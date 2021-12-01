@@ -1,0 +1,6 @@
+{
+    "certificates": {
+        "pathPrivateKey": "C://local_repos/mro-v2/server_webrtc_signal/certs/cert.pem",
+        "pathPublicKey": "C://local_repos/mro-v2/server_webrtc_signal/certs/key.pem"
+    }
+}
