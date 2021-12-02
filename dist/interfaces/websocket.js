@@ -121,6 +121,8 @@ var broadcastChannelICECandidate = function (roomID, srcUID, ice) {
 var broadcastToChannel = function (roomID, srcUID, payload) {
     console.log("Broadcasting payload from ".concat(srcUID, " to channel ").concat(roomID));
     console.log(payload);
+    // console.log("Broadcast to Channel Temp Room Store");
+    // console.log(tempRoomStore);
     // If the session store is not empty build the payload to send out to other channel members
     if (Object.keys(tempRoomStore[roomID].members).length > 0) {
         // Build the list of websockets to broadcast the payload on, excluding record to the sending member
@@ -132,6 +134,9 @@ var broadcastToChannel = function (roomID, srcUID, payload) {
         });
         // Send message to each channel member
         targetMembersWS_1.forEach(function (targetMemberWS) {
+            // console.log("Broadcast to channel");
+            // console.log(typeof targetMemberWS);
+            // console.log(targetMemberWS);
             targetMemberWS.send(payload);
         });
     }
@@ -142,6 +147,8 @@ var broadcastToChannel = function (roomID, srcUID, payload) {
 var forwardToTarget = function (roomID, trgtUID, payload) {
     console.log("Forwarding payload to ".concat(trgtUID, " in room ").concat(roomID));
     console.log(payload);
+    // console.log("Forward to Target Temp Room Store");
+    // console.log(tempRoomStore);
     // If the session store is not empty build the payload to send out to other channel members
     if (tempRoomStore[roomID].members[trgtUID] !== undefined) {
         // Build the list of websockets to broadcast the payload on, excluding record to the sending member

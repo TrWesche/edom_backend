@@ -145,6 +145,8 @@ const broadcastChannelICECandidate = (roomID: string, srcUID: string, ice: RTCIc
 const broadcastToChannel = (roomID: string, srcUID: string, payload: string) => {
     console.log(`Broadcasting payload from ${srcUID} to channel ${roomID}`);
     console.log(payload);
+    // console.log("Broadcast to Channel Temp Room Store");
+    // console.log(tempRoomStore);
     // If the session store is not empty build the payload to send out to other channel members
     if (Object.keys(tempRoomStore[roomID].members).length > 0) {
         // Build the list of websockets to broadcast the payload on, excluding record to the sending member
@@ -157,6 +159,9 @@ const broadcastToChannel = (roomID: string, srcUID: string, payload: string) => 
 
         // Send message to each channel member
         targetMembersWS.forEach((targetMemberWS) => {
+            // console.log("Broadcast to channel");
+            // console.log(typeof targetMemberWS);
+            // console.log(targetMemberWS);
             targetMemberWS.send(payload);
         });
         
@@ -168,6 +173,8 @@ const broadcastToChannel = (roomID: string, srcUID: string, payload: string) => 
 const forwardToTarget = (roomID: string, trgtUID: string, payload: string) => {
     console.log(`Forwarding payload to ${trgtUID} in room ${roomID}`);
     console.log(payload);
+    // console.log("Forward to Target Temp Room Store");
+    // console.log(tempRoomStore);
     // If the session store is not empty build the payload to send out to other channel members
     if (tempRoomStore[roomID].members[trgtUID] !== undefined) {
         // Build the list of websockets to broadcast the payload on, excluding record to the sending member
