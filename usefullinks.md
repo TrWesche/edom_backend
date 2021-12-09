@@ -1,0 +1,1 @@
+https://ajv.js.org/guide/typescript.html
