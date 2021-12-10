@@ -1,17 +1,25 @@
 import Ajv, {JSONSchemaType} from "ajv";
 const ajv = new Ajv();
 
-export interface UserAuthProps {
+export interface UserRegisterProps {
     username: string
+    email: string
     password: string
 };
 
-const schema: JSONSchemaType<UserAuthProps> = {
+const schema: JSONSchemaType<UserRegisterProps> = {
     type: "object",
     properties: {
         username: {
             $id:"#/properties/username",
             type: "string",
+            default: "",
+            minLength: 1
+        },
+        email: {
+            $id: "#/properties/email",
+            type: "string",
+            format: "email",
             default: "",
             minLength: 1
         },
@@ -23,11 +31,11 @@ const schema: JSONSchemaType<UserAuthProps> = {
         }
     },
     required: [
-        "username", "password"
+        "username", "email", "password"
     ],
     additionalProperties: true
 };
 
-const validateUserAuthSchema = ajv.compile(schema)
+const validateUserRegisterSchema = ajv.compile(schema)
 
-export default validateUserAuthSchema;
+export default validateUserRegisterSchema;

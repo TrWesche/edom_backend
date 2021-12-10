@@ -4,13 +4,13 @@ import { private_key } from "../config/config";
 
 
 class AuthHandling {
-    static generateCookies(queryRes, queryData) {
+    static generateToken(queryRes, queryData) {
         const token = jwt.sign(queryData, private_key, { algorithm: 'RS256'});
 
         queryRes.header("auth-token", token);
     }
 
-    static validateCookies(queryReq) {
+    static validateToken(queryReq) {
         try {
             let token = queryReq.header("Authorization");
 

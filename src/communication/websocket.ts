@@ -150,7 +150,7 @@ const broadcastToChannel = (roomID: string, srcUID: string, payload: string) => 
     // If the session store is not empty build the payload to send out to other channel members
     if (Object.keys(tempRoomStore[roomID].members).length > 0) {
         // Build the list of websockets to broadcast the payload on, excluding record to the sending member
-        const targetMembersWS = [];
+        const targetMembersWS: Array<WebSocket> = [];
         Object.keys(tempRoomStore[roomID].members).forEach((member) => {
             if (member !== srcUID) {
                 targetMembersWS.push(tempRoomStore[roomID].members[member].ws);

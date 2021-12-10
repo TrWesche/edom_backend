@@ -5,8 +5,8 @@ import { readFileSync } from "fs";
 import { join as pathJoin } from "path";
 import * as cors from "cors";
 
-import mqttHandler from "./interfaces/mqtt";
-import wssHandler from "./interfaces/websocket";
+import mqttHandler from "./communication/mqtt";
+import wssHandler from "./communication/websocket";
 
 // Global Variable Imports
 import { hostname } from "os";
@@ -14,6 +14,10 @@ import { port } from "./config/config";
 
 // Router Imports
 import roomRouter from "./routers/roomRouter";
+import userRouter from "./routers/userRouter";
+
+// Middleware Imports
+import { authenticateJWT } from "./middleware/authorizationMW";
 
 
 const corsOptions = {
@@ -38,6 +42,8 @@ mqttHandler();
 
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(authenticateJWT);
+app.use("/user", userRouter);
 app.use("/room", roomRouter);
 
 server.listen(port, host, () => {
