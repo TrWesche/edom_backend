@@ -12,16 +12,19 @@ import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userU
 // Model Imports
 import UserModel from "../models/userModel";
 
+// Middleware Imports
+import { validateUserID } from "../middleware/authorizationMW";
+
 
 const userRouter = express.Router();
 
 
-//      _   _   _ _____ _   _ 
-//     / \ | | | |_   _| | | |
-//    / _ \| | | | | | | |_| |
-//   / ___ \ |_| | | | |  _  |
-//  /_/   \_\___/  |_| |_| |_|
-
+/*    _   _   _ _____ _   _ 
+     / \ | | | |_   _| | | |
+    / _ \| | | | | | | |_| |
+   / ___ \ |_| | | | |  _  |
+  /_/   \_\___/  |_| |_| |_|
+*/
 
 userRouter.post("/auth", async (req, res, next) => {
     try {
@@ -45,8 +48,15 @@ userRouter.post("/auth", async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-})
+});
 
+
+/* ____ ____  _____    _  _____ _____ 
+  / ___|  _ \| ____|  / \|_   _| ____|
+ | |   | |_) |  _|   / _ \ | | |  _|  
+ | |___|  _ <| |___ / ___ \| | | |___ 
+  \____|_| \_\_____/_/   \_\_| |_____|
+*/
 
 userRouter.post("/register", async (req, res, next) => {
     try {
@@ -71,10 +81,38 @@ userRouter.post("/register", async (req, res, next) => {
     } catch (error) {
         next(error)
     }
-})
+});
+
+/* ____  _____    _    ____  
+  |  _ \| ____|  / \  |  _ \ 
+  | |_) |  _|   / _ \ | | | |
+  |  _ <| |___ / ___ \| |_| |
+  |_| \_\_____/_/   \_\____/ 
+*/
+
+userRouter.get("/:username", async (req, res, next) => {
+    try {
+        // TODO: User needs a public / private selection & additional details
+        const queryData = await UserModel.retrieve_user_by_username(req.params.username);
+        if (!queryData) {
+            throw new ExpressError("Unable to find a user with provided username.", 404);
+        }
+        
+        return res.json({user: queryData});
+    } catch (error) {
+        next(error)
+    }
+});
 
 
-userRouter.patch("/update", async (req, res, next) => {
+/* _   _ ____  ____    _  _____ _____ 
+  | | | |  _ \|  _ \  / \|_   _| ____|
+  | | | | |_) | | | |/ _ \ | | |  _|  
+  | |_| |  __/| |_| / ___ \| | | |___ 
+   \___/|_|   |____/_/   \_\_| |_____|
+*/
+
+userRouter.patch("/update", validateUserID, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
         if (!prevValues) {
@@ -117,6 +155,50 @@ userRouter.patch("/update", async (req, res, next) => {
         return res.json({user: newData})
     } catch (error) {
         next(error)
+    }
+});
+
+
+
+/* _     ___   ____  ___  _   _ _____ 
+  | |   / _ \ / ___|/ _ \| | | |_   _|
+  | |  | | | | |  _| | | | | | | | |  
+  | |__| |_| | |_| | |_| | |_| | | |  
+  |_____\___/ \____|\___/ \___/  |_|  
+*/
+
+userRouter.get("/logout", async (req, res, next) => {
+    try {
+        res.setHeader("Authorization", "");
+        
+        return res.json({"message": "Logout successful."})
+    } catch (error) {
+        next(error)
+    }
+});
+
+/* ___  _____ _     _____ _____ _____ 
+  |  _ \| ____| |   | ____|_   _| ____|
+  | | | |  _| | |   |  _|   | | |  _|  
+  | |_| | |___| |___| |___  | | | |___ 
+  |____/|_____|_____|_____| |_| |_____|
+*/
+
+userRouter.delete("/delete", validateUserID, async (req, res, next) => {
+    try {
+        if (!req.user?.id) {
+            throw new ExpressError("Delete user failed, userid not provided.", 400);
+        }
+
+        const queryData = UserModel.delete_user(req.user?.id);
+        if(!queryData) {
+            throw new ExpressError("Unable to delete target user account", 404);
+        }
+
+        res.setHeader("Authorization", "");
+        return res.json({message: "Your account has been deleted."});
+    } catch (error) {
+        return next(error);
     }
 })
 

@@ -75,6 +75,23 @@ class UserModel {
     return user;
   }
 
+  static async retrieve_user_by_username(username: string | undefined) {
+    if (!username) {
+      throw new ExpressError("Error: Username not provided", 400);
+    }
+
+    const user = await UserRepository.fetch_user_by_username(username);
+
+    if (!user) {
+      throw new ExpressError("Unable to locate target user", 404);
+    }
+
+    // Not a great way to handle this, need to think of a better way.
+    delete user.password;
+    delete user.email;
+    return user;
+  }
+
   /** Update user data with `data` */
   static async modify_user(id: string | undefined, data: UserObjectProps) {
     if (!id) {

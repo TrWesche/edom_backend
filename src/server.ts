@@ -19,6 +19,9 @@ import userRouter from "./routers/userRouter";
 // Middleware Imports
 import { authenticateJWT } from "./middleware/authorizationMW";
 
+// Database Connector Imports
+import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
+import pgdb from "./databases/postgreSQL/pgdb";
 
 const corsOptions = {
     origin: "http://u0134-m21p-01:3000",
@@ -43,6 +46,17 @@ mqttHandler();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authenticateJWT);
+app.use(session({
+    secret: redisConfig.secret,
+    store: new redisStore({
+        host: host,
+        port: redisConfig.port,
+        client: redisClient
+    }),
+    saveUninitialized: redisConfig.saveUninitialized,
+    resave: redisConfig.resave
+}))
+
 app.use("/user", userRouter);
 app.use("/room", roomRouter);
 

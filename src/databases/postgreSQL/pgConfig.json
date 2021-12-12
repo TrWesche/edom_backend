@@ -1,0 +1,7 @@
+{
+    "username": "pgDBadmin",
+    "secret": "pgDBPassword",
+    "dbname": "edomcore",
+    "host": "localhost",
+    "port": 5432
+}
