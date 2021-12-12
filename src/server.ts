@@ -10,7 +10,7 @@ import wssHandler from "./communication/websocket";
 
 // Global Variable Imports
 import { hostname } from "os";
-import { port } from "./config/config";
+import { port, sessionSecret } from "./config/config";
 
 // Router Imports
 import roomRouter from "./routers/roomRouter";
@@ -35,8 +35,8 @@ const corsOptions = {
 
 const key = readFileSync(pathJoin(__dirname+"/certs/key.pem"));
 const certificate = readFileSync(pathJoin(__dirname+"/certs/cert.pem"));
-const host = hostname();
-// const host = "localhost"
+// const host = hostname();
+const host = "localhost"
 
 const app = express();
 const server = https.createServer({ key: key, cert: certificate }, app);
@@ -47,10 +47,9 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authenticateJWT);
 app.use(session({
-    secret: redisConfig.secret,
+    // secret: redisConfig.secret,
+    secret: sessionSecret,
     store: new redisStore({
-        host: host,
-        port: redisConfig.port,
         client: redisClient
     }),
     saveUninitialized: redisConfig.saveUninitialized,

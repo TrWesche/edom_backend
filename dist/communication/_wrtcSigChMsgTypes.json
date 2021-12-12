@@ -1,0 +1,17 @@
+{
+    "incoming": {
+        "c2sChannelEnter": "c2sChannelEnter",
+        "c2sChannelExit": "c2sChannelExit",
+        "c2sSDPOffer": "c2sSDPOffer",
+        "c2sSDPAnswer": "c2sSDPAnswer",
+        "c2sICECandidate": "c2sICECandidate"
+    },
+    "outgoing": {
+        "s2cSignalConnEstablished": "s2cSignalConnEstablished",
+        "s2cChannelEnter": "s2cChannelEnter",
+        "s2cChannelExit": "s2cChannelExit",
+        "s2cSDPOffer": "s2cSDPOffer",
+        "s2cSDPAnswer": "s2cSDPAnswer",
+        "s2cICECandidate": "s2cICECandidate"
+    }
+}

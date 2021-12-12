@@ -1,36 +1,31 @@
-import Ajv, {JSONSchemaType} from "ajv";
-import addFormats from "ajv-formats";
-
-const ajv = new Ajv();
-addFormats(ajv, ["email", "password"]);
-
-export interface UserRegisterProps {
-    username: string
-    email: string
-    password: string
-};
-
-const schema: JSONSchemaType<UserRegisterProps> = {
+"use strict";
+exports.__esModule = true;
+var ajv_1 = require("ajv");
+var ajv_formats_1 = require("ajv-formats");
+var ajv = new ajv_1["default"]();
+(0, ajv_formats_1["default"])(ajv, ["email", "password"]);
+;
+var schema = {
     type: "object",
     properties: {
         username: {
-            $id:"#/properties/username",
+            $id: "#/properties/username",
             type: "string",
-            default: "",
+            "default": "",
             minLength: 1
         },
         email: {
             $id: "#/properties/email",
             type: "string",
             format: "email",
-            default: "",
+            "default": "",
             minLength: 1
         },
         password: {
             $id: "#/properties/password",
             type: "string",
             format: "password",
-            default: "",
+            "default": "",
             minLength: 8
         }
     },
@@ -39,7 +34,6 @@ const schema: JSONSchemaType<UserRegisterProps> = {
     ],
     additionalProperties: true
 };
-
-const validateUserRegisterSchema = ajv.compile(schema)
-
-export default validateUserRegisterSchema;
+var validateUserRegisterSchema = ajv.compile(schema);
+exports["default"] = validateUserRegisterSchema;
+//# sourceMappingURL=userRegisterSchema.js.map

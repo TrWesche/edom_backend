@@ -1,0 +1,1 @@
+{"version":3,"file":"expresError.js","sourceRoot":"","sources":["../../src/utils/expresError.ts"],"names":[],"mappings":";AAAA;;;;;;GAMG;;;;;;;;;;;;;;;;;AAMH;IAA2B,gCAAK;IAC5B,sBAAY,OAAO,EAAE,MAAM;QAA3B,YACI,iBAAO,SAIV;QAHG,KAAI,CAAC,OAAO,GAAG,OAAO,CAAC;QACvB,KAAI,CAAC,MAAM,GAAG,MAAM,CAAC;;QACrB,6BAA6B;IACjC,CAAC;IACL,mBAAC;AAAD,CAAC,AAPD,CAA2B,KAAK,GAO/B;AAED,qBAAe,YAAY,CAAC"}

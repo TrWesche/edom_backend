@@ -1,5 +1,8 @@
 import Ajv, {JSONSchemaType} from "ajv";
+import addFormats from "ajv-formats";
+
 const ajv = new Ajv();
+addFormats(ajv, ["password"]);
 
 export interface UserAuthProps {
     username: string
@@ -18,6 +21,7 @@ const schema: JSONSchemaType<UserAuthProps> = {
         password: {
             $id: "#/properties/password",
             type: "string",
+            format: "password",
             default: "",
             minLength: 8
         }
