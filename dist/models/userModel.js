@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var bcrypt_1 = require("bcrypt");
+var bcrypt = require("bcrypt");
 var config_1 = require("../config/config");
 var expresError_1 = require("../utils/expresError");
 var userRepository_1 = require("../repositories/userRepository");
@@ -57,8 +57,8 @@ var UserModel = /** @class */ (function () {
                         return [4 /*yield*/, userRepository_1["default"].fetch_user_by_username(data.username)];
                     case 1:
                         user = _a.sent();
-                        if (!user) return [3 /*break*/, 3];
-                        return [4 /*yield*/, bcrypt_1["default"].compare(data.password, user.password)];
+                        if (!(user && user.password && data.password)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, bcrypt.compare(data.password, user.password)];
                     case 2:
                         isValid = _a.sent();
                         if (isValid) {
@@ -83,7 +83,8 @@ var UserModel = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!data.username || !data.email) {
+                        console.log(data);
+                        if (!data.username || !data.email || !data.password) {
                             throw new expresError_1["default"]("Invalid Register Call", 400);
                         }
                         return [4 /*yield*/, userRepository_1["default"].fetch_user_by_user_email(data.email)];
@@ -99,7 +100,7 @@ var UserModel = /** @class */ (function () {
                         if (usernameCheck) {
                             throw new expresError_1["default"]("That username has already been taken", 400);
                         }
-                        return [4 /*yield*/, bcrypt_1["default"].hash(data.password, config_1.bcrypt_work_factor)];
+                        return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
                     case 3:
                         hashedPassword = _a.sent();
                         return [4 /*yield*/, userRepository_1["default"].create_new_user(data, hashedPassword)];
@@ -172,7 +173,7 @@ var UserModel = /** @class */ (function () {
                         }
                         if (!data.password) return [3 /*break*/, 2];
                         _a = data;
-                        return [4 /*yield*/, bcrypt_1["default"].hash(data.password, config_1.bcrypt_work_factor)];
+                        return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
                     case 1:
                         _a.password = _b.sent();
                         _b.label = 2;

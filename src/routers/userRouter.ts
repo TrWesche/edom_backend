@@ -67,6 +67,17 @@ userRouter.post("/register", async (req, res, next) => {
         }
 
         if(!validateUserRegisterSchema(regValues)) {
+            console.log(validateUserRegisterSchema.errors);
+            // TODO: Create Error Message Based on Schema Output
+            // [
+            //     [1]   {
+            //     [1]     instancePath: '',
+            //     [1]     schemaPath: '#/required',
+            //     [1]     keyword: 'required',
+            //     [1]     params: { missingProperty: 'username' },
+            //     [1]     message: "must have required property 'username'"
+            //     [1]   }
+            //     [1] ]
             throw new ExpressError(`Username & Password Required: ${validateUserRegisterSchema.errors}`, 400);
         }
 

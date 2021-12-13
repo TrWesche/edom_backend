@@ -3,8 +3,6 @@ exports.__esModule = true;
 // Library Imports
 var express = require("express");
 var https = require("https");
-var fs_1 = require("fs");
-var path_1 = require("path");
 var cors = require("cors");
 var mqtt_1 = require("./communication/mqtt");
 var websocket_1 = require("./communication/websocket");
@@ -25,19 +23,16 @@ var corsOptions = {
     allowedHeaders: 'Content-Type,Authorization,Set-Cookie',
     exposedHeaders: 'Content-Range,X-Content-Range'
 };
-var key = (0, fs_1.readFileSync)((0, path_1.join)(__dirname + "/certs/key.pem"));
-var certificate = (0, fs_1.readFileSync)((0, path_1.join)(__dirname + "/certs/cert.pem"));
 // const host = hostname();
 var host = "localhost";
 var app = express();
-var server = https.createServer({ key: key, cert: certificate }, app);
+var server = https.createServer({ key: config_1.privatekey, cert: config_1.certificate }, app);
 (0, websocket_1["default"])(server);
 (0, mqtt_1["default"])();
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(authorizationMW_1.authenticateJWT);
+app.use(authorizationMW_1.validateJWT);
 app.use((0, redis_1.session)({
-    // secret: redisConfig.secret,
     secret: config_1.sessionSecret,
     store: new redis_1.redisStore({
         client: redis_1.redisClient

@@ -4,7 +4,7 @@ import AuthHandling from "../utils/authHandling";
 
 /** Middleware: Authenticate user. */
 
-function authenticateJWT(req, res, next) {
+function validateJWT(req, res, next) {
   try {
     const payload = AuthHandling.validateToken(req);
     req.user = payload; // create a current user
@@ -58,7 +58,7 @@ function validatePermissions(req, res, next) {
 
 
 export {
-  authenticateJWT,
+  validateJWT,
   ensureLoggedIn,
   validateUserID,
   validatePermissions

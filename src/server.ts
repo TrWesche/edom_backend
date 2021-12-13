@@ -1,8 +1,6 @@
 // Library Imports
 import * as express from "express";
 import * as https from "https";
-import { readFileSync } from "fs";
-import { join as pathJoin } from "path";
 import * as cors from "cors";
 
 import mqttHandler from "./communication/mqtt";
@@ -10,18 +8,17 @@ import wssHandler from "./communication/websocket";
 
 // Global Variable Imports
 import { hostname } from "os";
-import { port, sessionSecret } from "./config/config";
+import { certificate, port, privatekey, sessionSecret } from "./config/config";
 
 // Router Imports
 import roomRouter from "./routers/roomRouter";
 import userRouter from "./routers/userRouter";
 
 // Middleware Imports
-import { authenticateJWT } from "./middleware/authorizationMW";
+import { validateJWT } from "./middleware/authorizationMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
-import pgdb from "./databases/postgreSQL/pgdb";
 
 const corsOptions = {
     origin: "http://u0134-m21p-01:3000",
@@ -33,21 +30,18 @@ const corsOptions = {
     exposedHeaders: 'Content-Range,X-Content-Range'
 }
 
-const key = readFileSync(pathJoin(__dirname+"/certs/key.pem"));
-const certificate = readFileSync(pathJoin(__dirname+"/certs/cert.pem"));
 // const host = hostname();
 const host = "localhost"
 
 const app = express();
-const server = https.createServer({ key: key, cert: certificate }, app);
+const server = https.createServer({ key: privatekey, cert: certificate}, app)
 wssHandler(server);
 mqttHandler();
 
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(authenticateJWT);
+app.use(validateJWT);
 app.use(session({
-    // secret: redisConfig.secret,
     secret: sessionSecret,
     store: new redisStore({
         client: redisClient

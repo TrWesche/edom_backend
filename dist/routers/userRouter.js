@@ -102,6 +102,17 @@ userRouter.post("/register", function (req, res, next) { return __awaiter(void 0
                     password: req.body.password
                 };
                 if (!(0, userRegisterSchema_1["default"])(regValues)) {
+                    console.log(userRegisterSchema_1["default"].errors);
+                    // TODO: Create Error Message Based on Schema Output
+                    // [
+                    //     [1]   {
+                    //     [1]     instancePath: '',
+                    //     [1]     schemaPath: '#/required',
+                    //     [1]     keyword: 'required',
+                    //     [1]     params: { missingProperty: 'username' },
+                    //     [1]     message: "must have required property 'username'"
+                    //     [1]   }
+                    //     [1] ]
                     throw new expresError_1["default"]("Username & Password Required: ".concat(userRegisterSchema_1["default"].errors), 400);
                 }
                 return [4 /*yield*/, userModel_1["default"].register(regValues)];

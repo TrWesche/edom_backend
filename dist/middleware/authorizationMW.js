@@ -1,10 +1,10 @@
 "use strict";
 exports.__esModule = true;
-exports.validatePermissions = exports.validateUserID = exports.ensureLoggedIn = exports.authenticateJWT = void 0;
+exports.validatePermissions = exports.validateUserID = exports.ensureLoggedIn = exports.validateJWT = void 0;
 /** Middleware for handling req authorization for routes. */
 var authHandling_1 = require("../utils/authHandling");
 /** Middleware: Authenticate user. */
-function authenticateJWT(req, res, next) {
+function validateJWT(req, res, next) {
     try {
         var payload = authHandling_1["default"].validateToken(req);
         req.user = payload; // create a current user
@@ -14,7 +14,7 @@ function authenticateJWT(req, res, next) {
         return next();
     }
 }
-exports.authenticateJWT = authenticateJWT;
+exports.validateJWT = validateJWT;
 /** Middleware: Requires user is authenticated. */
 function ensureLoggedIn(req, res, next) {
     var _a;

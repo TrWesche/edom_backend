@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 import { bcrypt_work_factor } from "../config/config";
 import ExpressError from "../utils/expresError";
 
@@ -14,7 +14,7 @@ class UserModel {
 
     const user = await UserRepository.fetch_user_by_username(data.username);
 
-    if (user) {
+    if (user && user.password && data.password) {
       // compare hashed password to a new hash from password
       const isValid = await bcrypt.compare(data.password, user.password);
       if (isValid) {
@@ -33,23 +33,21 @@ class UserModel {
 
   /** Register user with data. Returns new user data. */
   static async register(data: UserObjectProps) {
-    if (!data.username || !data.email){
+    if (!data.username || !data.email || !data.password){
       throw new ExpressError("Invalid Register Call", 400)
     }
-
 
     const emailCheck = await UserRepository.fetch_user_by_user_email(data.email);
     if (emailCheck) {
       throw new ExpressError("An account is already registered with that email", 400);
     };
 
-
     const usernameCheck = await UserRepository.fetch_user_by_username(data.username);
     if (usernameCheck) {
       throw new ExpressError("That username has already been taken", 400);
     }
 
-    const hashedPassword: string = await bcrypt.hash(data.password, bcrypt_work_factor);
+    const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
     const user = await UserRepository.create_new_user(data, hashedPassword);
     // TODO: User Roles & Permissions Will Need to be added
     if (user) {

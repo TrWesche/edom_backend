@@ -1,11 +1,11 @@
 // See user/merchant routes.
-import jwt from "jsonwebtoken";
-import { private_key } from "../config/config";
+import * as jwt from "jsonwebtoken";
+import { privatekey } from "../config/config";
 
 
 class AuthHandling {
     static generateToken(queryRes, queryData) {
-        const token = jwt.sign(queryData, private_key, { algorithm: 'RS256'});
+        const token = jwt.sign(queryData, privatekey, { algorithm: 'RS256'});
 
         queryRes.header("auth-token", token);
     }
@@ -14,13 +14,13 @@ class AuthHandling {
         try {
             let token = queryReq.header("Authorization");
 
-            if (!token) {throw new Error("Access Denied")};
+            if (!token) {return undefined};
 
             if (token.startsWith('Bearer ')) {
                 token.slice(7, token.length).trimLeft();
             }
 
-            const verifyToken = jwt.verify(token, private_key, {algorithms: ['RS256']})
+            const verifyToken = jwt.verify(token, privatekey, {algorithms: ['RS256']})
             return verifyToken;
         } catch (error) {
             console.log("Verification Error Occured:", error);
