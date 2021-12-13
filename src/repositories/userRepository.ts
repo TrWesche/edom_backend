@@ -33,14 +33,13 @@ class UserRepository {
             
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
-
-            // return result.rows[0];
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create new user - ${error}`, 500);
         }
     };
     
-    static async fetch_user_by_user_email(user_email: string) {
+
+    static async fetch_user_by_user_email(userEmail: string) {
         try {
             const result = await pgdb.query(
                 `SELECT id, 
@@ -49,18 +48,17 @@ class UserRepository {
                         password
                   FROM users 
                   WHERE email = $1`,
-                  [user_email]
+                  [userEmail]
             );
     
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
-
-            // return result.rows[0];
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
         };
     };
     
+
     static async fetch_user_by_username(username: string) {
         try {
             const result = await pgdb.query(
@@ -75,64 +73,59 @@ class UserRepository {
     
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
-
-            // return result.rows[0];
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
         };
     };
 
-    static async fetch_user_by_user_id(user_id: string) {
+
+    static async fetch_user_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(`
                 SELECT id, email, username
                 FROM users
                 WHERE id = $1`,
-                [user_id]
+                [userID]
             );
     
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
-
-            // return result.rows[0];
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
         }
     };
     
-    static async update_user_by_user_id(user_id: string, data: UserObjectProps) {
+
+    static async update_user_by_user_id(userID: string, data: UserObjectProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
                 "users",
                 data,
                 "id",
-                user_id
+                userID
             );
     
             const result = await pgdb.query(query, values);
 
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
-
-            // return result.rows[0];
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to update user - ${error}`, 500);
         }
     };
     
-    static async delete_user_by_user_id(user_id: string) {
+    
+    static async delete_user_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM users 
                 WHERE id = $1
                 RETURNING id`,
-            [user_id]);
+            [userID]);
     
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
-
-            // return result.rows[0];
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete user - ${error}`, 500);
         }

@@ -64,7 +64,6 @@ class UserModel {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
     }
-
     const user = await UserRepository.fetch_user_by_user_id(id);
 
     if (!user) {

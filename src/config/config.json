@@ -1,6 +1,7 @@
 {
     "certificates": {
-        "pathPrivateKey": "C://local_repos/mro-v2/server_webrtc_signal/certs/cert.pem",
-        "pathPublicKey": "C://local_repos/mro-v2/server_webrtc_signal/certs/key.pem"
+        "pathCertificate": "C:/local_repos/edom/server_edom_backend/dist/certs/cert.pem",
+        "pathPrivateKey": "C:/local_repos/edom/server_edom_backend/dist/certs/privatekey.pem",
+        "pathPublicKey": "C:/local_repos/edom/server_edom_backend/dist/certs/publickey.pem"
     }
 }
