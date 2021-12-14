@@ -2,7 +2,7 @@ import * as bcrypt from "bcrypt";
 import { bcrypt_work_factor } from "../config/config";
 import ExpressError from "../utils/expresError";
 
-import UserRepository, { UserObjectProps } from "../repositories/userRepository";
+import UserRepo, { UserObjectProps } from "../repositories/user.repository";
 
 /** Standard User Creation & Authentication */
 class UserModel {
@@ -12,7 +12,7 @@ class UserModel {
       throw new ExpressError("Invalid Authentication Call", 400)
     }
 
-    const user = await UserRepository.fetch_user_by_username(data.username);
+    const user = await UserRepo.fetch_user_by_username(data.username);
 
     if (user && user.password && data.password) {
       // compare hashed password to a new hash from password
@@ -37,18 +37,18 @@ class UserModel {
       throw new ExpressError("Invalid Register Call", 400)
     }
 
-    const emailCheck = await UserRepository.fetch_user_by_user_email(data.email);
+    const emailCheck = await UserRepo.fetch_user_by_user_email(data.email);
     if (emailCheck) {
       throw new ExpressError("An account is already registered with that email", 400);
     };
 
-    const usernameCheck = await UserRepository.fetch_user_by_username(data.username);
+    const usernameCheck = await UserRepo.fetch_user_by_username(data.username);
     if (usernameCheck) {
       throw new ExpressError("That username has already been taken", 400);
     }
 
     const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
-    const user = await UserRepository.create_new_user(data, hashedPassword);
+    const user = await UserRepo.create_new_user(data, hashedPassword);
     // TODO: User Roles & Permissions Will Need to be added
     if (user) {
       user.permissions = {
@@ -64,7 +64,7 @@ class UserModel {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
     }
-    const user = await UserRepository.fetch_user_by_user_id(id);
+    const user = await UserRepo.fetch_user_by_user_id(id);
 
     if (!user) {
       throw new ExpressError("Unable to locate target user", 404);
@@ -77,7 +77,7 @@ class UserModel {
       throw new ExpressError("Error: Username not provided", 400);
     }
 
-    const user = await UserRepository.fetch_user_by_username(username);
+    const user = await UserRepo.fetch_user_by_username(username);
 
     if (!user) {
       throw new ExpressError("Unable to locate target user", 404);
@@ -102,7 +102,7 @@ class UserModel {
 
     // Handle Email Change
     if (data.email) {
-      const duplicateCheck = await UserRepository.fetch_user_by_user_email(data.email);
+      const duplicateCheck = await UserRepo.fetch_user_by_user_email(data.email);
       if (duplicateCheck && duplicateCheck.id !== id) {
         throw new ExpressError("A user already exists with that email", 400);
       };
@@ -110,14 +110,14 @@ class UserModel {
 
     // Handle Username Change
     if (data.username) {
-      const duplicateCheck = await UserRepository.fetch_user_by_username(data.username);
+      const duplicateCheck = await UserRepo.fetch_user_by_username(data.username);
       if (duplicateCheck && duplicateCheck.id !== id) {
         throw new ExpressError("A user already exists with that username", 400);
       };
     }
 
     // Perform User Update
-    const user = await UserRepository.update_user_by_user_id(id, data);
+    const user = await UserRepo.update_user_by_user_id(id, data);
     if (!user) {
       throw new ExpressError("Unable to update target user", 400);
     }
@@ -129,7 +129,7 @@ class UserModel {
 
   /** Delete target user from database; returns undefined. */
   static async delete_user(id: string) {
-    const result = await UserRepository.delete_user_by_user_id(id);
+    const result = await UserRepo.delete_user_by_user_id(id);
 
     if (!result) {
       throw new ExpressError("Delete failed, unable to locate target user", 400);

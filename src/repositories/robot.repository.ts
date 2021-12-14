@@ -7,29 +7,21 @@ export interface RobotObjectProps {
     id?: string,
     name?: string,
     description?: string,
-    public?: boolean,
     config?: object 
 }
 
 
-class RobotRepository {
-    /*    ____ ____  _____    _  _____ _____ 
-         / ___|  _ \| ____|  / \|_   _| ____|
-        | |   | |_) |  _|   / _ \ | | |  _|  
-        | |___|  _ <| |___ / ___ \| | | |___ 
-         \____|_| \_\_____/_/   \_\_| |_____|
-    */
+class RobotRepo {
     static async create_new_robot(robotData: RobotObjectProps) {
         try {
             const result = await pgdb.query(
                 `INSERT INTO robots 
-                    (name, description, public, config) 
+                    (name, description, config) 
                 VALUES ($1, $2, $3, $4) 
                 RETURNING id, name, description, public, config`,
             [
                 robotData.name,
                 robotData.description,
-                robotData.public,
                 robotData.config
             ]);
             
@@ -41,16 +33,10 @@ class RobotRepository {
     };
 
 
-    /*   ____  _____    _    ____  
-        |  _ \| ____|  / \  |  _ \ 
-        | |_) |  _|   / _ \ | | | |
-        |  _ <| |___ / ___ \| |_| |
-        |_| \_\_____/_/   \_\____/ 
-    */
     static async fetch_robot_by_robot_id(robotID: string) {
         try {
             const result = await pgdb.query(`
-                SELECT id, name, description, public, config
+                SELECT id, name, description, config
                 FROM robots
                 WHERE id = $1`,
                 [robotID]
@@ -64,17 +50,11 @@ class RobotRepository {
     };
 
 
-    /*   _   _ ____  ____    _  _____ _____ 
-        | | | |  _ \|  _ \  / \|_   _| ____|
-        | | | | |_) | | | |/ _ \ | | |  _|  
-        | |_| |  __/| |_| / ___ \| | | |___ 
-         \___/|_|   |____/_/   \_\_| |_____|
-    */
-    static async update_robot_by_robot_id(robotID: string, data: RobotObjectProps) {
+    static async update_robot_by_robot_id(robotID: string, robotData: RobotObjectProps) {
         try {
             let {query, values} = createUpdateQueryPGSQL(
                 "robots",
-                data,
+                robotData,
                 "id",
                 robotID
             );
@@ -89,12 +69,6 @@ class RobotRepository {
     };
 
 
-    /*   ____  _____ _     _____ _____ _____ 
-        |  _ \| ____| |   | ____|_   _| ____|
-        | | | |  _| | |   |  _|   | | |  _|  
-        | |_| | |___| |___| |___  | | | |___ 
-        |____/|_____|_____|_____| |_| |_____|
-    */
     static async delete_robot_by_robot_id(robotID: string) {
         try {
             const result = await pgdb.query(
@@ -111,4 +85,4 @@ class RobotRepository {
     };
 }
 
-export default RobotRepository;
+export default RobotRepo;

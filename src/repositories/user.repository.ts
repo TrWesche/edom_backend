@@ -17,7 +17,7 @@ interface UserPermissionsProps {
 }
 
 
-class UserRepository {
+class UserRepo {
     static async create_new_user(userData: UserObjectProps, hashedPassword: string) {
         try {
             const result = await pgdb.query(
@@ -96,12 +96,12 @@ class UserRepository {
     };
     
 
-    static async update_user_by_user_id(userID: string, data: UserObjectProps) {
+    static async update_user_by_user_id(userID: string, userData: UserObjectProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
                 "users",
-                data,
+                userData,
                 "id",
                 userID
             );
@@ -133,4 +133,4 @@ class UserRepository {
 }
 
 
-export default UserRepository;
+export default UserRepo;

@@ -3,7 +3,6 @@ import AuthHandling from "../utils/authHandling";
 
 
 /** Middleware: Authenticate user. */
-
 function validateJWT(req, res, next) {
   try {
     const payload = AuthHandling.validateToken(req);
@@ -44,6 +43,8 @@ function validateUserID(req, res, next) {
 /** Middleware: Requires user type & correct user id. */
 function validatePermissions(req, res, next) {
   try {
+    // TODO: This will need to do deeper checks to make sure the user has permissions based on their their
+    // individual account, site permissiosn, or group permissions
     if (req.user?.permissions?.role === "user") {
       return next();
     }

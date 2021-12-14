@@ -18,6 +18,8 @@ CREATE TABLE "users" (
 CREATE TABLE "groups" (
   "id" uuid DEFAULT uuid_generate_v4(),
   "name" text NOT NULL,
+  "description" text,
+  "public" boolean NOT NULL DEFAULT false,
   "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY ("id")
@@ -50,7 +52,7 @@ CREATE TABLE "groupRoles" (
   "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY ("id")
-)
+);
 
 -- Group Permissions Table
 CREATE TABLE "groupPermissions" (
@@ -105,6 +107,7 @@ CREATE TABLE "rooms" (
   "id" uuid DEFAULT uuid_generate_v4(),
   "name" text NOT NULL,
   "description" text NOT NULL,
+  "public" boolean NOT NULL DEFAULT false,
   "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY ("id")
@@ -115,7 +118,6 @@ CREATE TABLE "robots" (
   "id" uuid DEFAULT uuid_generate_v4(),
   "name" text NOT NULL,
   "description" text,
-  "public" boolean NOT NULL DEFAULT false,
   "config" json NOT NULL,
   "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

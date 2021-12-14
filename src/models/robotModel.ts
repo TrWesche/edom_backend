@@ -1,4 +1,4 @@
-import RobotRepository, { RobotObjectProps } from "../repositories/robotRepository";
+import RobotRepo, { RobotObjectProps } from "../repositories/robot.repository";
 import { RobotCreateProps } from "../schemas/robot/robotCreateSchema";
 import ExpressError from "../utils/expresError";
 
@@ -17,7 +17,7 @@ class RobotModel {
             throw new ExpressError("Invalid Create Robot Call", 400);
         };
 
-        const robot = RobotRepository.create_new_robot(data);
+        const robot = RobotRepo.create_new_robot(data);
         return robot;
     };
 
@@ -29,7 +29,7 @@ class RobotModel {
         |_| \_\_____/_/   \_\____/ 
     */
     static async retrieve_robot_by_robot_id(robotID: string) {
-        const robot = RobotRepository.fetch_robot_by_robot_id(robotID);
+        const robot = RobotRepo.fetch_robot_by_robot_id(robotID);
         return robot;
     };
 
@@ -46,7 +46,7 @@ class RobotModel {
         }
 
         // Perform Robot Update
-        const robot = await RobotRepository.update_robot_by_robot_id(robotID, data);
+        const robot = await RobotRepo.update_robot_by_robot_id(robotID, data);
         if (!robot) {
             throw new ExpressError("Unable to update target robot", 400);
         }
@@ -66,7 +66,7 @@ class RobotModel {
             throw new ExpressError("Error: Robot ID not provided", 400);
         }
 
-        const robot = await RobotRepository.delete_robot_by_robot_id(robotID);
+        const robot = await RobotRepo.delete_robot_by_robot_id(robotID);
         if (!robot) {
             throw new ExpressError("Unable to update target robot", 400);
         }

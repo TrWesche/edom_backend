@@ -11,7 +11,7 @@ import validateCreateRobotSchema, { RobotCreateProps } from "../schemas/robot/ro
 import RobotModel from "../models/robotModel";
 
 // Middleware Imports
-import { validateUserID, ensureLoggedIn } from "../middleware/authorizationMW";
+import { ensureLoggedIn, validatePermissions } from "../middleware/authorizationMW";
 import validateUpdateRobotSchema, { RobotUpdateProps } from "../schemas/robot/robotUpdateSchema";
 
 
@@ -79,7 +79,7 @@ robotRouter.get("/:robotID", ensureLoggedIn, async (req, res, next) => {
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-robotRouter.patch("/:robotID", validateUserID, async (req, res, next) => {
+robotRouter.patch("/:robotID", validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await RobotModel.retrieve_robot_by_robot_id(req.params.robotID);
         if (!prevValues) {
@@ -128,7 +128,7 @@ robotRouter.patch("/:robotID", validateUserID, async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 
-robotRouter.delete("/:robotID", validateUserID, async (req, res, next) => {
+robotRouter.delete("/:robotID", validatePermissions, async (req, res, next) => {
     try {
         const queryData = RobotModel.delete_robot(req.params.robotID);
         if(!queryData) {
