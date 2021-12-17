@@ -31,6 +31,25 @@ class GroupRoleRepo {
     };
     
 
+    static async fetch_group_roles_by_group_id(groupID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT id, 
+                        name,
+                        group_id 
+                  FROM groupRoles
+                  WHERE group_id = $1`,
+                  [groupID]
+            );
+
+            const rval: Array<GroupRoleProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to get roles for the target group - ${error}`, 500);
+        }
+    };
+
+
     static async fetch_group_role_by_group_role_id(groupRoleID: string) {
         try {
             const result = await pgdb.query(

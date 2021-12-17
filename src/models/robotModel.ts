@@ -21,6 +21,14 @@ class RobotModel {
         return robot;
     };
 
+    static async add_robot_to_group(robotID: string, groupID: string) {
+        //TODO
+    };
+
+    static async add_robot_to_room(robotID: string, roomID: string) {
+        //TODO
+    };
+
 
     /*   ____  _____    _    ____  
         |  _ \| ____|  / \  |  _ \ 
@@ -31,6 +39,14 @@ class RobotModel {
     static async retrieve_robot_by_robot_id(robotID: string) {
         const robot = RobotRepo.fetch_robot_by_robot_id(robotID);
         return robot;
+    };
+
+    static async retrieve_robot_group_by_robot_id(robotID: string) {
+        //TODO
+    };
+
+    static async retrieve_robot_room_by_robot_id(robotID: string) {
+        //TODO
     };
 
 
@@ -72,6 +88,14 @@ class RobotModel {
         }
 
         return robot;
+    };
+
+    static async remove_robot_from_group(robotID: string, groupID: string) {
+        //TODO
+    };
+
+    static async remove_robot_from_room(robotID:string, roomID: string) {
+        //TODO
     };
 }
 

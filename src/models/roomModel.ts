@@ -19,12 +19,25 @@ class RoomModel {
     };
 
 
+    static async create_group_room(group_id: string, data: RoomCreateProps) {
+        //TODO
+    };
+
+
     static async retrieve_room_by_room_id(roomID: string) {
         const room = RoomRepo.fetch_room_by_room_id(roomID);
         return room;
     };
 
+    static async retrieve_group_rooms_by_group_id(groupID: string) {
+        //TODO
+    };
 
+    static async retrieve_user_rooms_by_user_id(userID: string) {
+        //TODO
+    };
+
+    
     static async modify_room(roomID: string, data: RoomObjectProps) {
         if (!roomID) {
             throw new ExpressError("Error: Room ID not provided", 400);

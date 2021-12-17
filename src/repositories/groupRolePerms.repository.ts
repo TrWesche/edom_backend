@@ -1,23 +1,19 @@
 import ExpressError from "../utils/expresError";
 import pgdb from "../databases/postgreSQL/pgdb";
-import { GroupPermProps } from "./groupPerm.repository";
 
 export interface GroupRolePermsProps {
     role_id?: string,
     permission_id?: string
 }
 
-
-
-
 class GroupRolePermsRepo {
-    static async create_new_group_role_perm(groupRoleID: string, groupPermList: Array<GroupPermProps>) {
+    static async create_new_group_role_perm(groupRoleID: string, permissionList: Array<string>) {
         const valueExpressions: Array<string> = [];
         let queryValues = [groupRoleID];
     
-        for (const permission of groupPermList) {
-            if (permission.id) {
-                queryValues.push(permission.id);
+        for (const permission of permissionList) {
+            if (permission) {
+                queryValues.push(permission);
                 valueExpressions.push(`($1, $${queryValues.length})`)
             }
         }
