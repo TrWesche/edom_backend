@@ -3,7 +3,7 @@ import createUpdateQueryPGSQL from "../utils/createUpdateQueryPGSQL";
 import pgdb from "../databases/postgreSQL/pgdb";
 
 
-export interface GroupRoleObjectProps {
+export interface GroupRoleProps {
     id?: string,
     group_id?: string,
     name?: string
@@ -11,7 +11,7 @@ export interface GroupRoleObjectProps {
 
 
 class GroupRoleRepo {
-    static async create_new_group_role(groupRoleData: GroupRoleObjectProps) {
+    static async create_new_group_role(groupRoleData: GroupRoleProps) {
         try {
             const result = await pgdb.query(
                 `INSERT INTO groupRoles
@@ -23,7 +23,7 @@ class GroupRoleRepo {
                 groupRoleData.group_id
             ]);
             
-            const rval: GroupRoleObjectProps | undefined = result.rows[0];
+            const rval: GroupRoleProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create new group role - ${error}`, 500);
@@ -42,7 +42,7 @@ class GroupRoleRepo {
                   [groupRoleID]
             );
     
-            const rval: GroupRoleObjectProps | undefined = result.rows[0];
+            const rval: GroupRoleProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate group role - ${error}`, 500);
@@ -50,7 +50,7 @@ class GroupRoleRepo {
     };
     
 
-    static async update_group_role_by_group_role_id(groupRoleID: string, groupRoleData: GroupRoleObjectProps) {
+    static async update_group_role_by_group_role_id(groupRoleID: string, groupRoleData: GroupRoleProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
@@ -62,7 +62,7 @@ class GroupRoleRepo {
     
             const result = await pgdb.query(query, values);
 
-            const rval: GroupRoleObjectProps | undefined = result.rows[0];
+            const rval: GroupRoleProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to update group role - ${error}`, 500);
@@ -78,7 +78,7 @@ class GroupRoleRepo {
                 RETURNING id`,
             [groupRoleID]);
     
-            const rval: GroupRoleObjectProps | undefined = result.rows[0];
+            const rval: GroupRoleProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete group role - ${error}`, 500);

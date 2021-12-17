@@ -2,13 +2,13 @@ import Ajv, {JSONSchemaType} from "ajv";
 
 const ajv = new Ajv();
 
-export interface RobotUpdateProps {
+export interface RoomCreateProps {
     name: string
     description: string
-    config: object
+    public: boolean
 };
 
-const schema: JSONSchemaType<RobotUpdateProps> = {
+const schema: JSONSchemaType<RoomCreateProps> = {
     type: "object",
     properties: {
         name: {
@@ -22,16 +22,18 @@ const schema: JSONSchemaType<RobotUpdateProps> = {
             type: "string",
             default: ""
         },
-        config: {
-            $id: "#/properties/config",
-            type: "object"
+        public: {
+            $id: "#/properties/public",
+            type: "boolean",
+            default: false
         }
     },
     required: [
+        "name"
     ],
     additionalProperties: true
 };
 
-const validateUpdateRobotSchema = ajv.compile(schema)
+const validateCreateRoomSchema = ajv.compile(schema)
 
-export default validateUpdateRobotSchema;
+export default validateCreateRoomSchema;

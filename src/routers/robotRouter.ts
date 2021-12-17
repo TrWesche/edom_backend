@@ -6,13 +6,13 @@ import ExpressError from "../utils/expresError";
 
 // Schema Imports
 import validateCreateRobotSchema, { RobotCreateProps } from "../schemas/robot/robotCreateSchema";
+import validateUpdateRobotSchema, { RobotUpdateProps } from "../schemas/robot/robotUpdateSchema";
 
 // Model Imports
 import RobotModel from "../models/robotModel";
 
 // Middleware Imports
 import { ensureLoggedIn, validatePermissions } from "../middleware/authorizationMW";
-import validateUpdateRobotSchema, { RobotUpdateProps } from "../schemas/robot/robotUpdateSchema";
 
 
 const robotRouter = express.Router();
@@ -30,7 +30,6 @@ robotRouter.post("/create", ensureLoggedIn, async (req, res, next) => {
         const regValues: RobotCreateProps = {
             name: req.body.name,
             description: req.body.description,
-            public: req.body.public,
             config: req.body.config
         }
 
@@ -89,7 +88,6 @@ robotRouter.patch("/:robotID", validatePermissions, async (req, res, next) => {
         const updateValues: RobotUpdateProps = {
             name: req.body.name,
             description: req.body.description,
-            public: req.body.public,
             config: req.body.config
         };
 

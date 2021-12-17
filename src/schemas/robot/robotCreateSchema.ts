@@ -5,7 +5,6 @@ const ajv = new Ajv();
 export interface RobotCreateProps {
     name: string
     description: string
-    public: boolean
     config: object
 };
 
@@ -23,18 +22,13 @@ const schema: JSONSchemaType<RobotCreateProps> = {
             type: "string",
             default: ""
         },
-        public: {
-            $id: "#/properties/public",
-            type: "boolean",
-            default: false
-        },
         config: {
             $id: "#/properties/config",
             type: "object"
         }
     },
     required: [
-        "name"
+        "name", "config"
     ],
     additionalProperties: true
 };

@@ -40,7 +40,7 @@ class RobotModel {
         | |_| |  __/| |_| / ___ \| | | |___ 
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    static async modify_robot(robotID: string | undefined, data: RobotObjectProps) {
+    static async modify_robot(robotID: string, data: RobotObjectProps) {
         if (!robotID) {
             throw new ExpressError("Error: Robot ID not provided", 400);
         }
@@ -61,14 +61,14 @@ class RobotModel {
         | |_| | |___| |___| |___  | | | |___ 
         |____/|_____|_____|_____| |_| |_____|
     */
-    static async delete_robot(robotID: string | undefined) {
+    static async delete_robot(robotID: string) {
         if (!robotID) {
             throw new ExpressError("Error: Robot ID not provided", 400);
         }
 
         const robot = await RobotRepo.delete_robot_by_robot_id(robotID);
         if (!robot) {
-            throw new ExpressError("Unable to update target robot", 400);
+            throw new ExpressError("Unable to elete target robot", 400);
         }
 
         return robot;

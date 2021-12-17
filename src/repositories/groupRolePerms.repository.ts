@@ -1,6 +1,6 @@
 import ExpressError from "../utils/expresError";
 import pgdb from "../databases/postgreSQL/pgdb";
-import { GroupPermObjectProps } from "./groupPerm.repository";
+import { GroupPermProps } from "./groupPerm.repository";
 
 export interface GroupRolePermsProps {
     role_id?: string,
@@ -11,7 +11,7 @@ export interface GroupRolePermsProps {
 
 
 class GroupRolePermsRepo {
-    static async create_new_group_role_perm(groupRoleID: string, groupPermList: Array<GroupPermObjectProps>) {
+    static async create_new_group_role_perm(groupRoleID: string, groupPermList: Array<GroupPermProps>) {
         const valueExpressions: Array<string> = [];
         let queryValues = [groupRoleID];
     

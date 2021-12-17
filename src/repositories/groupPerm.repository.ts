@@ -3,14 +3,14 @@ import createUpdateQueryPGSQL from "../utils/createUpdateQueryPGSQL";
 import pgdb from "../databases/postgreSQL/pgdb";
 
 
-export interface GroupPermObjectProps {
+export interface GroupPermProps {
     id?: string,
     name?: string
 }
 
 
 class GroupPermRepo {
-    static async create_new_group_perm(groupPermData: GroupPermObjectProps) {
+    static async create_new_group_perm(groupPermData: GroupPermProps) {
         try {
             const result = await pgdb.query(
                 `INSERT INTO groupPermissions
@@ -21,7 +21,7 @@ class GroupPermRepo {
                 groupPermData.name,
             ]);
             
-            const rval: GroupPermObjectProps | undefined = result.rows[0];
+            const rval: GroupPermProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create new group permission - ${error}`, 500);
@@ -39,7 +39,7 @@ class GroupPermRepo {
                   [groupPermID]
             );
     
-            const rval: GroupPermObjectProps | undefined = result.rows[0];
+            const rval: GroupPermProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate group permission - ${error}`, 500);
@@ -47,7 +47,7 @@ class GroupPermRepo {
     };
     
 
-    static async update_group_perm_by_group_perm_id(groupPermID: string, groupPermData: GroupPermObjectProps) {
+    static async update_group_perm_by_group_perm_id(groupPermID: string, groupPermData: GroupPermProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
@@ -59,7 +59,7 @@ class GroupPermRepo {
     
             const result = await pgdb.query(query, values);
 
-            const rval: GroupPermObjectProps | undefined = result.rows[0];
+            const rval: GroupPermProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to update group permission - ${error}`, 500);
@@ -75,7 +75,7 @@ class GroupPermRepo {
                 RETURNING id`,
             [groupPermID]);
     
-            const rval: GroupPermObjectProps | undefined = result.rows[0];
+            const rval: GroupPermProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete group permission - ${error}`, 500);
