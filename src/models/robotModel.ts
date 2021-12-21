@@ -12,22 +12,24 @@ class RobotModel {
         | |___|  _ <| |___ / ___ \| | | |___ 
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    static async create(data: RobotCreateProps) {
-        if (!data.name || !data.config) {
-            throw new ExpressError("Invalid Create Robot Call", 400);
-        };
+    static async create_user_robot(userID: string, robotData: RobotCreateProps) {
+        // if (!data.name || !data.config) {
+        //     throw new ExpressError("Invalid Create Robot Call", 400);
+        // };
 
-        const robot = RobotRepo.create_new_robot(data);
+        const robot = RobotRepo.create_new_robot(robotData);
+        // TODO: Associate robot with user
         return robot;
     };
 
-    static async add_robot_to_group(robotID: string, groupID: string) {
-        //TODO
+    static async create_group_robot(userID: string, groupID: string, robotData: RobotCreateProps) {
+        // TODO: Check that user has permissions to target group
+
+        const robot = RobotRepo.create_new_robot(robotData);
+        // TODO Associate robot with group
+        return robot;
     };
 
-    static async add_robot_to_room(robotID: string, roomID: string) {
-        //TODO
-    };
 
 
     /*   ____  _____    _    ____  
@@ -41,8 +43,14 @@ class RobotModel {
         return robot;
     };
 
+    static async retrieve_robot_user_by_robot_id(robotID: string) {
+        //TODO: Check if user profile is public
+        //TODO: Return user data
+    };
+
     static async retrieve_robot_group_by_robot_id(robotID: string) {
-        //TODO
+        //TODO: Check if group is public
+        //TODO: Return group data
     };
 
     static async retrieve_robot_room_by_robot_id(robotID: string) {
@@ -56,13 +64,13 @@ class RobotModel {
         | |_| |  __/| |_| / ___ \| | | |___ 
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    static async modify_robot(robotID: string, data: RobotObjectProps) {
-        if (!robotID) {
-            throw new ExpressError("Error: Robot ID not provided", 400);
-        }
+    static async modify_robot(robotID: string, robotData: RobotObjectProps) {
+        // if (!robotID) {
+        //     throw new ExpressError("Error: Robot ID not provided", 400);
+        // }
 
         // Perform Robot Update
-        const robot = await RobotRepo.update_robot_by_robot_id(robotID, data);
+        const robot = await RobotRepo.update_robot_by_robot_id(robotID, robotData);
         if (!robot) {
             throw new ExpressError("Unable to update target robot", 400);
         }
@@ -77,24 +85,40 @@ class RobotModel {
         | |_| | |___| |___| |___  | | | |___ 
         |____/|_____|_____|_____| |_| |_____|
     */
-    static async delete_robot(robotID: string) {
-        if (!robotID) {
-            throw new ExpressError("Error: Robot ID not provided", 400);
-        }
+    static async delete_user_robot(userID: string, robotID: string) {
+        // if (!robotID) {
+        //     throw new ExpressError("Error: Robot ID not provided", 400);
+        // }
+
+        // TODO: Check user permissions
+
 
         const robot = await RobotRepo.delete_robot_by_robot_id(robotID);
         if (!robot) {
-            throw new ExpressError("Unable to elete target robot", 400);
+            throw new ExpressError("Unable to delete target robot", 400);
+        }
+
+        return robot;
+    };
+    
+    static async delete_group_robot(userID: string, groupID: string, robotID: string) {
+        // if (!robotID) {
+        //     throw new ExpressError("Error: Robot ID not provided", 400);
+        // }
+
+        // TODO: Check user permissions
+
+
+        const robot = await RobotRepo.delete_robot_by_robot_id(robotID);
+        if (!robot) {
+            throw new ExpressError("Unable to delete target robot", 400);
         }
 
         return robot;
     };
 
-    static async remove_robot_from_group(robotID: string, groupID: string) {
-        //TODO
-    };
 
-    static async remove_robot_from_room(robotID:string, roomID: string) {
+    static async remove_robot_from_room(robotID: string, roomID: string) {
         //TODO
     };
 }

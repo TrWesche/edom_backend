@@ -64,6 +64,28 @@ class SitePermissionsRepo {
         }
     };
 
+    static async fetch_permissions_by_user_id(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT DISTINCT
+                        sitePermissions.id AS permission_id,
+                        sitePermissions.name AS permission_name,
+                    FROM sitePermissions
+                    LEFT JOIN siteRole_sitePermissions
+                        ON siteRole_sitePermissions.permission_id = sitePermissiosn.id
+                    LEFT JOIN user_siteRoles
+                        ON user_siteRoles.role_id = siteRole_sitePermissions.role_id
+                    WHERE user_siteRoles.user_id = $1`,
+                    [userID]
+            );
+
+            // const rval: Array<siteRoleProps> | undefined = result.rows;
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to get site permissions for the target user - ${error}`, 500);
+        }  
+    };
+
     static async fetch_role_by_role_id(siteRoleID: string) {
         try {
             const result = await pgdb.query(

@@ -9,7 +9,7 @@ import ExpressError from "../utils/expresError";
 
 
 class RoomModel {
-    static async create(data: RoomCreateProps) {
+    static async create_user_room(data: RoomCreateProps) {
         if (!data.name) {
             throw new ExpressError("Invalid Create Room Call", 400);
         }
@@ -24,6 +24,8 @@ class RoomModel {
     };
 
 
+
+    
     static async retrieve_room_by_room_id(roomID: string) {
         const room = RoomRepo.fetch_room_by_room_id(roomID);
         return room;

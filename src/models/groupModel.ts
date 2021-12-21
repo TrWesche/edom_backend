@@ -101,7 +101,9 @@ class GroupModel {
         return permissions;
     };
 
-
+    static async retrieve_user_permissions_by_user_id(userID: string) {
+        
+    };
 
     /*   _   _ ____  ____    _  _____ _____ 
         | | | |  _ \|  _ \  / \|_   _| ____|

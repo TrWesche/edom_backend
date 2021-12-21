@@ -79,6 +79,52 @@ class GroupPermissionsRepo {
         };
     };
 
+
+    static async fetch_roles_by_user_id(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT users.id AS user_id,
+                        users.username AS username,
+                        groupRoles.id AS role_id, 
+                        groupRoles.name AS role_name
+                    FROM users
+                    LEFT JOIN user_groupRoles 
+                        ON users.id = user_groupRoles.user_id
+                    LEFT JOIN groupRoles
+                        ON user_groupRoles.role_id = groupRoles.id
+                    WHERE user_id = $1`,
+                    [userID]
+            );
+
+            // const rval: Array<siteRoleProps> | undefined = result.rows;
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to get site group for the target user - ${error}`, 500);
+        }
+    };
+
+    static async fetch_permissions_by_user_id(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT DISTINCT
+                        groupPermissions.id AS permission_id,
+                        groupPermissions.name AS permission_name,
+                    FROM groupPermissions
+                    LEFT JOIN groupRole_groupPermissions
+                        ON groupRole_groupPermissions.permission_id = groupPermissiosn.id
+                    LEFT JOIN user_groupRoles
+                        ON user_groupRoles.role_id = groupRole_groupPermissions.role_id
+                    WHERE user_groupRoles.user_id = $1`,
+                    [userID]
+            );
+
+            // const rval: Array<siteRoleProps> | undefined = result.rows;
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to get site roles for the target user - ${error}`, 500);
+        }  
+    };
+
     static async update_role_by_role_id(groupRoleID: string, groupRoleData: GroupRoleProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
