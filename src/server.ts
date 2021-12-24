@@ -13,12 +13,17 @@ import { certificate, port, privatekey, sessionSecret } from "./config/config";
 // Router Imports
 import roomRouter from "./routers/roomRouter";
 import userRouter from "./routers/userRouter";
+import userRobotRouter from "./routers/userRobotRouter";
+import groupRobotRouter = require("./routers/groupRobotRouter");
 
 // Middleware Imports
-import { validateJWT } from "./middleware/authorizationMW";
+import authMW from "./middleware/authorizationMW";
+import groupMW from "./middleware/groupMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
+
+
 
 const corsOptions = {
     origin: "http://u0134-m21p-01:3000",
@@ -40,7 +45,7 @@ mqttHandler();
 
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(validateJWT);
+app.use(authMW.loadJWT);
 app.use(session({
     secret: sessionSecret,
     store: new redisStore({
@@ -51,6 +56,11 @@ app.use(session({
 }))
 
 app.use("/user", userRouter);
+app.use("/user/robots", authMW.loadSitePermissions, userRobotRouter);
+
+// app.use("/group", groupRouter);
+app.use("/group/:groupID/robots", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRobotRouter);
+
 app.use("/room", roomRouter);
 
 server.listen(port, host, () => {

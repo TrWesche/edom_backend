@@ -12,10 +12,11 @@ import validateUpdateRobotSchema, { RobotUpdateProps } from "../schemas/robot/ro
 import RobotModel from "../models/robotModel";
 
 // Middleware Imports
-import { ensureLoggedIn, validatePermissions } from "../middleware/authorizationMW";
+import siteMW from "../middleware/siteMW";
+import authMW from "../middleware/authorizationMW";
 
 
-const robotRouter = express.Router();
+const userRobotRouter = express.Router();
 
 
 /* ____ ____  _____    _  _____ _____ 
@@ -25,7 +26,7 @@ const robotRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-robotRouter.post("/create", ensureLoggedIn, async (req, res, next) => {
+userRobotRouter.post("/create", siteMW.defineActionPermissions(["view", "create"]), authMW.validatePermissions,  async (req, res, next) => {
     try {
         const regValues: RobotCreateProps = {
             name: req.body.name,
@@ -33,11 +34,15 @@ robotRouter.post("/create", ensureLoggedIn, async (req, res, next) => {
             config: req.body.config
         }
 
-        if(!validateCreateRobotSchema(regValues)) {
-            throw new ExpressError(`Username & Password Required: ${validateCreateRobotSchema.errors}`, 400);
+        if (!req.user?.id) {
+            throw new ExpressError(`Must be logged in to create a robot`, 400);
         }
 
-        const queryData = await RobotModel.create(regValues);
+        if(!validateCreateRobotSchema(regValues)) {
+            throw new ExpressError(`Unable to Create User Robot: ${validateCreateRobotSchema.errors}`, 400);
+        }
+
+        const queryData = await RobotModel.create_user_robot(req.user?.id, regValues);
         if (!queryData) {
             throw new ExpressError("Create Robot Failed", 400);
         }
@@ -57,7 +62,7 @@ robotRouter.post("/create", ensureLoggedIn, async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
-robotRouter.get("/:robotID", ensureLoggedIn, async (req, res, next) => {
+userRobotRouter.get("/p/:robotID", siteMW.defineActionPermissions(["view"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RobotModel.retrieve_robot_by_robot_id(req.params.robotID);
         if (!queryData) {
@@ -78,7 +83,7 @@ robotRouter.get("/:robotID", ensureLoggedIn, async (req, res, next) => {
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-robotRouter.patch("/:robotID", validatePermissions, async (req, res, next) => {
+userRobotRouter.patch("/p/:robotID", siteMW.defineActionPermissions(["view", "update"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await RobotModel.retrieve_robot_by_robot_id(req.params.robotID);
         if (!prevValues) {
@@ -126,9 +131,13 @@ robotRouter.patch("/:robotID", validatePermissions, async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 
-robotRouter.delete("/:robotID", validatePermissions, async (req, res, next) => {
+userRobotRouter.delete("/p/:robotID", siteMW.defineActionPermissions(["view", "delete"]), authMW.validatePermissions, async (req, res, next) => {
     try {
-        const queryData = RobotModel.delete_robot(req.params.robotID);
+        if (!req.user?.id) {
+            throw new ExpressError(`Must be logged in to delete a robot`, 400);
+        }
+
+        const queryData = RobotModel.delete_user_robot(req.user?.id, req.params.robotID);
         if(!queryData) {
             throw new ExpressError("Unable to delete target robot", 404);
         }
@@ -138,3 +147,5 @@ robotRouter.delete("/:robotID", validatePermissions, async (req, res, next) => {
         return next(error);
     }
 })
+
+export default userRobotRouter;
