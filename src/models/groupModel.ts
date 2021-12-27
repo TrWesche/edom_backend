@@ -102,7 +102,8 @@ class GroupModel {
     };
 
     static async retrieve_user_permissions_by_user_id(userID: string) {
-        
+        const permissions = GroupPermissionsRepo.fetch_permissions_by_user_id(userID);
+        return permissions;
     };
 
     /*   _   _ ____  ____    _  _____ _____ 

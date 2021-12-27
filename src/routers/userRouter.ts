@@ -11,9 +11,10 @@ import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userU
 
 // Model Imports
 import UserModel from "../models/userModel";
+import authMW from "../middleware/authorizationMW";
 
 // Middleware Imports
-import { validateUserID } from "../middleware/authorizationMW";
+
 
 
 const userRouter = express.Router();
@@ -123,7 +124,7 @@ userRouter.get("/:username", async (req, res, next) => {
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-userRouter.patch("/update", validateUserID, async (req, res, next) => {
+userRouter.patch("/update", authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
         if (!prevValues) {
@@ -195,7 +196,7 @@ userRouter.get("/logout", async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 
-userRouter.delete("/delete", validateUserID, async (req, res, next) => {
+userRouter.delete("/delete", authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError("Delete user failed, userid not provided.", 400);
