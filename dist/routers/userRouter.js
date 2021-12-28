@@ -46,8 +46,8 @@ var userRegisterSchema_1 = require("../schemas/user/userRegisterSchema");
 var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
 // Model Imports
 var userModel_1 = require("../models/userModel");
-// Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
+// Middleware Imports
 var userRouter = express.Router();
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |
@@ -164,7 +164,7 @@ userRouter.get("/:username", function (req, res, next) { return __awaiter(void 0
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-userRouter.patch("/update", authorizationMW_1.validateUserID, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.patch("/update", authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -238,7 +238,7 @@ userRouter.get("/logout", function (req, res, next) { return __awaiter(void 0, v
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-userRouter["delete"]("/delete", authorizationMW_1.validateUserID, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter["delete"]("/delete", authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a, _b;
     return __generator(this, function (_c) {

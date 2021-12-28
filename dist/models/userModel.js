@@ -39,7 +39,7 @@ exports.__esModule = true;
 var bcrypt = require("bcrypt");
 var config_1 = require("../config/config");
 var expresError_1 = require("../utils/expresError");
-var userRepository_1 = require("../repositories/userRepository");
+var user_repository_1 = require("../repositories/user.repository");
 /** Standard User Creation & Authentication */
 var UserModel = /** @class */ (function () {
     function UserModel() {
@@ -54,7 +54,7 @@ var UserModel = /** @class */ (function () {
                         if (!data.username) {
                             throw new expresError_1["default"]("Invalid Authentication Call", 400);
                         }
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_username(data.username)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
                     case 1:
                         user = _a.sent();
                         if (!(user && user.password && data.password)) return [3 /*break*/, 3];
@@ -83,18 +83,17 @@ var UserModel = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(data);
                         if (!data.username || !data.email || !data.password) {
                             throw new expresError_1["default"]("Invalid Register Call", 400);
                         }
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_user_email(data.email)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email(data.email)];
                     case 1:
                         emailCheck = _a.sent();
                         if (emailCheck) {
                             throw new expresError_1["default"]("An account is already registered with that email", 400);
                         }
                         ;
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_username(data.username)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
                     case 2:
                         usernameCheck = _a.sent();
                         if (usernameCheck) {
@@ -103,7 +102,7 @@ var UserModel = /** @class */ (function () {
                         return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
                     case 3:
                         hashedPassword = _a.sent();
-                        return [4 /*yield*/, userRepository_1["default"].create_new_user(data, hashedPassword)];
+                        return [4 /*yield*/, user_repository_1["default"].create_new_user(data, hashedPassword)];
                     case 4:
                         user = _a.sent();
                         // TODO: User Roles & Permissions Will Need to be added
@@ -127,7 +126,7 @@ var UserModel = /** @class */ (function () {
                         if (!id) {
                             throw new expresError_1["default"]("Error: User ID not provided", 400);
                         }
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_user_id(id)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id)];
                     case 1:
                         user = _a.sent();
                         if (!user) {
@@ -147,7 +146,7 @@ var UserModel = /** @class */ (function () {
                         if (!username) {
                             throw new expresError_1["default"]("Error: Username not provided", 400);
                         }
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_username(username)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(username)];
                     case 1:
                         user = _a.sent();
                         if (!user) {
@@ -179,7 +178,7 @@ var UserModel = /** @class */ (function () {
                         _b.label = 2;
                     case 2:
                         if (!data.email) return [3 /*break*/, 4];
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_user_email(data.email)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email(data.email)];
                     case 3:
                         duplicateCheck = _b.sent();
                         if (duplicateCheck && duplicateCheck.id !== id) {
@@ -189,7 +188,7 @@ var UserModel = /** @class */ (function () {
                         _b.label = 4;
                     case 4:
                         if (!data.username) return [3 /*break*/, 6];
-                        return [4 /*yield*/, userRepository_1["default"].fetch_user_by_username(data.username)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
                     case 5:
                         duplicateCheck = _b.sent();
                         if (duplicateCheck && duplicateCheck.id !== id) {
@@ -197,7 +196,7 @@ var UserModel = /** @class */ (function () {
                         }
                         ;
                         _b.label = 6;
-                    case 6: return [4 /*yield*/, userRepository_1["default"].update_user_by_user_id(id, data)];
+                    case 6: return [4 /*yield*/, user_repository_1["default"].update_user_by_user_id(id, data)];
                     case 7:
                         user = _b.sent();
                         if (!user) {
@@ -216,7 +215,7 @@ var UserModel = /** @class */ (function () {
             var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, userRepository_1["default"].delete_user_by_user_id(id)];
+                    case 0: return [4 /*yield*/, user_repository_1["default"].delete_user_by_user_id(id)];
                     case 1:
                         result = _a.sent();
                         if (!result) {

@@ -10,12 +10,15 @@ var config_1 = require("./config/config");
 // Router Imports
 var roomRouter_1 = require("./routers/roomRouter");
 var userRouter_1 = require("./routers/userRouter");
+var userRobotRouter_1 = require("./routers/userRobotRouter");
+var groupRobotRouter = require("./routers/groupRobotRouter");
 // Middleware Imports
 var authorizationMW_1 = require("./middleware/authorizationMW");
+var groupMW_1 = require("./middleware/groupMW");
 // Database Connector Imports
 var redis_1 = require("./databases/redisSession/redis");
 var corsOptions = {
-    origin: "http://u0134-m21p-01:3000",
+    origin: "http://localhost:3000",
     optionsSuccessStatus: 200,
     methods: ['GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'DELETE'],
     preflightContinue: true,
@@ -31,7 +34,7 @@ var server = https.createServer({ key: config_1.privatekey, cert: config_1.certi
 (0, mqtt_1["default"])();
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(authorizationMW_1.validateJWT);
+app.use(authorizationMW_1["default"].loadJWT);
 app.use((0, redis_1.session)({
     secret: config_1.sessionSecret,
     store: new redis_1.redisStore({
@@ -41,6 +44,9 @@ app.use((0, redis_1.session)({
     resave: redis_1.redisConfig.resave
 }));
 app.use("/user", userRouter_1["default"]);
+app.use("/user/robots", authorizationMW_1["default"].loadSitePermissions, userRobotRouter_1["default"]);
+// app.use("/group", groupRouter);
+app.use("/group/:groupID/robots", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRobotRouter);
 app.use("/room", roomRouter_1["default"]);
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));

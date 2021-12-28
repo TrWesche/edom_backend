@@ -26,7 +26,7 @@ import { session, redisClient, redisConfig, redisStore } from "./databases/redis
 
 
 const corsOptions = {
-    origin: "http://u0134-m21p-01:3000",
+    origin: "http://localhost:3000",
     optionsSuccessStatus: 200,
     methods: ['GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'DELETE'],
     preflightContinue: true,
@@ -39,7 +39,7 @@ const corsOptions = {
 const host = "localhost"
 
 const app = express();
-const server = https.createServer({ key: privatekey, cert: certificate}, app)
+const server = https.createServer({ key: privatekey, cert: certificate}, app);
 wssHandler(server);
 mqttHandler();
 
