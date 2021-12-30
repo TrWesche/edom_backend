@@ -3,153 +3,220 @@ SET TIME ZONE 'UTC';
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
--- User Table Creation
 CREATE TABLE "users" (
-  "id" uuid DEFAULT uuid_generate_v4(),
-  "email" text NOT NULL,
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "email" text UNIQUE NOT NULL,
+  "username" text UNIQUE NOT NULL,
   "password" text NOT NULL,
-  "username" text NOT NULL,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
+  "first_name" text,
+  "last_name" text,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
--- Groups Table
 CREATE TABLE "groups" (
-  "id" uuid DEFAULT uuid_generate_v4(),
-  "name" text NOT NULL,
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "headline" text,
   "description" text,
-  "public" boolean NOT NULL DEFAULT false,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
+  "public" boolean DEFAULT false,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-
--- Roles Table
-CREATE TABLE "siteRoles" (
-  "id" uuid DEFAULT uuid_generate_v4(),
+CREATE TABLE "devices" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text NOT NULL,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
+  "category" text NOT NULL,
+  "sub_category" text,
+  "headline" text,
+  "description" text,
+  "configuration" json NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
--- Site Permissions Table
-CREATE TABLE "sitePermissions" (
-  "id" uuid DEFAULT uuid_generate_v4(),
-  "name" text NOT NULL,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
-);
-
--- Group Roles Table
-CREATE TABLE "groupRoles" (
-  "id" uuid DEFAULT uuid_generate_v4(),
-  "group_id" uuid REFERENCES "groups" ("id") ON DELETE CASCADE,
-  "name" text NOT NULL,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
-);
-
--- Group Permissions Table
-CREATE TABLE "groupPermissions" (
-  "id" uuid DEFAULT uuid_generate_v4(),
-  "name" text NOT NULL,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
-);
-
-
--- User Groups One-to-Many Join Table
-CREATE TABLE "user_groups" (
-  "user_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE,
-  "group_id" uuid REFERENCES "groups" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("user_id", "group_id")
-);
-
-
--- User Site Roles One-to-Many Join Table
-CREATE TABLE "user_siteRoles" (
-  "user_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE,
-  "role_id" uuid REFERENCES "siteRoles" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("user_id", "role_id")
-);
-
--- User Site Roles One-to-Many Join Table
-CREATE TABLE "user_groupRoles" (
-  "user_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE,
-  "group_id" uuid REFERENCES "groups" ("id") ON DELETE CASCADE,
-  "role_id" uuid REFERENCES "groupRoles" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("user_id", "group_id", "role_id")
-);
-
--- Group Roles to Permissions One-to-Many Join Table
-CREATE TABLE "groupRole_groupPermissions" (
-  "role_id" uuid REFERENCES "groupRoles" ("id") ON DELETE CASCADE,
-  "permission_id" uuid REFERENCES "groupPermissions" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("role_id", "permission_id")
-);
-
--- Site Roles to Permissions One-to-Many Join Table
-CREATE TABLE "siteRole_sitePermissions" (
-  "role_id" uuid REFERENCES "siteRoles" ("id") ON DELETE CASCADE,
-  "permission_id" uuid REFERENCES "sitePermissions" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("role_id", "permission_id")
-);
-
-
--- Rooms Table
 CREATE TABLE "rooms" (
-  "id" uuid DEFAULT uuid_generate_v4(),
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text NOT NULL,
-  "description" text NOT NULL,
-  "public" boolean NOT NULL DEFAULT false,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
-);
-
--- Robots Table
-CREATE TABLE "robots" (
-  "id" uuid DEFAULT uuid_generate_v4(),
-  "name" text NOT NULL,
+  "category" text NOT NULL,
+  "sub_category" text,
+  "headline" text,
   "description" text,
-  "config" json NOT NULL,
-  "create_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  "modify_dt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY ("id")
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
+CREATE TABLE "usertypes" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
 
--- User Site Roles One-to-Many Join Table
+CREATE TABLE "siteroles" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "sitepermissions" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "grouproles" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "group_id" uuid,
+  "name" text UNIQUE NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "grouppermissions" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "user_usertype" (
+  "user_id" uuid,
+  "usertype_id" uuid
+);
+
+CREATE TABLE "user_groups" (
+  "user_id" uuid,
+  "group_id" uuid
+);
+
+CREATE TABLE "user_devices" (
+  "user_id" uuid,
+  "device_id" uuid
+);
+
 CREATE TABLE "user_rooms" (
-  "user_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE,
-  "room_id" uuid REFERENCES "rooms" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("user_id", "room_id")
+  "user_id" uuid,
+  "room_id" uuid
 );
 
+CREATE TABLE "user_siteroles" (
+  "user_id" uuid,
+  "siterole_id" uuid
+);
 
--- User Site Roles One-to-Many Join Table
+CREATE TABLE "siterole_sitepermissions" (
+  "siterole_id" uuid,
+  "sitepermissions" uuid
+);
+
+CREATE TABLE "grouproles_grouppermissions" (
+  "grouprole_id" uuid,
+  "grouppermission_id" uuid
+);
+
+CREATE TABLE "user_grouproles" (
+  "user_id" uuid,
+  "grouprole_id" uuid
+);
+
+CREATE TABLE "group_devices" (
+  "group_id" uuid,
+  "device_id" uuid
+);
+
 CREATE TABLE "group_rooms" (
-  "group_id" uuid REFERENCES "groups" ("id") ON DELETE CASCADE,
-  "room_id" uuid REFERENCES "rooms" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("group_id", "room_id")
+  "group_id" uuid,
+  "room_id" uuid
 );
 
--- User Site Roles One-to-Many Join Table
-CREATE TABLE "user_robots" (
-  "user_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE,
-  "robot_id" uuid REFERENCES "robots" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("user_id", "robot_id")
+CREATE TABLE "room_devices" (
+  "room_id" uuid,
+  "device_id" uuid
 );
 
--- User Site Roles One-to-Many Join Table
-CREATE TABLE "group_robots" (
-  "group_id" uuid REFERENCES "groups" ("id") ON DELETE CASCADE,
-  "robot_id" uuid REFERENCES "robots" ("id") ON DELETE CASCADE,
-  PRIMARY KEY ("group_id", "robot_id")
+CREATE TABLE "room_chat_log" (
+  "room_id" uuid,
+  "user_id" uuid,
+  "message_contents" text,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
+
+CREATE TABLE "group_chat_threads" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "group_id" uuid,
+  "name" text NOT NULL,
+  "headline" text,
+  "description" text,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "group_chat_log" (
+  "group_id" uuid,
+  "thread_id" uuid,
+  "user_id" uuid,
+  "message_contents" text,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+ALTER TABLE "grouproles" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+
+ALTER TABLE "user_usertype" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_usertype" ADD FOREIGN KEY ("usertype_id") REFERENCES "usertypes" ("id");
+
+ALTER TABLE "user_groups" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_groups" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+
+ALTER TABLE "user_devices" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id");
+
+ALTER TABLE "user_rooms" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+
+ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id");
+
+ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id");
+
+ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("sitepermissions") REFERENCES "sitepermissions" ("id");
+
+ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id");
+
+ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouppermission_id") REFERENCES "grouppermissions" ("id");
+
+ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id");
+
+ALTER TABLE "group_devices" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+
+ALTER TABLE "group_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id");
+
+ALTER TABLE "group_rooms" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+
+ALTER TABLE "group_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+
+ALTER TABLE "room_devices" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+
+ALTER TABLE "room_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id");
+
+ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+
+ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "group_chat_threads" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("thread_id") REFERENCES "group_chat_threads" ("id");
+
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
