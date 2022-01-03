@@ -50,7 +50,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO siteRoles\n                    (name) \n                VALUES ($1) \n                RETURNING id, name, site_id", [
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO siteRoles\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
                                 siteRoleData.name
                             ])];
                     case 1:
@@ -66,51 +66,9 @@ var SitePermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    SitePermissionsRepo.fetch_roles_by_user_id = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var result, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT users.id AS user_id,\n                        users.username AS username,\n                        siteRoles.id AS role_id, \n                        siteRoles.name AS role_name\n                    FROM users\n                    LEFT JOIN user_siteRoles \n                        ON users.id = user_siteRoles.user_id\n                    LEFT JOIN siteRoles\n                        ON user_siteRoles.role_id = siteRoles.id\n                    WHERE user_id = $1", [userID])];
-                    case 1:
-                        result = _a.sent();
-                        // const rval: Array<siteRoleProps> | undefined = result.rows;
-                        return [2 /*return*/, result.rows];
-                    case 2:
-                        error_2 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to get site roles for the target user - ".concat(error_2), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    SitePermissionsRepo.fetch_permissions_by_user_id = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var result, error_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        sitePermissions.id AS permission_id,\n                        sitePermissions.name AS permission_name,\n                    FROM sitePermissions\n                    LEFT JOIN siteRole_sitePermissions\n                        ON siteRole_sitePermissions.permission_id = sitePermissiosn.id\n                    LEFT JOIN user_siteRoles\n                        ON user_siteRoles.role_id = siteRole_sitePermissions.role_id\n                    WHERE user_siteRoles.user_id = $1", [userID])];
-                    case 1:
-                        result = _a.sent();
-                        // const rval: Array<siteRoleProps> | undefined = result.rows;
-                        return [2 /*return*/, result.rows];
-                    case 2:
-                        error_3 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to get site permissions for the target user - ".concat(error_3), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
     SitePermissionsRepo.fetch_role_by_role_id = function (siteRoleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_4;
+            var result, rval, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -121,8 +79,31 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_4 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate site role - ".concat(error_4), 500);
+                        error_2 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate site role - ".concat(error_2), 500);
+                    case 3:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    SitePermissionsRepo.fetch_role_by_role_name = function (siteRoleName) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM siteRoles\n                  WHERE name = $1", [siteRoleName])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_3 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate site role - ".concat(error_3), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -133,7 +114,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.update_role_by_role_id = function (siteRoleID, siteRoleData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, query, values, result, rval, error_5;
+            var _a, query, values, result, rval, error_4;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -145,8 +126,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_5 = _b.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update site role - ".concat(error_5), 500);
+                        error_4 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to update site role - ".concat(error_4), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -155,7 +136,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.delete_role_by_role_id = function (siteRoleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_6;
+            var result, rval, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -166,8 +147,73 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
+                        error_5 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete site role - ".concat(error_5), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    // User Role Management
+    SitePermissionsRepo.create_user_site_role = function (userID, siteRoleID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO user_siteroles\n                    (user_id, siterole_id) \n                VALUES ($1, $2) \n                RETURNING user_id, siterole_id", [
+                                userID, siteRoleID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows];
+                    case 2:
                         error_6 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete site role - ".concat(error_6), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to assign user site role - ".concat(error_6), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    SitePermissionsRepo.fetch_roles_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT users.id AS user_id,\n                        users.username AS username,\n                        siteRoles.id AS role_id, \n                        siteRoles.name AS role_name\n                    FROM users\n                    LEFT JOIN user_siteRoles \n                        ON users.id = user_siteRoles.user_id\n                    LEFT JOIN siteRoles\n                        ON user_siteRoles.role_id = siteRoles.id\n                    WHERE user_id = $1", [userID])];
+                    case 1:
+                        result = _a.sent();
+                        // const rval: Array<siteRoleProps> | undefined = result.rows;
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_7 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to get site roles for the target user - ".concat(error_7), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    SitePermissionsRepo.fetch_permissions_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        sitePermissions.id AS permission_id,\n                        sitePermissions.name AS permission_name,\n                    FROM sitePermissions\n                    LEFT JOIN siteRole_sitePermissions\n                        ON siteRole_sitePermissions.permission_id = sitePermissiosn.id\n                    LEFT JOIN user_siteRoles\n                        ON user_siteRoles.role_id = siteRole_sitePermissions.role_id\n                    WHERE user_siteRoles.user_id = $1", [userID])];
+                    case 1:
+                        result = _a.sent();
+                        // const rval: Array<siteRoleProps> | undefined = result.rows;
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_8 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to get site permissions for the target user - ".concat(error_8), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -177,7 +223,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     // PERMISSIONS Management
     SitePermissionsRepo.create_new_permission = function (sitePermData) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_7;
+            var result, rval, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -190,8 +236,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_7 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create new site permission - ".concat(error_7), 500);
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create new site permission - ".concat(error_9), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -200,7 +246,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.fetch_permission_by_permission_id = function (sitePermID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_8;
+            var result, rval, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -211,8 +257,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_8 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate site permission - ".concat(error_8), 500);
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate site permission - ".concat(error_10), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -223,7 +269,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.update_permission_by_permission_id = function (sitePermID, sitePermData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, query, values, result, rval, error_9;
+            var _a, query, values, result, rval, error_11;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -235,8 +281,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_9 = _b.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update site permission - ".concat(error_9), 500);
+                        error_11 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to update site permission - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -245,7 +291,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.delete_permission_by_permission_id = function (sitePermID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_10;
+            var result, rval, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -256,8 +302,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_10 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete site permission - ".concat(error_10), 500);
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete site permission - ".concat(error_12), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -267,7 +313,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     // ROLE PERMISSIONS ASSOCIATIONS Management
     SitePermissionsRepo.create_role_permissions = function (siteRoleID, permissionList) {
         return __awaiter(this, void 0, void 0, function () {
-            var valueExpressions, queryValues, _i, permissionList_1, permission, valueExpressionRows, result, rval, error_11;
+            var valueExpressions, queryValues, _i, permissionList_1, permission, valueExpressionRows, result, rval, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -290,8 +336,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 3:
-                        error_11 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create new site role permission(s) - ".concat(error_11), 500);
+                        error_13 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create new site role permission(s) - ".concat(error_13), 500);
                     case 4:
                         ;
                         return [2 /*return*/];
@@ -302,7 +348,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.fetch_role_permissions_by_role_id = function (siteRoleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_12;
+            var result, rval, error_14;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -313,8 +359,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_12 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate site role permissions - ".concat(error_12), 500);
+                        error_14 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate site role permissions - ".concat(error_14), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -325,7 +371,7 @@ var SitePermissionsRepo = /** @class */ (function () {
     ;
     SitePermissionsRepo.delete_role_permissions_by_role_permission_ids = function (siteRoleID, sitePermID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_13;
+            var result, rval, error_15;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -336,8 +382,8 @@ var SitePermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_13 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete site role permission - ".concat(error_13), 500);
+                        error_15 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete site role permission - ".concat(error_15), 500);
                     case 3: return [2 /*return*/];
                 }
             });

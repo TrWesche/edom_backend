@@ -40,6 +40,8 @@ var bcrypt = require("bcrypt");
 var config_1 = require("../config/config");
 var expresError_1 = require("../utils/expresError");
 var user_repository_1 = require("../repositories/user.repository");
+var transactionRepository_1 = require("../repositories/transactionRepository");
+var sitePermissions_repository_1 = require("../repositories/sitePermissions.repository");
 /** Standard User Creation & Authentication */
 var UserModel = /** @class */ (function () {
     function UserModel() {
@@ -65,9 +67,9 @@ var UserModel = /** @class */ (function () {
                             delete user.password;
                             delete user.email;
                             // TODO: User Roles & Permissions Will Need to be added
-                            user.permissions = {
-                                role: "user"
-                            };
+                            // user.permissions = {
+                            //   role: "user"
+                            // }
                             return [2 /*return*/, user];
                         }
                         _a.label = 3;
@@ -79,7 +81,7 @@ var UserModel = /** @class */ (function () {
     /** Register user with data. Returns new user data. */
     UserModel.register = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var emailCheck, usernameCheck, hashedPassword, user;
+            var emailCheck, usernameCheck, hashedPassword, user, siteRole, permissionAssignment, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -99,19 +101,49 @@ var UserModel = /** @class */ (function () {
                         if (usernameCheck) {
                             throw new expresError_1["default"]("That username has already been taken", 400);
                         }
-                        return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
+                        _a.label = 3;
                     case 3:
+                        _a.trys.push([3, 14, , 16]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
+                    case 5:
                         hashedPassword = _a.sent();
                         return [4 /*yield*/, user_repository_1["default"].create_new_user(data, hashedPassword)];
-                    case 4:
+                    case 6:
                         user = _a.sent();
-                        // TODO: User Roles & Permissions Will Need to be added
-                        if (user) {
-                            user.permissions = {
-                                role: "user"
-                            };
+                        if (!user) return [3 /*break*/, 13];
+                        return [4 /*yield*/, sitePermissions_repository_1["default"].fetch_role_by_role_name('user')];
+                    case 7:
+                        siteRole = _a.sent();
+                        if (!((siteRole === null || siteRole === void 0 ? void 0 : siteRole.id) && user.id)) return [3 /*break*/, 12];
+                        return [4 /*yield*/, sitePermissions_repository_1["default"].create_user_site_role(user.id, siteRole.id)];
+                    case 8:
+                        permissionAssignment = _a.sent();
+                        if (!(permissionAssignment.length > 0)) return [3 /*break*/, 10];
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 9:
+                        _a.sent();
+                        if (user.roles) {
+                            user.roles.push({ name: siteRole.name });
                         }
-                        return [2 /*return*/, user];
+                        else {
+                            user.roles = [{ name: siteRole.name }];
+                        }
+                        ;
+                        return [3 /*break*/, 11];
+                    case 10: throw new expresError_1["default"]("Error encountered while assigning user role", 400);
+                    case 11: return [3 /*break*/, 13];
+                    case 12: throw new expresError_1["default"]("Error encountered while retrieving role information", 400);
+                    case 13: return [2 /*return*/, user];
+                    case 14:
+                        error_1 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 15:
+                        _a.sent();
+                        throw new expresError_1["default"](error_1.message, 400);
+                    case 16: return [2 /*return*/];
                 }
             });
         });

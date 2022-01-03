@@ -102,6 +102,19 @@ userRouter.post("/register", async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
+userRouter.get("/", authMW.validatePermissions, async (req, res, next) => {
+    try {
+        const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
+        if (!queryData) {
+            throw new ExpressError("Unable to find user account.", 404);
+        }
+        
+        return res.json({user: queryData});
+    } catch (error) {
+        next(error);
+    }
+})
+
 userRouter.get("/:username", async (req, res, next) => {
     try {
         // TODO: User needs a public / private selection & additional details

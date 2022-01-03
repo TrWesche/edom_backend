@@ -8,12 +8,11 @@ export interface UserObjectProps {
     email?: string,
     username?: string,
     password?: string,
-    permissions?: UserPermissionsProps
+    roles?: Array<UserRolesProps>
 }
 
-interface UserPermissionsProps {
-    id?: string,
-    role: string
+interface UserRolesProps {
+    name?: string | undefined
 }
 
 

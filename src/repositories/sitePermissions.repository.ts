@@ -29,7 +29,7 @@ class SitePermissionsRepo {
                 `INSERT INTO siteRoles
                     (name) 
                 VALUES ($1) 
-                RETURNING id, name, site_id`,
+                RETURNING id, name`,
             [
                 siteRoleData.name
             ]);
@@ -40,6 +40,93 @@ class SitePermissionsRepo {
             throw new ExpressError(`An Error Occured: Unable to create new site role - ${error}`, 500);
         }
     }; 
+
+    static async fetch_role_by_role_id(siteRoleID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT id, 
+                        name
+                  FROM siteRoles
+                  WHERE id = $1`,
+                  [siteRoleID]
+            );
+    
+            const rval: SiteRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate site role - ${error}`, 500);
+        };
+    };
+
+    static async fetch_role_by_role_name(siteRoleName: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT id, 
+                        name
+                  FROM siteRoles
+                  WHERE name = $1`,
+                  [siteRoleName]
+            );
+    
+            const rval: SiteRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate site role - ${error}`, 500);
+        };
+    };
+
+    static async update_role_by_role_id(siteRoleID: string, siteRoleData: SiteRoleProps) {
+        try {
+            // Parital Update: table name, payload data, lookup column name, lookup key
+            let {query, values} = createUpdateQueryPGSQL(
+                "siteRoles",
+                siteRoleData,
+                "id",
+                siteRoleID
+            );
+    
+            const result = await pgdb.query(query, values);
+
+            const rval: SiteRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to update site role - ${error}`, 500);
+        }
+    };
+    
+    static async delete_role_by_role_id(siteRoleID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM siteRoles
+                WHERE id = $1
+                RETURNING id`,
+            [siteRoleID]);
+    
+            const rval: SiteRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete site role - ${error}`, 500);
+        }
+    };
+
+
+    // User Role Management
+    static async create_user_site_role(userID: string, siteRoleID: string) {
+        try {
+            const result = await pgdb.query(
+                `INSERT INTO user_siteroles
+                    (user_id, siterole_id) 
+                VALUES ($1, $2) 
+                RETURNING user_id, siterole_id`,
+            [
+                userID, siteRoleID
+            ]);
+
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to assign user site role - ${error}`, 500);
+        }
+    };
 
     static async fetch_roles_by_user_id(userID: string) {
         try {
@@ -86,56 +173,6 @@ class SitePermissionsRepo {
         }  
     };
 
-    static async fetch_role_by_role_id(siteRoleID: string) {
-        try {
-            const result = await pgdb.query(
-                `SELECT id, 
-                        name
-                  FROM siteRoles
-                  WHERE id = $1`,
-                  [siteRoleID]
-            );
-    
-            const rval: SiteRoleProps | undefined = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate site role - ${error}`, 500);
-        };
-    };
-
-    static async update_role_by_role_id(siteRoleID: string, siteRoleData: SiteRoleProps) {
-        try {
-            // Parital Update: table name, payload data, lookup column name, lookup key
-            let {query, values} = createUpdateQueryPGSQL(
-                "siteRoles",
-                siteRoleData,
-                "id",
-                siteRoleID
-            );
-    
-            const result = await pgdb.query(query, values);
-
-            const rval: SiteRoleProps | undefined = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to update site role - ${error}`, 500);
-        }
-    };
-    
-    static async delete_role_by_role_id(siteRoleID: string) {
-        try {
-            const result = await pgdb.query(
-                `DELETE FROM siteRoles
-                WHERE id = $1
-                RETURNING id`,
-            [siteRoleID]);
-    
-            const rval: SiteRoleProps | undefined = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete site role - ${error}`, 500);
-        }
-    };
 
 
     // PERMISSIONS Management

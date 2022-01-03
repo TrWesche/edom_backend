@@ -110,7 +110,7 @@ CREATE TABLE "user_siteroles" (
 
 CREATE TABLE "siterole_sitepermissions" (
   "siterole_id" uuid,
-  "sitepermissions" uuid
+  "sitepermission_id" uuid
 );
 
 CREATE TABLE "grouproles_grouppermissions" (
@@ -163,60 +163,60 @@ CREATE TABLE "group_chat_log" (
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-ALTER TABLE "grouproles" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+ALTER TABLE "grouproles" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_usertype" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_usertype" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_usertype" ADD FOREIGN KEY ("usertype_id") REFERENCES "usertypes" ("id");
+ALTER TABLE "user_usertype" ADD FOREIGN KEY ("usertype_id") REFERENCES "usertypes" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_groups" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_groups" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_groups" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+ALTER TABLE "user_groups" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_devices" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_devices" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id");
+ALTER TABLE "user_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_rooms" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_rooms" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+ALTER TABLE "user_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id");
+ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id");
+ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("sitepermissions") REFERENCES "sitepermissions" ("id");
+ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("sitepermission_id") REFERENCES "sitepermissions" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id");
+ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouppermission_id") REFERENCES "grouppermissions" ("id");
+ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouppermission_id") REFERENCES "grouppermissions" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id");
+ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_devices" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+ALTER TABLE "group_devices" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id");
+ALTER TABLE "group_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_rooms" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+ALTER TABLE "group_rooms" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+ALTER TABLE "group_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_devices" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+ALTER TABLE "room_devices" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id");
+ALTER TABLE "room_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
+ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_threads" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+ALTER TABLE "group_chat_threads" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id");
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("thread_id") REFERENCES "group_chat_threads" ("id");
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("thread_id") REFERENCES "group_chat_threads" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;

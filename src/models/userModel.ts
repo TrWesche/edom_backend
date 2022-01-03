@@ -3,6 +3,8 @@ import { bcrypt_work_factor } from "../config/config";
 import ExpressError from "../utils/expresError";
 
 import UserRepo, { UserObjectProps } from "../repositories/user.repository";
+import TransactionRepo from "../repositories/transactionRepository";
+import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 
 /** Standard User Creation & Authentication */
 class UserModel {
@@ -21,9 +23,9 @@ class UserModel {
         delete user.password;
         delete user.email;
         // TODO: User Roles & Permissions Will Need to be added
-        user.permissions = {
-          role: "user"
-        }
+        // user.permissions = {
+        //   role: "user"
+        // }
         return user;
       }
     }
@@ -47,16 +49,42 @@ class UserModel {
       throw new ExpressError("That username has already been taken", 400);
     }
 
-    const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
-    const user = await UserRepo.create_new_user(data, hashedPassword);
-    // TODO: User Roles & Permissions Will Need to be added
-    if (user) {
-      user.permissions = {
-        role: "user"
-      }
-    }
+    try {
+      await TransactionRepo.begin_transaction()
 
-    return user;
+      const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
+      const user = await UserRepo.create_new_user(data, hashedPassword);
+      // TODO: User Roles & Permissions Will Need to be added
+      if (user) {
+        const siteRole = await SitePermissionsRepo.fetch_role_by_role_name('user');
+        if (siteRole?.id && user.id) {
+          const permissionAssignment = await SitePermissionsRepo.create_user_site_role(user.id, siteRole.id);
+
+          if (permissionAssignment.length > 0) {
+            await TransactionRepo.commit_transaction();
+            if (user.roles) {
+              user.roles.push({name: siteRole.name});
+            } else {
+              user.roles = [{name: siteRole.name}]
+            };
+          } else {
+            throw new ExpressError("Error encountered while assigning user role", 400);
+          }
+
+        } else {
+          throw new ExpressError("Error encountered while retrieving role information", 400);
+        }
+
+        // user.permissions = {
+        //   role: "user"
+        // }
+      }
+  
+      return user;  
+    } catch (error) {
+      await TransactionRepo.rollback_transaction();
+      throw new ExpressError(error.message , 400);
+    }
   }
   
   /** Get user data by id */

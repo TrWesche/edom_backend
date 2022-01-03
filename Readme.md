@@ -9,3 +9,14 @@ openssl rsa -in privatekeyt.pem -outform PEM -pubout -out publickey.pem
 
 
 Pass Phrase Used: development
+
+
+
+PG Database Docker Container: Future
+{
+    "username": "pgDBadmin",
+    "secret": "pgDBPassword",
+    "dbname": "edomcore",
+    "host": "localhost",
+    "port": 5433
+}
