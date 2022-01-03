@@ -47,6 +47,7 @@ var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
 // Model Imports
 var userModel_1 = require("../models/userModel");
 var authorizationMW_1 = require("../middleware/authorizationMW");
+var siteMW_1 = require("../middleware/siteMW");
 // Middleware Imports
 var userRouter = express.Router();
 /*    _   _   _ _____ _   _
@@ -137,25 +138,28 @@ userRouter.post("/register", function (req, res, next) { return __awaiter(void 0
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-userRouter.get("/", authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.get("/", siteMW_1["default"].defineActionPermissions(['read_user_self']), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
+                console.log("Getting Self");
+                _b.label = 1;
             case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
+            case 2:
                 queryData = _b.sent();
                 if (!queryData) {
                     throw new expresError_1["default"]("Unable to find user account.", 404);
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
-            case 2:
+            case 3:
                 error_3 = _b.sent();
                 next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); });

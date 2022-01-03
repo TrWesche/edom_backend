@@ -12,6 +12,7 @@ import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userU
 // Model Imports
 import UserModel from "../models/userModel";
 import authMW from "../middleware/authorizationMW";
+import siteMW from "../middleware/siteMW";
 
 // Middleware Imports
 
@@ -102,7 +103,8 @@ userRouter.post("/register", async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
-userRouter.get("/", authMW.validatePermissions, async (req, res, next) => {
+userRouter.get("/", siteMW.defineActionPermissions(['read_user_self']), authMW.validatePermissions, async (req, res, next) => {
+    console.log("Getting Self");
     try {
         const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
         if (!queryData) {

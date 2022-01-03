@@ -17,7 +17,7 @@ class AuthHandling {
             if (!token) {return undefined};
 
             if (token.startsWith('Bearer ')) {
-                token.slice(7, token.length).trimLeft();
+                token = token.slice(7, token.length).trimLeft();
             }
 
             const verifyToken = jwt.verify(token, privatekey, {algorithms: ['RS256']})

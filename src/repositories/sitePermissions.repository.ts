@@ -26,7 +26,7 @@ class SitePermissionsRepo {
     static async create_new_role(siteRoleData: SiteRoleProps) {
         try {
             const result = await pgdb.query(
-                `INSERT INTO siteRoles
+                `INSERT INTO siteroles
                     (name) 
                 VALUES ($1) 
                 RETURNING id, name`,
@@ -46,7 +46,7 @@ class SitePermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                  FROM siteRoles
+                  FROM siteroles
                   WHERE id = $1`,
                   [siteRoleID]
             );
@@ -63,7 +63,7 @@ class SitePermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                  FROM siteRoles
+                  FROM siteroles
                   WHERE name = $1`,
                   [siteRoleName]
             );
@@ -79,7 +79,7 @@ class SitePermissionsRepo {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
-                "siteRoles",
+                "siteroles",
                 siteRoleData,
                 "id",
                 siteRoleID
@@ -97,7 +97,7 @@ class SitePermissionsRepo {
     static async delete_role_by_role_id(siteRoleID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM siteRoles
+                `DELETE FROM siteroles
                 WHERE id = $1
                 RETURNING id`,
             [siteRoleID]);
@@ -133,13 +133,13 @@ class SitePermissionsRepo {
             const result = await pgdb.query(
                 `SELECT users.id AS user_id,
                         users.username AS username,
-                        siteRoles.id AS role_id, 
-                        siteRoles.name AS role_name
+                        siteroles.id AS role_id, 
+                        siteroles.name AS role_name
                     FROM users
-                    LEFT JOIN user_siteRoles 
-                        ON users.id = user_siteRoles.user_id
-                    LEFT JOIN siteRoles
-                        ON user_siteRoles.role_id = siteRoles.id
+                    LEFT JOIN user_siteroles 
+                        ON users.id = user_siteroles.user_id
+                    LEFT JOIN siteroles
+                        ON user_siteroles.role_id = siteroles.id
                     WHERE user_id = $1`,
                     [userID]
             );
@@ -152,23 +152,25 @@ class SitePermissionsRepo {
     };
 
     static async fetch_permissions_by_user_id(userID: string) {
+
         try {
             const result = await pgdb.query(
                 `SELECT DISTINCT
-                        sitePermissions.id AS permission_id,
-                        sitePermissions.name AS permission_name,
-                    FROM sitePermissions
-                    LEFT JOIN siteRole_sitePermissions
-                        ON siteRole_sitePermissions.permission_id = sitePermissiosn.id
-                    LEFT JOIN user_siteRoles
-                        ON user_siteRoles.role_id = siteRole_sitePermissions.role_id
-                    WHERE user_siteRoles.user_id = $1`,
+                        sitepermissions.id AS permission_id,
+                        sitepermissions.name AS permission_name
+                    FROM sitepermissions
+                    LEFT JOIN siterole_sitepermissions
+                        ON siterole_sitepermissions.sitepermission_id = sitepermissions.id
+                    LEFT JOIN user_siteroles
+                        ON user_siteroles.siterole_id = siterole_sitepermissions.siterole_id
+                    WHERE user_siteroles.user_id = $1`,
                     [userID]
             );
 
             // const rval: Array<siteRoleProps> | undefined = result.rows;
             return result.rows;
         } catch (error) {
+            // console.log(error);
             throw new ExpressError(`An Error Occured: Unable to get site permissions for the target user - ${error}`, 500);
         }  
     };
@@ -179,7 +181,7 @@ class SitePermissionsRepo {
     static async create_new_permission(sitePermData: SitePermProps) {
         try {
             const result = await pgdb.query(
-                `INSERT INTO sitePermissions
+                `INSERT INTO sitepermissions
                     (name) 
                 VALUES ($1) 
                 RETURNING id, name`,
@@ -199,7 +201,7 @@ class SitePermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                  FROM sitePermissions
+                  FROM sitepermissions
                   WHERE id = $1`,
                   [sitePermID]
             );
@@ -215,7 +217,7 @@ class SitePermissionsRepo {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
-                "sitePermissions",
+                "sitepermissions",
                 sitePermData,
                 "id",
                 sitePermID
@@ -233,7 +235,7 @@ class SitePermissionsRepo {
     static async delete_permission_by_permission_id(sitePermID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM sitePermissions
+                `DELETE FROM sitepermissions
                 WHERE id = $1
                 RETURNING id`,
             [sitePermID]);
@@ -262,7 +264,7 @@ class SitePermissionsRepo {
     
         try {
             const result = await pgdb.query(`
-                INSERT INTO siteRole_sitePermissions
+                INSERT INTO siterole_sitepermissions
                     (role_id, permission_id)
                 VALUES
                     ${valueExpressionRows}
@@ -279,15 +281,15 @@ class SitePermissionsRepo {
     static async fetch_role_permissions_by_role_id(siteRoleID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT siteRoles.id AS role_id,
-                        siteRoles.name AS role_name,
-                        sitePermissions.id AS permission_id,
-                        sitePermissions.name AS permission_name
-                  FROM siteRoles
-                  LEFT JOIN siteRole_sitePermissions AS joinTable
-                  ON siteRoles.id = siteRole_sitePermissions.role_id
-                  LEFT JOIN sitePermissions
-                  ON joinTable.permission_id = sitePermissions.id
+                `SELECT siteroles.id AS role_id,
+                        siteroles.name AS role_name,
+                        sitepermissions.id AS permission_id,
+                        sitepermissions.name AS permission_name
+                  FROM siteroles
+                  LEFT JOIN siterole_sitepermissions AS joinTable
+                  ON siteroles.id = siterole_sitepermissions.role_id
+                  LEFT JOIN sitepermissions
+                  ON joinTable.permission_id = sitepermissions.id
                   WHERE role_id = $1`,
                   [siteRoleID]
             );
@@ -302,7 +304,7 @@ class SitePermissionsRepo {
     static async delete_role_permissions_by_role_permission_ids(siteRoleID: string, sitePermID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM siteRole_sitePermissions
+                `DELETE FROM siterole_sitepermissions
                 WHERE role_id = $1 AND permission_id = $2
                 RETURNING role_id`,
             [siteRoleID, sitePermID]);

@@ -73,7 +73,7 @@ var authMW = /** @class */ (function () {
                     case 1:
                         sitePermissions = _b.sent();
                         req.sitePermissions = sitePermissions;
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, next()];
                     case 2:
                         error_1 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
@@ -101,7 +101,7 @@ var authMW = /** @class */ (function () {
                     case 1:
                         groupPermissions = _b.sent();
                         req.groupPermissions = groupPermissions;
-                        return [3 /*break*/, 3];
+                        return [2 /*return*/, next()];
                     case 2:
                         error_2 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
@@ -120,7 +120,7 @@ var authMW = /** @class */ (function () {
             }
             ;
             // If no permissions are defined for validating access throw an error
-            if (!req.requiredPermissions) {
+            if (!req.requiredPermissions.site) {
                 return next({ status: 400, message: "Unable to Process Request" });
             }
             ;
@@ -143,12 +143,16 @@ var authMW = /** @class */ (function () {
                     return next({ status: 401, message: "Unauthorized" });
                 }
                 var permissionsOK = req.requiredPermissions.site.reduce(function (acc, val) {
-                    req.sitePermissions.find(val) && acc;
+                    var findResult = req.sitePermissions.find(function (perm) {
+                        return perm.permission_name === val;
+                    });
+                    return findResult !== undefined && acc;
                 }, true);
                 if (!permissionsOK) {
                     return next({ status: 401, message: "Unauthorized" });
                 }
                 ;
+                return next();
             }
         }
         catch (error) {
@@ -180,12 +184,4 @@ var authMW = /** @class */ (function () {
 //   }
 // }
 exports["default"] = authMW;
-// export {
-//   loadJWT,
-//   loadSitePermissions,
-//   loadGroupPermissions,
-//   ensureLoggedIn,
-//   validateUserID,
-//   validatePermissions
-// };
 //# sourceMappingURL=authorizationMW.js.map

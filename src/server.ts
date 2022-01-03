@@ -46,6 +46,7 @@ mqttHandler();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authMW.loadJWT);
+app.use(authMW.loadSitePermissions);
 app.use(session({
     secret: sessionSecret,
     store: new redisStore({
@@ -56,7 +57,7 @@ app.use(session({
 }))
 
 app.use("/user", userRouter);
-app.use("/user/robots", authMW.loadSitePermissions, userRobotRouter);
+app.use("/user/robots", userRobotRouter);
 
 // app.use("/group", groupRouter);
 app.use("/group/:groupID/robots", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRobotRouter);

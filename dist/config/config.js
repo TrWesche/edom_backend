@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.bcrypt_work_factor = exports.sessionSecret = exports.wsPort = exports.wsEnable = exports.mqttBrokerAddress = exports.mqttEnable = exports.nodeEnv = exports.port = exports.publickey = exports.privatekey = exports.certificate = void 0;
+exports.enableDebugTrace = exports.bcrypt_work_factor = exports.sessionSecret = exports.wsPort = exports.wsEnable = exports.mqttBrokerAddress = exports.mqttEnable = exports.nodeEnv = exports.port = exports.publickey = exports.privatekey = exports.certificate = void 0;
 var dotenv_1 = require("dotenv");
 var fs_1 = require("fs");
 var path_1 = require("path");
@@ -30,4 +30,6 @@ var sessionSecret = process.env.SESSION_SECRET ? process.env.SESSION_SECRET : "t
 exports.sessionSecret = sessionSecret;
 var bcrypt_work_factor = 12;
 exports.bcrypt_work_factor = bcrypt_work_factor;
+var enableDebugTrace = true;
+exports.enableDebugTrace = enableDebugTrace;
 //# sourceMappingURL=config.js.map

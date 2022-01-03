@@ -50,7 +50,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO siteRoles\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO siteroles\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
                                 siteRoleData.name
                             ])];
                     case 1:
@@ -73,7 +73,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM siteRoles\n                  WHERE id = $1", [siteRoleID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM siteroles\n                  WHERE id = $1", [siteRoleID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -96,7 +96,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM siteRoles\n                  WHERE name = $1", [siteRoleName])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM siteroles\n                  WHERE name = $1", [siteRoleName])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -119,7 +119,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        _a = (0, createUpdateQueryPGSQL_1["default"])("siteRoles", siteRoleData, "id", siteRoleID), query = _a.query, values = _a.values;
+                        _a = (0, createUpdateQueryPGSQL_1["default"])("siteroles", siteRoleData, "id", siteRoleID), query = _a.query, values = _a.values;
                         return [4 /*yield*/, pgdb_1["default"].query(query, values)];
                     case 1:
                         result = _b.sent();
@@ -141,7 +141,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM siteRoles\n                WHERE id = $1\n                RETURNING id", [siteRoleID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM siteroles\n                WHERE id = $1\n                RETURNING id", [siteRoleID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -185,7 +185,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT users.id AS user_id,\n                        users.username AS username,\n                        siteRoles.id AS role_id, \n                        siteRoles.name AS role_name\n                    FROM users\n                    LEFT JOIN user_siteRoles \n                        ON users.id = user_siteRoles.user_id\n                    LEFT JOIN siteRoles\n                        ON user_siteRoles.role_id = siteRoles.id\n                    WHERE user_id = $1", [userID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT users.id AS user_id,\n                        users.username AS username,\n                        siteroles.id AS role_id, \n                        siteroles.name AS role_name\n                    FROM users\n                    LEFT JOIN user_siteroles \n                        ON users.id = user_siteroles.user_id\n                    LEFT JOIN siteroles\n                        ON user_siteroles.role_id = siteroles.id\n                    WHERE user_id = $1", [userID])];
                     case 1:
                         result = _a.sent();
                         // const rval: Array<siteRoleProps> | undefined = result.rows;
@@ -206,13 +206,14 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        sitePermissions.id AS permission_id,\n                        sitePermissions.name AS permission_name,\n                    FROM sitePermissions\n                    LEFT JOIN siteRole_sitePermissions\n                        ON siteRole_sitePermissions.permission_id = sitePermissiosn.id\n                    LEFT JOIN user_siteRoles\n                        ON user_siteRoles.role_id = siteRole_sitePermissions.role_id\n                    WHERE user_siteRoles.user_id = $1", [userID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        sitepermissions.id AS permission_id,\n                        sitepermissions.name AS permission_name\n                    FROM sitepermissions\n                    LEFT JOIN siterole_sitepermissions\n                        ON siterole_sitepermissions.sitepermission_id = sitepermissions.id\n                    LEFT JOIN user_siteroles\n                        ON user_siteroles.siterole_id = siterole_sitepermissions.siterole_id\n                    WHERE user_siteroles.user_id = $1", [userID])];
                     case 1:
                         result = _a.sent();
                         // const rval: Array<siteRoleProps> | undefined = result.rows;
                         return [2 /*return*/, result.rows];
                     case 2:
                         error_8 = _a.sent();
+                        // console.log(error);
                         throw new expresError_1["default"]("An Error Occured: Unable to get site permissions for the target user - ".concat(error_8), 500);
                     case 3: return [2 /*return*/];
                 }
@@ -228,7 +229,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO sitePermissions\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO sitepermissions\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
                                 sitePermData.name,
                             ])];
                     case 1:
@@ -251,7 +252,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM sitePermissions\n                  WHERE id = $1", [sitePermID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM sitepermissions\n                  WHERE id = $1", [sitePermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -274,7 +275,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        _a = (0, createUpdateQueryPGSQL_1["default"])("sitePermissions", sitePermData, "id", sitePermID), query = _a.query, values = _a.values;
+                        _a = (0, createUpdateQueryPGSQL_1["default"])("sitepermissions", sitePermData, "id", sitePermID), query = _a.query, values = _a.values;
                         return [4 /*yield*/, pgdb_1["default"].query(query, values)];
                     case 1:
                         result = _b.sent();
@@ -296,7 +297,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM sitePermissions\n                WHERE id = $1\n                RETURNING id", [sitePermID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM sitepermissions\n                WHERE id = $1\n                RETURNING id", [sitePermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -330,7 +331,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                INSERT INTO siteRole_sitePermissions\n                    (role_id, permission_id)\n                VALUES\n                    ".concat(valueExpressionRows, "\n                RETURNING role_id, permission_id"), queryValues)];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                INSERT INTO siterole_sitepermissions\n                    (role_id, permission_id)\n                VALUES\n                    ".concat(valueExpressionRows, "\n                RETURNING role_id, permission_id"), queryValues)];
                     case 2:
                         result = _a.sent();
                         rval = result.rows;
@@ -353,7 +354,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT siteRoles.id AS role_id,\n                        siteRoles.name AS role_name,\n                        sitePermissions.id AS permission_id,\n                        sitePermissions.name AS permission_name\n                  FROM siteRoles\n                  LEFT JOIN siteRole_sitePermissions AS joinTable\n                  ON siteRoles.id = siteRole_sitePermissions.role_id\n                  LEFT JOIN sitePermissions\n                  ON joinTable.permission_id = sitePermissions.id\n                  WHERE role_id = $1", [siteRoleID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT siteroles.id AS role_id,\n                        siteroles.name AS role_name,\n                        sitepermissions.id AS permission_id,\n                        sitepermissions.name AS permission_name\n                  FROM siteroles\n                  LEFT JOIN siterole_sitepermissions AS joinTable\n                  ON siteroles.id = siterole_sitepermissions.role_id\n                  LEFT JOIN sitepermissions\n                  ON joinTable.permission_id = sitepermissions.id\n                  WHERE role_id = $1", [siteRoleID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -376,7 +377,7 @@ var SitePermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM siteRole_sitePermissions\n                WHERE role_id = $1 AND permission_id = $2\n                RETURNING role_id", [siteRoleID, sitePermID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM siterole_sitepermissions\n                WHERE role_id = $1 AND permission_id = $2\n                RETURNING role_id", [siteRoleID, sitePermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];

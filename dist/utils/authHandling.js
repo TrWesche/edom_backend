@@ -18,7 +18,7 @@ var AuthHandling = /** @class */ (function () {
             }
             ;
             if (token.startsWith('Bearer ')) {
-                token.slice(7, token.length).trimLeft();
+                token = token.slice(7, token.length).trimLeft();
             }
             var verifyToken = jwt.verify(token, config_1.privatekey, { algorithms: ['RS256'] });
             return verifyToken;

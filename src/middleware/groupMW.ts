@@ -28,20 +28,6 @@ class groupMW {
               }
         }
     };
-    // static defineActionPermissions (req, res, next, permList: Array<string>) {
-    //     try {
-    //         if (req.requiredPermissions) {
-    //             req.requiredPermissions.group = permList;
-    //         } else {
-    //             req.requiredPermissions = {
-    //                 group: permList
-    //             };
-    //         }
-    //         return next();
-    //       } catch (err) {
-    //         return next();
-    //       }
-    // };
 }
 
 export default groupMW;

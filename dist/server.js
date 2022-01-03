@@ -35,6 +35,7 @@ var server = https.createServer({ key: config_1.privatekey, cert: config_1.certi
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authorizationMW_1["default"].loadJWT);
+app.use(authorizationMW_1["default"].loadSitePermissions);
 app.use((0, redis_1.session)({
     secret: config_1.sessionSecret,
     store: new redis_1.redisStore({
@@ -44,7 +45,7 @@ app.use((0, redis_1.session)({
     resave: redis_1.redisConfig.resave
 }));
 app.use("/user", userRouter_1["default"]);
-app.use("/user/robots", authorizationMW_1["default"].loadSitePermissions, userRobotRouter_1["default"]);
+app.use("/user/robots", userRobotRouter_1["default"]);
 // app.use("/group", groupRouter);
 app.use("/group/:groupID/robots", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRobotRouter);
 app.use("/room", roomRouter_1["default"]);

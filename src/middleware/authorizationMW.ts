@@ -4,7 +4,6 @@ import AuthHandling from "../utils/authHandling";
 import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 
-
 class authMW {
 
   /** Middleware: Load JWT Data Into Request & Authenticate user. */
@@ -29,6 +28,7 @@ class authMW {
       const sitePermissions = await SitePermissionsRepo.fetch_permissions_by_user_id(req.user.id);
 
       req.sitePermissions = sitePermissions;
+      return next();
     } catch (error) {
       return next({ status: 401, message: "Unauthorized" });
     }
@@ -48,10 +48,12 @@ class authMW {
 
       req.groupPermissions = groupPermissions;
 
+      return next();
     } catch (error) {
       return next({ status: 401, message: "Unauthorized" });
     }
   };
+
 
 
   /** Validate Permissions Assigned */
@@ -62,10 +64,9 @@ class authMW {
       };
   
       // If no permissions are defined for validating access throw an error
-      if (!req.requiredPermissions) {
+      if (!req.requiredPermissions.site) {
         return next({ status: 400, message: "Unable to Process Request" });
       };
-  
   
       // Check for Group Permissions if they are defined
       if (req.requiredPermissions.group) {
@@ -82,27 +83,31 @@ class authMW {
         };
       }
   
-  
       // Check for Site Permisisons if they are defined
       if (req.requiredPermissions.site) {
         if (!req.sitePermissions) {
           return next({ status: 401, message: "Unauthorized" });
         }
-  
+
         const permissionsOK = req.requiredPermissions.site.reduce((acc, val) => {
-          req.sitePermissions.find(val) && acc;
-        }, true)
+          const findResult = req.sitePermissions.find(perm => {
+            return perm.permission_name === val;
+          });
+
+          return findResult !== undefined && acc;
+        }, true);
   
         if (!permissionsOK) {
           return next({ status: 401, message: "Unauthorized" });
         };
+
+        return next();
       }
   
     } catch (error) {
       return next({ status: 401, message: "Unauthorized" });
     }
   }
-
 }
 
 
@@ -138,13 +143,3 @@ class authMW {
 
 
 export default authMW;
-
-
-// export {
-//   loadJWT,
-//   loadSitePermissions,
-//   loadGroupPermissions,
-//   ensureLoggedIn,
-//   validateUserID,
-//   validatePermissions
-// };

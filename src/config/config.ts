@@ -24,6 +24,8 @@ const sessionSecret = process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 
 
 const bcrypt_work_factor = 12;
 
+const enableDebugTrace = true;
+
 export {
     certificate,
     privatekey,
@@ -35,5 +37,6 @@ export {
     wsEnable,
     wsPort,
     sessionSecret,
-    bcrypt_work_factor
+    bcrypt_work_factor,
+    enableDebugTrace
 };
