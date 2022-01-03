@@ -75,8 +75,12 @@ class authMW {
         }
   
         const permissionsOK = req.requiredPermissions.group.reduce((acc, val) => {
-          req.groupPermissions.find(val) && acc;
-        }, true)
+          const findResult = req.groupPermissions.find(perm => {
+            return perm.permission_name === val;
+          });
+
+          return findResult !== undefined && acc;
+        }, true);
   
         if (!permissionsOK) {
           return next({ status: 401, message: "Unauthorized" });
