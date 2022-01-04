@@ -7,6 +7,8 @@ export interface UserObjectProps {
     id?: string,
     email?: string,
     username?: string,
+    first_name?: string,
+    last_name?: string,
     password?: string,
     roles?: Array<UserRolesProps>
 }
@@ -19,16 +21,32 @@ interface UserRolesProps {
 class UserRepo {
     static async create_new_user(userData: UserObjectProps, hashedPassword: string) {
         try {
+            const targetColumns: Array<string> = [];
+            const idxValues: Array<string> = [];
+            const insertValues: Array<any> = [];
+
+            let idx = 1;
+            for (const key in userData) {
+                if (userData[key]) {
+                    targetColumns.push(key);
+                    idxValues.push(`$${idx}`);
+                    insertValues.push(userData[key]);
+
+                    idx++;
+                }
+            };
+
+            const query = `
+                INSERT INTO users 
+                    (${targetColumns.join(", ")}) 
+                VALUES (${idxValues.join(", ")}) 
+                RETURNING id, email, username
+            `;
+
             const result = await pgdb.query(
-                `INSERT INTO users 
-                    (email, username, password) 
-                VALUES ($1, $2, $3) 
-                RETURNING id, email, username`,
-            [
-                userData.email,
-                userData.username,
-                hashedPassword
-            ]);
+                query,
+                insertValues
+            );
             
             const rval: UserObjectProps | undefined = result.rows[0];
             return rval;
@@ -46,7 +64,7 @@ class UserRepo {
                         username,
                         password
                   FROM users 
-                  WHERE email = $1`,
+                  WHERE email ILIKE $1`,
                   [userEmail]
             );
     
@@ -66,7 +84,7 @@ class UserRepo {
                         username,
                         password
                   FROM users 
-                  WHERE username = $1`,
+                  WHERE username ILIKE $1`,
                   [username]
             );
     
@@ -81,7 +99,7 @@ class UserRepo {
     static async fetch_user_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(`
-                SELECT id, email, username
+                SELECT id, email, username, first_name, last_name
                 FROM users
                 WHERE id = $1`,
                 [userID]
@@ -104,7 +122,7 @@ class UserRepo {
                 "id",
                 userID
             );
-    
+
             const result = await pgdb.query(query, values);
 
             const rval: UserObjectProps | undefined = result.rows[0];

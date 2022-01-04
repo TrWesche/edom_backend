@@ -8,6 +8,8 @@ export interface UserRegisterProps {
     username: string
     email: string
     password: string
+    first_name?: string
+    last_name?: string
 };
 
 const schema: JSONSchemaType<UserRegisterProps> = {
@@ -32,6 +34,16 @@ const schema: JSONSchemaType<UserRegisterProps> = {
             format: "password",
             default: "",
             minLength: 8
+        },
+        first_name: {
+            $id:"#/properties/first_name",
+            type: "string",
+            nullable: true
+        },
+        last_name: {
+            $id:"#/properties/last_name",
+            type: "string",
+            nullable: true
         }
     },
     required: [

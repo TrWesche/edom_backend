@@ -100,7 +100,9 @@ userRouter.post("/register", function (req, res, next) { return __awaiter(void 0
                 regValues = {
                     username: req.body.username,
                     email: req.body.email,
-                    password: req.body.password
+                    password: req.body.password,
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name
                 };
                 if (!(0, userRegisterSchema_1["default"])(regValues)) {
                     console.log(userRegisterSchema_1["default"].errors);
@@ -163,7 +165,7 @@ userRouter.get("/", siteMW_1["default"].defineActionPermissions(['read_user_self
         }
     });
 }); });
-userRouter.get("/:username", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.get("/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -190,7 +192,7 @@ userRouter.get("/:username", function (req, res, next) { return __awaiter(void 0
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-userRouter.patch("/update", authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -207,7 +209,9 @@ userRouter.patch("/update", authorizationMW_1["default"].validatePermissions, fu
                 updateValues_1 = {
                     username: req.body.username,
                     email: req.body.email,
-                    password: req.body.password
+                    password: req.body.password,
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name
                 };
                 if (!(0, userUpdateSchema_1["default"])(updateValues_1)) {
                     throw new expresError_1["default"]("Update Error: ".concat(userUpdateSchema_1["default"].errors), 400);
@@ -220,10 +224,6 @@ userRouter.patch("/update", authorizationMW_1["default"].validatePermissions, fu
                         itemsList_1[key] = req.body[key];
                     }
                 });
-                // If body has password this is a special case and should be added to the itemsList separately
-                // if (updateValues.password) {
-                //     itemsList["password"] = req.body.password;
-                // }
                 // If no changes return original data
                 if (Object.keys(itemsList_1).length === 0) {
                     return [2 /*return*/, res.json({ user: prevValues_1 })];
@@ -264,7 +264,7 @@ userRouter.get("/logout", function (req, res, next) { return __awaiter(void 0, v
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-userRouter["delete"]("/delete", authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a, _b;
     return __generator(this, function (_c) {

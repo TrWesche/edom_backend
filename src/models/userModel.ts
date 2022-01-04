@@ -54,7 +54,7 @@ class UserModel {
 
       const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
       const user = await UserRepo.create_new_user(data, hashedPassword);
-      // TODO: User Roles & Permissions Will Need to be added
+
       if (user) {
         const siteRole = await SitePermissionsRepo.fetch_role_by_role_name('user');
         if (siteRole?.id && user.id) {
@@ -74,10 +74,6 @@ class UserModel {
         } else {
           throw new ExpressError("Error encountered while retrieving role information", 400);
         }
-
-        // user.permissions = {
-        //   role: "user"
-        // }
       }
   
       return user;  

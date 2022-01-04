@@ -27,6 +27,16 @@ var schema = {
             format: "password",
             "default": "",
             minLength: 8
+        },
+        first_name: {
+            $id: "#/properties/first_name",
+            type: "string",
+            nullable: true
+        },
+        last_name: {
+            $id: "#/properties/last_name",
+            type: "string",
+            nullable: true
         }
     },
     required: [

@@ -65,7 +65,9 @@ userRouter.post("/register", async (req, res, next) => {
         const regValues: UserRegisterProps = {
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name
         }
 
         if(!validateUserRegisterSchema(regValues)) {
@@ -117,7 +119,7 @@ userRouter.get("/", siteMW.defineActionPermissions(['read_user_self']), authMW.v
     }
 })
 
-userRouter.get("/:username", async (req, res, next) => {
+userRouter.get("/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: User needs a public / private selection & additional details
         const queryData = await UserModel.retrieve_user_by_username(req.params.username);
@@ -139,7 +141,7 @@ userRouter.get("/:username", async (req, res, next) => {
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-userRouter.patch("/update", authMW.validatePermissions, async (req, res, next) => {
+userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self']), authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
         if (!prevValues) {
@@ -150,7 +152,9 @@ userRouter.patch("/update", authMW.validatePermissions, async (req, res, next) =
         const updateValues: UserUpdateProps = {
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name
         };
 
         if(!validateUserUpdateSchema(updateValues)) {
@@ -167,10 +171,6 @@ userRouter.patch("/update", authMW.validatePermissions, async (req, res, next) =
             }
         })
 
-        // If body has password this is a special case and should be added to the itemsList separately
-        // if (updateValues.password) {
-        //     itemsList["password"] = req.body.password;
-        // }
 
         // If no changes return original data
         if(Object.keys(itemsList).length === 0) {
@@ -179,9 +179,9 @@ userRouter.patch("/update", authMW.validatePermissions, async (req, res, next) =
 
         // Update the user data with the itemsList information
         const newData = await UserModel.modify_user(req.user?.id, itemsList);
-        return res.json({user: newData})
+        return res.json({user: newData});
     } catch (error) {
-        next(error)
+        next(error);
     }
 });
 
@@ -211,7 +211,7 @@ userRouter.get("/logout", async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 
-userRouter.delete("/delete", authMW.validatePermissions, async (req, res, next) => {
+userRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError("Delete user failed, userid not provided.", 400);

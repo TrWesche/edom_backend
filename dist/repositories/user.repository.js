@@ -44,16 +44,26 @@ var UserRepo = /** @class */ (function () {
     }
     UserRepo.create_new_user = function (userData, hashedPassword) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_1;
+            var targetColumns, idxValues, insertValues, idx, key, query, result, rval, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO users \n                    (email, username, password) \n                VALUES ($1, $2, $3) \n                RETURNING id, email, username", [
-                                userData.email,
-                                userData.username,
-                                hashedPassword
-                            ])];
+                        targetColumns = [];
+                        idxValues = [];
+                        insertValues = [];
+                        idx = 1;
+                        for (key in userData) {
+                            if (userData[key]) {
+                                targetColumns.push(key);
+                                idxValues.push("$".concat(idx));
+                                insertValues.push(userData[key]);
+                                idx++;
+                            }
+                        }
+                        ;
+                        query = "\n                INSERT INTO users \n                    (".concat(targetColumns.join(", "), ") \n                VALUES (").concat(idxValues.join(", "), ") \n                RETURNING id, email, username\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, insertValues)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -74,7 +84,7 @@ var UserRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        email, \n                        username,\n                        password\n                  FROM users \n                  WHERE email = $1", [userEmail])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        email, \n                        username,\n                        password\n                  FROM users \n                  WHERE email ILIKE $1", [userEmail])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -97,7 +107,7 @@ var UserRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        email, \n                        username,\n                        password\n                  FROM users \n                  WHERE username = $1", [username])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        email, \n                        username,\n                        password\n                  FROM users \n                  WHERE username ILIKE $1", [username])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -120,7 +130,7 @@ var UserRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, email, username\n                FROM users\n                WHERE id = $1", [userID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, email, username, first_name, last_name\n                FROM users\n                WHERE id = $1", [userID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];

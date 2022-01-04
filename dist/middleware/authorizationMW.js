@@ -130,7 +130,10 @@ var authMW = /** @class */ (function () {
                     return next({ status: 401, message: "Unauthorized" });
                 }
                 var permissionsOK = req.requiredPermissions.group.reduce(function (acc, val) {
-                    req.groupPermissions.find(val) && acc;
+                    var findResult = req.groupPermissions.find(function (perm) {
+                        return perm.permission_name === val;
+                    });
+                    return findResult !== undefined && acc;
                 }, true);
                 if (!permissionsOK) {
                     return next({ status: 401, message: "Unauthorized" });

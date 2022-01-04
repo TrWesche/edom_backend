@@ -12,21 +12,34 @@ var schema = {
             $id: "#/properties/username",
             type: "string",
             "default": "",
-            minLength: 1
+            minLength: 1,
+            nullable: true
         },
         email: {
             $id: "#/properties/email",
             type: "string",
             format: "email",
             "default": "",
-            minLength: 1
+            minLength: 1,
+            nullable: true
         },
         password: {
             $id: "#/properties/password",
             type: "string",
             format: "password",
             "default": "",
-            minLength: 8
+            minLength: 8,
+            nullable: true
+        },
+        first_name: {
+            $id: "#/properties/first_name",
+            type: "string",
+            nullable: true
+        },
+        last_name: {
+            $id: "#/properties/last_name",
+            type: "string",
+            nullable: true
         }
     },
     required: [],

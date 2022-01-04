@@ -47,6 +47,15 @@ VALUES
 	('6a5664f0-1d28-4269-883a-d8b362b1cf57', 'update_device_self'),
 	('c3934131-658e-43c9-a8b5-3f207d88140f', 'delete_device_self'),
 	
+	('2332da90-06c7-45d4-95a5-95fc7e4c9853', 'browse_users_public'),
+	('72eef18a-90bb-40ea-aac4-75883ef51a64', 'browse_groups_public'),
+	('61fc32b7-d165-4c42-a3ea-67e70ffc2652', 'browse_rooms_public'),
+	('87813dbe-496b-4b10-8ac7-5f790a87c07d', 'browse_devices_public'),
+	('9f379465-0adb-4daa-a7b8-1c42949dba4f', 'view_user_public'),
+	('6bf76d45-d706-434b-8ae5-8b87cf3b4fc6', 'view_group_public'),
+	('9823bc6b-104e-4fd2-b03b-b63faf102f90', 'view_room_public'),
+	('6259f8e4-6412-4e88-a961-77965300f0d5', 'view_device_public'),
+
     -- L2 Support
 	('d05372f2-16a2-4e04-afa9-1a7584b6b68a', 'read_user_global'),
     ('9c7d86a5-515a-43ba-ac7e-09bdb5c63484', 'update_user_global'),
@@ -65,11 +74,21 @@ VALUES
 	('dce54ca4-3af6-4af7-b1b8-822a0d003407', 'create_device_global'),
 	('3232ffbd-4dd2-4ff0-ac98-823d999e1546', 'read_device_global'),
 	('47dccb89-3f49-48ab-93bf-c1c7f991a6ba', 'update_device_global'),
-	('0db7e210-91be-4c9c-b274-fc6d7bc027bb', 'delete_device_global');
+	('0db7e210-91be-4c9c-b274-fc6d7bc027bb', 'delete_device_global')
+	
+	('ca1ff51b-9749-4ab1-af57-96d4fbdfac73', 'browse_users_global'),
+	('c2b9fadc-7f26-479c-a0bf-095a39d12d79', 'browse_groups_global'),
+	('03addaa1-a99f-4c03-9096-b64d6ed23cf0', 'browse_rooms_global'),
+	('da03944f-dab1-4ddd-9d6f-f7317bd6ce6e', 'browse_devices_global'),
+	('5213173a-85bb-4612-926a-e870fff30ee9', 'view_user_global'),
+	('22ada866-5626-4c4f-9956-9b7f1f1459be', 'view_group_global'),
+	('369a9c36-457c-4b73-86f2-716aa4c3801a', 'view_room_global'),
+	('835961a5-8dc8-4d9f-8ff8-6c8241a8cc10', 'view_device_global');
+
 
 
 INSERT INTO public.siterole_sitepermissions
-    (siterole_id, sitepermissions)
+    (siterole_id, sitepermission_id)
 VALUES
 -- user role id, permission_id
     ('853724f0-ef31-467d-a739-58bcc081a540', '1077c00a-4d3a-458a-be88-56d1d3cfdf56'),
@@ -87,13 +106,23 @@ VALUES
     ('853724f0-ef31-467d-a739-58bcc081a540', '59f4a08c-a498-4129-8fcf-b35e87d241e8'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '6a5664f0-1d28-4269-883a-d8b362b1cf57'),
     ('853724f0-ef31-467d-a739-58bcc081a540', 'c3934131-658e-43c9-a8b5-3f207d88140f'),
+
+	('853724f0-ef31-467d-a739-58bcc081a540', '2332da90-06c7-45d4-95a5-95fc7e4c9853'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '72eef18a-90bb-40ea-aac4-75883ef51a64'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '61fc32b7-d165-4c42-a3ea-67e70ffc2652'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '87813dbe-496b-4b10-8ac7-5f790a87c07d'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '9f379465-0adb-4daa-a7b8-1c42949dba4f'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '6bf76d45-d706-434b-8ae5-8b87cf3b4fc6'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '9823bc6b-104e-4fd2-b03b-b63faf102f90'),
+	('853724f0-ef31-467d-a739-58bcc081a540', '6259f8e4-6412-4e88-a961-77965300f0d5'),
+
 -- administrator role id, permission_id
     ('3acdd306-7225-4ffc-ad11-97c09c9ed32b', '516b9952-d3fb-42d7-b187-2c49255bdb69'),
     ('3acdd306-7225-4ffc-ad11-97c09c9ed32b', 'b3dc9319-c9c0-4cb8-b00c-9029a599eed9'),
     ('3acdd306-7225-4ffc-ad11-97c09c9ed32b', '09470072-d3bd-4fed-9407-b116874c526e'),
     ('3acdd306-7225-4ffc-ad11-97c09c9ed32b', 'bfe56333-0537-4571-bdf3-6464b82cd131'),
 -- L1 support role id, permission_id
-    ('5f21659e-888a-4354-8b10-277ebf7b088a',  '4417d9b3-339b-444f-bdec-78b8effb2d3e'),
+    ('5f21659e-888a-4354-8b10-277ebf7b088a', '4417d9b3-339b-444f-bdec-78b8effb2d3e'),
 -- L3 Support role id, permission_id
 	('d46063d8-1c48-4d73-8207-ef873e70af1c', '84807530-d09e-4527-a337-ac4c583c6bdf'),
 	('d46063d8-1c48-4d73-8207-ef873e70af1c', '0f58ae58-108f-4ce7-9c9b-54326bbf37aa'),
@@ -115,4 +144,13 @@ VALUES
 	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', 'dce54ca4-3af6-4af7-b1b8-822a0d003407'),
 	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '3232ffbd-4dd2-4ff0-ac98-823d999e1546'),
 	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '47dccb89-3f49-48ab-93bf-c1c7f991a6ba'),
-	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '0db7e210-91be-4c9c-b274-fc6d7bc027bb');
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '0db7e210-91be-4c9c-b274-fc6d7bc027bb'),
+
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', 'ca1ff51b-9749-4ab1-af57-96d4fbdfac73'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', 'c2b9fadc-7f26-479c-a0bf-095a39d12d79'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '03addaa1-a99f-4c03-9096-b64d6ed23cf0'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', 'da03944f-dab1-4ddd-9d6f-f7317bd6ce6e'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '5213173a-85bb-4612-926a-e870fff30ee9'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '22ada866-5626-4c4f-9956-9b7f1f1459be'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '369a9c36-457c-4b73-86f2-716aa4c3801a'),
+	('edc0c949-5afd-4206-af01-aa4f7ea4c4f8', '835961a5-8dc8-4d9f-8ff8-6c8241a8cc10');
