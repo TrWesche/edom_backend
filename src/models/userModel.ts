@@ -22,10 +22,26 @@ class UserModel {
       if (isValid) {
         delete user.password;
         delete user.email;
-        // TODO: User Roles & Permissions Will Need to be added
-        // user.permissions = {
-        //   role: "user"
-        // }
+
+        const siteRole = await SitePermissionsRepo.fetch_role_by_role_name('user');
+        if (siteRole?.id && user.id) {
+          const permissionAssignment = await SitePermissionsRepo.create_user_site_role(user.id, siteRole.id);
+
+          if (permissionAssignment.length > 0) {
+            await TransactionRepo.commit_transaction();
+            if (user.roles) {
+              user.roles.push({name: siteRole.name});
+            } else {
+              user.roles = [{name: siteRole.name}]
+            };
+          } else {
+            throw new ExpressError("Error encountered while assigning user role", 400);
+          }
+
+        } else {
+          throw new ExpressError("Error encountered while retrieving role information", 400);
+        }
+
         return user;
       }
     }
@@ -53,6 +69,7 @@ class UserModel {
       await TransactionRepo.begin_transaction()
 
       const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
+      data.password = hashedPassword;
       const user = await UserRepo.create_new_user(data, hashedPassword);
 
       if (user) {
@@ -121,6 +138,7 @@ class UserModel {
     
     // Handle Password Change
     if (data.password) {
+      console.log("Changing Password");
       data.password = await bcrypt.hash(data.password, bcrypt_work_factor);
     }
 
@@ -153,12 +171,27 @@ class UserModel {
 
   /** Delete target user from database; returns undefined. */
   static async delete_user(id: string) {
-    const result = await UserRepo.delete_user_by_user_id(id);
+    try {
+      await TransactionRepo.begin_transaction();
+      // Clean Up User Site Roles:
+      const siteRoleCleanupSuccess = await SitePermissionsRepo.delete_user_site_roles(id);
+      if (!siteRoleCleanupSuccess) {
+        throw new ExpressError(`Site Role Cleanup Failed`, 500);
+      }
 
-    if (!result) {
-      throw new ExpressError("Delete failed, unable to locate target user", 400);
-    }
-    return result;
+      // Clean Up User Table:
+      const result = await UserRepo.delete_user_by_user_id(id);
+
+      if (!result) {
+        throw new ExpressError("Delete failed, unable to locate target user", 400);
+      }
+
+      await TransactionRepo.commit_transaction()
+
+      return result;
+    } catch (error) {
+      await TransactionRepo.rollback_transaction(); 
+    }    
   }
 }
   

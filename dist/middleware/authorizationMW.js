@@ -116,17 +116,20 @@ var authMW = /** @class */ (function () {
         var _a;
         try {
             if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                console.log("UserID Missing");
                 return next({ status: 401, message: "Unauthorized" });
             }
             ;
             // If no permissions are defined for validating access throw an error
             if (!req.requiredPermissions.site) {
+                console.log("No Required Site Permissions Defined");
                 return next({ status: 400, message: "Unable to Process Request" });
             }
             ;
             // Check for Group Permissions if they are defined
             if (req.requiredPermissions.group) {
                 if (!req.groupPermissions) {
+                    console.log("No Required Group Permissions Defined");
                     return next({ status: 401, message: "Unauthorized" });
                 }
                 var permissionsOK = req.requiredPermissions.group.reduce(function (acc, val) {

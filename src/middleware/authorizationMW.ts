@@ -60,17 +60,20 @@ class authMW {
   static validatePermissions(req, res, next) {
     try {
       if (!req.user?.id) {
+        console.log("UserID Missing");
         return next({ status: 401, message: "Unauthorized" });
       };
   
       // If no permissions are defined for validating access throw an error
       if (!req.requiredPermissions.site) {
+        console.log("No Required Site Permissions Defined");
         return next({ status: 400, message: "Unable to Process Request" });
       };
   
       // Check for Group Permissions if they are defined
       if (req.requiredPermissions.group) {
         if (!req.groupPermissions) {
+          console.log("No Required Group Permissions Defined");
           return next({ status: 401, message: "Unauthorized" });
         }
   

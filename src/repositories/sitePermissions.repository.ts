@@ -128,6 +128,34 @@ class SitePermissionsRepo {
         }
     };
 
+    static async delete_user_site_roles(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM user_siteroles
+                WHERE user_id = $1`,
+                [userID]
+            );
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete user site roles - ${error}`, 500);
+        }
+    };
+
+    static async delete_user_site_role_by_role_id(userID: string, roleID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM user_siteroles
+                WHERE user_id = $1 AND site_roleid = $2`,
+                [userID, roleID]
+            );
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete user site roles - ${error}`, 500);
+        }
+    }
+
     static async fetch_roles_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(

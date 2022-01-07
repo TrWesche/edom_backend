@@ -7,7 +7,7 @@ var AuthHandling = /** @class */ (function () {
     function AuthHandling() {
     }
     AuthHandling.generateToken = function (queryRes, queryData) {
-        var token = jwt.sign(queryData, config_1.privatekey, { algorithm: 'RS256' });
+        var token = jwt.sign(queryData, config_1.privatekey, { algorithm: 'RS256', expiresIn: '8h' });
         queryRes.header("auth-token", token);
     };
     AuthHandling.validateToken = function (queryReq) {

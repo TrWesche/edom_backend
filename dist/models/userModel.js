@@ -49,7 +49,7 @@ var UserModel = /** @class */ (function () {
     /** Authenticate user with email & password. Returns user or throws error. */
     UserModel.authenticate = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, isValid;
+            var user, isValid, siteRole, permissionAssignment;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -59,21 +59,37 @@ var UserModel = /** @class */ (function () {
                         return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
                     case 1:
                         user = _a.sent();
-                        if (!(user && user.password && data.password)) return [3 /*break*/, 3];
+                        if (!(user && user.password && data.password)) return [3 /*break*/, 10];
                         return [4 /*yield*/, bcrypt.compare(data.password, user.password)];
                     case 2:
                         isValid = _a.sent();
-                        if (isValid) {
-                            delete user.password;
-                            delete user.email;
-                            // TODO: User Roles & Permissions Will Need to be added
-                            // user.permissions = {
-                            //   role: "user"
-                            // }
-                            return [2 /*return*/, user];
+                        if (!isValid) return [3 /*break*/, 10];
+                        delete user.password;
+                        delete user.email;
+                        return [4 /*yield*/, sitePermissions_repository_1["default"].fetch_role_by_role_name('user')];
+                    case 3:
+                        siteRole = _a.sent();
+                        if (!((siteRole === null || siteRole === void 0 ? void 0 : siteRole.id) && user.id)) return [3 /*break*/, 8];
+                        return [4 /*yield*/, sitePermissions_repository_1["default"].create_user_site_role(user.id, siteRole.id)];
+                    case 4:
+                        permissionAssignment = _a.sent();
+                        if (!(permissionAssignment.length > 0)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 5:
+                        _a.sent();
+                        if (user.roles) {
+                            user.roles.push({ name: siteRole.name });
                         }
-                        _a.label = 3;
-                    case 3: throw new expresError_1["default"]("Invalid Credentials", 401);
+                        else {
+                            user.roles = [{ name: siteRole.name }];
+                        }
+                        ;
+                        return [3 /*break*/, 7];
+                    case 6: throw new expresError_1["default"]("Error encountered while assigning user role", 400);
+                    case 7: return [3 /*break*/, 9];
+                    case 8: throw new expresError_1["default"]("Error encountered while retrieving role information", 400);
+                    case 9: return [2 /*return*/, user];
+                    case 10: throw new expresError_1["default"]("Invalid Credentials", 401);
                 }
             });
         });
@@ -110,6 +126,7 @@ var UserModel = /** @class */ (function () {
                         return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
                     case 5:
                         hashedPassword = _a.sent();
+                        data.password = hashedPassword;
                         return [4 /*yield*/, user_repository_1["default"].create_new_user(data, hashedPassword)];
                     case 6:
                         user = _a.sent();
@@ -203,6 +220,7 @@ var UserModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error: User ID not provided", 400);
                         }
                         if (!data.password) return [3 /*break*/, 2];
+                        console.log("Changing Password");
                         _a = data;
                         return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
                     case 1:
@@ -244,16 +262,37 @@ var UserModel = /** @class */ (function () {
     /** Delete target user from database; returns undefined. */
     UserModel.delete_user = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var result;
+            var siteRoleCleanupSuccess, result, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_repository_1["default"].delete_user_by_user_id(id)];
+                    case 0:
+                        _a.trys.push([0, 5, , 7]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
+                        _a.sent();
+                        return [4 /*yield*/, sitePermissions_repository_1["default"].delete_user_site_roles(id)];
+                    case 2:
+                        siteRoleCleanupSuccess = _a.sent();
+                        if (!siteRoleCleanupSuccess) {
+                            throw new expresError_1["default"]("Site Role Cleanup Failed", 500);
+                        }
+                        return [4 /*yield*/, user_repository_1["default"].delete_user_by_user_id(id)];
+                    case 3:
                         result = _a.sent();
                         if (!result) {
                             throw new expresError_1["default"]("Delete failed, unable to locate target user", 400);
                         }
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 4:
+                        _a.sent();
                         return [2 /*return*/, result];
+                    case 5:
+                        error_2 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 6:
+                        _a.sent();
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         });

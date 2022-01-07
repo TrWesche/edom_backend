@@ -189,7 +189,7 @@ userRouter.get("/:username", siteMW_1["default"].defineActionPermissions(['view_
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -243,7 +243,7 @@ userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update
   | |__| |_| | |_| | |_| | |_| | | |
   |_____\___/ \____|\___/ \___/  |_|
 */
-userRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.get("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Logging Out");
         try {
@@ -262,30 +262,26 @@ userRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, 
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-userRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_6;
+userRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData;
     var _a, _b;
     return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _c.trys.push([0, 2, , 3]);
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                    throw new expresError_1["default"]("Delete user failed, userid not provided.", 400);
-                }
-                return [4 /*yield*/, userModel_1["default"].delete_user((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
-            case 1:
-                queryData = _c.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Unable to delete target user account", 404);
-                }
-                res.setHeader("Authorization", "");
-                return [2 /*return*/, res.json({ message: "Your account has been deleted." })];
-            case 2:
-                error_6 = _c.sent();
-                return [2 /*return*/, next(error_6)];
-            case 3: return [2 /*return*/];
+        try {
+            if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                throw new expresError_1["default"]("Delete user failed, userid not provided.", 400);
+            }
+            queryData = userModel_1["default"].delete_user((_b = req.user) === null || _b === void 0 ? void 0 : _b.id);
+            if (!queryData) {
+                throw new expresError_1["default"]("Unable to delete target user account", 404);
+            }
+            res.setHeader("Authorization", "");
+            return [2 /*return*/, res.json({ message: "Your account has been deleted." })];
         }
+        catch (error) {
+            return [2 /*return*/, next(error)];
+        }
+        return [2 /*return*/];
     });
 }); });
 exports["default"] = userRouter;
-//# sourceMappingURL=userRouter.js.map
+//# sourceMappingURL=userRouter%20copy.js.map

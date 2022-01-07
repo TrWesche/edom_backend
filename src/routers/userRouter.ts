@@ -105,8 +105,7 @@ userRouter.post("/register", async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
-userRouter.get("/", siteMW.defineActionPermissions(['read_user_self']), authMW.validatePermissions, async (req, res, next) => {
-    console.log("Getting Self");
+userRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
         if (!queryData) {
@@ -119,7 +118,7 @@ userRouter.get("/", siteMW.defineActionPermissions(['read_user_self']), authMW.v
     }
 })
 
-userRouter.get("/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.validatePermissions, async (req, res, next) => {
+userRouter.get("/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: User needs a public / private selection & additional details
         const queryData = await UserModel.retrieve_user_by_username(req.params.username);
@@ -141,7 +140,7 @@ userRouter.get("/:username", siteMW.defineActionPermissions(['view_user_public']
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self']), authMW.validatePermissions, async (req, res, next) => {
+userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
         if (!prevValues) {
@@ -194,9 +193,10 @@ userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self'])
   |_____\___/ \____|\___/ \___/  |_|  
 */
 
-userRouter.get("/logout", async (req, res, next) => {
+userRouter.post("/logout", async (req, res, next) => {
+    console.log("Logging Out");
     try {
-        res.setHeader("Authorization", "");
+        res.header("auth-token", "");
         
         return res.json({"message": "Logout successful."})
     } catch (error) {
@@ -211,13 +211,13 @@ userRouter.get("/logout", async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 
-userRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']), authMW.validatePermissions, async (req, res, next) => {
+userRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']),  authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError("Delete user failed, userid not provided.", 400);
         }
 
-        const queryData = UserModel.delete_user(req.user?.id);
+        const queryData = await UserModel.delete_user(req.user?.id);
         if(!queryData) {
             throw new ExpressError("Unable to delete target user account", 404);
         }

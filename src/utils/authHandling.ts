@@ -5,7 +5,7 @@ import { privatekey } from "../config/config";
 
 class AuthHandling {
     static generateToken(queryRes, queryData) {
-        const token = jwt.sign(queryData, privatekey, { algorithm: 'RS256'});
+        const token = jwt.sign(queryData, privatekey, { algorithm: 'RS256', expiresIn: '8h'});
 
         queryRes.header("auth-token", token);
     }
