@@ -1,15 +1,24 @@
 import * as express from "express";
 import { v4 as uuidv4 } from "uuid";
 
-const roomRouter = express.Router();
+// Utility Functions Import
+import ExpressError from "../utils/expresError";
 
-roomRouter.get("/new", (req, res, next) => {
+// Schema Imports
+
+// Repo Imports
+
+
+
+const groupRouter = express.Router();
+
+groupRouter.post("/create", (req, res, next) => {
     const roomID = uuidv4();
     const userID = uuidv4();
     res.json({roomID, userID})
 })
 
-roomRouter.get("/:roomId/newUser", (req, res, next) => {
+groupRouter.get("/:groupID", (req, res, next) => {
     try {
         const userID = uuidv4();
         // console.log(`MSG rtcRouter.js: Adding Participant: ${userId}`);
@@ -19,4 +28,4 @@ roomRouter.get("/:roomId/newUser", (req, res, next) => {
     }
 })
 
-export default roomRouter;
+export default groupRouter;

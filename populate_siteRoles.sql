@@ -42,19 +42,19 @@ VALUES
 	('b2ff4d87-eb25-4777-afc5-19466b5ff9d1', 'update_room_self'),
 	('a76ceac4-fc74-44e6-8325-3e74d334f7c8', 'delete_room_self'),
 	
-	('0f424834-caa8-4443-927f-472960ad40f8', 'create_device_self'),
-	('59f4a08c-a498-4129-8fcf-b35e87d241e8', 'read_device_self'),
-	('6a5664f0-1d28-4269-883a-d8b362b1cf57', 'update_device_self'),
-	('c3934131-658e-43c9-a8b5-3f207d88140f', 'delete_device_self'),
+	('0f424834-caa8-4443-927f-472960ad40f8', 'create_equip_self'),
+	('59f4a08c-a498-4129-8fcf-b35e87d241e8', 'read_equip_self'),
+	('6a5664f0-1d28-4269-883a-d8b362b1cf57', 'update_equip_self'),
+	('c3934131-658e-43c9-a8b5-3f207d88140f', 'delete_equip_self'),
 	
 	('2332da90-06c7-45d4-95a5-95fc7e4c9853', 'browse_users_public'),
 	('72eef18a-90bb-40ea-aac4-75883ef51a64', 'browse_groups_public'),
 	('61fc32b7-d165-4c42-a3ea-67e70ffc2652', 'browse_rooms_public'),
-	('87813dbe-496b-4b10-8ac7-5f790a87c07d', 'browse_devices_public'),
+	('87813dbe-496b-4b10-8ac7-5f790a87c07d', 'browse_equip_public'),
 	('9f379465-0adb-4daa-a7b8-1c42949dba4f', 'view_user_public'),
 	('6bf76d45-d706-434b-8ae5-8b87cf3b4fc6', 'view_group_public'),
 	('9823bc6b-104e-4fd2-b03b-b63faf102f90', 'view_room_public'),
-	('6259f8e4-6412-4e88-a961-77965300f0d5', 'view_device_public'),
+	('6259f8e4-6412-4e88-a961-77965300f0d5', 'view_equip_public'),
 
     -- L2 Support
 	('d05372f2-16a2-4e04-afa9-1a7584b6b68a', 'read_user_global'),
@@ -71,19 +71,19 @@ VALUES
     ('f8ef984a-d8c0-4510-8d6a-4bd8a898d004', 'update_room_global'),
 	('0e003c08-7885-4fe2-ab8c-a95fce17cfe1', 'delete_room_global'),
 	
-	('dce54ca4-3af6-4af7-b1b8-822a0d003407', 'create_device_global'),
-	('3232ffbd-4dd2-4ff0-ac98-823d999e1546', 'read_device_global'),
-	('47dccb89-3f49-48ab-93bf-c1c7f991a6ba', 'update_device_global'),
-	('0db7e210-91be-4c9c-b274-fc6d7bc027bb', 'delete_device_global')
+	('dce54ca4-3af6-4af7-b1b8-822a0d003407', 'create_equip_global'),
+	('3232ffbd-4dd2-4ff0-ac98-823d999e1546', 'read_equip_global'),
+	('47dccb89-3f49-48ab-93bf-c1c7f991a6ba', 'update_equip_global'),
+	('0db7e210-91be-4c9c-b274-fc6d7bc027bb', 'delete_equip_global'),
 	
 	('ca1ff51b-9749-4ab1-af57-96d4fbdfac73', 'browse_users_global'),
 	('c2b9fadc-7f26-479c-a0bf-095a39d12d79', 'browse_groups_global'),
 	('03addaa1-a99f-4c03-9096-b64d6ed23cf0', 'browse_rooms_global'),
-	('da03944f-dab1-4ddd-9d6f-f7317bd6ce6e', 'browse_devices_global'),
+	('da03944f-dab1-4ddd-9d6f-f7317bd6ce6e', 'browse_equip_global'),
 	('5213173a-85bb-4612-926a-e870fff30ee9', 'view_user_global'),
 	('22ada866-5626-4c4f-9956-9b7f1f1459be', 'view_group_global'),
 	('369a9c36-457c-4b73-86f2-716aa4c3801a', 'view_room_global'),
-	('835961a5-8dc8-4d9f-8ff8-6c8241a8cc10', 'view_device_global');
+	('835961a5-8dc8-4d9f-8ff8-6c8241a8cc10', 'view_equip_global');
 
 
 

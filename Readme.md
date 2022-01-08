@@ -18,5 +18,5 @@ PG Database Docker Container: Future
     "secret": "pgDBPassword",
     "dbname": "edomcore",
     "host": "localhost",
-    "port": 5433
+    "port": 5432
 }

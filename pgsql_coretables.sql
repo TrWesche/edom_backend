@@ -24,7 +24,7 @@ CREATE TABLE "groups" (
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE TABLE "devices" (
+CREATE TABLE "equipment" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text NOT NULL,
   "category" text NOT NULL,
@@ -93,9 +93,9 @@ CREATE TABLE "user_groups" (
   "group_id" uuid
 );
 
-CREATE TABLE "user_devices" (
+CREATE TABLE "user_equipment" (
   "user_id" uuid,
-  "device_id" uuid
+  "equip_id" uuid
 );
 
 CREATE TABLE "user_rooms" (
@@ -123,9 +123,9 @@ CREATE TABLE "user_grouproles" (
   "grouprole_id" uuid
 );
 
-CREATE TABLE "group_devices" (
+CREATE TABLE "group_equipment" (
   "group_id" uuid,
-  "device_id" uuid
+  "equip_id" uuid
 );
 
 CREATE TABLE "group_rooms" (
@@ -133,9 +133,9 @@ CREATE TABLE "group_rooms" (
   "room_id" uuid
 );
 
-CREATE TABLE "room_devices" (
+CREATE TABLE "room_equipment" (
   "room_id" uuid,
-  "device_id" uuid
+  "equip_id" uuid
 );
 
 CREATE TABLE "room_chat_log" (
@@ -173,9 +173,9 @@ ALTER TABLE "user_groups" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") 
 
 ALTER TABLE "user_groups" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_devices" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_equipment" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_equipment" ADD FOREIGN KEY ("equip_id") REFERENCES "equipment" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "user_rooms" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
 
@@ -197,17 +197,17 @@ ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("i
 
 ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_devices" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_equipment" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_equipment" ADD FOREIGN KEY ("equip_id") REFERENCES "equipment" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "group_rooms" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "group_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_devices" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
+ALTER TABLE "room_equipment" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_devices" ADD FOREIGN KEY ("device_id") REFERENCES "devices" ("id") ON DELETE NO ACTION;
+ALTER TABLE "room_equipment" ADD FOREIGN KEY ("equip_id") REFERENCES "equipment" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 

@@ -2,14 +2,14 @@
 import RoomRepo, { RoomObjectProps } from "../repositories/room.repository";
 
 // Schemas
-import { RoomCreateProps } from "../schemas/room/roomCreateSchema";
+import { UserRoomCreateProps } from "../schemas/room/userRoomCreateSchema";
 
 // Utility Functions
 import ExpressError from "../utils/expresError";
 
 
 class RoomModel {
-    static async create_user_room(data: RoomCreateProps) {
+    static async create_user_room(data: UserRoomCreateProps) {
         if (!data.name) {
             throw new ExpressError("Invalid Create Room Call", 400);
         }
@@ -19,7 +19,7 @@ class RoomModel {
     };
 
 
-    static async create_group_room(group_id: string, data: RoomCreateProps) {
+    static async create_group_room(group_id: string, data: UserRoomCreateProps) {
         //TODO
     };
 

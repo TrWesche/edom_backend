@@ -11,10 +11,13 @@ import { hostname } from "os";
 import { certificate, port, privatekey, sessionSecret } from "./config/config";
 
 // Router Imports
-import roomRouter from "./routers/roomRouter";
 import userRouter from "./routers/userRouter";
-import userRobotRouter from "./routers/userRobotRouter";
-import groupRobotRouter = require("./routers/groupRobotRouter");
+import userRoomRouter from "./routers/userRoomRouter";
+import userEquipRouter from "./routers/userEquipRouter";
+
+import groupRouter from "./routers/groupRouter";
+import groupRoomRouter from "./routers/groupRoomRouter";
+import groupEquipRouter from "./routers/groupEquipRouter";
 
 // Middleware Imports
 import authMW from "./middleware/authorizationMW";
@@ -22,6 +25,7 @@ import groupMW from "./middleware/groupMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
+
 
 
 
@@ -57,12 +61,12 @@ app.use(session({
 }))
 
 app.use("/user", userRouter);
-app.use("/user/robots", userRobotRouter);
+app.use("/user/equip", authMW.loadSitePermissions, userEquipRouter);
+app.use("/user/room", authMW.loadSitePermissions, userRoomRouter);
 
-// app.use("/group", groupRouter);
-app.use("/group/:groupID/robots", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRobotRouter);
-
-app.use("/room", roomRouter);
+app.use("/group", groupRouter);
+app.use("/group/:groupID/equip", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
+app.use("/group/:groupID/room", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
 
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);

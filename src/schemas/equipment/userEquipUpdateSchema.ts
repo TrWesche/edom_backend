@@ -2,13 +2,14 @@ import Ajv, {JSONSchemaType} from "ajv";
 
 const ajv = new Ajv();
 
-export interface RoomUpdateProps {
+export interface UserEquipUpdateProps {
     name: string
     description: string
     public: boolean
+    config: object
 };
 
-const schema: JSONSchemaType<RoomUpdateProps> = {
+const schema: JSONSchemaType<UserEquipUpdateProps> = {
     type: "object",
     properties: {
         name: {
@@ -26,6 +27,10 @@ const schema: JSONSchemaType<RoomUpdateProps> = {
             $id: "#/properties/public",
             type: "boolean",
             default: false
+        },
+        config: {
+            $id: "#/properties/config",
+            type: "object"
         }
     },
     required: [
@@ -33,6 +38,6 @@ const schema: JSONSchemaType<RoomUpdateProps> = {
     additionalProperties: true
 };
 
-const validateUpdateRoomSchema = ajv.compile(schema)
+const validateUserEquipUpdateSchema = ajv.compile(schema)
 
-export default validateUpdateRoomSchema;
+export default validateUserEquipUpdateSchema;

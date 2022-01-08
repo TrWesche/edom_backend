@@ -8,10 +8,12 @@ var mqtt_1 = require("./communication/mqtt");
 var websocket_1 = require("./communication/websocket");
 var config_1 = require("./config/config");
 // Router Imports
-var roomRouter_1 = require("./routers/roomRouter");
 var userRouter_1 = require("./routers/userRouter");
-var userRobotRouter_1 = require("./routers/userRobotRouter");
-var groupRobotRouter = require("./routers/groupRobotRouter");
+var userRoomRouter_1 = require("./routers/userRoomRouter");
+var userEquipRouter_1 = require("./routers/userEquipRouter");
+var groupRouter_1 = require("./routers/groupRouter");
+var groupRoomRouter_1 = require("./routers/groupRoomRouter");
+var groupEquipRouter_1 = require("./routers/groupEquipRouter");
 // Middleware Imports
 var authorizationMW_1 = require("./middleware/authorizationMW");
 var groupMW_1 = require("./middleware/groupMW");
@@ -45,10 +47,11 @@ app.use((0, redis_1.session)({
     resave: redis_1.redisConfig.resave
 }));
 app.use("/user", userRouter_1["default"]);
-app.use("/user/robots", userRobotRouter_1["default"]);
-// app.use("/group", groupRouter);
-app.use("/group/:groupID/robots", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRobotRouter);
-app.use("/room", roomRouter_1["default"]);
+app.use("/user/equip", authorizationMW_1["default"].loadSitePermissions, userEquipRouter_1["default"]);
+app.use("/user/room", authorizationMW_1["default"].loadSitePermissions, userRoomRouter_1["default"]);
+app.use("/group", groupRouter_1["default"]);
+app.use("/group/:groupID/equip", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupEquipRouter_1["default"]);
+app.use("/group/:groupID/room", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRoomRouter_1["default"]);
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));
 });
