@@ -12,10 +12,18 @@ var schema = {
             "default": "",
             minLength: 1
         },
+        category_id: {
+            $id: "#/properties/category_id",
+            type: "string"
+        },
+        headline: {
+            $id: "#/properties/headline",
+            type: "string",
+            maxLength: 255
+        },
         description: {
             $id: "#/properties/description",
-            type: "string",
-            "default": ""
+            type: "string"
         },
         public: {
             $id: "#/properties/public",

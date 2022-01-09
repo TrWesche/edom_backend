@@ -87,33 +87,33 @@ class EquipModel {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/ 
     */
-    static async retrieve_equip_by_equip_id(equipID: string) {
-        const equip = await EquipRepo.fetch_equip_by_equip_id(equipID);
+    static async retrieve_equip_by_equip_id(equipID: string, equipPublic?: boolean) {
+        const equip = await EquipRepo.fetch_equip_by_equip_id(equipID, equipPublic);
         return equip;
     };
 
-    static async retrieve_equip_all_paginated(limit: number, offset: number) {
-        const equip = await EquipRepo.fetch_equip_all_paginated(limit, offset);
+    static async retrieve_equip_list_paginated(limit: number, offset: number) {
+        const equip = await EquipRepo.fetch_equip_list_paginated(limit, offset);
         return equip;
     }
 
     static async retrieve_user_equip_public(userID: string) {
-        const equip = await EquipRepo.fetch_public_equip_by_user_id(userID);
+        const equip = await EquipRepo.fetch_equip_by_user_id(userID, true);
         return equip;
     };
 
     static async retrieve_user_equip_all(userID: string) {
-        const equip = await EquipRepo.fetch_all_equip_by_user_id(userID);
+        const equip = await EquipRepo.fetch_equip_by_user_id(userID);
         return equip;
     };
 
     static async retrieve_group_equip_public(groupID: string) {
-        const equip = await EquipRepo.fetch_public_equip_by_group_id(groupID);
+        const equip = await EquipRepo.fetch_equip_by_group_id(groupID, true);
         return equip;
     };
 
     static async retrieve_group_equip_all(groupID: string) {
-        const equip = await EquipRepo.fetch_all_equip_by_group_id(groupID);
+        const equip = await EquipRepo.fetch_equip_by_group_id(groupID);
         return equip;
     };
 

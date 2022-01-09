@@ -26,11 +26,13 @@ const userEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-userEquipRouter.post("/create", siteMW.defineActionPermissions(["view", "create"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const reqValues: UserEquipCreateProps = {
             name: req.body.name,
+            category_id: req.body.category_id,
+            headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
             config: req.body.config
@@ -65,7 +67,7 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["view", "create"
   |_| \_\_____/_/   \_\____/ 
 */
 
-userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["view"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
         if (!queryData) {
@@ -86,7 +88,7 @@ userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["view"]), authM
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["view", "update"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const prevValues = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
@@ -96,6 +98,8 @@ userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["view", "upda
 
         const updateValues: UserEquipUpdateProps = {
             name: req.body.name,
+            category_id: req.body.category_id,
+            headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
             config: req.body.config
@@ -136,7 +140,7 @@ userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["view", "upda
   |____/|_____|_____|_____| |_| |_____|
 */
 
-userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["view", "delete"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError(`Must be logged in to delete equipment`, 400);

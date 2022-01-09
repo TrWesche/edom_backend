@@ -31,6 +31,8 @@ groupEquipRouter.post("/create", groupMW.defineActionPermissions(["view", "creat
         // Preflight
         const reqValues: GroupEquipCreateProps = {
             name: req.body.name,
+            category_id: req.body.category_id,
+            headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
             config: req.body.config
@@ -100,6 +102,8 @@ groupEquipRouter.patch("/:equipID", groupMW.defineActionPermissions(["view", "up
 
         const updateValues: GroupEquipUpdateProps = {
             name: req.body.name,
+            category_id: req.body.category_id,
+            headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
             config: req.body.config

@@ -11,6 +11,8 @@ import { hostname } from "os";
 import { certificate, port, privatekey, sessionSecret } from "./config/config";
 
 // Router Imports
+import equipRouter from "./routers/equipRouter";
+
 import userRouter from "./routers/userRouter";
 import userRoomRouter from "./routers/userRoomRouter";
 import userEquipRouter from "./routers/userEquipRouter";
@@ -25,8 +27,6 @@ import groupMW from "./middleware/groupMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
-
-
 
 
 const corsOptions = {
@@ -59,6 +59,8 @@ app.use(session({
     saveUninitialized: redisConfig.saveUninitialized,
     resave: redisConfig.resave
 }))
+
+app.use("/equip", equipRouter);
 
 app.use("/user", userRouter);
 app.use("/user/equip", authMW.loadSitePermissions, userEquipRouter);

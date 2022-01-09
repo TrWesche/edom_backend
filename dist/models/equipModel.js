@@ -158,12 +158,12 @@ var EquipModel = /** @class */ (function () {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/
     */
-    EquipModel.retrieve_equip_by_equip_id = function (equipID) {
+    EquipModel.retrieve_equip_by_equip_id = function (equipID, equipPublic) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_equip_id(equipID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_equip_id(equipID, equipPublic)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -172,12 +172,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_equip_all_paginated = function (limit, offset) {
+    EquipModel.retrieve_equip_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_all_paginated(limit, offset)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_list_paginated(limit, offset)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -190,7 +190,7 @@ var EquipModel = /** @class */ (function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_public_equip_by_user_id(userID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_id(userID, true)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -204,7 +204,7 @@ var EquipModel = /** @class */ (function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_all_equip_by_user_id(userID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_id(userID)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -218,7 +218,7 @@ var EquipModel = /** @class */ (function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_public_equip_by_group_id(groupID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_id(groupID, true)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -232,7 +232,7 @@ var EquipModel = /** @class */ (function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_all_equip_by_group_id(groupID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_id(groupID)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];

@@ -55,7 +55,7 @@ var userEquipRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["view", "create"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["read_equip_self", "create_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -64,6 +64,8 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["vi
                 _b.trys.push([0, 2, , 3]);
                 reqValues = {
                     name: req.body.name,
+                    category_id: req.body.category_id,
+                    headline: req.body.headline,
                     description: req.body.description,
                     public: req.body.public,
                     config: req.body.config
@@ -95,7 +97,7 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["vi
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -122,7 +124,7 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["v
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions(["view", "update"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -137,6 +139,8 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
                 ;
                 updateValues_1 = {
                     name: req.body.name,
+                    category_id: req.body.category_id,
+                    headline: req.body.headline,
                     description: req.body.description,
                     public: req.body.public,
                     config: req.body.config
@@ -174,7 +178,7 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissions(["view", "delete"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "delete_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
     return __generator(this, function (_b) {

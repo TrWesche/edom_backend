@@ -68,14 +68,24 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_by_equip_id = function (equipID) {
+    EquipmentRepo.fetch_equip_by_equip_id = function (equipID, equipPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_2;
+            var query, queryParams, result, rval, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, public, config\n                FROM equipment\n                WHERE id = $1", [equipID])];
+                        query = void 0;
+                        queryParams = [];
+                        if (equipPublic !== undefined) {
+                            query = "\n                    SELECT id, name, description, public, config\n                    FROM equipment\n                    WHERE id = $1 AND public = $2";
+                            queryParams.push(equipID, equipPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, description, public, config\n                    FROM equipment\n                    WHERE id = $1";
+                            queryParams.push(equipID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -89,14 +99,14 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_all_paginated = function (limit, offset) {
+    EquipmentRepo.fetch_equip_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, public, config\n                FROM equipment\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, config\n                FROM equipment\n                LIMIT $1\n                OFFSET $2\n                WHERE equipment.public = TRUE", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -206,42 +216,31 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_public_equip_by_user_id = function (userID) {
+    EquipmentRepo.fetch_equip_by_user_id = function (userID, equipPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_8;
+            var query, queryParams, result, rval, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, config\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND equipment.public = TRUE", [userID])];
+                        query = void 0;
+                        queryParams = [];
+                        if (equipPublic !== undefined) {
+                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1 AND equipment.public = $2";
+                            queryParams.push(userID, equipPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
+                            queryParams.push(userID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
                         error_8 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_8), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    EquipmentRepo.fetch_all_equip_by_user_id = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_9;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, public, config\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1", [userID])];
-                    case 1:
-                        result = _a.sent();
-                        rval = result.rows;
-                        return [2 /*return*/, rval];
-                    case 2:
-                        error_9 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_9), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by user id - ".concat(error_8), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -255,7 +254,7 @@ var EquipmentRepo = /** @class */ (function () {
     //     \____|_| \_\\___/ \___/|_|    
     EquipmentRepo.associate_group_to_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_10;
+            var result, rval, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -269,8 +268,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_10 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association group -> equipment - ".concat(error_10), 500);
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association group -> equipment - ".concat(error_9), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -279,7 +278,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.disassociate_group_from_equip = function (groupId, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_11;
+            var result, rval, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -293,50 +292,39 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association group -> equipment - ".concat(error_10), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.fetch_equip_by_group_id = function (groupID, equipPublic) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = void 0;
+                        queryParams = [];
+                        if (equipPublic !== undefined) {
+                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1 AND equipment.public = $2";
+                            queryParams.push(groupID, equipPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
+                            queryParams.push(groupID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
                         error_11 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association group -> equipment - ".concat(error_11), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    EquipmentRepo.fetch_public_equip_by_group_id = function (groupID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_12;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, config\n                FROM equipment\n                RIGHT JOIN group_equipment\n                ON equipment.id = group_equipment.equip_id\n                WHERE group_equipment.group_id = $1 AND equipment.public = TRUE", [groupID])];
-                    case 1:
-                        result = _a.sent();
-                        rval = result.rows;
-                        return [2 /*return*/, rval];
-                    case 2:
-                        error_12 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_12), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    EquipmentRepo.fetch_all_equip_by_group_id = function (groupID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_13;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, public, config\n                FROM equipment\n                RIGHT JOIN group_equipment\n                ON equipment.id = group_equipment.equip_id\n                WHERE group_equipment.group_id = $1", [groupID])];
-                    case 1:
-                        result = _a.sent();
-                        rval = result.rows;
-                        return [2 /*return*/, rval];
-                    case 2:
-                        error_13 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_13), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });

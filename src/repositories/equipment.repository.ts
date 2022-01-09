@@ -6,6 +6,8 @@ import pgdb from "../databases/postgreSQL/pgdb";
 export interface EquipObjectProps {
     id?: string,
     name?: string,
+    category_id?: string,
+    headline?: string,
     description?: string,
     public?: boolean,
     config?: object 
@@ -34,15 +36,26 @@ class EquipmentRepo {
         }
     };
 
-
-    static async fetch_equip_by_equip_id(equipID: string) {
+    static async fetch_equip_by_equip_id(equipID: string, equipPublic?: boolean) {
         try {
-            const result = await pgdb.query(`
-                SELECT id, name, description, public, config
-                FROM equipment
-                WHERE id = $1`,
-                [equipID]
-            );
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            if (equipPublic !== undefined) {
+                query = `
+                    SELECT id, name, description, public, config
+                    FROM equipment
+                    WHERE id = $1 AND public = $2`;
+                queryParams.push(equipID, equipPublic);
+            } else {
+                query = `
+                    SELECT id, name, description, public, config
+                    FROM equipment
+                    WHERE id = $1`;
+                queryParams.push(equipID);
+            }
+
+            const result = await pgdb.query(query, queryParams);
     
             const rval: EquipObjectProps | undefined = result.rows[0];
             return rval;
@@ -51,14 +64,14 @@ class EquipmentRepo {
         }
     };
 
-
-    static async fetch_equip_all_paginated(limit: number, offset: number) {
+    static async fetch_equip_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
-                SELECT id, name, description, public, config
+                SELECT id, name, description, config
                 FROM equipment
                 LIMIT $1
-                OFFSET $2`,
+                OFFSET $2
+                WHERE equipment.public = TRUE`,
                 [limit, offset]
             );
     
@@ -68,7 +81,6 @@ class EquipmentRepo {
             throw new ExpressError(`An Error Occured: Unable to locate equipment - ${error}`, 500);
         }
     };
-
 
     static async update_equip_by_equip_id(equipID: string, equipData: EquipObjectProps) {
         try {
@@ -87,7 +99,6 @@ class EquipmentRepo {
             throw new ExpressError(`An Error Occured: Unable to update equipment - ${error}`, 500);
         }
     };
-
 
     static async delete_equip_by_equip_id(equipID: string) {
         try {
@@ -147,39 +158,35 @@ class EquipmentRepo {
         }
     };
 
-    static async fetch_public_equip_by_user_id(userID: string) {
+    static async fetch_equip_by_user_id(userID: string, equipPublic?: boolean) {
         try {
-            const result = await pgdb.query(`
-                SELECT id, name, description, config
-                FROM equipment
-                RIGHT JOIN user_equipment
-                ON equipment.id = user_equipment.equip_id
-                WHERE user_equipment.user_id = $1 AND equipment.public = TRUE`,
-                [userID]
-            );
-    
-            const rval: Array<EquipObjectProps> | undefined = result.rows;
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment by group id - ${error}`, 500);
-        }
-    };
+            let query: string;
+            let queryParams: Array<any> = [];
 
-    static async fetch_all_equip_by_user_id(userID: string) {
-        try {
-            const result = await pgdb.query(`
-                SELECT id, name, description, public, config
-                FROM equipment
-                RIGHT JOIN user_equipment
-                ON equipment.id = user_equipment.equip_id
-                WHERE user_equipment.user_id = $1`,
-                [userID]
-            );
+            if (equipPublic !== undefined) {
+                query = `
+                    SELECT id, name, description, config
+                    FROM equipment
+                    RIGHT JOIN user_equipment
+                    ON equipment.id = user_equipment.equip_id
+                    WHERE user_equipment.user_id = $1 AND equipment.public = $2`
+                queryParams.push(userID, equipPublic);
+            } else {
+                query = `
+                    SELECT id, name, description, config
+                    FROM equipment
+                    RIGHT JOIN user_equipment
+                    ON equipment.id = user_equipment.equip_id
+                    WHERE user_equipment.user_id = $1`;
+                queryParams.push(userID);
+            }
+
+            const result = await pgdb.query(query, queryParams);
     
             const rval: Array<EquipObjectProps> | undefined = result.rows;
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment by group id - ${error}`, 500);
+            throw new ExpressError(`An Error Occured: Unable to locate equipment by user id - ${error}`, 500);
         }
     };
 
@@ -225,36 +232,30 @@ class EquipmentRepo {
         }
     };
 
-
-    static async fetch_public_equip_by_group_id(groupID: string) {
+    static async fetch_equip_by_group_id(groupID: string, equipPublic?: boolean) {
         try {
-            const result = await pgdb.query(`
-                SELECT id, name, description, config
-                FROM equipment
-                RIGHT JOIN group_equipment
-                ON equipment.id = group_equipment.equip_id
-                WHERE group_equipment.group_id = $1 AND equipment.public = TRUE`,
-                [groupID]
-            );
-    
-            const rval: Array<EquipObjectProps> | undefined = result.rows;
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment by group id - ${error}`, 500);
-        }
-    };
+            let query: string;
+            let queryParams: Array<any> = [];
 
+            if (equipPublic !== undefined) {
+                query = `
+                    SELECT id, name, description, config
+                    FROM equipment
+                    RIGHT JOIN group_equipment
+                    ON equipment.id = group_equipment.equip_id
+                    WHERE group_equipment.group_id = $1 AND equipment.public = $2`
+                queryParams.push(groupID, equipPublic);
+            } else {
+                query = `
+                    SELECT id, name, description, config
+                    FROM equipment
+                    RIGHT JOIN group_equipment
+                    ON equipment.id = group_equipment.equip_id
+                    WHERE group_equipment.group_id = $1`
+                queryParams.push(groupID);
+            }
 
-    static async fetch_all_equip_by_group_id(groupID: string) {
-        try {
-            const result = await pgdb.query(`
-                SELECT id, name, description, public, config
-                FROM equipment
-                RIGHT JOIN group_equipment
-                ON equipment.id = group_equipment.equip_id
-                WHERE group_equipment.group_id = $1`,
-                [groupID]
-            );
+            const result = await pgdb.query(query, queryParams);
     
             const rval: Array<EquipObjectProps> | undefined = result.rows;
             return rval;
