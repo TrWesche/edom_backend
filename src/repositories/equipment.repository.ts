@@ -17,17 +17,27 @@ export interface EquipObjectProps {
 class EquipmentRepo {
     static async create_new_equip(equipData: EquipObjectProps) {
         try {
-            const result = await pgdb.query(
-                `INSERT INTO equipment 
-                    (name, description, public, config) 
-                VALUES ($1, $2, $3, $4) 
-                RETURNING id, name, description, public, config`,
-            [
-                equipData.name,
-                equipData.description,
-                equipData.public,
-                equipData.config
-            ]);
+            let queryColumns: Array<string> = [];
+            let queryColIdxs: Array<string> = [];
+            let queryParams: Array<any> = [];
+            
+            let idx = 1;
+            for (const key in equipData) {
+                if (equipData[key] !== undefined) {
+                    queryColumns.push(key);
+                    queryColIdxs.push(`$${idx}`);
+                    queryParams.push(equipData[key]);
+                    idx++;
+                }
+            };
+
+            const query = `
+                INSERT INTO equipment 
+                    (${queryColumns.join(",")}) 
+                VALUES (${queryColIdxs.join(",")}) 
+                RETURNING id, name, category_id, headline, description, public, config`;
+
+            const result = await pgdb.query(query, queryParams);
             
             const rval: EquipObjectProps | undefined = result.rows[0];
             return rval;
@@ -43,13 +53,13 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, description, public, config
+                    SELECT id, name, category_id, headline, description, public, config
                     FROM equipment
                     WHERE id = $1 AND public = $2`;
                 queryParams.push(equipID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, description, public, config
+                    SELECT id, name, category_id, headline, description, public, config
                     FROM equipment
                     WHERE id = $1`;
                 queryParams.push(equipID);
@@ -67,7 +77,7 @@ class EquipmentRepo {
     static async fetch_equip_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
-                SELECT id, name, description, config
+                SELECT id, name, category_id, headline
                 FROM equipment
                 LIMIT $1
                 OFFSET $2
@@ -165,7 +175,7 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, description, config
+                    SELECT id, name, category_id, headline
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -173,7 +183,7 @@ class EquipmentRepo {
                 queryParams.push(userID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, description, config
+                    SELECT id, name, category_id, headline
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -239,7 +249,7 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, description, config
+                    SELECT id, name, category_id, headline
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
@@ -247,7 +257,7 @@ class EquipmentRepo {
                 queryParams.push(groupID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, description, config
+                    SELECT id, name, category_id, headline
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
