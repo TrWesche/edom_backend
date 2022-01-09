@@ -95,24 +95,24 @@ class EquipModel {
     static async retrieve_equip_list_paginated(limit: number, offset: number) {
         const equip = await EquipRepo.fetch_equip_list_paginated(limit, offset);
         return equip;
-    }
+    };
 
-    static async retrieve_user_equip_public(userID: string) {
+    static async retrieve_user_equip_by_user_id_public(userID: string) {
         const equip = await EquipRepo.fetch_equip_by_user_id(userID, true);
         return equip;
     };
 
-    static async retrieve_user_equip_all(userID: string) {
+    static async retrieve_user_equip_by_user_id_all(userID: string) {
         const equip = await EquipRepo.fetch_equip_by_user_id(userID);
         return equip;
     };
 
-    static async retrieve_group_equip_public(groupID: string) {
+    static async retrieve_group_equip_by_group_id_public(groupID: string) {
         const equip = await EquipRepo.fetch_equip_by_group_id(groupID, true);
         return equip;
     };
 
-    static async retrieve_group_equip_all(groupID: string) {
+    static async retrieve_group_equip_by_group_id_all(groupID: string) {
         const equip = await EquipRepo.fetch_equip_by_group_id(groupID);
         return equip;
     };
@@ -174,7 +174,7 @@ class EquipModel {
 
             // Delete User -> Equipment Association Entry
             const equipAssoc = await EquipRepo.disassociate_user_from_equip(userID, equipID);
-            if (!equipAssoc?.equipID) {
+            if (!equipAssoc?.equip_id) {
                 throw new ExpressError("Error while disassociating user from equipment entry", 500);
                 
             };
@@ -202,7 +202,7 @@ class EquipModel {
 
             // Delete Group -> Equipment Association Entry
             const equipAssoc = await EquipRepo.disassociate_group_from_equip(groupID, equipID);
-            if (!equipAssoc?.equipID) {
+            if (!equipAssoc?.equip_id) {
                 throw new ExpressError("Error while disassociating group from equipment entry", 500);
                 
             };

@@ -2,7 +2,7 @@ import Ajv, {JSONSchemaType} from "ajv";
 
 const ajv = new Ajv();
 
-export interface UserRoomCreateProps {
+export interface GroupRoomCreateProps {
     name: string
     category_id: string
     headline: string
@@ -10,7 +10,7 @@ export interface UserRoomCreateProps {
     public: boolean
 };
 
-const schema: JSONSchemaType<UserRoomCreateProps> = {
+const schema: JSONSchemaType<GroupRoomCreateProps> = {
     type: "object",
     properties: {
         name: {
@@ -44,6 +44,6 @@ const schema: JSONSchemaType<UserRoomCreateProps> = {
     additionalProperties: true
 };
 
-const validateUserRoomCreateSchema = ajv.compile(schema)
+const validateGroupRoomCreateSchema = ajv.compile(schema)
 
-export default validateUserRoomCreateSchema;
+export default validateGroupRoomCreateSchema;

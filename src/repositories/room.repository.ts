@@ -224,7 +224,7 @@ class RoomRepo {
         }
     };
 
-    static async disassociate_group_from_equip(groupId: string, roomID: string) {
+    static async disassociate_group_from_room(groupId: string, roomID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM group_rooms
@@ -242,7 +242,7 @@ class RoomRepo {
         }
     };
 
-    static async fetch_equip_by_group_id(groupID: string, roomPublic?: boolean) {
+    static async fetch_rooms_by_group_id(groupID: string, roomPublic?: boolean) {
         try {
             let query: string;
             let queryParams: Array<any> = [];

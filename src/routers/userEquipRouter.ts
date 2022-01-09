@@ -66,6 +66,25 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+userEquipRouter.get("/all", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.user?.id) {
+            throw new ExpressError("Invalid Call: Get User Equipment - All", 401);
+        };
+
+        // Processing
+        const queryData = await EquipModel.retrieve_user_equip_by_user_id_all(req.user?.id);
+        if (!queryData) {
+            throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+        };
+        
+        return res.json({equip: [queryData]});
+    } catch (error) {
+        next(error)
+    }
+});
+
 
 userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {

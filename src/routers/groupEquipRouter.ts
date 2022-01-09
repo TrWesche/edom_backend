@@ -66,6 +66,25 @@ groupEquipRouter.post("/create", groupMW.defineActionPermissions(["view", "creat
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+groupEquipRouter.get("/all", groupMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.groupID) {
+            throw new ExpressError("Invalid Call: Get Group Equipment - All", 401);
+        };
+
+        // Processing
+        const queryData = await EquipModel.retrieve_group_equip_by_group_id_all(req.groupID);
+        if (!queryData) {
+            throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+        };
+        
+        return res.json({equip: [queryData]});
+    } catch (error) {
+        next(error)
+    }
+});
+
 
 groupEquipRouter.get("/:equipID", groupMW.defineActionPermissions(["view"]), authMW.validatePermissions, async (req, res, next) => {
     try {
