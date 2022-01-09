@@ -39,8 +39,7 @@ CREATE TABLE "equipment" (
 CREATE TABLE "rooms" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text NOT NULL,
-  "category" text NOT NULL,
-  "sub_category" text,
+  "category_id" uuid NOT NULL,
   "headline" text,
   "description" text,
   "public" boolean DEFAULT false,
@@ -85,6 +84,13 @@ CREATE TABLE "grouppermissions" (
 );
 
 CREATE TABLE "equipment_categories" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "room_categories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text UNIQUE NOT NULL,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
@@ -172,6 +178,8 @@ CREATE TABLE "group_chat_log" (
 );
 
 ALTER TABLE "equipment" ADD FOREIGN KEY ("category_id") REFERENCES "equipment_categories" ("id") ON DELETE NO ACTION;
+
+ALTER TABLE "rooms" ADD FOREIGN KEY ("category_id") REFERENCES "room_categories" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "grouproles" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
 
