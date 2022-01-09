@@ -128,7 +128,7 @@ class SitePermissionsRepo {
         }
     };
 
-    static async delete_user_site_roles(userID: string) {
+    static async delete_user_site_roles_all(userID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM user_siteroles
@@ -154,7 +154,7 @@ class SitePermissionsRepo {
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete user site roles - ${error}`, 500);
         }
-    }
+    };
 
     static async fetch_roles_by_user_id(userID: string) {
         try {

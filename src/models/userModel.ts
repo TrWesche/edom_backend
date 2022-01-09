@@ -174,7 +174,7 @@ class UserModel {
     try {
       await TransactionRepo.begin_transaction();
       // Clean Up User Site Roles:
-      const siteRoleCleanupSuccess = await SitePermissionsRepo.delete_user_site_roles(id);
+      const siteRoleCleanupSuccess = await SitePermissionsRepo.delete_user_site_roles_all(id);
       if (!siteRoleCleanupSuccess) {
         throw new ExpressError(`Site Role Cleanup Failed`, 500);
       }
