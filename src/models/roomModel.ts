@@ -88,8 +88,8 @@ class RoomModel {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/ 
     */
-    static async retrieve_room_by_room_id(roomID: string) {
-        const room = RoomRepo.fetch_room_by_room_id(roomID);
+    static async retrieve_room_by_room_id(roomID: string, roomPublic?: boolean) {
+        const room = RoomRepo.fetch_room_by_room_id(roomID, roomPublic);
         return room;
     };
 

@@ -18,7 +18,7 @@ groupRouter.post("/create", (req, res, next) => {
     res.json({roomID, userID})
 })
 
-groupRouter.get("/:groupID", (req, res, next) => {
+groupRouter.get("/gp/:groupID", (req, res, next) => {
     try {
         const userID = uuidv4();
         // console.log(`MSG rtcRouter.js: Adding Participant: ${userId}`);

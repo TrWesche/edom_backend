@@ -5,7 +5,7 @@ import * as express from "express";
 import ExpressError from "../utils/expresError";
 
 // Model Imports
-import EquipModel from "../models/equipModel";
+import RoomModel from "../models/roomModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
@@ -20,7 +20,7 @@ import siteMW from "../middleware/siteMW";
 // }
 
 
-const equipRouter = express.Router();
+const roomRouter = express.Router();
 
 
 /* ____  _____    _    ____  
@@ -30,7 +30,7 @@ const equipRouter = express.Router();
   |_| \_\_____/_/   \_\____/ 
 */
 
-equipRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRouter.get("/list", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
@@ -49,60 +49,60 @@ equipRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"]), 
 
 
         // Processing
-        const queryData = await EquipModel.retrieve_equip_list_paginated(limit, offset);
+        const queryData = await RoomModel.retrieve_room_list_paginated(limit, offset);
         if (!queryData) {
-            throw new ExpressError("Equipment Not Found.", 404);
+            throw new ExpressError("Rooms Not Found.", 404);
         }
         
-        return res.json({equip: queryData});
+        return res.json({rooms: queryData});
     } catch (error) {
         next(error)
     }
 });
 
 
-equipRouter.get("/user/:userID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRouter.get("/user/:userID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
-        const queryData = await EquipModel.retrieve_user_equip_by_user_id_public(req.params.userID);
+        const queryData = await RoomModel.retrieve_user_rooms_by_user_id_public(req.params.userID);
         if (!queryData) {
-            throw new ExpressError("Equipment Not Found: Get User Equipment - Public", 404);
+            throw new ExpressError("Equipment Not Found: Get User Rooms - Public", 404);
         };
         
-        return res.json({equip: queryData});
+        return res.json({rooms: queryData});
     } catch (error) {
         next(error)
     }
 });
 
 
-equipRouter.get("/group/:groupID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRouter.get("/group/:groupID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
-        const queryData = await EquipModel.retrieve_group_equip_by_group_id_public(req.params.groupID);
+        const queryData = await RoomModel.retrieve_group_rooms_by_group_id_public(req.params.groupID);
         if (!queryData) {
-            throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
+            throw new ExpressError("Equipment Not Found: Get Group Rooms - Public", 404);
         };
         
-        return res.json({equip: queryData});
+        return res.json({rooms: queryData});
     } catch (error) {
         next(error)
     }
 });
 
 
-equipRouter.get("/:equipID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRouter.get("/:roomID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
-        const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID, true);
+        const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID, true);
         if (!queryData) {
-            throw new ExpressError("Equipment Not Found.", 404);
+            throw new ExpressError("Room Not Found.", 404);
         }
         
-        return res.json({equip: [queryData]});
+        return res.json({rooms: [queryData]});
     } catch (error) {
         next(error)
     }
 });
 
 
-export default equipRouter;
+export default roomRouter;

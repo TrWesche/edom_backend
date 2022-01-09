@@ -118,7 +118,7 @@ userRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), a
     }
 })
 
-userRouter.get("/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRouter.get("/up/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: User needs a public / private selection & additional details
         const queryData = await UserModel.retrieve_user_by_username(req.params.username);

@@ -12,6 +12,7 @@ import { certificate, port, privatekey, sessionSecret } from "./config/config";
 
 // Router Imports
 import equipRouter from "./routers/equipRouter";
+import roomRouter from "./routers/roomRouter";
 
 import userRouter from "./routers/userRouter";
 import userRoomRouter from "./routers/userRoomRouter";
@@ -61,6 +62,7 @@ app.use(session({
 }))
 
 app.use("/equip", equipRouter);
+app.use("/room", roomRouter);
 
 app.use("/user", userRouter);
 app.use("/user/equip", authMW.loadSitePermissions, userEquipRouter);
