@@ -87,7 +87,7 @@ class RoomRepo {
             const rval: Array<RoomObjectProps> | undefined = result.rows;
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment - ${error}`, 500);
+            throw new ExpressError(`An Error Occured: Unable to locate rooms - ${error}`, 500);
         }
     };
 
