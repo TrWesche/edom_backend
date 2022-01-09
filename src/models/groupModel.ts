@@ -17,16 +17,53 @@ class GroupModel {
         | |___|  _ <| |___ / ___ \| | | |___ 
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    static async create_group(groupData: GroupCreateProps) {
-        // if (!data.name) {
-        //     throw new ExpressError("Invalid Create Group Call", 400);
-        // };
+    static async create_group(userID: string, data: GroupCreateProps) {
+        // Preflight
+        if (!data.name) {
+            throw new ExpressError("Invalid Create Equipment Call", 400);
+        };
 
-        const group = GroupRepo.create_new_group(groupData);
-        // TODO: When creating a new group it should be immediately populated with default roles & permissions
-        //       This may be a good place to use something like a stored procedure?
+        // Processing
+        try {
+            await TransactionRepo.begin_transaction();
 
-        return group;
+            // Create Equipment in Database
+            const groupEntry = await GroupRepo.create_new_group(data);
+            if (!groupEntry?.id) {
+                throw new ExpressError("Error while creating new group entry", 500);
+            };
+
+            // Populate Standard Group Roles
+            const groupRoles = await GroupPermissionsRepo.create_group_roles_for_new_group(groupEntry.id);
+            if (!groupRoles[0]?.id) {
+                throw new ExpressError("Error while creating group role entries for new group", 500);
+            };
+
+            // Populate Permissions on Newly Created Group Roles
+            const groupPermissions = await GroupPermissionsRepo.create_role_permissions_for_new_group(groupEntry.id);
+            if (!groupPermissions[0]?.id) {
+                throw new ExpressError("Error while creating group role permission entries for new group", 500);
+            };
+
+            const ownerPermission = await GroupPermissionsRepo.fetch_role_by_role_name("owner", groupEntry.id);
+            if (!ownerPermission?.id) {
+                throw new ExpressError("Error while fetching group owner permission entry for new group", 500);
+            };
+
+            // Associate Equipment with Uploading User
+            const userAssoc = await GroupPermissionsRepo.create_user_group_role(userID, ownerPermission.id);
+            if (!userAssoc?.grouprole_id) {
+                throw new ExpressError("Error while associating user to group entry", 500);
+            };
+
+            // Commit to Database
+            await TransactionRepo.commit_transaction();
+
+            return groupEntry;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        };
     };
 
     static async create_role(groupID: string, name: string) {
@@ -102,7 +139,7 @@ class GroupModel {
     };
 
     static async retrieve_user_permissions_by_user_id(userID: string) {
-        const permissions = GroupPermissionsRepo.fetch_permissions_by_user_id(userID);
+        const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
         return permissions;
     };
 

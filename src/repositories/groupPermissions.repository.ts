@@ -9,25 +9,27 @@ export interface GroupRoleProps {
     name?: string
 }
 
-
 export interface GroupPermProps {
     id?: string,
     name?: string
 }
-
 
 export interface GroupRolePermsProps {
     role_id?: string,
     permission_id?: string
 }
 
+export interface GroupUserRoleProps {
+    user_id?: string,
+    grouprole_id?: string
+}
 
 class GroupPermissionsRepo {
     // ROLE Management
     static async create_new_role(groupRoleData: GroupRoleProps) {
         try {
             const result = await pgdb.query(
-                `INSERT INTO groupRoles
+                `INSERT INTO grouproles
                     (name, group_id) 
                 VALUES ($1, $2) 
                 RETURNING id, name, group_id`,
@@ -42,6 +44,35 @@ class GroupPermissionsRepo {
             throw new ExpressError(`An Error Occured: Unable to create new group role - ${error}`, 500);
         }
     }; 
+
+    static async create_group_roles_for_new_group(groupID: string) {
+        try {
+            const newGroupRoles = ["owner", "admin", "manage_room", "manage_equip", "user"];
+            const queryColumns: Array<string> = ["name", "group_id"];
+            const queryColIdxs: Array<string> = [];
+            const queryParams: Array<any> = [];
+            
+            let idx = 1;
+            newGroupRoles.forEach((val) => {
+                queryColIdxs.push(`($${idx}, $${idx+1})`);
+                queryParams.push(val, groupID);
+                idx += 2;
+            });
+
+            const query = `
+                INSERT INTO grouproles 
+                    (${queryColumns.join(",")}) 
+                VALUES ${queryColIdxs.join(",")} 
+                RETURNING id, name, group_id`;
+
+            const result = await pgdb.query(query, queryParams);
+            
+            const rval: Array<GroupRoleProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to create roles for new group - ${error}`, 500);
+        }
+    };
 
     static async fetch_roles_by_group_id(groupID: string) {
         try {
@@ -79,15 +110,15 @@ class GroupPermissionsRepo {
         };
     };
 
-    static async fetch_role_by_role_name(groupRoleName: string) {
+    static async fetch_role_by_role_name(groupID: string, groupRoleName: string) {
         try {
             const result = await pgdb.query(
                 `SELECT id, 
                         name,
                         group_id
                   FROM groupRoles
-                  WHERE name = $1`,
-                  [groupRoleName]
+                  WHERE name = $1 AND group_id = $2`,
+                  [groupRoleName, groupID]
             );
     
             const rval: GroupRoleProps | undefined = result.rows[0];
@@ -143,7 +174,8 @@ class GroupPermissionsRepo {
                 userID, groupRoleID
             ]);
 
-            return result.rows;
+            const rval: GroupUserRoleProps | undefined = result.rows[0];
+            return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to assign user group role - ${error}`, 500);
         }
@@ -177,7 +209,7 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async fetch_group_roles_by_user_id(userID: string) {
+    static async fetch_user_group_roles_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(
                 `SELECT users.id AS user_id,
@@ -200,7 +232,7 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async fetch_group_permissions_by_user_id(userID: string) {
+    static async fetch_user_group_permissions_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(
                 `SELECT DISTINCT
@@ -322,6 +354,64 @@ class GroupPermissionsRepo {
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create new group role permission(s) - ${error}`, 500);
         };
+    };
+
+    static async create_role_permissions_for_new_group(groupID: string) {
+        try {
+            const newGroupPermissions = {
+                owner: [
+                    'create_role', 'read_role', 'update_role', 'delete_role',
+                    'create_user_role', 'read_user_role', 'delete_user_role',
+                    'create_group_user', 'read_group_user', 'delete_group_user',
+                    'create_equip', 'read_equip', 'update_equip', 'delete_equip',
+                    'create_room', 'read_room', 'update_room', 'delete_room'
+                ],
+                admin: [
+                    'read_role',
+                    'create_user_role', 'read_user_role', 'delete_user_role',
+                    'create_group_user', 'read_group_user', 'delete_group_user',
+                    'create_equip', 'read_equip', 'update_equip', 'delete_equip',
+                    'create_room', 'read_room', 'update_room', 'delete_room'
+                ],
+                manage_room: [
+                    'create_room', 'read_room', 'update_room', 'delete_room'
+                ],
+                manage_equip: [
+                    'create_equip', 'read_equip', 'update_equip', 'delete_equip'
+                ],
+                user: [
+                    'read_group_user', 'read_equip', 'read_room'
+                ]
+            };
+
+            const queryColumns: Array<string> = ["grouprole_id", "grouppermission_id"];
+            const queryColIdxs: Array<string> = [];
+            const queryParams: Array<any> = [];
+            
+            let idx = 1;
+            // If this works its super inefficient and should be replaced at some point
+            for (const key in newGroupPermissions) {
+                newGroupPermissions[key].forEach(element => {
+                    queryColIdxs.push(`
+                    (SELECT get_group_role_uuid($${idx}, $${idx+1}), SELECT get_group_permission_uuid($${idx+2}))`);
+                    queryParams.push(key, groupID, element);
+                    idx += 3;
+                });
+            };
+
+            const query = `
+                INSERT INTO grouproles_grouppermissions
+                    (${queryColumns.join(",")}) 
+                VALUES ${queryColIdxs.join(",")} 
+                RETURNING grouprole_id, grouppermission_id`;
+
+            const result = await pgdb.query(query, queryParams);
+            
+            const rval: Array<GroupRoleProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to create role permissions for new group - ${error}`, 500);
+        }
     };
 
     static async fetch_role_permissions_by_role_id(groupRoleID: string) {

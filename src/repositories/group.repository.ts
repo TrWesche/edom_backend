@@ -117,42 +117,42 @@ class GroupRepo {
     // | | | \___ \|  _| | |_) |
     // | |_| |___) | |___|  _ < 
     //  \___/|____/|_____|_| \_\
-    static async associate_user_to_group(userID: string, groupID: string) {
-        try {
-            const result = await pgdb.query(
-                `INSERT INTO user_groups 
-                    (user_id, group_id) 
-                VALUES ($1, $2) 
-                RETURNING user_id, group_id`,
-            [
-                userID,
-                groupID
-            ]);
+    // static async associate_user_to_group(userID: string, groupID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `INSERT INTO user_groups 
+    //                 (user_id, group_id) 
+    //             VALUES ($1, $2) 
+    //             RETURNING user_id, group_id`,
+    //         [
+    //             userID,
+    //             groupID
+    //         ]);
             
-            const rval = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to create group association group -> user - ${error}`, 500);
-        }
-    };
+    //         const rval = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to create group association group -> user - ${error}`, 500);
+    //     }
+    // };
 
-    static async disassociate_user_from_room(userID: string, groupID: string) {
-        try {
-            const result = await pgdb.query(
-                `DELETE FROM user_groups
-                WHERE user_id = $1 AND group_id = $2
-                RETURNING user_id, group_id`,
-            [
-                userID,
-                groupID
-            ]);
+    // static async disassociate_user_from_room(userID: string, groupID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM user_groups
+    //             WHERE user_id = $1 AND group_id = $2
+    //             RETURNING user_id, group_id`,
+    //         [
+    //             userID,
+    //             groupID
+    //         ]);
             
-            const rval = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete group association group -> user - ${error}`, 500);
-        }
-    };
+    //         const rval = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to delete group association group -> user - ${error}`, 500);
+    //     }
+    // };
 
     static async fetch_groups_by_user_id(userID: string, groupPublic?: boolean) {
         try {
