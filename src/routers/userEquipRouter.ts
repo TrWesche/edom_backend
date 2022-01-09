@@ -36,23 +36,23 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self
             description: req.body.description,
             public: req.body.public,
             config: req.body.config
-        }
+        };
 
         if (!req.user?.id) {
             throw new ExpressError(`Must be logged in to create equipment`, 400);
-        }
+        };
 
         if(!validateUserEquipCreateSchema(reqValues)) {
-            throw new ExpressError(`Unable to Create Group Equipment: ${validateUserEquipCreateSchema.errors}`, 400);
-        }
+            throw new ExpressError(`Unable to Create User Equipment: ${validateUserEquipCreateSchema.errors}`, 400);
+        };
 
-        // Process
+        // Processing
         const queryData = await EquipModel.create_user_equip(req.user.id, reqValues);
         if (!queryData) {
             throw new ExpressError("Create Equipment Failed", 400);
-        }
+        };
         
-        return res.json({equip: [queryData]})
+        return res.json({equip: [queryData]});
     } catch (error) {
         next(error)
     }
@@ -79,7 +79,7 @@ userEquipRouter.get("/all", siteMW.defineActionPermissions(["read_equip_self"]),
             throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
         };
         
-        return res.json({equip: [queryData]});
+        return res.json({equip: queryData});
     } catch (error) {
         next(error)
     }
@@ -174,6 +174,6 @@ userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_
     } catch (error) {
         return next(error);
     }
-})
+});
 
 export default userEquipRouter;
