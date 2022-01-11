@@ -9,6 +9,8 @@ import { GroupCreateProps } from "../schemas/group/groupCreateSchema";
 import ExpressError from "../utils/expresError";
 import TransactionRepo from "../repositories/transactionRepository";
 
+// TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
+// the database server and the front end.
 
 class GroupModel {
     /*    ____ ____  _____    _  _____ _____ 
@@ -34,7 +36,7 @@ class GroupModel {
             };
 
             // Populate Standard Group Roles
-            const groupRoles = await GroupPermissionsRepo.create_group_roles_for_new_group(groupEntry.id);
+            const groupRoles = await GroupPermissionsRepo.create_roles_init_new_group(groupEntry.id);
             if (!groupRoles[0]?.id) {
                 throw new ExpressError("Error while creating group role entries for new group", 500);
             };
@@ -51,7 +53,7 @@ class GroupModel {
             };
 
             // Associate Equipment with Uploading User
-            const userAssoc = await GroupPermissionsRepo.create_user_group_role(userID, ownerPermission.id);
+            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, ownerPermission.id);
             if (!userAssoc?.grouprole_id) {
                 throw new ExpressError("Error while associating user to group entry", 500);
             };
@@ -67,28 +69,25 @@ class GroupModel {
     };
 
     static async create_role(groupID: string, name: string) {
-        // if (!groupID || !name) {
-        //     throw new ExpressError("Invalid Create Group Role Call", 400);
-        // };
-
         const roleData: GroupRoleProps = {
             group_id: groupID,
             name: name
         };
 
-        const role = GroupPermissionsRepo.create_new_role(roleData);
+        const role = GroupPermissionsRepo.create_role(roleData);
         return role;
     };
 
-    static async create_permission(groupID: string, name: string) {
-        const permissionData: GroupPermProps = {
-            id: groupID,
-            name: name
-        }
+    // Creating Permissions Should Be Reserved for Site Admins.  This may be something that will come later, but might not even be necessary at all.
+    // static async create_permission(groupID: string, name: string) {
+    //     const permissionData: GroupPermProps = {
+    //         id: groupID,
+    //         name: name
+    //     }
 
-        const permission = GroupPermissionsRepo.create_new_permission(permissionData);
-        return permission;
-    };
+    //     const permission = GroupPermissionsRepo.create_permission(permissionData);
+    //     return permission;
+    // };
 
     static async create_role_permissions(roleID: string, permissionIDs: Array<string>) {
         // if (!roleID || !name) {
@@ -105,7 +104,7 @@ class GroupModel {
                 throw new ExpressError("Error encountered when creating new role permissions", 400);
             }
 
-            if (rolePermissions && rolePermissions.length > 0 && rolePermissions[0].permission_id) {
+            if (rolePermissions && rolePermissions.length > 0 && rolePermissions[0].grouppermission_id) {
                 await TransactionRepo.commit_transaction();
             }
     
@@ -115,6 +114,32 @@ class GroupModel {
         }
     };
 
+    static async create_group_user(groupID: string, userID: string) {
+        try {
+            await TransactionRepo.begin_transaction();
+
+            const userGroup = await GroupRepo.associate_user_to_group(userID, groupID);
+            if (!userGroup) {
+                throw new ExpressError("Error while associating user to group", 500);
+            };
+
+            const defaultRole = await GroupPermissionsRepo.fetch_role_by_role_name("user", groupID);
+            if (!defaultRole?.id) {
+                throw new ExpressError("Error while fetching default role for target group", 500);
+            };
+
+            const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, defaultRole.id);
+            if (!userRole) {
+                throw new ExpressError("Error while assinging default role to target user", 500);
+            };
+
+            await TransactionRepo.commit_transaction();
+            return userRole;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        };
+    };
     
 
     /*   ____  _____    _    ____  
@@ -133,9 +158,19 @@ class GroupModel {
         return roles;
     };
     
+    static async retrieve_users_by_group_id(groupID: string) {
+        const users = GroupRepo.fetch_group_users_by_group_id(groupID);
+        return users;
+    };
+
     static async retrieve_role_permissions_by_role_id(roleID: string) {
         const permissions = GroupPermissionsRepo.fetch_role_permissions_by_role_id(roleID);
         return permissions;
+    };
+
+    static async retrieve_user_roles_by_user_id(userID: string, groupID: string) {
+        const roles = GroupPermissionsRepo.fetch_user_group_roles_by_user_id(userID, groupID);
+        return roles;
     };
 
     static async retrieve_user_permissions_by_user_id(userID: string) {
@@ -171,51 +206,102 @@ class GroupModel {
         |____/|_____|_____|_____| |_| |_____|
     */
     static async delete_group(groupID: string) {
-        // if (!groupID) {
-        //     throw new ExpressError("Error: Group ID not provided", 400);
-        // };
+        try {
+            await TransactionRepo.begin_transaction();
 
-        const group = await GroupRepo.delete_group_by_group_id(groupID);
-        if (!group) {
-            throw new ExpressError("Unable to delete target group", 400);
-        };
+            const permissions = await GroupPermissionsRepo.delete_role_permissions_by_group_id(groupID);
+            if (!permissions) {
+                throw new ExpressError("Failed to Delete Permissions Associated with Target Group", 500);
+            };
 
-        return group;
+            const roles = await GroupPermissionsRepo.delete_roles_by_group_id(groupID);
+            if (!roles) {
+                throw new ExpressError("Failed to Delete Roles Associated with Target Group", 500);
+            };
+
+            const users = await GroupRepo.disassociate_users_from_group_by_group_id(groupID);
+            if (!users) {
+                throw new ExpressError("Failed to Delete Users Associated with Target Group", 500);
+            };
+
+            const group = await GroupRepo.delete_group_by_group_id(groupID);
+            if (!group) {
+                throw new ExpressError("Unable to delete target group", 400);
+            };
+
+            await TransactionRepo.commit_transaction();
+            return group;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        }        
     };
 
     static async delete_role(roleID: string) {
-        // if (!roleID) {
-        //     throw new ExpressError("Error: Role ID not provided", 400);
-        // };
+        try {
+            await TransactionRepo.begin_transaction();
 
-        const role = await GroupPermissionsRepo.delete_role_by_role_id(roleID);
-        if (!role) {
-            throw new ExpressError("Unable to delete target role", 400);
-        };
+            const permissions = await GroupPermissionsRepo.delete_role_permissions_by_role_id(roleID);
+            if (!permissions) {
+                throw new ExpressError("Failed to Delete Permissions Associated with Target Role", 500);
+            };
 
-        return role;
+            const users = await GroupPermissionsRepo.delete_user_group_roles_by_role_id(roleID);
+            if (!users) {
+                throw new ExpressError("Failed to Delete User Roles Associated with Target Role", 500);
+            };
+
+            const role = await GroupPermissionsRepo.delete_role_by_role_id(roleID);
+            if (!role) {
+                throw new ExpressError("Failed to Delete Target Role", 500);
+            };
+
+            await TransactionRepo.commit_transaction();
+            return role;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        }
     };
 
-    static async delete_permission(permID: string) {
-        // if (!permID) {
-        //     throw new ExpressError("Error: Permission ID not provided", 400);
-        // };
+    // static async delete_permission(permID: string) {
+    //     const permission = await GroupPermissionsRepo.delete_permission_by_permission_id(permID);
+    //     if (!permission) {
+    //         throw new ExpressError("Unable to delete target permission", 400);
+    //     };
 
-        const permission = await GroupPermissionsRepo.delete_permission_by_permission_id(permID);
-        if (!permission) {
-            throw new ExpressError("Unable to delete target permission", 400);
-        };
-
-        return permission;
-    };
+    //     return permission;
+    // };
 
     static async delete_role_pemission(roleID: string, permID: string) {
-        const permission = await GroupPermissionsRepo.delete_role_permissions_by_role_permission_ids(roleID, permID);
+        const permission = await GroupPermissionsRepo.delete_role_permission_by_role_permission_id(roleID, permID);
         if (!permission) {
-            throw new ExpressError("Unable to delete target role permission", 400);
+            throw new ExpressError("Unable to delete target role permission", 500);
         };
 
         return permission;
+    };
+
+    static async delete_group_user(groupID: string, userID: string) {
+        try {
+            await TransactionRepo.begin_transaction();
+
+            const roles = await GroupPermissionsRepo.delete_user_group_roles_by_user_id(userID);
+            if (!roles) {
+                throw new ExpressError("Failed to Delete Roles Associated with Target User", 500);
+            };
+            
+            const groupUser = await GroupRepo.disassociate_user_from_group(userID, groupID);
+            if (!groupUser) {
+                throw new ExpressError("Failed to Disassociate User From Target Group", 500);
+            };
+
+            await TransactionRepo.commit_transaction();
+            return groupUser;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        }
     };
 }
 

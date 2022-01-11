@@ -15,8 +15,8 @@ export interface GroupPermProps {
 }
 
 export interface GroupRolePermsProps {
-    role_id?: string,
-    permission_id?: string
+    grouprole_id?: string,
+    grouppermission_id?: string
 }
 
 export interface GroupUserRoleProps {
@@ -26,7 +26,7 @@ export interface GroupUserRoleProps {
 
 class GroupPermissionsRepo {
     // ROLE Management
-    static async create_new_role(groupRoleData: GroupRoleProps) {
+    static async create_role(groupRoleData: GroupRoleProps) {
         try {
             const result = await pgdb.query(
                 `INSERT INTO grouproles
@@ -45,7 +45,7 @@ class GroupPermissionsRepo {
         }
     }; 
 
-    static async create_group_roles_for_new_group(groupID: string) {
+    static async create_roles_init_new_group(groupID: string) {
         try {
             const newGroupRoles = ["owner", "admin", "manage_room", "manage_equip", "user"];
             const queryColumns: Array<string> = ["name", "group_id"];
@@ -162,101 +162,24 @@ class GroupPermissionsRepo {
         }
     };
 
-    // User Role Management
-    static async create_user_group_role(userID: string, groupRoleID: string) {
+    static async delete_roles_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `INSERT INTO user_grouproles
-                    (user_id, grouprole_id) 
-                VALUES ($1, $2) 
-                RETURNING user_id, grouprole_id`,
-            [
-                userID, groupRoleID
-            ]);
-
-            const rval: GroupUserRoleProps | undefined = result.rows[0];
+                `DELETE FROM groupRoles
+                WHERE group_id = $1
+                RETURNING id`,
+            [groupID]);
+    
+            const rval: GroupRoleProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to assign user group role - ${error}`, 500);
+            throw new ExpressError(`An Error Occured: Unable to delete group roles - ${error}`, 500);
         }
-    };
-
-    static async delete_user_group_roles_all(userID: string) {
-        try {
-            const result = await pgdb.query(
-                `DELETE FROM user_grouproles
-                WHERE user_id = $1`,
-                [userID]
-            );
-
-            return true;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete user group roles - ${error}`, 500);
-        }
-    };
-
-    static async delete_user_group_role_by_role_id(userID: string, roleID: string) {
-        try {
-            const result = await pgdb.query(
-                `DELETE FROM user_grouproles
-                WHERE user_id = $1 AND group_roleid = $2`,
-                [userID, roleID]
-            );
-
-            return true;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete user group role - ${error}`, 500);
-        }
-    };
-
-    static async fetch_user_group_roles_by_user_id(userID: string) {
-        try {
-            const result = await pgdb.query(
-                `SELECT users.id AS user_id,
-                        users.username AS username,
-                        groupRoles.id AS role_id, 
-                        groupRoles.name AS role_name
-                    FROM users
-                    LEFT JOIN user_groupRoles 
-                        ON users.id = user_groupRoles.user_id
-                    LEFT JOIN groupRoles
-                        ON user_groupRoles.role_id = groupRoles.id
-                    WHERE user_id = $1`,
-                    [userID]
-            );
-
-            // const rval: Array<siteRoleProps> | undefined = result.rows;
-            return result.rows;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to get site group for the target user - ${error}`, 500);
-        }
-    };
-
-    static async fetch_user_group_permissions_by_user_id(userID: string) {
-        try {
-            const result = await pgdb.query(
-                `SELECT DISTINCT
-                        groupPermissions.id AS permission_id,
-                        groupPermissions.name AS permission_name,
-                    FROM groupPermissions
-                    LEFT JOIN groupRole_groupPermissions
-                        ON groupRole_groupPermissions.permission_id = groupPermissiosn.id
-                    LEFT JOIN user_groupRoles
-                        ON user_groupRoles.role_id = groupRole_groupPermissions.role_id
-                    WHERE user_groupRoles.user_id = $1`,
-                    [userID]
-            );
-
-            // const rval: Array<siteRoleProps> | undefined = result.rows;
-            return result.rows;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to get site roles for the target user - ${error}`, 500);
-        }  
     };
 
 
     // PERMISSIONS Management
-    static async create_new_permission(groupPermData: GroupPermProps) {
+    static async create_permission(groupPermData: GroupPermProps) {
         try {
             const result = await pgdb.query(
                 `INSERT INTO groupPermissions
@@ -279,11 +202,11 @@ class GroupPermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                  FROM groupPermissions
-                  WHERE id = $1`,
-                  [groupPermID]
+                FROM groupPermissions
+                WHERE id = $1`,
+                [groupPermID]
             );
-    
+
             const rval: GroupPermProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
@@ -300,7 +223,7 @@ class GroupPermissionsRepo {
                 "id",
                 groupPermID
             );
-    
+
             const result = await pgdb.query(query, values);
 
             const rval: GroupPermProps | undefined = result.rows[0];
@@ -309,7 +232,7 @@ class GroupPermissionsRepo {
             throw new ExpressError(`An Error Occured: Unable to update group permission - ${error}`, 500);
         }
     };
-    
+
     static async delete_permission_by_permission_id(groupPermID: string) {
         try {
             const result = await pgdb.query(
@@ -317,7 +240,7 @@ class GroupPermissionsRepo {
                 WHERE id = $1
                 RETURNING id`,
             [groupPermID]);
-    
+
             const rval: GroupPermProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
@@ -330,16 +253,16 @@ class GroupPermissionsRepo {
     static async create_role_permissions(groupRoleID: string, permissionList: Array<string>) {
         const valueExpressions: Array<string> = [];
         let queryValues = [groupRoleID];
-    
+
         for (const permission of permissionList) {
             if (permission) {
                 queryValues.push(permission);
                 valueExpressions.push(`($1, $${queryValues.length})`)
             }
         }
-    
+
         const valueExpressionRows = valueExpressions.join(",");
-    
+
         try {
             const result = await pgdb.query(`
                 INSERT INTO groupRole_groupPermissions
@@ -421,30 +344,30 @@ class GroupPermissionsRepo {
                         groupRoles.name AS role_name,
                         groupPermissions.id AS permission_id,
                         groupPermissions.name AS permission_name
-                  FROM groupRoles
-                  LEFT JOIN groupRole_groupPermissions AS joinTable
-                  ON groupRoles.id = groupRole_groupPermissions.role_id
-                  LEFT JOIN groupPermissions
-                  ON joinTable.permission_id = groupPermissions.id
-                  WHERE role_id = $1`,
-                  [groupRoleID]
+                FROM groupRoles
+                LEFT JOIN groupRole_groupPermissions AS joinTable
+                ON groupRoles.id = groupRole_groupPermissions.role_id
+                LEFT JOIN groupPermissions
+                ON joinTable.permission_id = groupPermissions.id
+                WHERE role_id = $1`,
+                [groupRoleID]
             );
-    
+
             const rval = result.rows;
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate group role permissions - ${error}`, 500);
         };
     };
-    
-    static async delete_role_permissions_by_role_permission_ids(groupRoleID: string, groupPermID: string) {
+
+    static async delete_role_permission_by_role_permission_id(groupRoleID: string, groupPermID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM groupRole_groupPermissions
-                WHERE role_id = $1 AND permission_id = $2
-                RETURNING role_id`,
+                WHERE grouprole_id = $1 AND grouppermission_id = $2
+                RETURNING grouprole_id`,
             [groupRoleID, groupPermID]);
-    
+
             const rval: GroupRolePermsProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
@@ -452,6 +375,151 @@ class GroupPermissionsRepo {
         }
     };
 
+    static async delete_role_permissions_by_role_id(groupRoleID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM groupRole_groupPermissions
+                WHERE grouprole_id = $1
+                RETURNING grouprole_id`,
+            [groupRoleID]);
+
+            const rval: GroupRolePermsProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error}`, 500);
+        }
+    };
+
+    static async delete_role_permissions_by_group_id(groupID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM groupRole_groupPermissions
+                WHERE grouprole_id IN 
+                (
+                    SELECT grouproles.id FROM grouproles
+                    WHERE grouproles.group_id = $1
+                )
+                RETURNING grouprole_id`,
+                [groupID]
+            ); 
+
+            const rval: GroupRolePermsProps | undefined = result.rows[0];
+            return rval;    
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error.message}`, 500);
+        }   
+    };
+
+
+    // User Role Management
+    static async create_user_group_role_by_role_id(userID: string, groupRoleID: string) {
+        try {
+            const result = await pgdb.query(
+                `INSERT INTO user_grouproles
+                    (user_id, grouprole_id) 
+                VALUES ($1, $2) 
+                RETURNING user_id, grouprole_id`,
+            [
+                userID, groupRoleID
+            ]);
+
+            const rval: GroupUserRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to assign user group role - ${error}`, 500);
+        }
+    };
+
+    static async delete_user_group_roles_by_user_id(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM user_grouproles
+                WHERE user_id = $1`,
+                [userID]
+            );
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete user group roles - ${error}`, 500);
+        }
+    };
+
+    static async delete_user_group_role_by_user_and_role_id(userID: string, roleID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM user_grouproles
+                WHERE user_id = $1 AND grouprole_id = $2
+                RETURNING user_id, grouprole_id`,
+                [userID, roleID]
+            );
+
+            const rval: GroupUserRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete user group role - ${error}`, 500);
+        }
+    };
+
+    static async delete_user_group_roles_by_role_id(roleID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM user_grouproles
+                WHERE grouprole_id = $1
+                RETURNING user_id, grouprole_id`,
+                [roleID]
+            );
+
+            const rval: GroupUserRoleProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete user role associations - ${error}`, 500);
+        }
+    };
+
+    static async fetch_user_group_roles_by_user_id(userID: string, groupID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT users.id AS user_id,
+                        users.username AS username,
+                        groupRoles.id AS role_id, 
+                        groupRoles.name AS role_name
+                    FROM users
+                    LEFT JOIN user_groupRoles 
+                        ON users.id = user_groupRoles.user_id
+                    LEFT JOIN groupRoles
+                        ON user_groupRoles.role_id = groupRoles.id
+                    WHERE users.id = $1 AND groupRoles.group_id = $2`,
+                    [userID, groupID]
+            );
+
+            // const rval: Array<siteRoleProps> | undefined = result.rows;
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to get site group for the target user - ${error}`, 500);
+        }
+    };
+
+    static async fetch_user_group_permissions_by_user_id(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT DISTINCT
+                        groupPermissions.id AS permission_id,
+                        groupPermissions.name AS permission_name,
+                    FROM groupPermissions
+                    LEFT JOIN groupRole_groupPermissions
+                        ON groupRole_groupPermissions.permission_id = groupPermissiosn.id
+                    LEFT JOIN user_groupRoles
+                        ON user_groupRoles.role_id = groupRole_groupPermissions.role_id
+                    WHERE user_groupRoles.user_id = $1`,
+                    [userID]
+            );
+
+            // const rval: Array<siteRoleProps> | undefined = result.rows;
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to get site roles for the target user - ${error}`, 500);
+        }  
+    };
 }
 
 
