@@ -10,6 +10,10 @@ VALUES
     ('update_role'),
     ('delete_role'),
 
+    ('create_role_permissions'),
+    ('read_role_permissions'),
+    ('delete_role_permissions'),
+
     ('create_user_role'),
     ('read_user_role'),
     ('delete_user_role'),
