@@ -18,79 +18,6 @@ import groupMW from "../middleware/groupMW";
 
 
 const groupMgmtRouter = express.Router();
-// Users
-// Get Users
-groupMgmtRouter.get("/users/list", groupMW.defineActionPermissions(["read_group_user"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to view group users || target group missing`, 400);
-        }
-        
-        // Process
-        const queryData = await GroupModel.retrieve_users_by_group_id(req.groupID);
-        if (!queryData) {
-            throw new ExpressError("Retrieving Group Users Failed", 400);
-        }
-        
-        return res.json({GroupUser: [queryData]})
-    } catch (error) {
-        next(error)
-    }
-});
-
-// Add User
-groupMgmtRouter.post("/users/create", groupMW.defineActionPermissions(["read_group_user", "create_group_user"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.body.user_id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to create group || target user missing || target group missing`, 400);
-        }
-
-        const reqValues: GroupUserCreateProps = {
-            userID: req.body.userID,
-            groupID: req.groupID
-        };
-        
-
-        if(!validateCreateGroupUserSchema(reqValues)) {
-            throw new ExpressError(`Unable to Create Group User: ${validateCreateGroupUserSchema.errors}`, 400);
-        }
-
-        // Process
-        const queryData = await GroupModel.create_group_user(reqValues.groupID, reqValues.userID);
-        if (!queryData) {
-            throw new ExpressError("Create Group User Failed", 400);
-        }
-        
-        return res.json({GroupUser: [queryData]})
-    } catch (error) {
-        next(error)
-    }
-});
-
-// Remove user
-groupMgmtRouter.delete("/users/:userID", groupMW.defineActionPermissions(["read_group_user", "delete_group_user"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.params.userID || !req.groupID) {
-            throw new ExpressError(`Must be logged in to create group || target user missing || target group missing`, 400);
-        }
-
-        // Process
-        const queryData = await GroupModel.delete_group_user(req.groupID, req.params.userID);
-        if (!queryData) {
-            throw new ExpressError("Delete Group User Failed", 400);
-        }
-        
-        return res.json({GroupUser: [queryData]})
-    } catch (error) {
-        next(error)
-    }
-});
-
-
-
 // User Roles
 // Get User Roles
 groupMgmtRouter.get("/users/:userID/roles", groupMW.defineActionPermissions(["read_user_role"]), authMW.validatePermissions, async (req, res, next) => {
@@ -162,77 +89,77 @@ groupMgmtRouter.delete("/users/:userID/roles/:roleID", groupMW.defineActionPermi
 });
 
 
-
-// Roles
-// Get Roles
-groupMgmtRouter.get("/roles/list", groupMW.defineActionPermissions(["read_role"]), authMW.validatePermissions, async (req, res, next) => {
+// Users
+// Get Users
+groupMgmtRouter.get("/users", groupMW.defineActionPermissions(["read_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to view group roles || target group missing`, 400);
+            throw new ExpressError(`Must be logged in to view group users || target group missing`, 400);
         }
         
         // Process
-        const queryData = await GroupModel.retrieve_roles_by_group_id(req.groupID);
+        const queryData = await GroupModel.retrieve_users_by_group_id(req.groupID);
         if (!queryData) {
-            throw new ExpressError("Retrieving Group Roles Failed", 400);
+            throw new ExpressError("Retrieving Group Users Failed", 400);
         }
         
-        return res.json({GroupRoles: [queryData]})
+        return res.json({GroupUser: [queryData]})
     } catch (error) {
         next(error)
     }
 });
 
-// Add Role
-groupMgmtRouter.post("/roles/create", groupMW.defineActionPermissions(["read_role", "create_role"]), authMW.validatePermissions, async (req, res, next) => {
+// Add User
+groupMgmtRouter.post("/users", groupMW.defineActionPermissions(["read_group_user", "create_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.body.name || !req.groupID) {
-            throw new ExpressError(`Must be logged in to create group role || role name missing || target group missing`, 400);
+        if (!req.user?.id || !req.body.user_id || !req.groupID) {
+            throw new ExpressError(`Must be logged in to create group || target user missing || target group missing`, 400);
         }
 
-        const reqValues: GroupRoleCreateProps = {
-            name: req.body.name,
-            group_id: req.groupID
+        const reqValues: GroupUserCreateProps = {
+            userID: req.body.userID,
+            groupID: req.groupID
         };
         
 
-        if(!validateCreateGroupRoleSchema(reqValues)) {
-            throw new ExpressError(`Unable to Create Group Role: ${validateCreateGroupRoleSchema.errors}`, 400);
+        if(!validateCreateGroupUserSchema(reqValues)) {
+            throw new ExpressError(`Unable to Create Group User: ${validateCreateGroupUserSchema.errors}`, 400);
         }
 
         // Process
-        const queryData = await GroupModel.create_role(reqValues.group_id, reqValues.name);
+        const queryData = await GroupModel.create_group_user(reqValues.groupID, reqValues.userID);
         if (!queryData) {
-            throw new ExpressError("Create Group Role Failed", 400);
+            throw new ExpressError("Create Group User Failed", 400);
         }
         
-        return res.json({GroupRoles: [queryData]})
+        return res.json({GroupUser: [queryData]})
     } catch (error) {
         next(error)
     }
 });
 
-// Remove Role
-groupMgmtRouter.delete("/roles/:roleID", groupMW.defineActionPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
+// Remove user
+groupMgmtRouter.delete("/users/:userID", groupMW.defineActionPermissions(["read_group_user", "delete_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.params.roleID || !req.groupID) {
-            throw new ExpressError(`Must be logged in to delete roles || target role missing || target group missing`, 400);
+        if (!req.user?.id || !req.params.userID || !req.groupID) {
+            throw new ExpressError(`Must be logged in to create group || target user missing || target group missing`, 400);
         }
 
         // Process
-        const queryData = await GroupModel.delete_role(req.params.roleID);
+        const queryData = await GroupModel.delete_group_user(req.groupID, req.params.userID);
         if (!queryData) {
-            throw new ExpressError("Delete Group Role Failed", 400);
+            throw new ExpressError("Delete Group User Failed", 400);
         }
         
-        return res.json({GroupRoles: [queryData]})
+        return res.json({GroupUser: [queryData]})
     } catch (error) {
         next(error)
     }
 });
+
 
 
 
@@ -258,7 +185,7 @@ groupMgmtRouter.get("/roles/:roleID/permissions", groupMW.defineActionPermission
 });
 
 // Add Role Permissions
-groupMgmtRouter.post("/roles/:roleID/permissions/create", groupMW.defineActionPermissions(["read_role_permissions", "create_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.post("/roles/:roleID/permissions", groupMW.defineActionPermissions(["read_role_permissions", "create_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.body.permissionList || !req.groupID || !req.params.roleID) {
@@ -309,6 +236,83 @@ groupMgmtRouter.delete("/roles/:roleID/permissions/:permissionID", groupMW.defin
         next(error)
     }
 });
+
+
+
+// Roles
+// Get Roles
+groupMgmtRouter.get("/roles", groupMW.defineActionPermissions(["read_role"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.user?.id || !req.groupID) {
+            throw new ExpressError(`Must be logged in to view group roles || target group missing`, 400);
+        }
+        
+        // Process
+        const queryData = await GroupModel.retrieve_roles_by_group_id(req.groupID);
+        if (!queryData) {
+            throw new ExpressError("Retrieving Group Roles Failed", 400);
+        }
+        
+        return res.json({GroupRoles: [queryData]})
+    } catch (error) {
+        next(error)
+    }
+});
+
+// Add Role
+groupMgmtRouter.post("/roles", groupMW.defineActionPermissions(["read_role", "create_role"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.user?.id || !req.body.name || !req.groupID) {
+            throw new ExpressError(`Must be logged in to create group role || role name missing || target group missing`, 400);
+        }
+
+        const reqValues: GroupRoleCreateProps = {
+            name: req.body.name,
+            group_id: req.groupID
+        };
+        
+
+        if(!validateCreateGroupRoleSchema(reqValues)) {
+            throw new ExpressError(`Unable to Create Group Role: ${validateCreateGroupRoleSchema.errors}`, 400);
+        }
+
+        // Process
+        const queryData = await GroupModel.create_role(reqValues.group_id, reqValues.name);
+        if (!queryData) {
+            throw new ExpressError("Create Group Role Failed", 400);
+        }
+        
+        return res.json({GroupRoles: [queryData]})
+    } catch (error) {
+        next(error)
+    }
+});
+
+// Remove Role
+groupMgmtRouter.delete("/roles/:roleID", groupMW.defineActionPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.user?.id || !req.params.roleID || !req.groupID) {
+            throw new ExpressError(`Must be logged in to delete roles || target role missing || target group missing`, 400);
+        }
+
+        // Process
+        const queryData = await GroupModel.delete_role(req.params.roleID);
+        if (!queryData) {
+            throw new ExpressError("Delete Group Role Failed", 400);
+        }
+        
+        return res.json({GroupRoles: [queryData]})
+    } catch (error) {
+        next(error)
+    }
+});
+
+
+
+
 
 
 export default groupMgmtRouter;
