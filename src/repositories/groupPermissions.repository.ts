@@ -250,13 +250,13 @@ class GroupPermissionsRepo {
 
 
     // ROLE PERMISSIONS ASSOCIATIONS Management
-    static async create_role_permissions(groupRoleID: string, permissionList: Array<string>) {
+    static async create_role_permissions(permissionList: Array<GroupRolePermsProps>) {
         const valueExpressions: Array<string> = [];
-        let queryValues = [groupRoleID];
+        let queryValues = [permissionList[0].grouprole_id];
 
         for (const permission of permissionList) {
-            if (permission) {
-                queryValues.push(permission);
+            if (permission.grouppermission_id) {
+                queryValues.push(permission.grouppermission_id);
                 valueExpressions.push(`($1, $${queryValues.length})`)
             }
         }

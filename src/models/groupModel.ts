@@ -89,7 +89,7 @@ class GroupModel {
     //     return permission;
     // };
 
-    static async create_role_permissions(roleID: string, permissionIDs: Array<string>) {
+    static async create_role_permissions(permissionList: Array<GroupRolePermsProps>) {
         // if (!roleID || !name) {
         //     throw new ExpressError("Invalid Create Group Role Permissions Call", 400);
         // };
@@ -98,8 +98,8 @@ class GroupModel {
             await TransactionRepo.begin_transaction();
             let rolePermissions: Array<GroupRolePermsProps> | undefined;
 
-            if (permissionIDs.length > 0) {
-                rolePermissions = await GroupPermissionsRepo.create_role_permissions(roleID, permissionIDs);
+            if (permissionList.length > 0) {
+                rolePermissions = await GroupPermissionsRepo.create_role_permissions(permissionList);
             } else {
                 throw new ExpressError("Error encountered when creating new role permissions", 400);
             }
@@ -141,6 +141,14 @@ class GroupModel {
         };
     };
     
+    static async create_group_user_role(roleID: string, userID: string) {
+        const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, roleID);
+        if (!userRole) {
+            throw new ExpressError("Error while assinging default role to target user", 500);
+        };
+
+        return userRole;
+    };
 
     /*   ____  _____    _    ____  
         |  _ \| ____|  / \  |  _ \ 
@@ -308,6 +316,16 @@ class GroupModel {
             throw new ExpressError(error.message, error.status);
         }
     };
+
+    static async delete_group_user_role(roleID: string, userID: string) {
+        const roles = await GroupPermissionsRepo.delete_user_group_role_by_user_and_role_id(userID, roleID);
+        if (!roles) {
+            throw new ExpressError("Failed to Delete User Role Associated with Target User", 500);
+        };
+
+        return roles;
+    };
+
 }
 
 export default GroupModel;
