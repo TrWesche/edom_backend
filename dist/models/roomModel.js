@@ -38,73 +38,216 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 // Repositories
 var room_repository_1 = require("../repositories/room.repository");
+var transactionRepository_1 = require("../repositories/transactionRepository");
 // Utility Functions
 var expresError_1 = require("../utils/expresError");
 var RoomModel = /** @class */ (function () {
     function RoomModel() {
     }
-    RoomModel.create_user_room = function (data) {
+    /*    ____ ____  _____    _  _____ _____
+         / ___|  _ \| ____|  / \|_   _| ____|
+        | |   | |_) |  _|   / _ \ | | |  _|
+        | |___|  _ <| |___ / ___ \| | | |___
+         \____|_| \_\_____/_/   \_\_| |_____|
+    */
+    RoomModel.create_user_room = function (userID, data) {
         return __awaiter(this, void 0, void 0, function () {
-            var room;
+            var room, roomAssoc, error_1;
             return __generator(this, function (_a) {
-                if (!data.name) {
-                    throw new expresError_1["default"]("Invalid Create Room Call", 400);
+                switch (_a.label) {
+                    case 0:
+                        // Preflight
+                        if (!data.name || !data.category_id) {
+                            throw new expresError_1["default"]("Invalid Create Room Call", 400);
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 6, , 8]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].create_new_room(data)];
+                    case 3:
+                        room = _a.sent();
+                        if (!(room === null || room === void 0 ? void 0 : room.id)) {
+                            throw new expresError_1["default"]("Error while creating new room entry", 500);
+                        }
+                        return [4 /*yield*/, room_repository_1["default"].associate_user_to_room(userID, room.id)];
+                    case 4:
+                        roomAssoc = _a.sent();
+                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.id)) {
+                            throw new expresError_1["default"]("Error while associating user to room entry", 500);
+                        }
+                        // Commit to Database
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 5:
+                        // Commit to Database
+                        _a.sent();
+                        return [2 /*return*/, room];
+                    case 6:
+                        error_1 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 7:
+                        _a.sent();
+                        throw new expresError_1["default"](error_1.message, error_1.status);
+                    case 8:
+                        ;
+                        return [2 /*return*/];
                 }
-                room = room_repository_1["default"].create_new_room(data);
-                return [2 /*return*/, room];
             });
         });
     };
     ;
-    RoomModel.create_group_room = function (group_id, data) {
+    RoomModel.create_group_room = function (groupID, data) {
         return __awaiter(this, void 0, void 0, function () {
+            var room, roomAssoc, error_2;
             return __generator(this, function (_a) {
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0:
+                        // Preflight
+                        if (!data.name || !data.category_id) {
+                            throw new expresError_1["default"]("Invalid Create Room Call", 400);
+                        }
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 6, , 8]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].create_new_room(data)];
+                    case 3:
+                        room = _a.sent();
+                        if (!(room === null || room === void 0 ? void 0 : room.id)) {
+                            throw new expresError_1["default"]("Error while creating new room entry", 500);
+                        }
+                        return [4 /*yield*/, room_repository_1["default"].associate_group_to_room(groupID, room.id)];
+                    case 4:
+                        roomAssoc = _a.sent();
+                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.id)) {
+                            throw new expresError_1["default"]("Error while associating group to room entry", 500);
+                        }
+                        // Commit to Database
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 5:
+                        // Commit to Database
+                        _a.sent();
+                        return [2 /*return*/, room];
+                    case 6:
+                        error_2 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 7:
+                        _a.sent();
+                        throw new expresError_1["default"](error_2.message, error_2.status);
+                    case 8:
+                        ;
+                        return [2 /*return*/];
+                }
             });
         });
     };
     ;
-    RoomModel.retrieve_room_by_room_id = function (roomID) {
+    /*   ____  _____    _    ____
+        |  _ \| ____|  / \  |  _ \
+        | |_) |  _|   / _ \ | | | |
+        |  _ <| |___ / ___ \| |_| |
+        |_| \_\_____/_/   \_\____/
+    */
+    RoomModel.retrieve_room_by_room_id = function (roomID, roomPublic) {
         return __awaiter(this, void 0, void 0, function () {
             var room;
             return __generator(this, function (_a) {
-                room = room_repository_1["default"].fetch_room_by_room_id(roomID);
+                room = room_repository_1["default"].fetch_room_by_room_id(roomID, roomPublic);
                 return [2 /*return*/, room];
             });
         });
     };
     ;
-    RoomModel.retrieve_group_rooms_by_group_id = function (groupID) {
+    RoomModel.retrieve_room_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
+            var rooms;
             return __generator(this, function (_a) {
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_room_list_paginated(limit, offset)];
+                    case 1:
+                        rooms = _a.sent();
+                        return [2 /*return*/, rooms];
+                }
             });
         });
     };
     ;
-    RoomModel.retrieve_user_rooms_by_user_id = function (userID) {
+    RoomModel.retrieve_user_rooms_by_user_id_public = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
+            var rooms;
             return __generator(this, function (_a) {
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID)];
+                    case 1:
+                        rooms = _a.sent();
+                        return [2 /*return*/, rooms];
+                }
             });
         });
     };
     ;
-    RoomModel.modify_room = function (roomID, data) {
+    RoomModel.retrieve_user_rooms_by_user_id_all = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var rooms;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID, true)];
+                    case 1:
+                        rooms = _a.sent();
+                        return [2 /*return*/, rooms];
+                }
+            });
+        });
+    };
+    ;
+    RoomModel.retrieve_group_rooms_by_group_id_public = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var rooms;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_group_id(groupID, true)];
+                    case 1:
+                        rooms = _a.sent();
+                        return [2 /*return*/, rooms];
+                }
+            });
+        });
+    };
+    ;
+    RoomModel.retrieve_group_rooms_by_group_id_all = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var rooms;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_group_id(groupID)];
+                    case 1:
+                        rooms = _a.sent();
+                        return [2 /*return*/, rooms];
+                }
+            });
+        });
+    };
+    ;
+    /*   _   _ ____  ____    _  _____ _____
+        | | | |  _ \|  _ \  / \|_   _| ____|
+        | | | | |_) | | | |/ _ \ | | |  _|
+        | |_| |  __/| |_| / ___ \| | | |___
+         \___/|_|   |____/_/   \_\_| |_____|
+    */
+    RoomModel.modify_user_room = function (roomID, data) {
         return __awaiter(this, void 0, void 0, function () {
             var room;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!roomID) {
-                            throw new expresError_1["default"]("Error: Room ID not provided", 400);
-                        }
-                        ;
-                        return [4 /*yield*/, room_repository_1["default"].update_room_by_room_id(roomID, data)];
+                    case 0: return [4 /*yield*/, room_repository_1["default"].update_room_by_room_id(roomID, data)];
                     case 1:
                         room = _a.sent();
                         if (!room) {
-                            throw new expresError_1["default"]("Unable to update target room", 400);
+                            throw new expresError_1["default"]("Unable to update target user room", 400);
                         }
                         ;
                         return [2 /*return*/, room];
@@ -113,26 +256,118 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    RoomModel.delete_room = function (roomID) {
+    RoomModel.modify_group_room = function (roomID, data) {
         return __awaiter(this, void 0, void 0, function () {
             var room;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!roomID) {
-                            throw new expresError_1["default"]("Error: Room ID not provided", 400);
-                        }
-                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_room_id(roomID)];
+                    case 0: return [4 /*yield*/, room_repository_1["default"].update_room_by_room_id(roomID, data)];
                     case 1:
                         room = _a.sent();
                         if (!room) {
-                            throw new expresError_1["default"]("Unable to delete target room", 400);
+                            throw new expresError_1["default"]("Unable to update target group room", 400);
                         }
+                        ;
                         return [2 /*return*/, room];
                 }
             });
         });
     };
+    ;
+    /*   ____  _____ _     _____ _____ _____
+        |  _ \| ____| |   | ____|_   _| ____|
+        | | | |  _| | |   |  _|   | | |  _|
+        | |_| | |___| |___| |___  | | | |___
+        |____/|_____|_____|_____| |_| |_____|
+    */
+    RoomModel.delete_user_room = function (userID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var roomAssoc, room, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 7]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].disassociate_user_from_room(userID, roomID)];
+                    case 2:
+                        roomAssoc = _a.sent();
+                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.room_id)) {
+                            throw new expresError_1["default"]("Error while disassociating user from room entry", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_room_id(roomAssoc.room_id)];
+                    case 3:
+                        room = _a.sent();
+                        if (!(room === null || room === void 0 ? void 0 : room.id)) {
+                            throw new expresError_1["default"]("Error while deleting room entry", 500);
+                        }
+                        ;
+                        // Commit to Database
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 4:
+                        // Commit to Database
+                        _a.sent();
+                        return [2 /*return*/, room];
+                    case 5:
+                        error_3 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 6:
+                        _a.sent();
+                        throw new expresError_1["default"](error_3.message, error_3.status);
+                    case 7:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomModel.delete_group_room = function (groupID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var roomAssoc, room, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 7]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].disassociate_group_from_room(groupID, roomID)];
+                    case 2:
+                        roomAssoc = _a.sent();
+                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.room_id)) {
+                            throw new expresError_1["default"]("Error while disassociating group from room entry", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_room_id(roomAssoc.room_id)];
+                    case 3:
+                        room = _a.sent();
+                        if (!(room === null || room === void 0 ? void 0 : room.id)) {
+                            throw new expresError_1["default"]("Error while deleting room entry", 500);
+                        }
+                        ;
+                        // Commit to Database
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 4:
+                        // Commit to Database
+                        _a.sent();
+                        return [2 /*return*/, room];
+                    case 5:
+                        error_4 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 6:
+                        _a.sent();
+                        throw new expresError_1["default"](error_4.message, error_4.status);
+                    case 7:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     return RoomModel;
 }());
 exports["default"] = RoomModel;

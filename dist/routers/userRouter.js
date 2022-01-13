@@ -162,7 +162,7 @@ userRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_us
         }
     });
 }); });
-userRouter.get("/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {

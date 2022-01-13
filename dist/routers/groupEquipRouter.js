@@ -97,8 +97,35 @@ groupEquipRouter.post("/create", groupMW_1["default"].defineActionPermissions(["
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-groupEquipRouter.get("/:equipID", groupMW_1["default"].defineActionPermissions(["view"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupEquipRouter.get("/list", groupMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                // Preflight
+                if (!req.groupID) {
+                    throw new expresError_1["default"]("Invalid Call: Get Group Equipment - All", 401);
+                }
+                ;
+                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id_all(req.groupID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - All", 404);
+                }
+                ;
+                return [2 /*return*/, res.json({ equip: [queryData] })];
+            case 2:
+                error_2 = _a.sent();
+                next(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+groupEquipRouter.get("/:equipID", groupMW_1["default"].defineActionPermissions(["view"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -111,8 +138,8 @@ groupEquipRouter.get("/:equipID", groupMW_1["default"].defineActionPermissions([
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_2 = _a.sent();
-                next(error_2);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -125,7 +152,7 @@ groupEquipRouter.get("/:equipID", groupMW_1["default"].defineActionPermissions([
    \___/|_|   |____/_/   \_\_| |_____|
 */
 groupEquipRouter.patch("/:equipID", groupMW_1["default"].defineActionPermissions(["view", "update"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -170,8 +197,8 @@ groupEquipRouter.patch("/:equipID", groupMW_1["default"].defineActionPermissions
                 newData = _b.sent();
                 return [2 /*return*/, res.json({ equip: [newData] })];
             case 3:
-                error_3 = _b.sent();
-                next(error_3);
+                error_4 = _b.sent();
+                next(error_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

@@ -44,7 +44,7 @@ class authMW {
         return next();
       };
 
-      const groupPermissions = await GroupPermissionsRepo.fetch_permissions_by_user_id(req.user.id);
+      const groupPermissions = await GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(req.user.id);
 
       req.groupPermissions = groupPermissions;
 

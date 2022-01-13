@@ -185,7 +185,8 @@ var EquipModel = /** @class */ (function () {
             });
         });
     };
-    EquipModel.retrieve_user_equip_public = function (userID) {
+    ;
+    EquipModel.retrieve_user_equip_by_user_id_public = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
@@ -199,7 +200,7 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_user_equip_all = function (userID) {
+    EquipModel.retrieve_user_equip_by_user_id_all = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
@@ -213,7 +214,7 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_group_equip_public = function (groupID) {
+    EquipModel.retrieve_group_equip_by_group_id_public = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
@@ -227,7 +228,7 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_group_equip_all = function (groupID) {
+    EquipModel.retrieve_group_equip_by_group_id_all = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
@@ -324,7 +325,7 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(userID, equipID)];
                     case 2:
                         equipAssoc = _a.sent();
-                        if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equipID)) {
+                        if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equip_id)) {
                             throw new expresError_1["default"]("Error while disassociating user from equipment entry", 500);
                         }
                         ;
@@ -368,7 +369,7 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, equipment_repository_1["default"].disassociate_group_from_equip(groupID, equipID)];
                     case 2:
                         equipAssoc = _a.sent();
-                        if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equipID)) {
+                        if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equip_id)) {
                             throw new expresError_1["default"]("Error while disassociating group from equipment entry", 500);
                         }
                         ;

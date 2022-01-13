@@ -61,16 +61,16 @@ app.use(session({
     resave: redisConfig.resave
 }))
 
-app.use("/equip", equipRouter);
-app.use("/room", roomRouter);
+app.use("/equips", equipRouter);
+app.use("/rooms", roomRouter);
 
-app.use("/user", userRouter);
-app.use("/user/equip", authMW.loadSitePermissions, userEquipRouter);
-app.use("/user/room", authMW.loadSitePermissions, userRoomRouter);
+app.use("/users/equips", authMW.loadSitePermissions, userEquipRouter);
+app.use("/users/rooms", authMW.loadSitePermissions, userRoomRouter);
+app.use("/users", authMW.loadSitePermissions, userRouter);
 
-app.use("/group", groupRouter);
-app.use("/group/:groupID/equip", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
-app.use("/group/:groupID/room", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
+app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
+app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
+app.use("/groups", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRouter);
 
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);

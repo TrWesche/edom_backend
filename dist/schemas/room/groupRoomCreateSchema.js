@@ -12,14 +12,18 @@ var schema = {
             "default": "",
             minLength: 1
         },
+        category_id: {
+            $id: "#/properties/category_id",
+            type: "string"
+        },
         headline: {
             $id: "#/properties/headline",
-            type: "string",
-            maxLength: 255
+            type: "string"
         },
         description: {
             $id: "#/properties/description",
-            type: "string"
+            type: "string",
+            "default": ""
         },
         public: {
             $id: "#/properties/public",
@@ -28,10 +32,10 @@ var schema = {
         }
     },
     required: [
-        "name"
+        "name", "category_id"
     ],
     additionalProperties: true
 };
-var validateCreateGroupSchema = ajv.compile(schema);
-exports["default"] = validateCreateGroupSchema;
-//# sourceMappingURL=groupCreateSchema.js.map
+var validateGroupRoomCreateSchema = ajv.compile(schema);
+exports["default"] = validateGroupRoomCreateSchema;
+//# sourceMappingURL=groupRoomCreateSchema.js.map

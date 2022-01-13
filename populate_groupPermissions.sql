@@ -1,6 +1,10 @@
 INSERT INTO public.grouppermissions
 	(name)
 VALUES
+    ('read_group'),
+    ('update_group'),
+    ('delete_group'),
+
     ('create_role'),
     ('read_role'),
     ('update_role'),

@@ -24,7 +24,7 @@ const schema: JSONSchemaType<GroupRoomUpdateProps> = {
             type: "string"
         },
         headline: {
-            $id:"#/properties/name",
+            $id:"#/properties/headline",
             type: "string"
         },
         description: {

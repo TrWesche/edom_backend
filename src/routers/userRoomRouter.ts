@@ -62,7 +62,7 @@ userRoomRouter.post("/create", siteMW.defineActionPermissions(["read_room_self",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-userRoomRouter.get("/all", siteMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userRoomRouter.get("/list", siteMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {

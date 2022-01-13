@@ -12,10 +12,14 @@ var schema = {
             "default": "",
             minLength: 1
         },
+        headline: {
+            $id: "#/properties/headline",
+            type: "string",
+            maxLength: 255
+        },
         description: {
             $id: "#/properties/description",
-            type: "string",
-            "default": ""
+            type: "string"
         },
         public: {
             $id: "#/properties/public",

@@ -60,8 +60,7 @@ equipRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"]), 
     }
 });
 
-
-equipRouter.get("/user/:userID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_user_equip_by_user_id_public(req.params.userID);
@@ -75,8 +74,7 @@ equipRouter.get("/user/:userID", siteMW.defineActionPermissions(["view_equip_pub
     }
 });
 
-
-equipRouter.get("/group/:groupID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_group_equip_by_group_id_public(req.params.groupID);
@@ -89,7 +87,6 @@ equipRouter.get("/group/:groupID", siteMW.defineActionPermissions(["view_equip_p
         next(error)
     }
 });
-
 
 equipRouter.get("/:equipID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {

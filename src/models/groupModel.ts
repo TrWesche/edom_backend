@@ -153,6 +153,11 @@ class GroupModel {
         return group;
     };
 
+    static async retrieve_group_list_paginated(limit: number, offset: number) {
+        const groups = await GroupRepo.fetch_group_list_paginated(limit, offset);
+        return groups;
+    };
+
     static async retrieve_roles_by_group_id(groupID: string) {
         const roles = GroupPermissionsRepo.fetch_role_by_role_id(groupID);
         return roles;
@@ -184,7 +189,7 @@ class GroupModel {
         | |_| |  __/| |_| / ___ \| | | |___ 
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    static async modify_group(groupID: string, groupData: GroupCreateProps) {
+    static async modify_group(groupID: string, groupData: GroupObjectProps) {
         // if (!groupID) {
         //     throw new ExpressError("Error: Group ID not provided", 400);
         // };

@@ -66,7 +66,7 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-userEquipRouter.get("/all", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.get("/list", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {

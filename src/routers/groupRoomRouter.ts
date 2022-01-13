@@ -62,7 +62,7 @@ groupRoomRouter.post("/create", groupMW.defineActionPermissions(["read_room_self
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-groupRoomRouter.get("/all", groupMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.get("/list", groupMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {

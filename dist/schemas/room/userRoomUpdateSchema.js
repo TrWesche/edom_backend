@@ -12,6 +12,14 @@ var schema = {
             "default": "",
             minLength: 1
         },
+        category_id: {
+            $id: "#/properties/category_id",
+            type: "string"
+        },
+        headline: {
+            $id: "#/properties/headline",
+            type: "string"
+        },
         description: {
             $id: "#/properties/description",
             type: "string",

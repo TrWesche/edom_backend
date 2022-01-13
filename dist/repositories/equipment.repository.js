@@ -44,17 +44,26 @@ var EquipmentRepo = /** @class */ (function () {
     }
     EquipmentRepo.create_new_equip = function (equipData) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_1;
+            var queryColumns, queryColIdxs, queryParams, idx, key, query, result, rval, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO equipment \n                    (name, description, public, config) \n                VALUES ($1, $2, $3, $4) \n                RETURNING id, name, description, public, config", [
-                                equipData.name,
-                                equipData.description,
-                                equipData.public,
-                                equipData.config
-                            ])];
+                        queryColumns = [];
+                        queryColIdxs = [];
+                        queryParams = [];
+                        idx = 1;
+                        for (key in equipData) {
+                            if (equipData[key] !== undefined) {
+                                queryColumns.push(key);
+                                queryColIdxs.push("$".concat(idx));
+                                queryParams.push(equipData[key]);
+                                idx++;
+                            }
+                        }
+                        ;
+                        query = "\n                INSERT INTO equipment \n                    (".concat(queryColumns.join(","), ") \n                VALUES (").concat(queryColIdxs.join(","), ") \n                RETURNING id, name, category_id, headline, description, public, config");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -78,11 +87,11 @@ var EquipmentRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (equipPublic !== undefined) {
-                            query = "\n                    SELECT id, name, description, public, config\n                    FROM equipment\n                    WHERE id = $1 AND public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline, description, public, config\n                    FROM equipment\n                    WHERE id = $1 AND public = $2";
                             queryParams.push(equipID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, description, public, config\n                    FROM equipment\n                    WHERE id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, description, public, config\n                    FROM equipment\n                    WHERE id = $1";
                             queryParams.push(equipID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
@@ -106,7 +115,7 @@ var EquipmentRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, description, config\n                FROM equipment\n                LIMIT $1\n                OFFSET $2\n                WHERE equipment.public = TRUE", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM equipment\n                LIMIT $1\n                OFFSET $2\n                WHERE equipment.public = TRUE", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -226,11 +235,11 @@ var EquipmentRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (equipPublic !== undefined) {
-                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1 AND equipment.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1 AND equipment.public = $2";
                             queryParams.push(userID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
                             queryParams.push(userID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
@@ -310,11 +319,11 @@ var EquipmentRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (equipPublic !== undefined) {
-                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1 AND equipment.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1 AND equipment.public = $2";
                             queryParams.push(groupID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, description, config\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

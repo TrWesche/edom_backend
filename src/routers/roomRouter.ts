@@ -61,7 +61,7 @@ roomRouter.get("/list", siteMW.defineActionPermissions(["view_room_public"]), au
 });
 
 
-roomRouter.get("/user/:userID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await RoomModel.retrieve_user_rooms_by_user_id_public(req.params.userID);
@@ -76,7 +76,7 @@ roomRouter.get("/user/:userID", siteMW.defineActionPermissions(["view_room_publi
 });
 
 
-roomRouter.get("/group/:groupID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await RoomModel.retrieve_group_rooms_by_group_id_public(req.params.groupID);

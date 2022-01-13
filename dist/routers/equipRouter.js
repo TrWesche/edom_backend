@@ -80,7 +80,7 @@ equipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_equi
                 if (!queryData) {
                     throw new expresError_1["default"]("Equipment Not Found.", 404);
                 }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
+                return [2 /*return*/, res.json({ equip: queryData })];
             case 2:
                 error_1 = _a.sent();
                 next(error_1);
@@ -89,8 +89,52 @@ equipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_equi
         }
     });
 }); });
-equipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRouter.get("/users/:userID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id_public(req.params.userID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - Public", 404);
+                }
+                ;
+                return [2 /*return*/, res.json({ equip: queryData })];
+            case 2:
+                error_2 = _a.sent();
+                next(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+equipRouter.get("/groups/:groupID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id_public(req.params.groupID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equipment Not Found: Get Group Equipment - Public", 404);
+                }
+                ;
+                return [2 /*return*/, res.json({ equip: queryData })];
+            case 2:
+                error_3 = _a.sent();
+                next(error_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+equipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -103,8 +147,8 @@ equipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_2 = _a.sent();
-                next(error_2);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

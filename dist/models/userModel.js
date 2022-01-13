@@ -270,7 +270,7 @@ var UserModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, sitePermissions_repository_1["default"].delete_user_site_roles(id)];
+                        return [4 /*yield*/, sitePermissions_repository_1["default"].delete_user_site_roles_all(id)];
                     case 2:
                         siteRoleCleanupSuccess = _a.sent();
                         if (!siteRoleCleanupSuccess) {

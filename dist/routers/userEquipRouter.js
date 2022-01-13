@@ -73,15 +73,18 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["re
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                     throw new expresError_1["default"]("Must be logged in to create equipment", 400);
                 }
+                ;
                 if (!(0, userEquipCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to Create Group Equipment: ".concat(userEquipCreateSchema_1["default"].errors), 400);
+                    throw new expresError_1["default"]("Unable to Create User Equipment: ".concat(userEquipCreateSchema_1["default"].errors), 400);
                 }
+                ;
                 return [4 /*yield*/, equipModel_1["default"].create_user_equip(req.user.id, reqValues)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
                     throw new expresError_1["default"]("Create Equipment Failed", 400);
                 }
+                ;
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
                 error_1 = _b.sent();
@@ -97,8 +100,36 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["re
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 2, , 3]);
+                // Preflight
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Invalid Call: Get User Equipment - All", 401);
+                }
+                ;
+                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id_all((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
+            case 1:
+                queryData = _c.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - All", 404);
+                }
+                ;
+                return [2 /*return*/, res.json({ equip: queryData })];
+            case 2:
+                error_2 = _c.sent();
+                next(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -111,8 +142,8 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["r
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_2 = _a.sent();
-                next(error_2);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -125,7 +156,7 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["r
    \___/|_|   |____/_/   \_\_| |_____|
 */
 userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -165,8 +196,8 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
                 newData = _a.sent();
                 return [2 /*return*/, res.json({ equip: [newData] })];
             case 3:
-                error_3 = _a.sent();
-                next(error_3);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

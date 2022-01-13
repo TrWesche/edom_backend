@@ -178,7 +178,7 @@ var SitePermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    SitePermissionsRepo.delete_user_site_roles = function (userID) {
+    SitePermissionsRepo.delete_user_site_roles_all = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, error_7;
             return __generator(this, function (_a) {
@@ -217,6 +217,7 @@ var SitePermissionsRepo = /** @class */ (function () {
             });
         });
     };
+    ;
     SitePermissionsRepo.fetch_roles_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, error_9;

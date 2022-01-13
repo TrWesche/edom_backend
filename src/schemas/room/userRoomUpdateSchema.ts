@@ -24,7 +24,7 @@ const schema: JSONSchemaType<UserRoomUpdateProps> = {
             type: "string"
         },
         headline: {
-            $id:"#/properties/name",
+            $id:"#/properties/headline",
             type: "string"
         },
         description: {

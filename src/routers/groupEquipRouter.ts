@@ -66,7 +66,7 @@ groupEquipRouter.post("/create", groupMW.defineActionPermissions(["view", "creat
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-groupEquipRouter.get("/all", groupMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.get("/list", groupMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.groupID) {
@@ -84,7 +84,6 @@ groupEquipRouter.get("/all", groupMW.defineActionPermissions(["read_equip_self"]
         next(error)
     }
 });
-
 
 groupEquipRouter.get("/:equipID", groupMW.defineActionPermissions(["view"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -178,6 +177,6 @@ groupEquipRouter.delete("/:equipID", groupMW.defineActionPermissions(["view", "d
     } catch (error) {
         return next(error);
     }
-})
+});
 
 export default groupEquipRouter;

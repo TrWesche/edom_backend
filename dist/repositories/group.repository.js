@@ -39,21 +39,33 @@ exports.__esModule = true;
 var expresError_1 = require("../utils/expresError");
 var createUpdateQueryPGSQL_1 = require("../utils/createUpdateQueryPGSQL");
 var pgdb_1 = require("../databases/postgreSQL/pgdb");
+;
+;
 var GroupRepo = /** @class */ (function () {
     function GroupRepo() {
     }
     GroupRepo.create_new_group = function (groupData) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_1;
+            var queryColumns, queryColIdxs, queryParams, idx, key, query, result, rval, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO groups \n                    (name, description, public) \n                VALUES ($1, $2, $3) \n                RETURNING id, name, description, public", [
-                                groupData.name,
-                                groupData.description,
-                                groupData.public
-                            ])];
+                        queryColumns = [];
+                        queryColIdxs = [];
+                        queryParams = [];
+                        idx = 1;
+                        for (key in groupData) {
+                            if (groupData[key] !== undefined) {
+                                queryColumns.push(key);
+                                queryColIdxs.push("$".concat(idx));
+                                queryParams.push(groupData[key]);
+                                idx++;
+                            }
+                        }
+                        ;
+                        query = "\n                INSERT INTO groups \n                    (".concat(queryColumns.join(","), ") \n                VALUES (").concat(queryColIdxs.join(","), ") \n                RETURNING id, name, headline, description, public");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -74,7 +86,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name, \n                        description,\n                        public\n                  FROM groups\n                  WHERE id = $1", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, public\n                  FROM groups\n                  WHERE id = $1", [groupID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -90,9 +102,30 @@ var GroupRepo = /** @class */ (function () {
         });
     };
     ;
+    GroupRepo.fetch_group_list_paginated = function (limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, headline\n                FROM groups\n                LIMIT $1\n                OFFSET $2\n                WHERE groups.public = TRUE", [limit, offset])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_3 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate groups - ".concat(error_3), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     GroupRepo.update_group_by_group_id = function (groupID, groupData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, query, values, result, rval, error_3;
+            var _a, query, values, result, rval, error_4;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -104,8 +137,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_3 = _b.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update group - ".concat(error_3), 500);
+                        error_4 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to update group - ".concat(error_4), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -114,7 +147,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.delete_group_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_4;
+            var result, rval, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -125,8 +158,146 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_4 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group - ".concat(error_4), 500);
+                        error_5 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group - ".concat(error_5), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    //  _   _ ____  _____ ____  
+    // | | | / ___|| ____|  _ \ 
+    // | | | \___ \|  _| | |_) |
+    // | |_| |___) | |___|  _ < 
+    //  \___/|____/|_____|_| \_\
+    GroupRepo.associate_user_to_group = function (userID, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO user_groups \n                    (user_id, group_id) \n                VALUES ($1, $2) \n                RETURNING user_id, group_id", [
+                                userID,
+                                groupID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_6 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create group association group -> user - ".concat(error_6), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupRepo.disassociate_user_from_group = function (userID, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM user_groups\n                WHERE user_id = $1 AND group_id = $2\n                RETURNING user_id, group_id", [
+                                userID,
+                                groupID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_7 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> user - ".concat(error_7), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupRepo.disassociate_users_from_group_by_group_id = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM user_groups\n                WHERE group_id = $1\n                RETURNING user_id, group_id", [
+                                groupID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_8 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> users - ".concat(error_8), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupRepo.fetch_groups_by_user_id = function (userID, groupPublic) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = void 0;
+                        queryParams = [];
+                        if (groupPublic !== undefined) {
+                            query = "\n                    SELECT id, name, headline\n                    FROM groups\n                    RIGHT JOIN user_groups\n                    ON groups.id = user_groups.group_id\n                    WHERE user_groups.user_id = $1 AND groups.public = $2";
+                            queryParams.push(userID, groupPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, headline\n                    FROM groups\n                    RIGHT JOIN user_groups\n                    ON groups.id = user_groups.equip_id\n                    WHERE groups.user_id = $1";
+                            queryParams.push(userID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate user groups by user id - ".concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupRepo.fetch_group_users_by_group_id = function (groupID, userPublic) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = void 0;
+                        queryParams = [];
+                        if (userPublic !== undefined) {
+                            query = "\n                    SELECT id, name\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON user.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1 AND users.public = $2";
+                            queryParams.push(groupID, userPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON user.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1";
+                            queryParams.push(groupID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate group users by group id - ".concat(error_10), 500);
                     case 3: return [2 /*return*/];
                 }
             });

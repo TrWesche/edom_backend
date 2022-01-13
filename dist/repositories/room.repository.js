@@ -44,16 +44,26 @@ var RoomRepo = /** @class */ (function () {
     }
     RoomRepo.create_new_room = function (roomData) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_1;
+            var queryColumns, queryColIdxs, queryParams, idx, key, query, result, rval, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO rooms \n                    (name, description, public) \n                VALUES ($1, $2, $3) \n                RETURNING id, name, description, public", [
-                                roomData.name,
-                                roomData.description,
-                                roomData.public
-                            ])];
+                        queryColumns = [];
+                        queryColIdxs = [];
+                        queryParams = [];
+                        idx = 1;
+                        for (key in roomData) {
+                            if (roomData[key] !== undefined) {
+                                queryColumns.push(key);
+                                queryColIdxs.push("$".concat(idx));
+                                queryParams.push(roomData[key]);
+                                idx++;
+                            }
+                        }
+                        ;
+                        query = "\n                INSERT INTO rooms \n                    (".concat(queryColumns.join(","), ") \n                VALUES (").concat(queryColIdxs.join(","), ") \n                RETURNING id, name, category_id, headline, description, public");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -67,14 +77,25 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
-    RoomRepo.fetch_room_by_room_id = function (roomID) {
+    RoomRepo.fetch_room_by_room_id = function (roomID, roomPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_2;
+            var query, queryParams, result, rval, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name, \n                        description,\n                        public\n                  FROM rooms\n                  WHERE id = $1", [roomID])];
+                        query = void 0;
+                        queryParams = [];
+                        if (roomPublic !== undefined) {
+                            query = "\n                    SELECT id, name, category_id, headline, description, public\n                    FROM rooms\n                    WHERE id = $1 AND public = $2";
+                            queryParams.push(roomID, roomPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, category_id, headline, description, public\n                    FROM rooms\n                    WHERE id = $1";
+                            queryParams.push(roomID);
+                        }
+                        ;
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -90,9 +111,30 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
+    RoomRepo.fetch_room_list_paginated = function (limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM rooms\n                LIMIT $1\n                OFFSET $2\n                WHERE rooms.public = TRUE", [limit, offset])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_3 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate rooms - ".concat(error_3), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     RoomRepo.update_room_by_room_id = function (roomID, roomData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, query, values, result, rval, error_3;
+            var _a, query, values, result, rval, error_4;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -104,8 +146,8 @@ var RoomRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_3 = _b.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update room - ".concat(error_3), 500);
+                        error_4 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to update room - ".concat(error_4), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -114,7 +156,7 @@ var RoomRepo = /** @class */ (function () {
     ;
     RoomRepo.delete_room_by_room_id = function (roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_4;
+            var result, rval, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -125,8 +167,176 @@ var RoomRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_4 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete room - ".concat(error_4), 500);
+                        error_5 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete room - ".concat(error_5), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    //  _   _ ____  _____ ____  
+    // | | | / ___|| ____|  _ \ 
+    // | | | \___ \|  _| | |_) |
+    // | |_| |___) | |___|  _ < 
+    //  \___/|____/|_____|_| \_\
+    RoomRepo.associate_user_to_room = function (userID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO user_rooms \n                    (user_id, room_id) \n                VALUES ($1, $2) \n                RETURNING user_id, room_id", [
+                                userID,
+                                roomID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_6 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create room association user -> room - ".concat(error_6), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomRepo.disassociate_user_from_room = function (userID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM user_rooms\n                WHERE user_id = $1 AND room_id = $2\n                RETURNING user_id, room_id", [
+                                userID,
+                                roomID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_7 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete room association user -> room - ".concat(error_7), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomRepo.fetch_rooms_by_user_id = function (userID, roomPublic) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = void 0;
+                        queryParams = [];
+                        if (roomPublic !== undefined) {
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.equip_id\n                    WHERE user_rooms.user_id = $1 AND rooms.public = $2";
+                            queryParams.push(userID, roomPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.equip_id\n                    WHERE user_rooms.user_id = $1";
+                            queryParams.push(userID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_8 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate rooms by user id - ".concat(error_8), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    //      ____ ____   ___  _   _ ____  
+    //     / ___|  _ \ / _ \| | | |  _ \ 
+    //    | |  _| |_) | | | | | | | |_) |
+    //    | |_| |  _ <| |_| | |_| |  __/ 
+    //     \____|_| \_\\___/ \___/|_|    
+    RoomRepo.associate_group_to_room = function (groupID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO group_rooms \n                    (group_id, room_id) \n                VALUES ($1, $2) \n                RETURNING user_id, room_id", [
+                                groupID,
+                                roomID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create room association group -> room - ".concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomRepo.disassociate_group_from_room = function (groupId, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM group_rooms\n                WHERE group_id = $1 AND room_id = $2\n                RETURNING group_id, room_id", [
+                                groupId,
+                                roomID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete room association group -> room - ".concat(error_10), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomRepo.fetch_rooms_by_group_id = function (groupID, roomPublic) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = void 0;
+                        queryParams = [];
+                        if (roomPublic !== undefined) {
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.equip_id\n                    WHERE group_rooms.group_id = $1 AND rooms.public = $2";
+                            queryParams.push(groupID, roomPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.equip_id\n                    WHERE group_rooms.group_id = $1";
+                            queryParams.push(groupID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_11 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate rooms by group id - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });

@@ -97,7 +97,7 @@ var authMW = /** @class */ (function () {
                             return [2 /*return*/, next()];
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_permissions_by_user_id(req.user.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_user_group_permissions_by_user_id(req.user.id)];
                     case 1:
                         groupPermissions = _b.sent();
                         req.groupPermissions = groupPermissions;
