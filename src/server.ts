@@ -21,6 +21,7 @@ import userEquipRouter from "./routers/userEquipRouter";
 import groupRouter from "./routers/groupRouter";
 import groupRoomRouter from "./routers/groupRoomRouter";
 import groupEquipRouter from "./routers/groupEquipRouter";
+import groupMgmtRouter from "./routers/groupMgmtRouter";
 
 // Middleware Imports
 import authMW from "./middleware/authorizationMW";
@@ -28,6 +29,7 @@ import groupMW from "./middleware/groupMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
+
 
 
 const corsOptions = {
@@ -70,6 +72,7 @@ app.use("/users", authMW.loadSitePermissions, userRouter);
 
 app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
 app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
+app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
 app.use("/groups", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRouter);
 
 server.listen(port, host, () => {
