@@ -321,18 +321,18 @@ var GroupPermissionsRepo = /** @class */ (function () {
     };
     ;
     // ROLE PERMISSIONS ASSOCIATIONS Management
-    GroupPermissionsRepo.create_role_permissions = function (groupRoleID, permissionList) {
+    GroupPermissionsRepo.create_role_permissions = function (permissionList) {
         return __awaiter(this, void 0, void 0, function () {
             var valueExpressions, queryValues, _i, permissionList_1, permission, valueExpressionRows, result, rval, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         valueExpressions = [];
-                        queryValues = [groupRoleID];
+                        queryValues = [permissionList[0].grouprole_id];
                         for (_i = 0, permissionList_1 = permissionList; _i < permissionList_1.length; _i++) {
                             permission = permissionList_1[_i];
-                            if (permission) {
-                                queryValues.push(permission);
+                            if (permission.grouppermission_id) {
+                                queryValues.push(permission.grouppermission_id);
                                 valueExpressions.push("($1, $".concat(queryValues.length, ")"));
                             }
                         }

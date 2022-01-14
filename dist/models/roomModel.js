@@ -75,7 +75,7 @@ var RoomModel = /** @class */ (function () {
                         return [4 /*yield*/, room_repository_1["default"].associate_user_to_room(userID, room.id)];
                     case 4:
                         roomAssoc = _a.sent();
-                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.id)) {
+                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.user_id)) {
                             throw new expresError_1["default"]("Error while associating user to room entry", 500);
                         }
                         // Commit to Database
@@ -181,7 +181,7 @@ var RoomModel = /** @class */ (function () {
             var rooms;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID)];
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID, true)];
                     case 1:
                         rooms = _a.sent();
                         return [2 /*return*/, rooms];
@@ -195,7 +195,7 @@ var RoomModel = /** @class */ (function () {
             var rooms;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID, true)];
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID)];
                     case 1:
                         rooms = _a.sent();
                         return [2 /*return*/, rooms];

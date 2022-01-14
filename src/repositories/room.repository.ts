@@ -133,6 +133,7 @@ class RoomRepo {
     //  \___/|____/|_____|_| \_\
     static async associate_user_to_room(userID: string, roomID: string) {
         try {
+            // console.log("Associate User to Room Values:", userID, roomID);
             const result = await pgdb.query(
                 `INSERT INTO user_rooms 
                     (user_id, room_id) 
@@ -144,6 +145,7 @@ class RoomRepo {
             ]);
             
             const rval = result.rows[0];
+            // console.log("Return Value", rval);
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create room association user -> room - ${error}`, 500);
@@ -178,7 +180,7 @@ class RoomRepo {
                     SELECT id, name, category_id, headline
                     FROM rooms
                     RIGHT JOIN user_rooms
-                    ON rooms.id = user_rooms.equip_id
+                    ON rooms.id = user_rooms.room_id
                     WHERE user_rooms.user_id = $1 AND rooms.public = $2`
                 queryParams.push(userID, roomPublic);
             } else {
@@ -186,7 +188,7 @@ class RoomRepo {
                     SELECT id, name, category_id, headline
                     FROM rooms
                     RIGHT JOIN user_rooms
-                    ON rooms.id = user_rooms.equip_id
+                    ON rooms.id = user_rooms.room_id
                     WHERE user_rooms.user_id = $1`
                 queryParams.push(userID);
             }

@@ -273,6 +273,8 @@ class EquipmentRepo {
             throw new ExpressError(`An Error Occured: Unable to locate equipment by group id - ${error}`, 500);
         }
     };
+
+    // TODO: ROOM Assocaite / Disassocaite / Fetch
 }
 
 export default EquipmentRepo;

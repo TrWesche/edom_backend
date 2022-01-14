@@ -149,7 +149,7 @@ var GroupModel = /** @class */ (function () {
     //     const permission = GroupPermissionsRepo.create_permission(permissionData);
     //     return permission;
     // };
-    GroupModel.create_role_permissions = function (roleID, permissionIDs) {
+    GroupModel.create_role_permissions = function (permissionList) {
         return __awaiter(this, void 0, void 0, function () {
             var rolePermissions, error_2;
             return __generator(this, function (_a) {
@@ -160,8 +160,8 @@ var GroupModel = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         rolePermissions = void 0;
-                        if (!(permissionIDs.length > 0)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_role_permissions(roleID, permissionIDs)];
+                        if (!(permissionList.length > 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_role_permissions(permissionList)];
                     case 2:
                         rolePermissions = _a.sent();
                         return [3 /*break*/, 4];
@@ -229,6 +229,24 @@ var GroupModel = /** @class */ (function () {
                     case 8:
                         ;
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupModel.create_group_user_role = function (roleID, userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userRole;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userID, roleID)];
+                    case 1:
+                        userRole = _a.sent();
+                        if (!userRole) {
+                            throw new expresError_1["default"]("Error while assinging default role to target user", 500);
+                        }
+                        ;
+                        return [2 /*return*/, userRole];
                 }
             });
         });
@@ -505,6 +523,24 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         throw new expresError_1["default"](error_6.message, error_6.status);
                     case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupModel.delete_group_user_role = function (roleID, userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var roles;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_role_by_user_and_role_id(userID, roleID)];
+                    case 1:
+                        roles = _a.sent();
+                        if (!roles) {
+                            throw new expresError_1["default"]("Failed to Delete User Role Associated with Target User", 500);
+                        }
+                        ;
+                        return [2 /*return*/, roles];
                 }
             });
         });

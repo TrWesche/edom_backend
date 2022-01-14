@@ -16,6 +16,7 @@ var userEquipRouter_1 = require("./routers/userEquipRouter");
 var groupRouter_1 = require("./routers/groupRouter");
 var groupRoomRouter_1 = require("./routers/groupRoomRouter");
 var groupEquipRouter_1 = require("./routers/groupEquipRouter");
+var groupMgmtRouter_1 = require("./routers/groupMgmtRouter");
 // Middleware Imports
 var authorizationMW_1 = require("./middleware/authorizationMW");
 var groupMW_1 = require("./middleware/groupMW");
@@ -55,6 +56,7 @@ app.use("/users/rooms", authorizationMW_1["default"].loadSitePermissions, userRo
 app.use("/users", authorizationMW_1["default"].loadSitePermissions, userRouter_1["default"]);
 app.use("/groups/:groupID/equips", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupEquipRouter_1["default"]);
 app.use("/groups/:groupID/rooms", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRoomRouter_1["default"]);
+app.use("/groups/:groupID/mgmt", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupMgmtRouter_1["default"]);
 app.use("/groups", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRouter_1["default"]);
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));

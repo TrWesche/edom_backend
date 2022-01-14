@@ -55,6 +55,7 @@ var userRoomRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.post("/create", siteMW_1["default"].defineActionPermissions(["read_room_self", "create_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
@@ -101,6 +102,7 @@ userRoomRouter.post("/create", siteMW_1["default"].defineActionPermissions(["rea
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a, _b;
@@ -129,6 +131,7 @@ userRoomRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_r
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.get("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
@@ -156,6 +159,7 @@ userRoomRouter.get("/:roomID", siteMW_1["default"].defineActionPermissions(["rea
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.patch("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     return __generator(this, function (_a) {
@@ -209,6 +213,7 @@ userRoomRouter.patch("/:roomID", siteMW_1["default"].defineActionPermissions(["r
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022 -- Note: Room -> Equipment Association was not yet implemented
 userRoomRouter["delete"]("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self", "delete_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;

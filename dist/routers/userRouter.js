@@ -56,6 +56,7 @@ var userRouter = express.Router();
    / ___ \ |_| | | | |  _  |
   /_/   \_\___/  |_| |_| |_|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var authValues, queryData, error_1;
     return __generator(this, function (_a) {
@@ -91,6 +92,7 @@ userRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, vo
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.post("/register", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var regValues, queryData, error_2;
     return __generator(this, function (_a) {
@@ -140,6 +142,7 @@ userRouter.post("/register", function (req, res, next) { return __awaiter(void 0
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
@@ -162,6 +165,7 @@ userRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_us
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
@@ -189,6 +193,7 @@ userRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['vi
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     var _a, _b;
@@ -243,6 +248,7 @@ userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update
   | |__| |_| | |_| | |_| | |_| | | |
   |_____\___/ \____|\___/ \___/  |_|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Logging Out");
@@ -262,6 +268,7 @@ userRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, 
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     var _a, _b;

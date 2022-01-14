@@ -28,6 +28,7 @@ const userRouter = express.Router();
   /_/   \_\___/  |_| |_| |_|
 */
 
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.post("/auth", async (req, res, next) => {
     try {
         const authValues: UserAuthProps = {
@@ -60,6 +61,7 @@ userRouter.post("/auth", async (req, res, next) => {
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.post("/register", async (req, res, next) => {
     try {
         const regValues: UserRegisterProps = {
@@ -105,6 +107,7 @@ userRouter.post("/register", async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
@@ -116,8 +119,9 @@ userRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), a
     } catch (error) {
         next(error);
     }
-})
+});
 
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.get("/up/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: User needs a public / private selection & additional details
@@ -139,7 +143,7 @@ userRouter.get("/up/:username", siteMW.defineActionPermissions(['view_user_publi
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
@@ -192,7 +196,7 @@ userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self'])
   | |__| |_| | |_| | |_| | |_| | | |  
   |_____\___/ \____|\___/ \___/  |_|  
 */
-
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.post("/logout", async (req, res, next) => {
     console.log("Logging Out");
     try {
@@ -210,7 +214,7 @@ userRouter.post("/logout", async (req, res, next) => {
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/13/2022
 userRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']),  authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {

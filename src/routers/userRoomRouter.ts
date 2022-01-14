@@ -24,6 +24,7 @@ const userRoomRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.post("/create", siteMW.defineActionPermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -62,6 +63,7 @@ userRoomRouter.post("/create", siteMW.defineActionPermissions(["read_room_self",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.get("/list", siteMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -81,6 +83,7 @@ userRoomRouter.get("/list", siteMW.defineActionPermissions(["read_room_self"]), 
     }
 });
 
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.get("/:roomID", siteMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
@@ -101,6 +104,7 @@ userRoomRouter.get("/:roomID", siteMW.defineActionPermissions(["read_room_self"]
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.patch("/:roomID", siteMW.defineActionPermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -151,7 +155,7 @@ userRoomRouter.patch("/:roomID", siteMW.defineActionPermissions(["read_room_self
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/13/2022 -- Note: Room -> Equipment Association was not yet implemented
 userRoomRouter.delete("/:roomID", siteMW.defineActionPermissions(["read_room_self", "delete_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {

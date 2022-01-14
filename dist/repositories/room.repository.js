@@ -194,6 +194,7 @@ var RoomRepo = /** @class */ (function () {
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
+                        // console.log("Return Value", rval);
                         return [2 /*return*/, rval];
                     case 2:
                         error_6 = _a.sent();
@@ -238,11 +239,11 @@ var RoomRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (roomPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.equip_id\n                    WHERE user_rooms.user_id = $1 AND rooms.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.room_id\n                    WHERE user_rooms.user_id = $1 AND rooms.public = $2";
                             queryParams.push(userID, roomPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.equip_id\n                    WHERE user_rooms.user_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.room_id\n                    WHERE user_rooms.user_id = $1";
                             queryParams.push(userID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

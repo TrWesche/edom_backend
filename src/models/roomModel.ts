@@ -35,7 +35,7 @@ class RoomModel {
 
             // Associate Room with User
             const roomAssoc = await RoomRepo.associate_user_to_room(userID, room.id);
-            if (!roomAssoc?.id) {
+            if (!roomAssoc?.user_id) {
                 throw new ExpressError("Error while associating user to room entry", 500);
             }
 
@@ -99,12 +99,12 @@ class RoomModel {
     };
 
     static async retrieve_user_rooms_by_user_id_public(userID: string) {
-        const rooms = await RoomRepo.fetch_rooms_by_user_id(userID);
+        const rooms = await RoomRepo.fetch_rooms_by_user_id(userID, true);
         return rooms;
     };
 
     static async retrieve_user_rooms_by_user_id_all(userID: string) {
-        const rooms = await RoomRepo.fetch_rooms_by_user_id(userID, true);
+        const rooms = await RoomRepo.fetch_rooms_by_user_id(userID);
         return rooms;
     };
 
@@ -163,6 +163,8 @@ class RoomModel {
                 throw new ExpressError("Error while disassociating user from room entry", 500);
                 
             };
+
+            // TODO: Disassociate Equipment From Room
 
             // Delete Room Entry
             const room = await RoomRepo.delete_room_by_room_id(roomAssoc.room_id);
