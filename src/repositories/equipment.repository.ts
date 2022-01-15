@@ -224,14 +224,14 @@ class EquipmentRepo {
         }
     };
 
-    static async disassociate_group_from_equip(groupId: string, equipID: string) {
+    static async disassociate_group_from_equip(groupID: string, equipID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM group_equipment
                 WHERE group_id = $1 AND equip_id = $2
                 RETURNING group_id, equip_id`,
             [
-                groupId,
+                groupID,
                 equipID
             ]);
             
@@ -274,7 +274,118 @@ class EquipmentRepo {
         }
     };
 
-    // TODO: ROOM Assocaite / Disassocaite / Fetch
+
+
+    //  ____   ___   ___  __  __ 
+    // |  _ \ / _ \ / _ \|  \/  |
+    // | |_) | | | | | | | |\/| |
+    // |  _ <| |_| | |_| | |  | |
+    // |_| \_\\___/ \___/|_|  |_|
+    static async associate_room_to_equip(roomID: string, equipID: string) {
+        try {
+            const result = await pgdb.query(
+                `INSERT INTO room_equipment 
+                    (room_id, equip_id) 
+                VALUES ($1, $2) 
+                RETURNING room_id, equip_id`,
+            [
+                roomID,
+                equipID
+            ]);
+            
+            const rval = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to create equipment association room -> equipment - ${error}`, 500);
+        }
+    };
+
+    static async disassociate_room_from_equip_by_equip_id(roomID: string, equipID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM room_equipment
+                WHERE room_id = $1 AND equip_id = $2
+                RETURNING room_id, equip_id`,
+            [
+                roomID,
+                equipID
+            ]);
+            
+            const rval = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete equipment association room -> equipment - ${error}`, 500);
+        }
+    };
+
+    static async disassociate_room_from_equip_by_room_id(roomID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM room_equipment
+                WHERE room_id = $1
+                RETURNING room_id`,
+            [
+                roomID
+            ]);
+            
+            const rval = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete equipment associations room -> equipment - ${error}`, 500);
+        }
+    };
+
+    static async fetch_equip_by_room_id(roomID: string, roomPublic?: boolean) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            if (roomPublic !== undefined) {
+                query = `
+                    SELECT id, name, category_id, headline, configuration
+                    FROM equipment
+                    RIGHT JOIN room_equipment
+                    ON equipment.id = room_equipment.equip_id
+                    WHERE room_equipment.room_id = $1 AND equipment.public = $2`
+                queryParams.push(roomID, roomPublic);
+            } else {
+                query = `
+                    SELECT id, name, category_id, headline, configuration
+                    FROM equipment
+                    RIGHT JOIN room_equipment
+                    ON equipment.id = room_equipment.equip_id
+                    WHERE room_equipment.room_id = $1`
+                queryParams.push(roomID);
+            }
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval: Array<EquipObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment by room id - ${error}`, 500);
+        }
+    };
+
+    static async fetch_equip_rooms_by_equip_id(equipID: string) {
+        try {
+                const query = `
+                    SELECT id, name
+                    FROM equipment
+                    RIGHT JOIN room_equipment
+                    ON equipment.id = room_equipment.equip_id
+                    WHERE room_equipment.equip_id = $1`;
+
+                const queryParams = [equipID];
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment rooms by equip id - ${error}`, 500);
+        }
+    };
 }
 
 export default EquipmentRepo;

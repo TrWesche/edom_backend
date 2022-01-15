@@ -8,6 +8,7 @@ import { GroupRoomCreateProps } from "../schemas/room/groupRoomCreateSchema";
 
 // Utility Functions
 import ExpressError from "../utils/expresError";
+import EquipmentRepo from "../repositories/equipment.repository";
 
 
 class RoomModel {
@@ -164,7 +165,11 @@ class RoomModel {
                 
             };
 
-            // TODO: Disassociate Equipment From Room
+            // Delete Equipment -> Room Associations Entries
+            const equipAssoc = await EquipmentRepo.disassociate_room_from_equip_by_room_id(roomID);
+            if (!equipAssoc) {
+                throw new ExpressError("Error while disassociating equipment from room entry", 500);
+            };
 
             // Delete Room Entry
             const room = await RoomRepo.delete_room_by_room_id(roomAssoc.room_id);
@@ -181,7 +186,6 @@ class RoomModel {
             throw new ExpressError(error.message, error.status);
         };
     };
-
 
     static async delete_group_room(groupID: string, roomID: string) {
         // Processing

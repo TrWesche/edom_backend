@@ -152,6 +152,50 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
+    EquipModel.create_equip_room_association = function (roomID, equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var equipRooms, equipEntry, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 7]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID)];
+                    case 2:
+                        equipRooms = _a.sent();
+                        if (equipRooms.length > 0) {
+                            throw new expresError_1["default"]("Equipment is already assigned to a room.", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, equipment_repository_1["default"].associate_room_to_equip(roomID, equipID)];
+                    case 3:
+                        equipEntry = _a.sent();
+                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
+                            throw new expresError_1["default"]("Error while creating new equipment -> room association", 500);
+                        }
+                        ;
+                        // Commit to Database
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 4:
+                        // Commit to Database
+                        _a.sent();
+                        return [2 /*return*/, equipEntry];
+                    case 5:
+                        error_3 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 6:
+                        _a.sent();
+                        throw new expresError_1["default"](error_3.message, error_3.status);
+                    case 7:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     /*   ____  _____    _    ____
         |  _ \| ____|  / \  |  _ \
         | |_) |  _|   / _ \ | | | |
@@ -314,7 +358,7 @@ var EquipModel = /** @class */ (function () {
     */
     EquipModel.delete_user_equip = function (userID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var equipAssoc, equipEntry, error_3;
+            var equipAssoc, equipEntry, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -343,11 +387,11 @@ var EquipModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, equipEntry];
                     case 5:
-                        error_3 = _a.sent();
+                        error_4 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 6:
                         _a.sent();
-                        throw new expresError_1["default"](error_3.message, error_3.status);
+                        throw new expresError_1["default"](error_4.message, error_4.status);
                     case 7:
                         ;
                         return [2 /*return*/];
@@ -358,7 +402,7 @@ var EquipModel = /** @class */ (function () {
     ;
     EquipModel.delete_group_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var equipAssoc, equipEntry, error_4;
+            var equipAssoc, equipEntry, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -387,12 +431,30 @@ var EquipModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, equipEntry];
                     case 5:
-                        error_4 = _a.sent();
+                        error_5 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 6:
                         _a.sent();
-                        throw new expresError_1["default"](error_4.message, error_4.status);
+                        throw new expresError_1["default"](error_5.message, error_5.status);
                     case 7:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipModel.delete_equip_room_association = function (roomID, equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var equipEntry;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_equip_id(roomID, equipID)];
+                    case 1:
+                        equipEntry = _a.sent();
+                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
+                            throw new expresError_1["default"]("Error while deleting equipment -> room association", 500);
+                        }
                         ;
                         return [2 /*return*/];
                 }

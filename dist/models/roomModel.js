@@ -41,6 +41,7 @@ var room_repository_1 = require("../repositories/room.repository");
 var transactionRepository_1 = require("../repositories/transactionRepository");
 // Utility Functions
 var expresError_1 = require("../utils/expresError");
+var equipment_repository_1 = require("../repositories/equipment.repository");
 var RoomModel = /** @class */ (function () {
     function RoomModel() {
     }
@@ -282,11 +283,11 @@ var RoomModel = /** @class */ (function () {
     */
     RoomModel.delete_user_room = function (userID, roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var roomAssoc, room, error_3;
+            var roomAssoc, equipAssoc, room, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 7]);
+                        _a.trys.push([0, 6, , 8]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
@@ -297,8 +298,15 @@ var RoomModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while disassociating user from room entry", 500);
                         }
                         ;
-                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_room_id(roomAssoc.room_id)];
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_room_id(roomID)];
                     case 3:
+                        equipAssoc = _a.sent();
+                        if (!equipAssoc) {
+                            throw new expresError_1["default"]("Error while disassociating equipment from room entry", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_room_id(roomAssoc.room_id)];
+                    case 4:
                         room = _a.sent();
                         if (!(room === null || room === void 0 ? void 0 : room.id)) {
                             throw new expresError_1["default"]("Error while deleting room entry", 500);
@@ -306,17 +314,17 @@ var RoomModel = /** @class */ (function () {
                         ;
                         // Commit to Database
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 4:
+                    case 5:
                         // Commit to Database
                         _a.sent();
                         return [2 /*return*/, room];
-                    case 5:
+                    case 6:
                         error_3 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 6:
+                    case 7:
                         _a.sent();
                         throw new expresError_1["default"](error_3.message, error_3.status);
-                    case 7:
+                    case 8:
                         ;
                         return [2 /*return*/];
                 }

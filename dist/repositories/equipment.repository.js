@@ -285,7 +285,7 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.disassociate_group_from_equip = function (groupId, equipID) {
+    EquipmentRepo.disassociate_group_from_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_10;
             return __generator(this, function (_a) {
@@ -293,7 +293,7 @@ var EquipmentRepo = /** @class */ (function () {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM group_equipment\n                WHERE group_id = $1 AND equip_id = $2\n                RETURNING group_id, equip_id", [
-                                groupId,
+                                groupID,
                                 equipID
                             ])];
                     case 1:
@@ -334,6 +334,136 @@ var EquipmentRepo = /** @class */ (function () {
                     case 2:
                         error_11 = _a.sent();
                         throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_11), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    //  ____   ___   ___  __  __ 
+    // |  _ \ / _ \ / _ \|  \/  |
+    // | |_) | | | | | | | |\/| |
+    // |  _ <| |_| | |_| | |  | |
+    // |_| \_\\___/ \___/|_|  |_|
+    EquipmentRepo.associate_room_to_equip = function (roomID, equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_12;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO room_equipment \n                    (room_id, equip_id) \n                VALUES ($1, $2) \n                RETURNING room_id, equip_id", [
+                                roomID,
+                                equipID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association room -> equipment - ".concat(error_12), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.disassociate_room_from_equip_by_equip_id = function (roomID, equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_13;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM room_equipment\n                WHERE room_id = $1 AND equip_id = $2\n                RETURNING room_id, equip_id", [
+                                roomID,
+                                equipID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_13 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association room -> equipment - ".concat(error_13), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.disassociate_room_from_equip_by_room_id = function (roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_14;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM room_equipment\n                WHERE room_id = $1\n                RETURNING room_id", [
+                                roomID
+                            ])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_14 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment associations room -> equipment - ".concat(error_14), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.fetch_equip_by_room_id = function (roomID, roomPublic) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_15;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = void 0;
+                        queryParams = [];
+                        if (roomPublic !== undefined) {
+                            query = "\n                    SELECT id, name, category_id, headline, configuration\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.room_id = $1 AND equipment.public = $2";
+                            queryParams.push(roomID, roomPublic);
+                        }
+                        else {
+                            query = "\n                    SELECT id, name, category_id, headline, configuration\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.room_id = $1";
+                            queryParams.push(roomID);
+                        }
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_15 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by room id - ".concat(error_15), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.fetch_equip_rooms_by_equip_id = function (equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_16;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = "\n                    SELECT id, name\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.equip_id = $1";
+                        queryParams = [equipID];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_16 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment rooms by equip id - ".concat(error_16), 500);
                     case 3: return [2 /*return*/];
                 }
             });

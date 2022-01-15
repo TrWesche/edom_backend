@@ -80,6 +80,33 @@ class EquipModel {
         };
     };
 
+    static async create_equip_room_association(roomID: string, equipID: string) {
+        // Processing
+        try {
+            await TransactionRepo.begin_transaction();
+
+            // Check for existing room -> equipment associations.
+            const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID);
+            if (equipRooms.length > 0) {
+                throw new ExpressError("Equipment is already assigned to a room.", 400);
+            };
+
+            // Create Equipment Room Association in Database
+            const equipEntry = await EquipRepo.associate_room_to_equip(roomID, equipID);
+            if (!equipEntry?.id) {
+                throw new ExpressError("Error while creating new equipment -> room association", 500);
+            };
+
+            // Commit to Database
+            await TransactionRepo.commit_transaction();
+
+            return equipEntry;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        };
+    };
+
 
     /*   ____  _____    _    ____  
         |  _ \| ____|  / \  |  _ \ 
@@ -220,6 +247,15 @@ class EquipModel {
         } catch (error) {
             await TransactionRepo.rollback_transaction();
             throw new ExpressError(error.message, error.status);
+        };
+    };
+
+    static async delete_equip_room_association(roomID: string, equipID: string) {
+        // Processing
+        // Delete Equipment Room Association from Database
+        const equipEntry = await EquipRepo.disassociate_room_from_equip_by_equip_id(roomID, equipID);
+        if (!equipEntry?.id) {
+            throw new ExpressError("Error while deleting equipment -> room association", 500);
         };
     };
 }
