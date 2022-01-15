@@ -29,15 +29,15 @@ const equipRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-
+// Manual Test - Basic Functionality: 01/15/2022
 equipRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
         // const {limit, offset} = req.query as unknown as equipRouterQuery;
         // Preflight
-        const limit = req.query.limit;
-        const offset = req.query.offset;
+        const limit = req.query.limit ? req.query.limit : 25;
+        const offset = req.query.offset ? req.query.offset : 0;
         // const ftserach = req.query.ftsearch;
         // const catid = req.query.catid;
         // const uid = req.query.uid;
@@ -60,6 +60,7 @@ equipRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"]), 
     }
 });
 
+// Manual Test - Basic Functionality: 01/15/2022
 equipRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
@@ -78,6 +79,21 @@ equipRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_equip_
     try {
         // Processing
         const queryData = await EquipModel.retrieve_group_equip_by_group_id_public(req.params.groupID);
+        if (!queryData) {
+            throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
+        };
+        
+        return res.json({equip: queryData});
+    } catch (error) {
+        next(error)
+    }
+});
+
+// Manual Test - Basic Functionality: 01/15/2022
+equipRouter.get("/rooms/:roomID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Processing
+        const queryData = await EquipModel.retrieve_room_equip_by_room_id_public(req.params.roomID);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
         };

@@ -58,14 +58,15 @@ var equipRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/15/2022
 equipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                limit = req.query.limit;
-                offset = req.query.offset;
+                limit = req.query.limit ? req.query.limit : 25;
+                offset = req.query.offset ? req.query.offset : 0;
                 // const ftserach = req.query.ftsearch;
                 // const catid = req.query.catid;
                 // const uid = req.query.uid;
@@ -89,6 +90,7 @@ equipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_equi
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/15/2022
 equipRouter.get("/users/:userID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
@@ -133,8 +135,31 @@ equipRouter.get("/groups/:groupID", siteMW_1["default"].defineActionPermissions(
         }
     });
 }); });
-equipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manual Test - Basic Functionality: 01/15/2022
+equipRouter.get("/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, equipModel_1["default"].retrieve_room_equip_by_room_id_public(req.params.roomID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equipment Not Found: Get Group Equipment - Public", 404);
+                }
+                ;
+                return [2 /*return*/, res.json({ equip: queryData })];
+            case 2:
+                error_4 = _a.sent();
+                next(error_4);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+equipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -147,8 +172,8 @@ equipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_4 = _a.sent();
-                next(error_4);
+                error_5 = _a.sent();
+                next(error_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

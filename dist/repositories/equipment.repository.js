@@ -115,7 +115,7 @@ var EquipmentRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM equipment\n                LIMIT $1\n                OFFSET $2\n                WHERE equipment.public = TRUE", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM equipment\n                WHERE equipment.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -239,7 +239,7 @@ var EquipmentRepo = /** @class */ (function () {
                             queryParams.push(userID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, public\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
                             queryParams.push(userID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
@@ -323,7 +323,7 @@ var EquipmentRepo = /** @class */ (function () {
                             queryParams.push(groupID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, public\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
@@ -449,11 +449,11 @@ var EquipmentRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (roomPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline, configuration\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.room_id = $1 AND equipment.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.room_id = $1 AND equipment.public = $2";
                             queryParams.push(roomID, roomPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline, configuration\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.room_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.room_id = $1";
                             queryParams.push(roomID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

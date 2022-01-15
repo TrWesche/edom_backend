@@ -144,6 +144,16 @@ class EquipModel {
         return equip;
     };
 
+    static async retrieve_room_equip_by_room_id_public(roomID: string) {
+        const equip = await EquipRepo.fetch_equip_by_room_id(roomID, true);
+        return equip;
+    };
+
+    static async retrieve_room_equip_by_room_id_all(roomID: string) {
+        const equip = await EquipRepo.fetch_equip_by_room_id(roomID);
+        return equip;
+    };
+
 
 
     static async retrieve_equip_user_by_equip_id(robotID: string) {

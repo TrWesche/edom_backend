@@ -286,6 +286,34 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
+    EquipModel.retrieve_room_equip_by_room_id_public = function (roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var equip;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_room_id(roomID, true)];
+                    case 1:
+                        equip = _a.sent();
+                        return [2 /*return*/, equip];
+                }
+            });
+        });
+    };
+    ;
+    EquipModel.retrieve_room_equip_by_room_id_all = function (roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var equip;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_room_id(roomID)];
+                    case 1:
+                        equip = _a.sent();
+                        return [2 /*return*/, equip];
+                }
+            });
+        });
+    };
+    ;
     EquipModel.retrieve_equip_user_by_equip_id = function (robotID) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {

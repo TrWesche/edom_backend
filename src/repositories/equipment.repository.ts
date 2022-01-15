@@ -79,9 +79,9 @@ class EquipmentRepo {
             const result = await pgdb.query(`
                 SELECT id, name, category_id, headline
                 FROM equipment
+                WHERE equipment.public = TRUE
                 LIMIT $1
-                OFFSET $2
-                WHERE equipment.public = TRUE`,
+                OFFSET $2`,
                 [limit, offset]
             );
     
@@ -183,7 +183,7 @@ class EquipmentRepo {
                 queryParams.push(userID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline
+                    SELECT id, name, category_id, headline, public
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -257,7 +257,7 @@ class EquipmentRepo {
                 queryParams.push(groupID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline
+                    SELECT id, name, category_id, headline, public
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
@@ -359,7 +359,7 @@ class EquipmentRepo {
 
             if (roomPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline, configuration
+                    SELECT id, name, category_id, headline
                     FROM equipment
                     RIGHT JOIN room_equipment
                     ON equipment.id = room_equipment.equip_id
@@ -367,7 +367,7 @@ class EquipmentRepo {
                 queryParams.push(roomID, roomPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, configuration
+                    SELECT id, name, category_id, headline
                     FROM equipment
                     RIGHT JOIN room_equipment
                     ON equipment.id = room_equipment.equip_id
