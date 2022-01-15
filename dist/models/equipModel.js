@@ -358,23 +358,30 @@ var EquipModel = /** @class */ (function () {
     */
     EquipModel.delete_user_equip = function (userID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var equipAssoc, equipEntry, error_4;
+            var roomAssoc, userAssoc, equipEntry, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 7]);
+                        _a.trys.push([0, 6, , 8]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(userID, equipID)];
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_equip_id(equipID)];
                     case 2:
-                        equipAssoc = _a.sent();
-                        if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equip_id)) {
+                        roomAssoc = _a.sent();
+                        if (!roomAssoc) {
+                            throw new expresError_1["default"]("Error while deleting equipment -> room association", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(userID, equipID)];
+                    case 3:
+                        userAssoc = _a.sent();
+                        if (!(userAssoc === null || userAssoc === void 0 ? void 0 : userAssoc.equip_id)) {
                             throw new expresError_1["default"]("Error while disassociating user from equipment entry", 500);
                         }
                         ;
-                        return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_equip_id(equipAssoc.equip_id)];
-                    case 3:
+                        return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_equip_id(userAssoc.equip_id)];
+                    case 4:
                         equipEntry = _a.sent();
                         if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
                             throw new expresError_1["default"]("Error while deleting equipment entry", 500);
@@ -382,17 +389,17 @@ var EquipModel = /** @class */ (function () {
                         ;
                         // Commit to Database
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 4:
+                    case 5:
                         // Commit to Database
                         _a.sent();
                         return [2 /*return*/, equipEntry];
-                    case 5:
+                    case 6:
                         error_4 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 6:
+                    case 7:
                         _a.sent();
                         throw new expresError_1["default"](error_4.message, error_4.status);
-                    case 7:
+                    case 8:
                         ;
                         return [2 /*return*/];
                 }
@@ -444,15 +451,15 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.delete_equip_room_association = function (roomID, equipID) {
+    EquipModel.delete_equip_room_assc_by_room_equip_id = function (roomID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var equipEntry;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_equip_id(roomID, equipID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_room_equip_id(roomID, equipID)];
                     case 1:
                         equipEntry = _a.sent();
-                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
+                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.room_id)) {
                             throw new expresError_1["default"]("Error while deleting equipment -> room association", 500);
                         }
                         ;

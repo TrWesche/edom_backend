@@ -53,13 +53,13 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline, description, public, config
+                    SELECT id, name, category_id, headline, description, public, configuration
                     FROM equipment
                     WHERE id = $1 AND public = $2`;
                 queryParams.push(equipID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, description, public, config
+                    SELECT id, name, category_id, headline, description, public, configuration
                     FROM equipment
                     WHERE id = $1`;
                 queryParams.push(equipID);
@@ -300,7 +300,7 @@ class EquipmentRepo {
         }
     };
 
-    static async disassociate_room_from_equip_by_equip_id(roomID: string, equipID: string) {
+    static async disassociate_room_from_equip_by_room_equip_id(roomID: string, equipID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM room_equipment
@@ -331,7 +331,24 @@ class EquipmentRepo {
             const rval = result.rows;
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete equipment associations room -> equipment - ${error}`, 500);
+            throw new ExpressError(`An Error Occured: Unable to delete equipment associations room -> equipment, all room instances - ${error}`, 500);
+        }
+    };
+
+    static async disassociate_room_from_equip_by_equip_id(equipID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM room_equipment
+                WHERE equip_id = $1
+                RETURNING room_id, equip_id`,
+            [
+                equipID
+            ]);
+            
+            const rval = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete equipment associations room -> equipment, all equipment instances - ${error}`, 500);
         }
     };
 

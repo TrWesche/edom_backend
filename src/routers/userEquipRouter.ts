@@ -25,7 +25,7 @@ const userEquipRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // console.log(req.body);
@@ -83,6 +83,7 @@ userEquipRouter.post("/:equipID/rooms/:roomID", siteMW.defineActionPermissions([
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.get("/list", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -103,6 +104,7 @@ userEquipRouter.get("/list", siteMW.defineActionPermissions(["read_equip_self"])
 });
 
 
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
@@ -123,7 +125,7 @@ userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["read_equip_sel
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -138,7 +140,7 @@ userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_s
             headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
-            config: req.body.config
+            configuration: req.body.configuration
         };
 
         if(!validateUserEquipUpdateSchema(updateValues)) {
@@ -175,13 +177,14 @@ userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_s
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError(`Must be logged in to delete equipment`, 400);
         }
 
+        // Processing
         const queryData = EquipModel.delete_user_equip(req.user.id, req.params.equipID);
         if(!queryData) {
             throw new ExpressError("Unable to delete target equipment", 404);
@@ -193,10 +196,11 @@ userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_
     }
 });
 
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.delete("/:equipID/rooms/:roomID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
-        const queryData = await EquipModel.delete_equip_room_association(req.params.roomID, req.params.equipID);
+        const queryData = await EquipModel.delete_equip_room_assc_by_room_equip_id(req.params.roomID, req.params.equipID);
         if (!queryData) {
             throw new ExpressError("Disassociate Equipment from Room Failed", 500);
         };

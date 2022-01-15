@@ -8,7 +8,7 @@ export interface UserEquipUpdateProps {
     headline: string
     description: string
     public: boolean
-    config: object
+    configuration: object
 };
 
 const schema: JSONSchemaType<UserEquipUpdateProps> = {
@@ -38,8 +38,8 @@ const schema: JSONSchemaType<UserEquipUpdateProps> = {
             type: "boolean",
             default: false
         },
-        config: {
-            $id: "#/properties/config",
+        configuration: {
+            $id: "#/properties/configuration",
             type: "object"
         }
     },

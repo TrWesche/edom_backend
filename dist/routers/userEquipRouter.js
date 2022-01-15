@@ -55,6 +55,7 @@ var userEquipRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["read_equip_self", "create_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
@@ -123,6 +124,7 @@ userEquipRouter.post("/:equipID/rooms/:roomID", siteMW_1["default"].defineAction
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a, _b;
@@ -151,6 +153,7 @@ userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
@@ -178,6 +181,7 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["r
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     return __generator(this, function (_a) {
@@ -197,7 +201,7 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
                     headline: req.body.headline,
                     description: req.body.description,
                     public: req.body.public,
-                    config: req.body.config
+                    configuration: req.body.configuration
                 };
                 if (!(0, userEquipUpdateSchema_1["default"])(updateValues_1)) {
                     throw new expresError_1["default"]("Update Error: ".concat(userEquipUpdateSchema_1["default"].errors), 400);
@@ -232,6 +236,7 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "delete_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
@@ -252,13 +257,14 @@ userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissio
         return [2 /*return*/];
     });
 }); });
+// Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter["delete"]("/:equipID/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].delete_equip_room_association(req.params.roomID, req.params.equipID)];
+                return [4 /*yield*/, equipModel_1["default"].delete_equip_room_assc_by_room_equip_id(req.params.roomID, req.params.equipID)];
             case 1:
                 queryData = _a.sent();
                 if (!queryData) {
