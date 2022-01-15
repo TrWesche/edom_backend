@@ -155,7 +155,7 @@ userRoomRouter.patch("/:roomID", siteMW.defineActionPermissions(["read_room_self
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022 -- Note: Room -> Equipment Association was not yet implemented
+// Manual Test - Basic Functionality: 01/15/2022
 userRoomRouter.delete("/:roomID", siteMW.defineActionPermissions(["read_room_self", "delete_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {

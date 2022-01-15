@@ -68,7 +68,7 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["re
                     headline: req.body.headline,
                     description: req.body.description,
                     public: req.body.public,
-                    config: req.body.config
+                    configuration: req.body.configuration
                 };
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                     throw new expresError_1["default"]("Must be logged in to create equipment", 400);
@@ -94,6 +94,29 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["re
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/15/2022
+userEquipRouter.post("/:equipID/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, equipModel_1["default"].create_equip_room_association(req.params.roomID, req.params.equipID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Assoicate Equipment to Room Failed", 500);
+                }
+                ;
+                return [2 /*return*/, res.json({ equipRoom: [queryData] })];
+            case 2:
+                error_2 = _a.sent();
+                next(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |
@@ -101,7 +124,7 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["re
   |_| \_\_____/_/   \_\____/
 */
 userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_2;
+    var queryData, error_3;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -121,15 +144,15 @@ userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_
                 ;
                 return [2 /*return*/, res.json({ equip: queryData })];
             case 2:
-                error_2 = _c.sent();
-                next(error_2);
+                error_3 = _c.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+    var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -142,8 +165,8 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["r
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_3 = _a.sent();
-                next(error_3);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -156,7 +179,7 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["r
    \___/|_|   |____/_/   \_\_| |_____|
 */
 userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -196,8 +219,8 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
                 newData = _a.sent();
                 return [2 /*return*/, res.json({ equip: [newData] })];
             case 3:
-                error_4 = _a.sent();
-                next(error_4);
+                error_5 = _a.sent();
+                next(error_5);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -227,6 +250,28 @@ userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissio
             return [2 /*return*/, next(error)];
         }
         return [2 /*return*/];
+    });
+}); });
+userEquipRouter["delete"]("/:equipID/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, equipModel_1["default"].delete_equip_room_association(req.params.roomID, req.params.equipID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Disassociate Equipment from Room Failed", 500);
+                }
+                ;
+                return [2 /*return*/, res.json({ equipRoom: [queryData] })];
+            case 2:
+                error_6 = _a.sent();
+                next(error_6);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
     });
 }); });
 exports["default"] = userEquipRouter;

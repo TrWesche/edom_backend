@@ -18,7 +18,7 @@ class EquipModel {
     */
     static async create_user_equip(userID: string, data: UserEquipCreateProps) {
         // Preflight
-        if (!data.name || !data.description || !data.config || !data.public) {
+        if (!data.name || !data.category_id || !data.configuration) {
             throw new ExpressError("Invalid Create Equipment Call", 400);
         };
 
@@ -93,7 +93,7 @@ class EquipModel {
 
             // Create Equipment Room Association in Database
             const equipEntry = await EquipRepo.associate_room_to_equip(roomID, equipID);
-            if (!equipEntry?.id) {
+            if (!equipEntry?.room_id) {
                 throw new ExpressError("Error while creating new equipment -> room association", 500);
             };
 
@@ -257,6 +257,7 @@ class EquipModel {
         if (!equipEntry?.id) {
             throw new ExpressError("Error while deleting equipment -> room association", 500);
         };
+        return equipEntry;
     };
 }
 

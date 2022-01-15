@@ -57,7 +57,7 @@ var EquipModel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         // Preflight
-                        if (!data.name || !data.description || !data.config || !data.public) {
+                        if (!data.name || !data.category_id || !data.configuration) {
                             throw new expresError_1["default"]("Invalid Create Equipment Call", 400);
                         }
                         ;
@@ -172,7 +172,7 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, equipment_repository_1["default"].associate_room_to_equip(roomID, equipID)];
                     case 3:
                         equipEntry = _a.sent();
-                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
+                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.room_id)) {
                             throw new expresError_1["default"]("Error while creating new equipment -> room association", 500);
                         }
                         ;
@@ -456,7 +456,7 @@ var EquipModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while deleting equipment -> room association", 500);
                         }
                         ;
-                        return [2 /*return*/];
+                        return [2 /*return*/, equipEntry];
                 }
             });
         });

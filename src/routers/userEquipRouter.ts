@@ -28,6 +28,8 @@ const userEquipRouter = express.Router();
 
 userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
+        // console.log(req.body);
+
         // Preflight
         const reqValues: UserEquipCreateProps = {
             name: req.body.name,
@@ -35,7 +37,7 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self
             headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
-            config: req.body.config
+            configuration: req.body.configuration
         };
 
         if (!req.user?.id) {
@@ -55,6 +57,21 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self
         return res.json({equip: [queryData]});
     } catch (error) {
         next(error)
+    }
+});
+
+// Manual Test - Basic Functionality: 01/15/2022
+userEquipRouter.post("/:equipID/rooms/:roomID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Processing
+        const queryData = await EquipModel.create_equip_room_association(req.params.roomID, req.params.equipID);
+        if (!queryData) {
+            throw new ExpressError("Assoicate Equipment to Room Failed", 500);
+        };
+        
+        return res.json({equipRoom: [queryData]});
+    } catch (error) {
+        next(error);
     }
 });
 
@@ -173,6 +190,20 @@ userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_
         return res.json({message: "Equipment deleted."});
     } catch (error) {
         return next(error);
+    }
+});
+
+userEquipRouter.delete("/:equipID/rooms/:roomID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Processing
+        const queryData = await EquipModel.delete_equip_room_association(req.params.roomID, req.params.equipID);
+        if (!queryData) {
+            throw new ExpressError("Disassociate Equipment from Room Failed", 500);
+        };
+        
+        return res.json({equipRoom: [queryData]});
+    } catch (error) {
+        next(error);
     }
 });
 

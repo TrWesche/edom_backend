@@ -213,7 +213,7 @@ userRoomRouter.patch("/:roomID", siteMW_1["default"].defineActionPermissions(["r
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022 -- Note: Room -> Equipment Association was not yet implemented
+// Manual Test - Basic Functionality: 01/15/2022
 userRoomRouter["delete"]("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self", "delete_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;

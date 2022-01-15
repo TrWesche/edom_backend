@@ -35,7 +35,7 @@ class EquipmentRepo {
                 INSERT INTO equipment 
                     (${queryColumns.join(",")}) 
                 VALUES (${queryColIdxs.join(",")}) 
-                RETURNING id, name, category_id, headline, description, public, config`;
+                RETURNING id, name, category_id, headline, description, public, configuration`;
 
             const result = await pgdb.query(query, queryParams);
             

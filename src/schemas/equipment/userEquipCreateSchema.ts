@@ -8,7 +8,7 @@ export interface UserEquipCreateProps {
     headline: string
     description: string
     public: boolean
-    config: object
+    configuration: object
 };
 
 const schema: JSONSchemaType<UserEquipCreateProps> = {
@@ -38,13 +38,13 @@ const schema: JSONSchemaType<UserEquipCreateProps> = {
             type: "boolean",
             default: false
         },
-        config: {
-            $id: "#/properties/config",
+        configuration: {
+            $id: "#/properties/configuration",
             type: "object"
         }
     },
     required: [
-        "name", "category_id", "config"
+        "name", "category_id", "configuration"
     ],
     additionalProperties: true
 };
