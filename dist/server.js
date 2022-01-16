@@ -16,7 +16,6 @@ var userEquipRouter_1 = require("./routers/userEquipRouter");
 var groupRouter_1 = require("./routers/groupRouter");
 // Middleware Imports
 var authorizationMW_1 = require("./middleware/authorizationMW");
-var groupMW_1 = require("./middleware/groupMW");
 // Database Connector Imports
 var redis_1 = require("./databases/redisSession/redis");
 var corsOptions = {
@@ -54,7 +53,7 @@ app.use("/users", authorizationMW_1["default"].loadSitePermissions, userRouter_1
 // app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
 // app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
 // app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
-app.use("/groups", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRouter_1["default"]);
+app.use("/groups", authorizationMW_1["default"].loadSitePermissions, groupRouter_1["default"]);
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));
 });

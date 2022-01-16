@@ -322,16 +322,10 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.retrieve_user_permissions_by_user_id = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var permissions;
-            return __generator(this, function (_a) {
-                permissions = groupPermissions_repository_1["default"].fetch_user_group_permissions_by_user_id(userID);
-                return [2 /*return*/, permissions];
-            });
-        });
-    };
-    ;
+    // static async retrieve_user_permissions_by_user_id(userID: string) {
+    //     const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
+    //     return permissions;
+    // };
     /*   _   _ ____  ____    _  _____ _____
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|

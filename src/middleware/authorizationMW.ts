@@ -39,13 +39,14 @@ class authMW {
   /** Middleware: Load User's Permissions for the group into the request. */
   static async loadGroupPermissions(req, res, next) {
     try {
-      if (!req.user?.id) {
+      if (!req.user?.id || !req.groupID) {
         req.groupPermissions = undefined;
         return next();
       };
 
-      const groupPermissions = await GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(req.user.id);
-
+      // console.log("Getting Group Permissions");
+      const groupPermissions = await GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(req.user.id, req.groupID);
+      // console.log(groupPermissions);
       req.groupPermissions = groupPermissions;
 
       return next();
@@ -71,6 +72,8 @@ class authMW {
       };
   
       // Check for Group Permissions if they are defined
+      // console.log(req.requiredPermissions);
+      // console.log(req.groupPermissions);
       if (req.requiredPermissions.group) {
         if (!req.groupPermissions) {
           console.log("No Required Group Permissions Defined");

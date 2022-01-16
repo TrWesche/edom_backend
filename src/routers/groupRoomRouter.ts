@@ -126,7 +126,7 @@ groupRoomRouter.patch("/:roomID", groupMW.defineActionPermissions(["read_room_se
         const itemsList = {};
         const newKeys = Object.keys(req.body);
         newKeys.map(key => {
-            if(updateValues[key] && (updateValues[key] != prevValues[key]) ) {
+            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
                 itemsList[key] = req.body[key];
             }
         })

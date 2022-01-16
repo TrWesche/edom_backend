@@ -186,10 +186,10 @@ class GroupModel {
         return roles;
     };
 
-    static async retrieve_user_permissions_by_user_id(userID: string) {
-        const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
-        return permissions;
-    };
+    // static async retrieve_user_permissions_by_user_id(userID: string) {
+    //     const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
+    //     return permissions;
+    // };
 
     /*   _   _ ____  ____    _  _____ _____ 
         | | | |  _ \|  _ \  / \|_   _| ____|

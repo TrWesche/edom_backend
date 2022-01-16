@@ -109,7 +109,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, headline\n                FROM groups\n                LIMIT $1\n                OFFSET $2\n                WHERE groups.public = TRUE", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, headline\n                FROM groups\n                WHERE groups.public = true\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;

@@ -185,7 +185,7 @@ groupEquipRouter.patch("/:equipID", groupMW_1["default"].defineActionPermissions
                 itemsList_1 = {};
                 newKeys = Object.keys(req.body);
                 newKeys.map(function (key) {
-                    if (updateValues_1[key] && (updateValues_1[key] != prevValues_1[key])) {
+                    if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
                         itemsList_1[key] = req.body[key];
                     }
                 });

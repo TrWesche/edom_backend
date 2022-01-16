@@ -55,7 +55,8 @@ var groupRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-groupRouter.post("/create", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manual Test - Basic Functionality: 01/16/2022
+groupRouter.post("/create", siteMW_1["default"].defineActionPermissions(["create_group_self"]), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -95,14 +96,15 @@ groupRouter.post("/create", function (req, res, next) { return __awaiter(void 0,
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/16/2022
 groupRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                limit = req.query.limit;
-                offset = req.query.offset;
+                limit = req.query.limit ? req.query.limit : 25;
+                offset = req.query.offset ? req.query.offset : 0;
                 // const ftserach = req.query.ftsearch;
                 // const catid = req.query.catid;
                 // const uid = req.query.uid;
@@ -153,7 +155,8 @@ groupRouter.get("/:groupID", siteMW_1["default"].defineActionPermissions(["view_
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-groupRouter.patch("/:groupID", groupMW_1["default"].defineActionPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manual Test - Basic Functionality: 01/16/2022
+groupRouter.patch("/:groupID", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadGroupPermissions, siteMW_1["default"].defineActionPermissions(["update_group_self"]), groupMW_1["default"].defineActionPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     var _a;
     return __generator(this, function (_b) {
@@ -164,7 +167,7 @@ groupRouter.patch("/:groupID", groupMW_1["default"].defineActionPermissions(["re
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
                     throw new expresError_1["default"]("Must be logged in to update group || group not found", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.params.groupID)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID)];
             case 1:
                 prevValues_1 = _b.sent();
                 if (!prevValues_1) {
@@ -184,18 +187,18 @@ groupRouter.patch("/:groupID", groupMW_1["default"].defineActionPermissions(["re
                 itemsList_1 = {};
                 newKeys = Object.keys(req.body);
                 newKeys.map(function (key) {
-                    if (updateValues_1[key] && (updateValues_1[key] != prevValues_1[key])) {
+                    if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
                         itemsList_1[key] = req.body[key];
                     }
                 });
                 // If no changes return original data
                 if (Object.keys(itemsList_1).length === 0) {
-                    return [2 /*return*/, res.json({ equip: [prevValues_1] })];
+                    return [2 /*return*/, res.json({ group: [prevValues_1] })];
                 }
-                return [4 /*yield*/, groupModel_1["default"].modify_group(req.params.groupID, itemsList_1)];
+                return [4 /*yield*/, groupModel_1["default"].modify_group(req.groupID, itemsList_1)];
             case 2:
                 newData = _b.sent();
-                return [2 /*return*/, res.json({ equip: [newData] })];
+                return [2 /*return*/, res.json({ group: [newData] })];
             case 3:
                 error_4 = _b.sent();
                 next(error_4);
@@ -210,7 +213,7 @@ groupRouter.patch("/:groupID", groupMW_1["default"].defineActionPermissions(["re
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-groupRouter["delete"]("/:groupID", groupMW_1["default"].defineActionPermissions(["view", "delete"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRouter["delete"]("/:groupID", siteMW_1["default"].defineActionPermissions(["delete_group_self"]), groupMW_1["default"].defineActionPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
     return __generator(this, function (_b) {

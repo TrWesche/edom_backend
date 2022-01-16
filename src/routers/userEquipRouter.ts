@@ -151,7 +151,7 @@ userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_s
         const itemsList = {};
         const newKeys = Object.keys(req.body);
         newKeys.map(key => {
-            if(updateValues[key] && (updateValues[key] != prevValues[key]) ) {
+            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
                 itemsList[key] = req.body[key];
             }
         })

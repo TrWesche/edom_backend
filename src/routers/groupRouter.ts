@@ -25,7 +25,8 @@ const groupRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-groupRouter.post("/create", async (req, res, next) => {
+// Manual Test - Basic Functionality: 01/16/2022
+groupRouter.post("/create", siteMW.defineActionPermissions(["create_group_self"]), async (req, res, next) => {
     try {
         // Preflight
         const reqValues: GroupCreateProps = {
@@ -62,15 +63,15 @@ groupRouter.post("/create", async (req, res, next) => {
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-
+// Manual Test - Basic Functionality: 01/16/2022
 groupRouter.get("/list", siteMW.defineActionPermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
         // const {limit, offset} = req.query as unknown as equipRouterQuery;
         // Preflight
-        const limit = req.query.limit;
-        const offset = req.query.offset;
+        const limit = req.query.limit ? req.query.limit : 25;
+        const offset = req.query.offset ? req.query.offset : 0;
         // const ftserach = req.query.ftsearch;
         // const catid = req.query.catid;
         // const uid = req.query.uid;
@@ -113,15 +114,15 @@ groupRouter.get("/:groupID", siteMW.defineActionPermissions(["view_group_public"
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-
-groupRouter.patch("/:groupID", groupMW.defineActionPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
+// Manual Test - Basic Functionality: 01/16/2022
+groupRouter.patch("/:groupID",  groupMW.addGroupIDToRequest, authMW.loadGroupPermissions, siteMW.defineActionPermissions(["update_group_self"]), groupMW.defineActionPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to update group || group not found`, 400);
         }
 
-        const prevValues = await GroupModel.retrieve_group_by_group_id(req.params.groupID);
+        const prevValues = await GroupModel.retrieve_group_by_group_id(req.groupID);
         if (!prevValues) {
             throw new ExpressError(`Update Failed: Group Not Found`, 404);
         };
@@ -141,7 +142,7 @@ groupRouter.patch("/:groupID", groupMW.defineActionPermissions(["read_group", "u
         const itemsList = {};
         const newKeys = Object.keys(req.body);
         newKeys.map(key => {
-            if(updateValues[key] && (updateValues[key] != prevValues[key]) ) {
+            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
                 itemsList[key] = req.body[key];
             }
         })
@@ -149,12 +150,12 @@ groupRouter.patch("/:groupID", groupMW.defineActionPermissions(["read_group", "u
 
         // If no changes return original data
         if(Object.keys(itemsList).length === 0) {
-            return res.json({equip: [prevValues]});
+            return res.json({group: [prevValues]});
         }
 
         // Update the user data with the itemsList information
-        const newData = await GroupModel.modify_group(req.params.groupID, itemsList);
-        return res.json({equip: [newData]})
+        const newData = await GroupModel.modify_group(req.groupID, itemsList);
+        return res.json({group: [newData]})
     } catch (error) {
         next(error)
     }
@@ -168,7 +169,7 @@ groupRouter.patch("/:groupID", groupMW.defineActionPermissions(["read_group", "u
   |____/|_____|_____|_____| |_| |_____|
 */
 
-groupRouter.delete("/:groupID", groupMW.defineActionPermissions(["view", "delete"]), authMW.validatePermissions, async (req, res, next) => {
+groupRouter.delete("/:groupID", siteMW.defineActionPermissions(["delete_group_self"]), groupMW.defineActionPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to delete groups || target group not specified`, 400);

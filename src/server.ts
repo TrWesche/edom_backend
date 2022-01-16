@@ -73,7 +73,7 @@ app.use("/users", authMW.loadSitePermissions, userRouter);
 // app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
 // app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
 // app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
-app.use("/groups", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRouter);
+app.use("/groups", authMW.loadSitePermissions, groupRouter);
 
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);

@@ -283,6 +283,7 @@ class GroupPermissionsRepo {
         try {
             const newGroupPermissions = {
                 owner: [
+                    'read_group', 'update_group', 'delete_group',
                     'create_role', 'read_role', 'update_role', 'delete_role',
                     'create_user_role', 'read_user_role', 'delete_user_role',
                     'create_group_user', 'read_group_user', 'delete_group_user',
@@ -303,7 +304,7 @@ class GroupPermissionsRepo {
                     'create_equip', 'read_equip', 'update_equip', 'delete_equip'
                 ],
                 user: [
-                    'read_group_user', 'read_equip', 'read_room'
+                    'read_group', 'read_group_user', 'read_equip', 'read_room'
                 ]
             };
 
@@ -502,7 +503,7 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async fetch_user_group_permissions_by_user_id(userID: string) {
+    static async fetch_user_group_permissions_by_user_id(userID: string, groupID: string) {
         try {
             const result = await pgdb.query(
                 `SELECT DISTINCT
@@ -511,10 +512,12 @@ class GroupPermissionsRepo {
                     FROM grouppermissions
                     LEFT JOIN grouproles_grouppermissions
                         ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id
+                    LEFT JOIN grouproles
+                        ON grouproles.id = grouproles_grouppermissions.grouprole_id
                     LEFT JOIN user_grouproles
                         ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id
-                    WHERE user_grouproles.user_id =  $1`,
-                    [userID]
+                    WHERE user_grouproles.user_id = $1 AND grouproles.group_id = $2`,
+                    [userID, groupID]
             );
 
             // const rval: Array<siteRoleProps> | undefined = result.rows;

@@ -137,7 +137,7 @@ groupEquipRouter.patch("/:equipID", groupMW.defineActionPermissions(["view", "up
         const itemsList = {};
         const newKeys = Object.keys(req.body);
         newKeys.map(key => {
-            if(updateValues[key] && (updateValues[key] != prevValues[key]) ) {
+            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
                 itemsList[key] = req.body[key];
             }
         })

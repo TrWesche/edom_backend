@@ -70,9 +70,9 @@ class GroupRepo {
             const result = await pgdb.query(`
                 SELECT id, name, headline
                 FROM groups
+                WHERE groups.public = true
                 LIMIT $1
-                OFFSET $2
-                WHERE groups.public = TRUE`,
+                OFFSET $2`,
                 [limit, offset]
             );
     

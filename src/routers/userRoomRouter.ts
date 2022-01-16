@@ -129,7 +129,7 @@ userRoomRouter.patch("/:roomID", siteMW.defineActionPermissions(["read_room_self
         const itemsList = {};
         const newKeys = Object.keys(req.body);
         newKeys.map(key => {
-            if(updateValues[key] && (updateValues[key] != prevValues[key]) ) {
+            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
                 itemsList[key] = req.body[key];
             }
         })

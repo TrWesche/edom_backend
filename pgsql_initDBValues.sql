@@ -29,6 +29,8 @@ VALUES
 	('0f58ae58-108f-4ce7-9c9b-54326bbf37aa', 'remove_role'),
 
     -- User Roles
+	('b4071041-8e47-4b46-9d07-748a984fecb1', 'site_access'),
+
 	('1077c00a-4d3a-458a-be88-56d1d3cfdf56', 'read_user_self'),
 	('7e5e9bbc-1d5a-4977-ad8c-905072571adb', 'update_user_self'),
 	('1eb0719d-838e-4c57-a3a7-9e1439650459', 'delete_user_self'),
@@ -92,6 +94,7 @@ INSERT INTO public.siterole_sitepermissions
     (siterole_id, sitepermission_id)
 VALUES
 -- user role id, permission_id
+	('853724f0-ef31-467d-a739-58bcc081a540', 'b4071041-8e47-4b46-9d07-748a984fecb1'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '1077c00a-4d3a-458a-be88-56d1d3cfdf56'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '7e5e9bbc-1d5a-4977-ad8c-905072571adb'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '1eb0719d-838e-4c57-a3a7-9e1439650459'),

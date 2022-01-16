@@ -92,14 +92,15 @@ var authMW = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
                             req.groupPermissions = undefined;
                             return [2 /*return*/, next()];
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_user_group_permissions_by_user_id(req.user.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_user_group_permissions_by_user_id(req.user.id, req.groupID)];
                     case 1:
                         groupPermissions = _b.sent();
+                        // console.log(groupPermissions);
                         req.groupPermissions = groupPermissions;
                         return [2 /*return*/, next()];
                     case 2:
@@ -127,6 +128,8 @@ var authMW = /** @class */ (function () {
             }
             ;
             // Check for Group Permissions if they are defined
+            // console.log(req.requiredPermissions);
+            // console.log(req.groupPermissions);
             if (req.requiredPermissions.group) {
                 if (!req.groupPermissions) {
                     console.log("No Required Group Permissions Defined");

@@ -365,6 +365,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         newGroupPermissions = {
                             owner: [
+                                'read_group', 'update_group', 'delete_group',
                                 'create_role', 'read_role', 'update_role', 'delete_role',
                                 'create_user_role', 'read_user_role', 'delete_user_role',
                                 'create_group_user', 'read_group_user', 'delete_group_user',
@@ -385,7 +386,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                                 'create_equip', 'read_equip', 'update_equip', 'delete_equip'
                             ],
                             user: [
-                                'read_group_user', 'read_equip', 'read_room'
+                                'read_group', 'read_group_user', 'read_equip', 'read_room'
                             ]
                         };
                         queryColumns = ["grouprole_id", "grouppermission_id"];
@@ -612,14 +613,14 @@ var GroupPermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupPermissionsRepo.fetch_user_group_permissions_by_user_id = function (userID) {
+    GroupPermissionsRepo.fetch_user_group_permissions_by_user_id = function (userID, groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, error_24;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        grouppermissions.id AS permission_id,\n                        grouppermissions.name AS permission_name\n                    FROM grouppermissions\n                    LEFT JOIN grouproles_grouppermissions\n                        ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id\n                    LEFT JOIN user_grouproles\n                        ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id\n                    WHERE user_grouproles.user_id =  $1", [userID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        grouppermissions.id AS permission_id,\n                        grouppermissions.name AS permission_name\n                    FROM grouppermissions\n                    LEFT JOIN grouproles_grouppermissions\n                        ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id\n                    LEFT JOIN grouproles\n                        ON grouproles.id = grouproles_grouppermissions.grouprole_id\n                    LEFT JOIN user_grouproles\n                        ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id\n                    WHERE user_grouproles.user_id = $1 AND grouproles.group_id = $2", [userID, groupID])];
                     case 1:
                         result = _a.sent();
                         // const rval: Array<siteRoleProps> | undefined = result.rows;
