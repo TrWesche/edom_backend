@@ -71,7 +71,7 @@ CREATE TABLE "sitepermissions" (
 CREATE TABLE "grouproles" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "group_id" uuid,
-  "name" text UNIQUE NOT NULL,
+  "name" text NOT NULL,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );

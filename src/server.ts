@@ -70,9 +70,9 @@ app.use("/users/equips", authMW.loadSitePermissions, userEquipRouter);
 app.use("/users/rooms", authMW.loadSitePermissions, userRoomRouter);
 app.use("/users", authMW.loadSitePermissions, userRouter);
 
-app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
-app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
-app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
+// app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
+// app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
+// app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
 app.use("/groups", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRouter);
 
 server.listen(port, host, () => {

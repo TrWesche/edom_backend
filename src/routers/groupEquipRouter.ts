@@ -28,6 +28,8 @@ const groupEquipRouter = express.Router();
 
 groupEquipRouter.post("/create", groupMW.defineActionPermissions(["view", "create"]), authMW.validatePermissions, async (req, res, next) => {
     try {
+        console.log("Start Create Group Equip");
+
         // Preflight
         const reqValues: GroupEquipCreateProps = {
             name: req.body.name,

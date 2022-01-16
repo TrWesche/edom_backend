@@ -43,7 +43,7 @@ class GroupModel {
 
             // Populate Permissions on Newly Created Group Roles
             const groupPermissions = await GroupPermissionsRepo.create_role_permissions_for_new_group(groupEntry.id);
-            if (!groupPermissions[0]?.id) {
+            if (!groupPermissions[0]?.grouprole_id) {
                 throw new ExpressError("Error while creating group role permission entries for new group", 500);
             };
 

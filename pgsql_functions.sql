@@ -10,12 +10,12 @@ $siterole_id$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION get_group_role_uuid (role_name text, group_id uuid) 
+CREATE OR REPLACE FUNCTION get_group_role_uuid (role_name text, group_id_var uuid) 
 RETURNS uuid AS $grouprole_id$
 DECLARE
 	grouprole_id uuid;
 BEGIN
-	SELECT grouproles.id INTO grouprole_id FROM grouproles WHERE grouproles.name = role_name AND grouproles.group_id = group_id;
+	SELECT grouproles.id INTO grouprole_id FROM grouproles WHERE grouproles.name = role_name AND grouproles.group_id = group_id_var;
 	RETURN grouprole_id;
 END;
 $grouprole_id$ LANGUAGE plpgsql;

@@ -33,8 +33,9 @@ groupRouter.post("/create", async (req, res, next) => {
             headline: req.body.headline,
             description: req.body.description,
             public: req.body.public
-        }
-
+        };
+        
+        
         if (!req.user?.id) {
             throw new ExpressError(`Must be logged in to create group`, 400);
         }

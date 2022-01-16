@@ -104,6 +104,7 @@ equipRouter.get("/rooms/:roomID", siteMW.defineActionPermissions(["view_equip_pu
     }
 });
 
+// Manual Test - Basic Functionality: 01/15/2022
 equipRouter.get("/:equipID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID, true);

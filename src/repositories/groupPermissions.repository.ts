@@ -110,13 +110,13 @@ class GroupPermissionsRepo {
         };
     };
 
-    static async fetch_role_by_role_name(groupID: string, groupRoleName: string) {
+    static async fetch_role_by_role_name(groupRoleName: string, groupID: string) {
         try {
             const result = await pgdb.query(
                 `SELECT id, 
                         name,
                         group_id
-                  FROM groupRoles
+                  FROM grouproles
                   WHERE name = $1 AND group_id = $2`,
                   [groupRoleName, groupID]
             );
@@ -236,7 +236,7 @@ class GroupPermissionsRepo {
     static async delete_permission_by_permission_id(groupPermID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM groupPermissions
+                `DELETE FROM grouppermissions
                 WHERE id = $1
                 RETURNING id`,
             [groupPermID]);
@@ -265,7 +265,7 @@ class GroupPermissionsRepo {
 
         try {
             const result = await pgdb.query(`
-                INSERT INTO groupRole_groupPermissions
+                INSERT INTO grouproles_grouppermissions
                     (role_id, permission_id)
                 VALUES
                     ${valueExpressionRows}
@@ -316,7 +316,7 @@ class GroupPermissionsRepo {
             for (const key in newGroupPermissions) {
                 newGroupPermissions[key].forEach(element => {
                     queryColIdxs.push(`
-                    (SELECT get_group_role_uuid($${idx}, $${idx+1}), SELECT get_group_permission_uuid($${idx+2}))`);
+                    ( (SELECT get_group_role_uuid($${idx}, $${idx+1})), (SELECT get_group_permission_uuid($${idx+2})) )`);
                     queryParams.push(key, groupID, element);
                     idx += 3;
                 });
@@ -328,9 +328,12 @@ class GroupPermissionsRepo {
                 VALUES ${queryColIdxs.join(",")} 
                 RETURNING grouprole_id, grouppermission_id`;
 
+            // console.log(query);
+
             const result = await pgdb.query(query, queryParams);
             
-            const rval: Array<GroupRoleProps> | undefined = result.rows;
+            // console.log(result);
+            const rval: Array<GroupRolePermsProps> | undefined = result.rows;
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create role permissions for new group - ${error}`, 500);
@@ -340,15 +343,15 @@ class GroupPermissionsRepo {
     static async fetch_role_permissions_by_role_id(groupRoleID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT groupRoles.id AS role_id,
-                        groupRoles.name AS role_name,
-                        groupPermissions.id AS permission_id,
-                        groupPermissions.name AS permission_name
+                `SELECT grouproles.id AS role_id,
+                        grouproles.name AS role_name,
+                        grouppermissions.id AS permission_id,
+                        grouppermissions.name AS permission_name
                 FROM groupRoles
-                LEFT JOIN groupRole_groupPermissions AS joinTable
-                ON groupRoles.id = groupRole_groupPermissions.role_id
-                LEFT JOIN groupPermissions
-                ON joinTable.permission_id = groupPermissions.id
+                LEFT JOIN grouproles_grouppermissions AS joinTable
+                ON grouproles.id = grouproles_grouppermissions.role_id
+                LEFT JOIN grouppermissions
+                ON joinTable.permission_id = grouppermissions.id
                 WHERE role_id = $1`,
                 [groupRoleID]
             );
@@ -363,7 +366,7 @@ class GroupPermissionsRepo {
     static async delete_role_permission_by_role_permission_id(groupRoleID: string, groupPermID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM groupRole_groupPermissions
+                `DELETE FROM grouproles_grouppermissions
                 WHERE grouprole_id = $1 AND grouppermission_id = $2
                 RETURNING grouprole_id`,
             [groupRoleID, groupPermID]);
@@ -378,7 +381,7 @@ class GroupPermissionsRepo {
     static async delete_role_permissions_by_role_id(groupRoleID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM groupRole_groupPermissions
+                `DELETE FROM grouproles_grouppermissions
                 WHERE grouprole_id = $1
                 RETURNING grouprole_id`,
             [groupRoleID]);
@@ -393,7 +396,7 @@ class GroupPermissionsRepo {
     static async delete_role_permissions_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM groupRole_groupPermissions
+                `DELETE FROM grouproles_grouppermissions
                 WHERE grouprole_id IN 
                 (
                     SELECT grouproles.id FROM grouproles
@@ -481,14 +484,14 @@ class GroupPermissionsRepo {
             const result = await pgdb.query(
                 `SELECT users.id AS user_id,
                         users.username AS username,
-                        groupRoles.id AS role_id, 
-                        groupRoles.name AS role_name
+                        grouproles.id AS role_id, 
+                        grouproles.name AS role_name
                     FROM users
-                    LEFT JOIN user_groupRoles 
-                        ON users.id = user_groupRoles.user_id
+                    LEFT JOIN user_grouproles 
+                        ON users.id = user_grouproles.user_id
                     LEFT JOIN groupRoles
-                        ON user_groupRoles.role_id = groupRoles.id
-                    WHERE users.id = $1 AND groupRoles.group_id = $2`,
+                        ON user_grouproles.grouprole_id = grouproles.id
+                    WHERE users.id = $1 AND grouproles.group_id = $2`,
                     [userID, groupID]
             );
 
@@ -503,14 +506,14 @@ class GroupPermissionsRepo {
         try {
             const result = await pgdb.query(
                 `SELECT DISTINCT
-                        groupPermissions.id AS permission_id,
-                        groupPermissions.name AS permission_name,
-                    FROM groupPermissions
-                    LEFT JOIN groupRole_groupPermissions
-                        ON groupRole_groupPermissions.permission_id = groupPermissiosn.id
-                    LEFT JOIN user_groupRoles
-                        ON user_groupRoles.role_id = groupRole_groupPermissions.role_id
-                    WHERE user_groupRoles.user_id = $1`,
+                        grouppermissions.id AS permission_id,
+                        grouppermissions.name AS permission_name
+                    FROM grouppermissions
+                    LEFT JOIN grouproles_grouppermissions
+                        ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id
+                    LEFT JOIN user_grouproles
+                        ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id
+                    WHERE user_grouproles.user_id =  $1`,
                     [userID]
             );
 

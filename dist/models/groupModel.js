@@ -88,7 +88,7 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, groupPermissions_repository_1["default"].create_role_permissions_for_new_group(groupEntry.id)];
                     case 5:
                         groupPermissions = _c.sent();
-                        if (!((_b = groupPermissions[0]) === null || _b === void 0 ? void 0 : _b.id)) {
+                        if (!((_b = groupPermissions[0]) === null || _b === void 0 ? void 0 : _b.grouprole_id)) {
                             throw new expresError_1["default"]("Error while creating group role permission entries for new group", 500);
                         }
                         ;

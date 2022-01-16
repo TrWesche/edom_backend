@@ -26,6 +26,7 @@ const groupRoomRouter = express.Router();
 */
 groupRoomRouter.post("/create", groupMW.defineActionPermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
+        console.log("Start Create Group Room");
         // Preflight
         const reqValues: GroupRoomCreateProps = {
             name: req.body.name,

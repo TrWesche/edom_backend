@@ -14,9 +14,6 @@ var userRouter_1 = require("./routers/userRouter");
 var userRoomRouter_1 = require("./routers/userRoomRouter");
 var userEquipRouter_1 = require("./routers/userEquipRouter");
 var groupRouter_1 = require("./routers/groupRouter");
-var groupRoomRouter_1 = require("./routers/groupRoomRouter");
-var groupEquipRouter_1 = require("./routers/groupEquipRouter");
-var groupMgmtRouter_1 = require("./routers/groupMgmtRouter");
 // Middleware Imports
 var authorizationMW_1 = require("./middleware/authorizationMW");
 var groupMW_1 = require("./middleware/groupMW");
@@ -54,9 +51,9 @@ app.use("/rooms", roomRouter_1["default"]);
 app.use("/users/equips", authorizationMW_1["default"].loadSitePermissions, userEquipRouter_1["default"]);
 app.use("/users/rooms", authorizationMW_1["default"].loadSitePermissions, userRoomRouter_1["default"]);
 app.use("/users", authorizationMW_1["default"].loadSitePermissions, userRouter_1["default"]);
-app.use("/groups/:groupID/equips", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupEquipRouter_1["default"]);
-app.use("/groups/:groupID/rooms", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRoomRouter_1["default"]);
-app.use("/groups/:groupID/mgmt", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupMgmtRouter_1["default"]);
+// app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
+// app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
+// app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
 app.use("/groups", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].loadGroupPermissions, groupRouter_1["default"]);
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));

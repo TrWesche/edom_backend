@@ -62,6 +62,7 @@ groupEquipRouter.post("/create", groupMW_1["default"].defineActionPermissions(["
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
+                console.log("Start Create Group Equip");
                 reqValues = {
                     name: req.body.name,
                     category_id: req.body.category_id,
