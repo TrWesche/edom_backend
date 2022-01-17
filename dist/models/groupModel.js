@@ -56,7 +56,7 @@ var GroupModel = /** @class */ (function () {
     GroupModel.create_group = function (userID, data) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var groupEntry, groupRoles, groupPermissions, ownerPermission, userAssoc, error_1;
+            var groupEntry, groupRoles, groupPermissions, ownerPermission, userGroup, userAssoc, error_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -67,7 +67,7 @@ var GroupModel = /** @class */ (function () {
                         ;
                         _c.label = 1;
                     case 1:
-                        _c.trys.push([1, 9, , 11]);
+                        _c.trys.push([1, 10, , 12]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
                         _c.sent();
@@ -99,8 +99,15 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while fetching group owner permission entry for new group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userID, ownerPermission.id)];
+                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group(userID, groupEntry.id)];
                     case 7:
+                        userGroup = _c.sent();
+                        if (!userGroup) {
+                            throw new expresError_1["default"]("Error while associating user to group", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userID, ownerPermission.id)];
+                    case 8:
                         userAssoc = _c.sent();
                         if (!(userAssoc === null || userAssoc === void 0 ? void 0 : userAssoc.grouprole_id)) {
                             throw new expresError_1["default"]("Error while associating user to group entry", 500);
@@ -108,17 +115,17 @@ var GroupModel = /** @class */ (function () {
                         ;
                         // Commit to Database
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 8:
+                    case 9:
                         // Commit to Database
                         _c.sent();
                         return [2 /*return*/, groupEntry];
-                    case 9:
+                    case 10:
                         error_1 = _c.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 10:
+                    case 11:
                         _c.sent();
                         throw new expresError_1["default"](error_1.message, error_1.status);
-                    case 11:
+                    case 12:
                         ;
                         return [2 /*return*/];
                 }
@@ -358,11 +365,11 @@ var GroupModel = /** @class */ (function () {
     */
     GroupModel.delete_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var permissions, roles, users, group, error_4;
+            var permissions, user_roles, roles, users, group, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 7, , 9]);
+                        _a.trys.push([0, 8, , 10]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
@@ -373,38 +380,45 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Failed to Delete Permissions Associated with Target Group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(groupID)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_group_id(groupID)];
                     case 3:
+                        user_roles = _a.sent();
+                        if (!user_roles) {
+                            throw new expresError_1["default"]("Failed to Delete Roles Associated with Users for the Target Group", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(groupID)];
+                    case 4:
                         roles = _a.sent();
                         if (!roles) {
                             throw new expresError_1["default"]("Failed to Delete Roles Associated with Target Group", 500);
                         }
                         ;
                         return [4 /*yield*/, group_repository_1["default"].disassociate_users_from_group_by_group_id(groupID)];
-                    case 4:
+                    case 5:
                         users = _a.sent();
-                        if (!users) {
+                        if (!(users === null || users === void 0 ? void 0 : users.user_id)) {
                             throw new expresError_1["default"]("Failed to Delete Users Associated with Target Group", 500);
                         }
                         ;
                         return [4 /*yield*/, group_repository_1["default"].delete_group_by_group_id(groupID)];
-                    case 5:
+                    case 6:
                         group = _a.sent();
                         if (!group) {
                             throw new expresError_1["default"]("Unable to delete target group", 400);
                         }
                         ;
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 6:
+                    case 7:
                         _a.sent();
                         return [2 /*return*/, group];
-                    case 7:
+                    case 8:
                         error_4 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 8:
+                    case 9:
                         _a.sent();
                         throw new expresError_1["default"](error_4.message, error_4.status);
-                    case 9: return [2 /*return*/];
+                    case 10: return [2 /*return*/];
                 }
             });
         });

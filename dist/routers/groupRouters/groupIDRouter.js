@@ -61,6 +61,7 @@ groupIDRouter.use("/equips", groupEquipRouter_1["default"]);
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.get("/", siteMW_1["default"].defineActionPermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_1;
     var _a;
@@ -94,6 +95,7 @@ groupIDRouter.get("/", siteMW_1["default"].defineActionPermissions(["view_group_
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.get("/", groupMW_1["default"].defineActionPermissions(["read_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a;
@@ -185,24 +187,29 @@ groupIDRouter.patch("/", authorizationMW_1["default"].loadGroupPermissions, site
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
+// Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter["delete"]("/", siteMW_1["default"].defineActionPermissions(["delete_group_self"]), groupMW_1["default"].defineActionPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData;
+    var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {
-        try {
-            if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                throw new expresError_1["default"]("Must be logged in to delete groups || target group not specified", 400);
-            }
-            queryData = groupModel_1["default"].delete_group(req.groupID);
-            if (!queryData) {
-                throw new expresError_1["default"]("Unable to delete target group", 404);
-            }
-            return [2 /*return*/, res.json({ message: "Group deleted." })];
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Must be logged in to delete groups || target group not specified", 400);
+                }
+                return [4 /*yield*/, groupModel_1["default"].delete_group(req.groupID)];
+            case 1:
+                queryData = _b.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Unable to delete target group", 404);
+                }
+                return [2 /*return*/, res.json({ message: "Group deleted." })];
+            case 2:
+                error_4 = _b.sent();
+                return [2 /*return*/, next(error_4)];
+            case 3: return [2 /*return*/];
         }
-        catch (error) {
-            return [2 /*return*/, next(error)];
-        }
-        return [2 /*return*/];
     });
 }); });
 exports["default"] = groupIDRouter;

@@ -60,7 +60,7 @@ var groupRootRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/16/2022
+// Manual Test - Basic Functionality: 01/17/2022 - Retest w/ user_groups connection update
 groupRootRouter.post("/create", siteMW_1["default"].defineActionPermissions(["create_group_self"]), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;

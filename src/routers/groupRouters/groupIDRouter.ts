@@ -34,6 +34,7 @@ groupIDRouter.use("/equips",  groupEquipRouter);
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.get("/", siteMW.defineActionPermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -59,7 +60,7 @@ groupIDRouter.get("/", siteMW.defineActionPermissions(["view_group_public"]), au
     }
 });
 
-
+// Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.get("/", groupMW.defineActionPermissions(["read_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -140,14 +141,14 @@ groupIDRouter.patch("/",  authMW.loadGroupPermissions, siteMW.defineActionPermis
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.delete("/", siteMW.defineActionPermissions(["delete_group_self"]), groupMW.defineActionPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to delete groups || target group not specified`, 400);
         }
 
-        const queryData = GroupModel.delete_group(req.groupID);
+        const queryData = await GroupModel.delete_group(req.groupID);
         if(!queryData) {
             throw new ExpressError("Unable to delete target group", 404);
         }

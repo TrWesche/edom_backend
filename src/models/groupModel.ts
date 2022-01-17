@@ -52,6 +52,12 @@ class GroupModel {
                 throw new ExpressError("Error while fetching group owner permission entry for new group", 500);
             };
 
+            // Associate User to Group
+            const userGroup = await GroupRepo.associate_user_to_group(userID, groupEntry.id);
+            if (!userGroup) {
+                throw new ExpressError("Error while associating user to group", 500);
+            };
+
             // Associate Equipment with Uploading User
             const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, ownerPermission.id);
             if (!userAssoc?.grouprole_id) {
@@ -227,13 +233,18 @@ class GroupModel {
                 throw new ExpressError("Failed to Delete Permissions Associated with Target Group", 500);
             };
 
+            const user_roles = await GroupPermissionsRepo.delete_user_group_roles_by_group_id(groupID);
+            if (!user_roles) {
+                throw new ExpressError("Failed to Delete Roles Associated with Users for the Target Group", 500);
+            };
+
             const roles = await GroupPermissionsRepo.delete_roles_by_group_id(groupID);
             if (!roles) {
                 throw new ExpressError("Failed to Delete Roles Associated with Target Group", 500);
             };
 
             const users = await GroupRepo.disassociate_users_from_group_by_group_id(groupID);
-            if (!users) {
+            if (!users?.user_id) {
                 throw new ExpressError("Failed to Delete Users Associated with Target Group", 500);
             };
 

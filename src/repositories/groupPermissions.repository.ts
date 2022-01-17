@@ -132,7 +132,7 @@ class GroupPermissionsRepo {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
-                "groupRoles",
+                "grouproles",
                 groupRoleData,
                 "id",
                 groupRoleID
@@ -150,7 +150,7 @@ class GroupPermissionsRepo {
     static async delete_role_by_role_id(groupRoleID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM groupRoles
+                `DELETE FROM grouproles
                 WHERE id = $1
                 RETURNING id`,
             [groupRoleID]);
@@ -165,7 +165,7 @@ class GroupPermissionsRepo {
     static async delete_roles_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM groupRoles
+                `DELETE FROM grouproles
                 WHERE group_id = $1
                 RETURNING id`,
             [groupID]);
@@ -182,7 +182,7 @@ class GroupPermissionsRepo {
     static async create_permission(groupPermData: GroupPermProps) {
         try {
             const result = await pgdb.query(
-                `INSERT INTO groupPermissions
+                `INSERT INTO grouppermissions
                     (name) 
                 VALUES ($1) 
                 RETURNING id, name`,
@@ -202,7 +202,7 @@ class GroupPermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                FROM groupPermissions
+                FROM grouppermissions
                 WHERE id = $1`,
                 [groupPermID]
             );
@@ -218,7 +218,7 @@ class GroupPermissionsRepo {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
-                "groupPermissions",
+                "grouppermissions",
                 groupPermData,
                 "id",
                 groupPermID
@@ -431,6 +431,22 @@ class GroupPermissionsRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to assign user group role - ${error}`, 500);
+        }
+    };
+
+    static async delete_user_group_roles_by_group_id(groupID: string) {
+        try {
+            const result = await pgdb.query(
+                `DELETE FROM user_grouproles
+                WHERE grouprole_id IN (
+                    SELECT id FROM grouproles WHERE group_id = $1
+                )`,
+                [groupID]
+            );
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to delete user group roles - ${error}`, 500);
         }
     };
 
