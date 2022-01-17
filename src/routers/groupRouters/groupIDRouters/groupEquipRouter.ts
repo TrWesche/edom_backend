@@ -2,18 +2,18 @@
 import * as express from "express";
 
 // Utility Functions Import
-import ExpressError from "../utils/expresError";
+import ExpressError from "../../../utils/expresError";
 
 // Schema Imports
-import validateGroupEquipCreateSchema, { GroupEquipCreateProps } from "../schemas/equipment/groupEquipCreateSchema";
-import validateGroupEquipUpdateSchema, { GroupEquipUpdateProps } from "../schemas/equipment/groupEquipUpdateSchema";
+import validateGroupEquipCreateSchema, { GroupEquipCreateProps } from "../../../schemas/equipment/groupEquipCreateSchema";
+import validateGroupEquipUpdateSchema, { GroupEquipUpdateProps } from "../../../schemas/equipment/groupEquipUpdateSchema";
 
 // Model Imports
-import EquipModel from "../models/equipModel";
+import EquipModel from "../../../models/equipModel";
 
 // Middleware Imports
-import authMW from "../middleware/authorizationMW";
-import groupMW from "../middleware/groupMW";
+import authMW from "../../../middleware/authorizationMW";
+import groupMW from "../../../middleware/groupMW";
 
 
 const groupEquipRouter = express.Router();
@@ -26,7 +26,7 @@ const groupEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-groupEquipRouter.post("/create", groupMW.defineActionPermissions(["view", "create"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.post("/", groupMW.defineActionPermissions(["view", "create"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         console.log("Start Create Group Equip");
 

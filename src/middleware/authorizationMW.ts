@@ -21,13 +21,13 @@ class authMW {
   static async loadSitePermissions(req, res, next) {
     try {
       if (!req.user?.id) {
-        req.sitePermissions = undefined;
+        console.log("Set Site Permissions Undefined");
         return next();
       };
 
       const sitePermissions = await SitePermissionsRepo.fetch_permissions_by_user_id(req.user.id);
 
-      req.sitePermissions = sitePermissions;
+      req.user.site_permissions = sitePermissions;
       return next();
     } catch (error) {
       return next({ status: 401, message: "Unauthorized" });
@@ -40,14 +40,15 @@ class authMW {
   static async loadGroupPermissions(req, res, next) {
     try {
       if (!req.user?.id || !req.groupID) {
-        req.groupPermissions = undefined;
+        req.user.group_permissions = undefined;
         return next();
       };
 
       // console.log("Getting Group Permissions");
+      // console.log(req.groupID);
       const groupPermissions = await GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(req.user.id, req.groupID);
       // console.log(groupPermissions);
-      req.groupPermissions = groupPermissions;
+      req.user.group_permissions = groupPermissions;
 
       return next();
     } catch (error) {
@@ -75,13 +76,13 @@ class authMW {
       // console.log(req.requiredPermissions);
       // console.log(req.groupPermissions);
       if (req.requiredPermissions.group) {
-        if (!req.groupPermissions) {
+        if (!req.user.group_permissions) {
           console.log("No Required Group Permissions Defined");
           return next({ status: 401, message: "Unauthorized" });
         }
   
         const permissionsOK = req.requiredPermissions.group.reduce((acc, val) => {
-          const findResult = req.groupPermissions.find(perm => {
+          const findResult = req.user.group_permissions.find(perm => {
             return perm.permission_name === val;
           });
 
@@ -95,12 +96,12 @@ class authMW {
   
       // Check for Site Permisisons if they are defined
       if (req.requiredPermissions.site) {
-        if (!req.sitePermissions) {
+        if (!req.user.site_permissions) {
           return next({ status: 401, message: "Unauthorized" });
         }
 
         const permissionsOK = req.requiredPermissions.site.reduce((acc, val) => {
-          const findResult = req.sitePermissions.find(perm => {
+          const findResult = req.user.site_permissions.find(perm => {
             return perm.permission_name === val;
           });
 

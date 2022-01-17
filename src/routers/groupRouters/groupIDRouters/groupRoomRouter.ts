@@ -2,18 +2,18 @@
 import * as express from "express";
 
 // Utility Functions Import
-import ExpressError from "../utils/expresError";
+import ExpressError from "../../../utils/expresError";
 
 // Schema Imports
-import validateGroupRoomCreateSchema, { GroupRoomCreateProps } from "../schemas/room/groupRoomCreateSchema";
-import validateGroupRoomUpdateSchema, { GroupRoomUpdateProps } from "../schemas/room/groupRoomUpdateSchema";
+import validateGroupRoomCreateSchema, { GroupRoomCreateProps } from "../../../schemas/room/groupRoomCreateSchema";
+import validateGroupRoomUpdateSchema, { GroupRoomUpdateProps } from "../../../schemas/room/groupRoomUpdateSchema";
 
 // Model Imports
-import RoomModel from "../models/roomModel";
+import RoomModel from "../../../models/roomModel";
 
 // Middleware Imports
-import authMW from "../middleware/authorizationMW";
-import groupMW from "../middleware/groupMW";
+import authMW from "../../../middleware/authorizationMW";
+import groupMW from "../../../middleware/groupMW";
 
 
 const groupRoomRouter = express.Router();
@@ -24,7 +24,7 @@ const groupRoomRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-groupRoomRouter.post("/create", groupMW.defineActionPermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.post("/", groupMW.defineActionPermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         console.log("Start Create Group Room");
         // Preflight

@@ -20,7 +20,7 @@ import siteMW from "../middleware/siteMW";
 // }
 
 
-const roomRouter = express.Router();
+const roomRootRouter = express.Router();
 
 
 /* ____  _____    _    ____  
@@ -30,7 +30,7 @@ const roomRouter = express.Router();
   |_| \_\_____/_/   \_\____/ 
 */
 
-roomRouter.get("/list", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRootRouter.get("/list", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
@@ -61,7 +61,7 @@ roomRouter.get("/list", siteMW.defineActionPermissions(["view_room_public"]), au
 });
 
 
-roomRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRootRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await RoomModel.retrieve_user_rooms_by_user_id_public(req.params.userID);
@@ -76,7 +76,7 @@ roomRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_room_publ
 });
 
 
-roomRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRootRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await RoomModel.retrieve_group_rooms_by_group_id_public(req.params.groupID);
@@ -91,7 +91,7 @@ roomRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_room_pu
 });
 
 
-roomRouter.get("/:roomID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRootRouter.get("/:roomID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID, true);
         if (!queryData) {
@@ -105,4 +105,4 @@ roomRouter.get("/:roomID", siteMW.defineActionPermissions(["view_equip_public"])
 });
 
 
-export default roomRouter;
+export default roomRootRouter;

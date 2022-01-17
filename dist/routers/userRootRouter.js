@@ -44,12 +44,17 @@ var authHandling_1 = require("../utils/authHandling");
 var userAuthSchema_1 = require("../schemas/user/userAuthSchema");
 var userRegisterSchema_1 = require("../schemas/user/userRegisterSchema");
 var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
+// Router Imports
+var userRoomRouter_1 = require("./userRouters/userRoomRouter");
+var userEquipRouter_1 = require("./userRouters/userEquipRouter");
 // Model Imports
 var userModel_1 = require("../models/userModel");
 var authorizationMW_1 = require("../middleware/authorizationMW");
 var siteMW_1 = require("../middleware/siteMW");
 // Middleware Imports
-var userRouter = express.Router();
+var userRootRouter = express.Router();
+userRootRouter.use("/rooms", userRoomRouter_1["default"]);
+userRootRouter.use("/equips", userEquipRouter_1["default"]);
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |
     / _ \| | | | | | | |_| |
@@ -57,7 +62,7 @@ var userRouter = express.Router();
   /_/   \_\___/  |_| |_| |_|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var authValues, queryData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -94,7 +99,7 @@ userRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, vo
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.post("/register", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.post("/register", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var regValues, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -144,7 +149,7 @@ userRouter.post("/register", function (req, res, next) { return __awaiter(void 0
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -167,7 +172,7 @@ userRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_us
     });
 }); });
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -195,7 +200,7 @@ userRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['vi
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -250,7 +255,7 @@ userRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update
   |_____\___/ \____|\___/ \___/  |_|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Logging Out");
         try {
@@ -270,7 +275,7 @@ userRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, 
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -295,5 +300,5 @@ userRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['de
         }
     });
 }); });
-exports["default"] = userRouter;
-//# sourceMappingURL=userRouter.js.map
+exports["default"] = userRootRouter;
+//# sourceMappingURL=userRootRouter.js.map

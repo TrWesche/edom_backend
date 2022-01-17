@@ -1,20 +1,20 @@
 import * as express from "express";
 
 // Utility Functions Import
-import ExpressError from "../utils/expresError";
+import ExpressError from "../../../utils/expresError";
 
 // Schema Imports
-import validateCreateGroupUserSchema, { GroupUserCreateProps } from "../schemas/group/groupUserCreateSchema";
-import validateCreateGroupUserRoleSchema, { GroupUserRoleCreateProps } from "../schemas/group/groupUserRoleCreateSchema";
-import validateCreateGroupRoleSchema, { GroupRoleCreateProps } from "../schemas/group/groupRoleCreateSchema";
-import validateCreateGroupRolePermissionSchema, { GroupRolePermissionCreateProps } from "../schemas/group/groupRolePermissionCreateSchema";
+import validateCreateGroupUserSchema, { GroupUserCreateProps } from "../../../schemas/group/groupUserCreateSchema";
+import validateCreateGroupUserRoleSchema, { GroupUserRoleCreateProps } from "../../../schemas/group/groupUserRoleCreateSchema";
+import validateCreateGroupRoleSchema, { GroupRoleCreateProps } from "../../../schemas/group/groupRoleCreateSchema";
+import validateCreateGroupRolePermissionSchema, { GroupRolePermissionCreateProps } from "../../../schemas/group/groupRolePermissionCreateSchema";
 
 // Model Imports
-import GroupModel from "../models/groupModel";
+import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
-import authMW from "../middleware/authorizationMW";
-import groupMW from "../middleware/groupMW";
+import authMW from "../../../middleware/authorizationMW";
+import groupMW from "../../../middleware/groupMW";
 
 
 const groupMgmtRouter = express.Router();

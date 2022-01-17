@@ -10,7 +10,9 @@ export interface UserObjectProps {
     first_name?: string,
     last_name?: string,
     password?: string,
-    roles?: Array<UserRolesProps>
+    roles?: Array<UserRolesProps>,
+    site_permissions?: Array<string>,
+    group_permissions?: Array<string>
 }
 
 interface UserRolesProps {

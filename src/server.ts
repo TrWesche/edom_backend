@@ -11,21 +11,14 @@ import { hostname } from "os";
 import { certificate, port, privatekey, sessionSecret } from "./config/config";
 
 // Router Imports
-import equipRouter from "./routers/equipRouter";
-import roomRouter from "./routers/roomRouter";
-
-import userRouter from "./routers/userRouter";
-import userRoomRouter from "./routers/userRoomRouter";
-import userEquipRouter from "./routers/userEquipRouter";
-
-import groupRouter from "./routers/groupRouter";
-import groupRoomRouter from "./routers/groupRoomRouter";
-import groupEquipRouter from "./routers/groupEquipRouter";
-import groupMgmtRouter from "./routers/groupMgmtRouter";
+import equipRootRouter from "./routers/equipRootRouter";
+import roomRootRouter from "./routers/roomRootRouter";
+import userRootRouter from "./routers/userRootRouter";
+import groupRootRouter from "./routers/groupRootRouter";
 
 // Middleware Imports
 import authMW from "./middleware/authorizationMW";
-import groupMW from "./middleware/groupMW";
+// import groupMW from "./middleware/groupMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
@@ -53,7 +46,7 @@ mqttHandler();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authMW.loadJWT);
-app.use(authMW.loadSitePermissions);
+// app.use(authMW.loadSitePermissions);
 app.use(session({
     secret: sessionSecret,
     store: new redisStore({
@@ -63,17 +56,10 @@ app.use(session({
     resave: redisConfig.resave
 }))
 
-app.use("/equips", equipRouter);
-app.use("/rooms", roomRouter);
-
-app.use("/users/equips", authMW.loadSitePermissions, userEquipRouter);
-app.use("/users/rooms", authMW.loadSitePermissions, userRoomRouter);
-app.use("/users", authMW.loadSitePermissions, userRouter);
-
-// app.use("/groups/:groupID/equips", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupEquipRouter);
-// app.use("/groups/:groupID/rooms", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupRoomRouter);
-// app.use("/groups/:groupID/mgmt", groupMW.addGroupIDToRequest, authMW.loadSitePermissions, authMW.loadGroupPermissions, groupMgmtRouter);
-app.use("/groups", authMW.loadSitePermissions, groupRouter);
+app.use("/equips", equipRootRouter);
+app.use("/rooms", roomRootRouter);
+app.use("/users", authMW.loadSitePermissions, userRootRouter);
+app.use("/groups", authMW.loadSitePermissions, groupRootRouter);
 
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);

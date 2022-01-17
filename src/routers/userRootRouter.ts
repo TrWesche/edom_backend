@@ -9,6 +9,10 @@ import validateUserAuthSchema, { UserAuthProps } from "../schemas/user/userAuthS
 import validateUserRegisterSchema, { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userUpdateSchema";
 
+// Router Imports
+import userRoomRouter from "./userRouters/userRoomRouter";
+import userEquipRouter from "./userRouters/userEquipRouter";
+
 // Model Imports
 import UserModel from "../models/userModel";
 import authMW from "../middleware/authorizationMW";
@@ -18,8 +22,10 @@ import siteMW from "../middleware/siteMW";
 
 
 
-const userRouter = express.Router();
+const userRootRouter = express.Router();
 
+userRootRouter.use("/rooms", userRoomRouter);
+userRootRouter.use("/equips", userEquipRouter);
 
 /*    _   _   _ _____ _   _ 
      / \ | | | |_   _| | | |
@@ -29,8 +35,9 @@ const userRouter = express.Router();
 */
 
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.post("/auth", async (req, res, next) => {
+userRootRouter.post("/auth", async (req, res, next) => {
     try {
+        console.log("Start Authentication");
         const authValues: UserAuthProps = {
             username: req.body.username,
             password: req.body.password
@@ -62,7 +69,7 @@ userRouter.post("/auth", async (req, res, next) => {
 */
 
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.post("/register", async (req, res, next) => {
+userRootRouter.post("/register", async (req, res, next) => {
     try {
         const regValues: UserRegisterProps = {
             username: req.body.username,
@@ -108,7 +115,7 @@ userRouter.post("/register", async (req, res, next) => {
 */
 
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
         if (!queryData) {
@@ -122,7 +129,7 @@ userRouter.get("/profile", siteMW.defineActionPermissions(['read_user_self']), a
 });
 
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.get("/up/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.get("/up/:username", siteMW.defineActionPermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: User needs a public / private selection & additional details
         const queryData = await UserModel.retrieve_user_by_username(req.params.username);
@@ -144,7 +151,7 @@ userRouter.get("/up/:username", siteMW.defineActionPermissions(['view_user_publi
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
         if (!prevValues) {
@@ -197,7 +204,7 @@ userRouter.patch("/update", siteMW.defineActionPermissions(['update_user_self'])
   |_____\___/ \____|\___/ \___/  |_|  
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.post("/logout", async (req, res, next) => {
+userRootRouter.post("/logout", async (req, res, next) => {
     console.log("Logging Out");
     try {
         res.header("auth-token", "");
@@ -215,7 +222,7 @@ userRouter.post("/logout", async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']),  authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']),  authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError("Delete user failed, userid not provided.", 400);
@@ -233,4 +240,4 @@ userRouter.delete("/delete", siteMW.defineActionPermissions(['delete_user_self']
     }
 })
 
-export default userRouter;
+export default userRootRouter;

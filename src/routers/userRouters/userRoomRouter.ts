@@ -2,18 +2,18 @@
 import * as express from "express";
 
 // Utility Functions Import
-import ExpressError from "../utils/expresError";
+import ExpressError from "../../utils/expresError";
 
 // Schema Imports
-import validateUserRoomCreateSchema, { UserRoomCreateProps } from "../schemas/room/userRoomCreateSchema";
-import validateUserRoomUpdateSchema, { UserRoomUpdateProps } from "../schemas/room/userRoomUpdateSchema";
+import validateUserRoomCreateSchema, { UserRoomCreateProps } from "../../schemas/room/userRoomCreateSchema";
+import validateUserRoomUpdateSchema, { UserRoomUpdateProps } from "../../schemas/room/userRoomUpdateSchema";
 
 // Model Imports
-import RoomModel from "../models/roomModel";
+import RoomModel from "../../models/roomModel";
 
 // Middleware Imports
-import authMW from "../middleware/authorizationMW";
-import siteMW from "../middleware/siteMW";
+import authMW from "../../middleware/authorizationMW";
+import siteMW from "../../middleware/siteMW";
 
 
 const userRoomRouter = express.Router();

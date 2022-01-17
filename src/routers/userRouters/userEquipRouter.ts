@@ -2,18 +2,18 @@
 import * as express from "express";
 
 // Utility Functions Import
-import ExpressError from "../utils/expresError";
+import ExpressError from "../../utils/expresError";
 
 // Schema Imports
-import validateUserEquipCreateSchema, { UserEquipCreateProps } from "../schemas/equipment/userEquipCreateSchema";
-import validateUserEquipUpdateSchema, { UserEquipUpdateProps } from "../schemas/equipment/userEquipUpdateSchema";
+import validateUserEquipCreateSchema, { UserEquipCreateProps } from "../../schemas/equipment/userEquipCreateSchema";
+import validateUserEquipUpdateSchema, { UserEquipUpdateProps } from "../../schemas/equipment/userEquipUpdateSchema";
 
 // Model Imports
-import EquipModel from "../models/equipModel";
+import EquipModel from "../../models/equipModel";
 
 // Middleware Imports
-import authMW from "../middleware/authorizationMW";
-import siteMW from "../middleware/siteMW";
+import authMW from "../../middleware/authorizationMW";
+import siteMW from "../../middleware/siteMW";
 
 
 const userEquipRouter = express.Router();

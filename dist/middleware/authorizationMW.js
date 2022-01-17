@@ -65,14 +65,14 @@ var authMW = /** @class */ (function () {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                            req.sitePermissions = undefined;
+                            console.log("Set Site Permissions Undefined");
                             return [2 /*return*/, next()];
                         }
                         ;
                         return [4 /*yield*/, sitePermissions_repository_1["default"].fetch_permissions_by_user_id(req.user.id)];
                     case 1:
                         sitePermissions = _b.sent();
-                        req.sitePermissions = sitePermissions;
+                        req.user.site_permissions = sitePermissions;
                         return [2 /*return*/, next()];
                     case 2:
                         error_1 = _b.sent();
@@ -93,7 +93,7 @@ var authMW = /** @class */ (function () {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                            req.groupPermissions = undefined;
+                            req.user.group_permissions = undefined;
                             return [2 /*return*/, next()];
                         }
                         ;
@@ -101,7 +101,7 @@ var authMW = /** @class */ (function () {
                     case 1:
                         groupPermissions = _b.sent();
                         // console.log(groupPermissions);
-                        req.groupPermissions = groupPermissions;
+                        req.user.group_permissions = groupPermissions;
                         return [2 /*return*/, next()];
                     case 2:
                         error_2 = _b.sent();
@@ -131,12 +131,12 @@ var authMW = /** @class */ (function () {
             // console.log(req.requiredPermissions);
             // console.log(req.groupPermissions);
             if (req.requiredPermissions.group) {
-                if (!req.groupPermissions) {
+                if (!req.user.group_permissions) {
                     console.log("No Required Group Permissions Defined");
                     return next({ status: 401, message: "Unauthorized" });
                 }
                 var permissionsOK = req.requiredPermissions.group.reduce(function (acc, val) {
-                    var findResult = req.groupPermissions.find(function (perm) {
+                    var findResult = req.user.group_permissions.find(function (perm) {
                         return perm.permission_name === val;
                     });
                     return findResult !== undefined && acc;
@@ -148,11 +148,11 @@ var authMW = /** @class */ (function () {
             }
             // Check for Site Permisisons if they are defined
             if (req.requiredPermissions.site) {
-                if (!req.sitePermissions) {
+                if (!req.user.site_permissions) {
                     return next({ status: 401, message: "Unauthorized" });
                 }
                 var permissionsOK = req.requiredPermissions.site.reduce(function (acc, val) {
-                    var findResult = req.sitePermissions.find(function (perm) {
+                    var findResult = req.user.site_permissions.find(function (perm) {
                         return perm.permission_name === val;
                     });
                     return findResult !== undefined && acc;

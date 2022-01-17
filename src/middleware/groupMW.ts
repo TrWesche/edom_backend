@@ -14,6 +14,7 @@ class groupMW {
 
     static defineActionPermissions (permList: Array<string>) {
         return (req, res, next) => {
+            
             try {
                 if (req.requiredPermissions) {
                     req.requiredPermissions.group = permList;
@@ -22,6 +23,8 @@ class groupMW {
                         group: permList
                     };
                 }
+                console.log("Permission Definitions");
+                console.log(req.requiredPermissions);
                 return next();
               } catch (err) {
                 return next();

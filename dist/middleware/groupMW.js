@@ -29,6 +29,8 @@ var groupMW = /** @class */ (function () {
                         group: permList
                     };
                 }
+                console.log("Permission Definitions");
+                console.log(req.requiredPermissions);
                 return next();
             }
             catch (err) {

@@ -6,8 +6,8 @@ declare module 'express-serve-static-core' {
     interface Request {
       user?: UserObjectProps
       groupID?: string
-      sitePermissions?: Array<any>
-      groupPermissions?: Array<any>
+      // sitePermissions?: Array<any>
+      // groupPermissions?: Array<any>
       requiredPermissions?: Object
     }
     // interface Response {
