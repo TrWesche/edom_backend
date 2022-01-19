@@ -55,7 +55,7 @@ var groupRootRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022 - Retest w/ user_groups connection update
-groupRootRouter.post("/create", authorizationMW_1["default"].defineSitePermissions(["create_group_self"]), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRootRouter.post("/create", authorizationMW_1["default"].defineSitePermissions(["create_group_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -69,17 +69,20 @@ groupRootRouter.post("/create", authorizationMW_1["default"].defineSitePermissio
                     public: req.body.public
                 };
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                    throw new expresError_1["default"]("Must be logged in to create group", 400);
+                    throw new expresError_1["default"]("Must be logged in to create group", 401);
                 }
+                ;
                 if (!(0, groupCreateSchema_1["default"])(reqValues)) {
                     throw new expresError_1["default"]("Unable to Create Group: ".concat(groupCreateSchema_1["default"].errors), 400);
                 }
+                ;
                 return [4 /*yield*/, groupModel_1["default"].create_group(req.user.id, reqValues)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Create Group Failed", 400);
+                    throw new expresError_1["default"]("Create Group Failed", 500);
                 }
+                ;
                 return [2 /*return*/, res.json({ group: [queryData] })];
             case 2:
                 error_1 = _b.sent();

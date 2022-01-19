@@ -86,7 +86,7 @@ groupIDRouter.get("/", authMW.defineGroupPermissions(["read_group"]), authMW.val
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/16/2022
-groupIDRouter.patch("/",  authMW.loadGroupPermissions, authMW.defineSitePermissions(["update_group_self"]), authMW.defineGroupPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
+groupIDRouter.patch("/",  authMW.defineSitePermissions(["update_group_self"]), authMW.defineGroupPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -140,7 +140,7 @@ groupIDRouter.patch("/",  authMW.loadGroupPermissions, authMW.defineSitePermissi
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.delete("/", authMW.loadGroupPermissions, authMW.defineSitePermissions(["delete_group_self"]), authMW.defineGroupPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
+groupIDRouter.delete("/", authMW.defineSitePermissions(["delete_group_self"]), authMW.defineGroupPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to delete groups || target group not specified`, 400);

@@ -27,7 +27,7 @@ const groupRootRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022 - Retest w/ user_groups connection update
-groupRootRouter.post("/create", authMW.defineSitePermissions(["create_group_self"]), async (req, res, next) => {
+groupRootRouter.post("/create", authMW.defineSitePermissions(["create_group_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const reqValues: GroupCreateProps = {
@@ -39,18 +39,18 @@ groupRootRouter.post("/create", authMW.defineSitePermissions(["create_group_self
         
         
         if (!req.user?.id) {
-            throw new ExpressError(`Must be logged in to create group`, 400);
-        }
+            throw new ExpressError(`Must be logged in to create group`, 401);
+        };
 
         if(!validateCreateGroupSchema(reqValues)) {
             throw new ExpressError(`Unable to Create Group: ${validateCreateGroupSchema.errors}`, 400);
-        }
+        };
 
         // Process
         const queryData = await GroupModel.create_group(req.user.id, reqValues);
         if (!queryData) {
-            throw new ExpressError("Create Group Failed", 400);
-        }
+            throw new ExpressError("Create Group Failed", 500);
+        };
         
         return res.json({group: [queryData]})
     } catch (error) {

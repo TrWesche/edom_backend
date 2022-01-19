@@ -18,7 +18,6 @@ import groupRootRouter from "./routers/groupRootRouter";
 
 // Middleware Imports
 import authMW from "./middleware/authorizationMW";
-// import groupMW from "./middleware/groupMW";
 
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
@@ -46,7 +45,6 @@ mqttHandler();
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authMW.loadJWT);
-// app.use(authMW.loadSitePermissions);
 app.use(session({
     secret: sessionSecret,
     store: new redisStore({

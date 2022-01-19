@@ -21,7 +21,6 @@ class authMW {
   static async loadSitePermissions(req, res, next) {
     try {
       if (!req.user?.id) {
-        console.log("Set Site Permissions Undefined");
         return next();
       };
 
@@ -42,10 +41,7 @@ class authMW {
         return next();
       };
 
-      // console.log("Getting Group Permissions");
-      // console.log(req.groupID);
       const groupPermissions = await GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(req.user.id, req.groupID);
-      // console.log(groupPermissions);
       req.user.group_permissions = groupPermissions;
 
       return next();
@@ -58,23 +54,18 @@ class authMW {
   static validatePermissions(req, res, next) {
     try {
       if (!req.user?.id) {
-        console.log("UserID Missing");
         return next({ status: 401, message: "Unauthorized" });
       };
   
       // If no permissions are defined for validating access throw an error
       if (!req.requiredPermissions.site) {
-        console.log("No Required Site Permissions Defined");
-        return next({ status: 400, message: "Unable to Process Request" });
+        return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
       };
   
       // Check for Group Permissions if they are defined
-      // console.log(req.requiredPermissions);
-      // console.log(req.groupPermissions);
       if (req.requiredPermissions.group) {
         if (!req.user.group_permissions) {
-          console.log("No Required Group Permissions Defined");
-          return next({ status: 401, message: "Unauthorized" });
+          return next({ status: 500, message: "Route Configuration Error - GP Def Missing" });
         }
   
         const permissionsOK = req.requiredPermissions.group.reduce((acc, val) => {
@@ -160,8 +151,6 @@ class authMW {
                     group: permList
                 };
             }
-            // console.log("Permission Definitions");
-            // console.log(req.requiredPermissions);
             return next();
           } catch (err) {
             return next();
@@ -170,37 +159,5 @@ class authMW {
   };
 
 }
-
-
-
-
-// /** Middleware: Requires user is authenticated. */
-// function ensureLoggedIn(req, res, next) {
-//   try {
-//     if (req.user?.id) {
-//       return next();
-//     }
-//     return next({ status: 401, message: "Unauthorized" });
-//   } catch (error) {
-//     return next({ status: 401, message: "Unauthorized" });
-//   }
-// }
-
-
-// /** Middleware: Requires user type & correct user id. */
-// function validateUserID(req, res, next) {
-//   try {
-//     if (req.user.id === req.params.id && req.user.type === "user") {
-//       return next();
-//     }
-
-//     return next({ status: 401, message: "Unauthorized" });
-//   } catch (err) {
-//     return next({ status: 401, message: "Unauthorized" });
-//   }
-// }
-
-
-
 
 export default authMW;

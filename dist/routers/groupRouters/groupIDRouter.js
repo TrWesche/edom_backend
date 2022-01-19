@@ -128,7 +128,7 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["rea
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/16/2022
-groupIDRouter.patch("/", authorizationMW_1["default"].loadGroupPermissions, authorizationMW_1["default"].defineSitePermissions(["update_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["update_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -186,7 +186,7 @@ groupIDRouter.patch("/", authorizationMW_1["default"].loadGroupPermissions, auth
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter["delete"]("/", authorizationMW_1["default"].loadGroupPermissions, authorizationMW_1["default"].defineSitePermissions(["delete_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter["delete"]("/", authorizationMW_1["default"].defineSitePermissions(["delete_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {

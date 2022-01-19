@@ -14,7 +14,6 @@ var userRootRouter_1 = require("./routers/userRootRouter");
 var groupRootRouter_1 = require("./routers/groupRootRouter");
 // Middleware Imports
 var authorizationMW_1 = require("./middleware/authorizationMW");
-// import groupMW from "./middleware/groupMW";
 // Database Connector Imports
 var redis_1 = require("./databases/redisSession/redis");
 var corsOptions = {
@@ -35,7 +34,6 @@ var server = https.createServer({ key: config_1.privatekey, cert: config_1.certi
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(authorizationMW_1["default"].loadJWT);
-// app.use(authMW.loadSitePermissions);
 app.use((0, redis_1.session)({
     secret: config_1.sessionSecret,
     store: new redis_1.redisStore({
