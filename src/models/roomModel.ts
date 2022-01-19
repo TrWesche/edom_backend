@@ -68,7 +68,7 @@ class RoomModel {
 
             // Associate Room with User
             const roomAssoc = await RoomRepo.associate_group_to_room(groupID, room.id);
-            if (!roomAssoc?.id) {
+            if (!roomAssoc?.room_id) {
                 throw new ExpressError("Error while associating group to room entry", 500);
             }
 

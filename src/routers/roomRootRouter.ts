@@ -20,15 +20,15 @@ const roomRootRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-
+// Manual Test - Basic Functionality: 01/19/2022
 roomRootRouter.get("/list", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
         // const {limit, offset} = req.query as unknown as equipRouterQuery;
         // Preflight
-        const limit = req.query.limit;
-        const offset = req.query.offset;
+        const limit = req.query.limit ? req.query.limit : 25;
+        const offset = req.query.offset ? req.query.offset : 0;
         // const ftserach = req.query.ftsearch;
         // const catid = req.query.catid;
         // const uid = req.query.uid;
@@ -66,7 +66,7 @@ roomRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_room_pu
     }
 });
 
-
+// Manual Test - Basic Functionality: 01/19/2022
 roomRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing

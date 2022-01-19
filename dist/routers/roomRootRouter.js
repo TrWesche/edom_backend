@@ -51,14 +51,15 @@ var roomRootRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/19/2022
 roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                limit = req.query.limit;
-                offset = req.query.offset;
+                limit = req.query.limit ? req.query.limit : 25;
+                offset = req.query.offset ? req.query.offset : 0;
                 // const ftserach = req.query.ftsearch;
                 // const catid = req.query.catid;
                 // const uid = req.query.uid;
@@ -104,6 +105,7 @@ roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePerm
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/19/2022
 roomRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {

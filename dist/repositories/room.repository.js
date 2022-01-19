@@ -118,7 +118,7 @@ var RoomRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM rooms\n                LIMIT $1\n                OFFSET $2\n                WHERE rooms.public = TRUE", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM rooms\n                WHERE rooms.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -272,7 +272,7 @@ var RoomRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO group_rooms \n                    (group_id, room_id) \n                VALUES ($1, $2) \n                RETURNING user_id, room_id", [
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO group_rooms \n                    (group_id, room_id) \n                VALUES ($1, $2) \n                RETURNING group_id, room_id", [
                                 groupID,
                                 roomID
                             ])];
@@ -323,11 +323,11 @@ var RoomRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (roomPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.equip_id\n                    WHERE group_rooms.group_id = $1 AND rooms.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.room_id\n                    WHERE group_rooms.group_id = $1 AND rooms.public = $2";
                             queryParams.push(groupID, roomPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.equip_id\n                    WHERE group_rooms.group_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.room_id\n                    WHERE group_rooms.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

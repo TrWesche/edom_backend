@@ -124,7 +124,7 @@ var RoomModel = /** @class */ (function () {
                         return [4 /*yield*/, room_repository_1["default"].associate_group_to_room(groupID, room.id)];
                     case 4:
                         roomAssoc = _a.sent();
-                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.id)) {
+                        if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.room_id)) {
                             throw new expresError_1["default"]("Error while associating group to room entry", 500);
                         }
                         // Commit to Database

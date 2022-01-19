@@ -23,6 +23,7 @@ const groupRoomRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/19/2022
 groupRoomRouter.post("/", authMW.defineGroupPermissions(["read_room", "create_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         console.log("Start Create Group Room");
@@ -62,6 +63,7 @@ groupRoomRouter.post("/", authMW.defineGroupPermissions(["read_room", "create_ro
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 01/19/2022
 groupRoomRouter.get("/list", authMW.defineGroupPermissions(["read_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -81,6 +83,7 @@ groupRoomRouter.get("/list", authMW.defineGroupPermissions(["read_room"]), authM
     }
 });
 
+// Manual Test - Basic Functionality: 01/19/2022
 groupRoomRouter.get("/:roomID", authMW.defineGroupPermissions(["read_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
@@ -101,6 +104,7 @@ groupRoomRouter.get("/:roomID", authMW.defineGroupPermissions(["read_room"]), au
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/19/2022
 groupRoomRouter.patch("/:roomID", authMW.defineGroupPermissions(["read_room", "update_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -151,7 +155,7 @@ groupRoomRouter.patch("/:roomID", authMW.defineGroupPermissions(["read_room", "u
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/19/2022
 groupRoomRouter.delete("/:roomID", authMW.defineGroupPermissions(["read_room", "delete_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight

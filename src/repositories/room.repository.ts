@@ -78,9 +78,9 @@ class RoomRepo {
             const result = await pgdb.query(`
                 SELECT id, name, category_id, headline
                 FROM rooms
+                WHERE rooms.public = TRUE
                 LIMIT $1
-                OFFSET $2
-                WHERE rooms.public = TRUE`,
+                OFFSET $2`,
                 [limit, offset]
             );
     
@@ -213,7 +213,7 @@ class RoomRepo {
                 `INSERT INTO group_rooms 
                     (group_id, room_id) 
                 VALUES ($1, $2) 
-                RETURNING user_id, room_id`,
+                RETURNING group_id, room_id`,
             [
                 groupID,
                 roomID
@@ -254,7 +254,7 @@ class RoomRepo {
                     SELECT id, name, category_id, headline
                     FROM rooms
                     RIGHT JOIN group_rooms
-                    ON rooms.id = group_rooms.equip_id
+                    ON rooms.id = group_rooms.room_id
                     WHERE group_rooms.group_id = $1 AND rooms.public = $2`
                 queryParams.push(groupID, roomPublic);
             } else {
@@ -262,7 +262,7 @@ class RoomRepo {
                     SELECT id, name, category_id, headline
                     FROM rooms
                     RIGHT JOIN group_rooms
-                    ON rooms.id = group_rooms.equip_id
+                    ON rooms.id = group_rooms.room_id
                     WHERE group_rooms.group_id = $1`
                 queryParams.push(groupID);
             }
