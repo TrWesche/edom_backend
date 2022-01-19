@@ -211,7 +211,7 @@ class EquipmentRepo {
                 `INSERT INTO group_equipment 
                     (group_id, equip_id) 
                 VALUES ($1, $2) 
-                RETURNING user_id, equip_id`,
+                RETURNING group_id, equip_id`,
             [
                 groupID,
                 equipID

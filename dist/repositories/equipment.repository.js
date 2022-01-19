@@ -268,7 +268,7 @@ var EquipmentRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO group_equipment \n                    (group_id, equip_id) \n                VALUES ($1, $2) \n                RETURNING user_id, equip_id", [
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO group_equipment \n                    (group_id, equip_id) \n                VALUES ($1, $2) \n                RETURNING group_id, equip_id", [
                                 groupID,
                                 equipID
                             ])];

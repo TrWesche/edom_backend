@@ -106,6 +106,7 @@ equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePer
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/18/2022
 equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {

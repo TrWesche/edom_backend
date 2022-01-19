@@ -50,9 +50,9 @@ var groupMgmtRouter_1 = require("./groupIDRouters/groupMgmtRouter");
 var groupRoomRouter_1 = require("./groupIDRouters/groupRoomRouter");
 var groupEquipRouter_1 = require("./groupIDRouters/groupEquipRouter");
 var groupIDRouter = express.Router();
-groupIDRouter.use("/mgmt", groupMgmtRouter_1["default"]);
-groupIDRouter.use("/rooms", groupRoomRouter_1["default"]);
-groupIDRouter.use("/equips", groupEquipRouter_1["default"]);
+groupIDRouter.use("/mgmt", authorizationMW_1["default"].defineSitePermissions(["site_access"]), groupMgmtRouter_1["default"]);
+groupIDRouter.use("/rooms", authorizationMW_1["default"].defineSitePermissions(["site_access"]), groupRoomRouter_1["default"]);
+groupIDRouter.use("/equips", authorizationMW_1["default"].defineSitePermissions(["site_access"]), groupEquipRouter_1["default"]);
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |

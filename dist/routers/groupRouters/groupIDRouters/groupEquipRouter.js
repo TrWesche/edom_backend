@@ -54,6 +54,7 @@ var groupEquipRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.post("/", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "create_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
@@ -68,12 +69,13 @@ groupEquipRouter.post("/", authorizationMW_1["default"].defineGroupPermissions([
                     headline: req.body.headline,
                     description: req.body.description,
                     public: req.body.public,
-                    config: req.body.config
+                    configuration: req.body.configuration
                 };
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
                     throw new expresError_1["default"]("Must be logged in to create equipment || group not found", 400);
                 }
                 if (!(0, groupEquipCreateSchema_1["default"])(reqValues)) {
+                    console.log(groupEquipCreateSchema_1["default"].errors);
                     throw new expresError_1["default"]("Unable to Create Group Equipment: ".concat(groupEquipCreateSchema_1["default"].errors), 400);
                 }
                 return [4 /*yield*/, equipModel_1["default"].create_group_equip(req.groupID, reqValues)];
@@ -97,6 +99,7 @@ groupEquipRouter.post("/", authorizationMW_1["default"].defineGroupPermissions([
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermissions(["read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
@@ -124,6 +127,7 @@ groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermission
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.get("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
@@ -151,6 +155,7 @@ groupEquipRouter.get("/:equipID", authorizationMW_1["default"].defineGroupPermis
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     var _a;
@@ -175,7 +180,7 @@ groupEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineGroupPerm
                     headline: req.body.headline,
                     description: req.body.description,
                     public: req.body.public,
-                    config: req.body.config
+                    configuration: req.body.configuration
                 };
                 if (!(0, groupEquipUpdateSchema_1["default"])(updateValues_1)) {
                     throw new expresError_1["default"]("Update Error: ".concat(groupEquipUpdateSchema_1["default"].errors), 400);
@@ -210,6 +215,7 @@ groupEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineGroupPerm
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "delete_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;

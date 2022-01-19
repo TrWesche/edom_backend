@@ -108,7 +108,7 @@ var EquipModel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         // Preflight
-                        if (!data.name || !data.description || !data.config || !data.public) {
+                        if (!data.name || !data.category_id || !data.configuration) {
                             throw new expresError_1["default"]("Invalid Create Equipment Call", 400);
                         }
                         ;

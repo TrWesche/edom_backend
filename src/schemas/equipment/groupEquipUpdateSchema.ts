@@ -8,7 +8,7 @@ export interface GroupEquipUpdateProps {
     headline: string
     description: string
     public: boolean
-    config: object
+    configuration: object
 };
 
 const schema: JSONSchemaType<GroupEquipUpdateProps> = {
@@ -38,8 +38,8 @@ const schema: JSONSchemaType<GroupEquipUpdateProps> = {
             type: "boolean",
             default: false
         },
-        config: {
-            $id: "#/properties/config",
+        configuration: {
+            $id: "#/properties/configuration",
             type: "object"
         }
     },

@@ -30,13 +30,13 @@ var schema = {
             type: "boolean",
             "default": false
         },
-        config: {
-            $id: "#/properties/config",
+        configuration: {
+            $id: "#/properties/configuration",
             type: "object"
         }
     },
     required: [
-        "name", "category_id", "config"
+        "name", "category_id", "configuration"
     ],
     additionalProperties: true
 };

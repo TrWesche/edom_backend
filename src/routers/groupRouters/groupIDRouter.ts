@@ -22,9 +22,9 @@ import groupEquipRouter from "./groupIDRouters/groupEquipRouter";
 const groupIDRouter = express.Router();
 
 
-groupIDRouter.use("/mgmt", groupMgmtRouter);
-groupIDRouter.use("/rooms",  groupRoomRouter);
-groupIDRouter.use("/equips",  groupEquipRouter);
+groupIDRouter.use("/mgmt", authMW.defineSitePermissions(["site_access"]), groupMgmtRouter);
+groupIDRouter.use("/rooms", authMW.defineSitePermissions(["site_access"]),  groupRoomRouter);
+groupIDRouter.use("/equips", authMW.defineSitePermissions(["site_access"]),  groupEquipRouter);
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 

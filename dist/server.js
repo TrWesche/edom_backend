@@ -42,8 +42,8 @@ app.use((0, redis_1.session)({
     saveUninitialized: redis_1.redisConfig.saveUninitialized,
     resave: redis_1.redisConfig.resave
 }));
-app.use("/equips", equipRootRouter_1["default"]);
-app.use("/rooms", roomRootRouter_1["default"]);
+app.use("/equips", authorizationMW_1["default"].loadSitePermissions, equipRootRouter_1["default"]);
+app.use("/rooms", authorizationMW_1["default"].loadSitePermissions, roomRootRouter_1["default"]);
 app.use("/users", authorizationMW_1["default"].loadSitePermissions, userRootRouter_1["default"]);
 app.use("/groups", authorizationMW_1["default"].loadSitePermissions, groupRootRouter_1["default"]);
 server.listen(config_1.port, host, function () {

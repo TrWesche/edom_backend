@@ -66,6 +66,7 @@ equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_equip_
     }
 });
 
+// Manual Test - Basic Functionality: 01/18/2022
 equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing

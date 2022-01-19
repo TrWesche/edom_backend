@@ -24,7 +24,7 @@ const groupEquipRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         console.log("Start Create Group Equip");
@@ -36,7 +36,7 @@ groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_
             headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
-            config: req.body.config
+            configuration: req.body.configuration
         }
 
         if (!req.user?.id || !req.groupID) {
@@ -44,6 +44,7 @@ groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_
         }
 
         if(!validateGroupEquipCreateSchema(reqValues)) {
+            console.log(validateGroupEquipCreateSchema.errors);
             throw new ExpressError(`Unable to Create Group Equipment: ${validateGroupEquipCreateSchema.errors}`, 400);
         }
 
@@ -60,13 +61,13 @@ groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_
 });
 
 
-
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
   | |_) |  _|   / _ \ | | | |
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -86,6 +87,7 @@ groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), aut
     }
 });
 
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.get("/:equipID", authMW.defineGroupPermissions(["read_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
@@ -106,7 +108,7 @@ groupEquipRouter.get("/:equipID", authMW.defineGroupPermissions(["read_equip"]),
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.patch("/:equipID", authMW.defineGroupPermissions(["read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
@@ -125,7 +127,7 @@ groupEquipRouter.patch("/:equipID", authMW.defineGroupPermissions(["read_equip",
             headline: req.body.headline,
             description: req.body.description,
             public: req.body.public,
-            config: req.body.config
+            configuration: req.body.configuration
         };
 
         if(!validateGroupEquipUpdateSchema(updateValues)) {
@@ -162,13 +164,13 @@ groupEquipRouter.patch("/:equipID", authMW.defineGroupPermissions(["read_equip",
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.delete("/:equipID", authMW.defineGroupPermissions(["read_equip", "delete_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);
         }
-
+        
         const queryData = EquipModel.delete_group_equip(req.groupID, req.params.equipID);
         if(!queryData) {
             throw new ExpressError("Unable to delete target equipment", 404);

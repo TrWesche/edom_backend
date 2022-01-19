@@ -30,8 +30,8 @@ var schema = {
             type: "boolean",
             "default": false
         },
-        config: {
-            $id: "#/properties/config",
+        configuration: {
+            $id: "#/properties/configuration",
             type: "object"
         }
     },

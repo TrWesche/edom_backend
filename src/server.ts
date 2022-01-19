@@ -54,8 +54,8 @@ app.use(session({
     resave: redisConfig.resave
 }))
 
-app.use("/equips", equipRootRouter);
-app.use("/rooms", roomRootRouter);
+app.use("/equips", authMW.loadSitePermissions, equipRootRouter);
+app.use("/rooms", authMW.loadSitePermissions, roomRootRouter);
 app.use("/users", authMW.loadSitePermissions, userRootRouter);
 app.use("/groups", authMW.loadSitePermissions, groupRootRouter);
 

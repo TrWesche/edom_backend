@@ -50,7 +50,7 @@ class EquipModel {
 
     static async create_group_equip(groupID: string, data: GroupEquipCreateProps) {
         // Preflight
-        if (!data.name || !data.description || !data.config || !data.public) {
+        if (!data.name || !data.category_id || !data.configuration) {
             throw new ExpressError("Invalid Create Equipment Call", 400);
         };
 
