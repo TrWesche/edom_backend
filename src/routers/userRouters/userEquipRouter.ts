@@ -13,7 +13,6 @@ import EquipModel from "../../models/equipModel";
 
 // Middleware Imports
 import authMW from "../../middleware/authorizationMW";
-import siteMW from "../../middleware/siteMW";
 
 
 const userEquipRouter = express.Router();
@@ -26,7 +25,7 @@ const userEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.post("/create", authMW.defineSitePermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // console.log(req.body);
 
@@ -61,7 +60,7 @@ userEquipRouter.post("/create", siteMW.defineActionPermissions(["read_equip_self
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.post("/:equipID/rooms/:roomID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.post("/:equipID/rooms/:roomID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.create_equip_room_association(req.params.roomID, req.params.equipID);
@@ -84,7 +83,7 @@ userEquipRouter.post("/:equipID/rooms/:roomID", siteMW.defineActionPermissions([
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/list", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {
@@ -105,7 +104,7 @@ userEquipRouter.get("/list", siteMW.defineActionPermissions(["read_equip_self"])
 
 
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
         if (!queryData) {
@@ -126,7 +125,7 @@ userEquipRouter.get("/:equipID", siteMW.defineActionPermissions(["read_equip_sel
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.patch("/:equipID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const prevValues = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
@@ -178,7 +177,7 @@ userEquipRouter.patch("/:equipID", siteMW.defineActionPermissions(["read_equip_s
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.delete("/:equipID", authMW.defineSitePermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError(`Must be logged in to delete equipment`, 400);
@@ -197,7 +196,7 @@ userEquipRouter.delete("/:equipID", siteMW.defineActionPermissions(["read_equip_
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.delete("/:equipID/rooms/:roomID", siteMW.defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userEquipRouter.delete("/:equipID/rooms/:roomID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.delete_equip_room_assc_by_room_equip_id(req.params.roomID, req.params.equipID);

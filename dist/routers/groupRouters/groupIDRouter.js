@@ -46,8 +46,6 @@ var groupUpdateSchema_1 = require("../../schemas/group/groupUpdateSchema");
 var groupModel_1 = require("../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../middleware/authorizationMW");
-var siteMW_1 = require("../../middleware/siteMW");
-var groupMW_1 = require("../../middleware/groupMW");
 var groupMgmtRouter_1 = require("./groupIDRouters/groupMgmtRouter");
 var groupRoomRouter_1 = require("./groupIDRouters/groupRoomRouter");
 var groupEquipRouter_1 = require("./groupIDRouters/groupEquipRouter");
@@ -62,7 +60,7 @@ groupIDRouter.use("/equips", groupEquipRouter_1["default"]);
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.get("/", siteMW_1["default"].defineActionPermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter.get("/", authorizationMW_1["default"].defineSitePermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -96,7 +94,7 @@ groupIDRouter.get("/", siteMW_1["default"].defineActionPermissions(["view_group_
     });
 }); });
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.get("/", groupMW_1["default"].defineActionPermissions(["read_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["read_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -130,7 +128,7 @@ groupIDRouter.get("/", groupMW_1["default"].defineActionPermissions(["read_group
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/16/2022
-groupIDRouter.patch("/", authorizationMW_1["default"].loadGroupPermissions, siteMW_1["default"].defineActionPermissions(["update_group_self"]), groupMW_1["default"].defineActionPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter.patch("/", authorizationMW_1["default"].loadGroupPermissions, authorizationMW_1["default"].defineSitePermissions(["update_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -188,7 +186,7 @@ groupIDRouter.patch("/", authorizationMW_1["default"].loadGroupPermissions, site
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter["delete"]("/", siteMW_1["default"].defineActionPermissions(["delete_group_self"]), groupMW_1["default"].defineActionPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter["delete"]("/", authorizationMW_1["default"].loadGroupPermissions, authorizationMW_1["default"].defineSitePermissions(["delete_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {

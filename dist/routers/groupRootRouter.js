@@ -41,18 +41,12 @@ var express = require("express");
 var expresError_1 = require("../utils/expresError");
 // Schema Imports
 var groupCreateSchema_1 = require("../schemas/group/groupCreateSchema");
-// import validateUpdateGroupSchema, { GroupUpdateProps } from "../schemas/group/groupUpdateSchema";
 // Model Imports
 var groupModel_1 = require("../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
-var siteMW_1 = require("../middleware/siteMW");
-var groupMW_1 = require("../middleware/groupMW");
 // Sub Routers
 var groupIDRouter_1 = require("./groupRouters/groupIDRouter");
-// import groupMgmtRouter from "./groupRouters/groupMgmtRouter";
-// import groupRoomRouter from "./groupRouters/groupRoomRouter";
-// import groupEquipRouter from "./groupRouters/groupEquipRouter";
 var groupRootRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -61,7 +55,7 @@ var groupRootRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022 - Retest w/ user_groups connection update
-groupRootRouter.post("/create", siteMW_1["default"].defineActionPermissions(["create_group_self"]), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRootRouter.post("/create", authorizationMW_1["default"].defineSitePermissions(["create_group_self"]), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -102,7 +96,7 @@ groupRootRouter.post("/create", siteMW_1["default"].defineActionPermissions(["cr
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/16/2022
-groupRootRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -133,6 +127,6 @@ groupRootRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_
         }
     });
 }); });
-groupRootRouter.use("/:groupID", groupMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadGroupPermissions, groupIDRouter_1["default"]);
+groupRootRouter.use("/:groupID", authorizationMW_1["default"].addGroupIDToRequest, authorizationMW_1["default"].loadGroupPermissions, groupIDRouter_1["default"]);
 exports["default"] = groupRootRouter;
 //# sourceMappingURL=groupRootRouter.js.map

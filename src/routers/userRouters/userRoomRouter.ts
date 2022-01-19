@@ -13,7 +13,6 @@ import RoomModel from "../../models/roomModel";
 
 // Middleware Imports
 import authMW from "../../middleware/authorizationMW";
-import siteMW from "../../middleware/siteMW";
 
 
 const userRoomRouter = express.Router();
@@ -25,7 +24,7 @@ const userRoomRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.post("/create", siteMW.defineActionPermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userRoomRouter.post("/create", authMW.defineSitePermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const reqValues: UserRoomCreateProps = {
@@ -64,7 +63,7 @@ userRoomRouter.post("/create", siteMW.defineActionPermissions(["read_room_self",
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.get("/list", siteMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userRoomRouter.get("/list", authMW.defineSitePermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {
@@ -84,7 +83,7 @@ userRoomRouter.get("/list", siteMW.defineActionPermissions(["read_room_self"]), 
 });
 
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.get("/:roomID", siteMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userRoomRouter.get("/:roomID", authMW.defineSitePermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
         if (!queryData) {
@@ -105,7 +104,7 @@ userRoomRouter.get("/:roomID", siteMW.defineActionPermissions(["read_room_self"]
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.patch("/:roomID", siteMW.defineActionPermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userRoomRouter.patch("/:roomID", authMW.defineSitePermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const prevValues = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
@@ -156,7 +155,7 @@ userRoomRouter.patch("/:roomID", siteMW.defineActionPermissions(["read_room_self
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userRoomRouter.delete("/:roomID", siteMW.defineActionPermissions(["read_room_self", "delete_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+userRoomRouter.delete("/:roomID", authMW.defineSitePermissions(["read_room_self", "delete_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError(`Must be logged in to delete rooms`, 400);

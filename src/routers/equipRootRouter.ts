@@ -9,15 +9,6 @@ import EquipModel from "../models/equipModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
-import siteMW from "../middleware/siteMW";
-
-
-// interface equipRouterQuery {
-//     limit: number
-//     offset: number
-//     orderby: string
-//     ftsearch: string
-// }
 
 
 const equipRootRouter = express.Router();
@@ -30,7 +21,7 @@ const equipRootRouter = express.Router();
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/list", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
@@ -61,7 +52,7 @@ equipRootRouter.get("/list", siteMW.defineActionPermissions(["view_equip_public"
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_user_equip_by_user_id_public(req.params.userID);
@@ -75,7 +66,7 @@ equipRootRouter.get("/users/:userID", siteMW.defineActionPermissions(["view_equi
     }
 });
 
-equipRootRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_group_equip_by_group_id_public(req.params.groupID);
@@ -90,7 +81,7 @@ equipRootRouter.get("/groups/:groupID", siteMW.defineActionPermissions(["view_eq
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/rooms/:roomID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_room_equip_by_room_id_public(req.params.roomID);
@@ -105,7 +96,7 @@ equipRootRouter.get("/rooms/:roomID", siteMW.defineActionPermissions(["view_equi
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/:equipID", siteMW.defineActionPermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/:equipID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID, true);
         if (!queryData) {

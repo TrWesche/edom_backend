@@ -13,7 +13,6 @@ import RoomModel from "../../../models/roomModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
-import groupMW from "../../../middleware/groupMW";
 
 
 const groupRoomRouter = express.Router();
@@ -24,7 +23,7 @@ const groupRoomRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-groupRoomRouter.post("/", groupMW.defineActionPermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.post("/", authMW.defineGroupPermissions(["read_room", "create_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         console.log("Start Create Group Room");
         // Preflight
@@ -63,7 +62,7 @@ groupRoomRouter.post("/", groupMW.defineActionPermissions(["read_room_self", "cr
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-groupRoomRouter.get("/list", groupMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.get("/list", authMW.defineGroupPermissions(["read_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -82,7 +81,7 @@ groupRoomRouter.get("/list", groupMW.defineActionPermissions(["read_room_self"])
     }
 });
 
-groupRoomRouter.get("/:roomID", groupMW.defineActionPermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.get("/:roomID", authMW.defineGroupPermissions(["read_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
         if (!queryData) {
@@ -102,7 +101,7 @@ groupRoomRouter.get("/:roomID", groupMW.defineActionPermissions(["read_room_self
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-groupRoomRouter.patch("/:roomID", groupMW.defineActionPermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.patch("/:roomID", authMW.defineGroupPermissions(["read_room", "update_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         const prevValues = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
@@ -153,7 +152,7 @@ groupRoomRouter.patch("/:roomID", groupMW.defineActionPermissions(["read_room_se
   |____/|_____|_____|_____| |_| |_____|
 */
 
-groupRoomRouter.delete("/:roomID", groupMW.defineActionPermissions(["read_room_self", "delete_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupRoomRouter.delete("/:roomID", authMW.defineGroupPermissions(["read_room", "delete_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {

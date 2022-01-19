@@ -48,11 +48,10 @@ var groupRolePermissionCreateSchema_1 = require("../../../schemas/group/groupRol
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupMW_1 = require("../../../middleware/groupMW");
 var groupMgmtRouter = express.Router();
 // User Roles
 // Get User Roles
-groupMgmtRouter.get("/users/:userID/roles", groupMW_1["default"].defineActionPermissions(["read_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.get("/users/:userID/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -79,7 +78,7 @@ groupMgmtRouter.get("/users/:userID/roles", groupMW_1["default"].defineActionPer
     });
 }); });
 // Add User Role
-groupMgmtRouter.post("/users/:userID/roles", groupMW_1["default"].defineActionPermissions(["read_user_role", "create_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.post("/users/:userID/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "create_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -113,7 +112,7 @@ groupMgmtRouter.post("/users/:userID/roles", groupMW_1["default"].defineActionPe
     });
 }); });
 // Remove User Role
-groupMgmtRouter["delete"]("/users/:userID/roles/:roleID", groupMW_1["default"].defineActionPermissions(["read_user_role", "delete_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter["delete"]("/users/:userID/roles/:roleID", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "delete_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -141,7 +140,7 @@ groupMgmtRouter["delete"]("/users/:userID/roles/:roleID", groupMW_1["default"].d
 }); });
 // Users
 // Get Users
-groupMgmtRouter.get("/users", groupMW_1["default"].defineActionPermissions(["read_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.get("/users", authorizationMW_1["default"].defineGroupPermissions(["read_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {
@@ -168,7 +167,7 @@ groupMgmtRouter.get("/users", groupMW_1["default"].defineActionPermissions(["rea
     });
 }); });
 // Add User
-groupMgmtRouter.post("/users", groupMW_1["default"].defineActionPermissions(["read_group_user", "create_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.post("/users", authorizationMW_1["default"].defineGroupPermissions(["read_group_user", "create_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_5;
     var _a;
     return __generator(this, function (_b) {
@@ -202,7 +201,7 @@ groupMgmtRouter.post("/users", groupMW_1["default"].defineActionPermissions(["re
     });
 }); });
 // Remove user
-groupMgmtRouter["delete"]("/users/:userID", groupMW_1["default"].defineActionPermissions(["read_group_user", "delete_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter["delete"]("/users/:userID", authorizationMW_1["default"].defineGroupPermissions(["read_group_user", "delete_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     var _a;
     return __generator(this, function (_b) {
@@ -230,7 +229,7 @@ groupMgmtRouter["delete"]("/users/:userID", groupMW_1["default"].defineActionPer
 }); });
 // Role Permissions
 // Get Role Permissions
-groupMgmtRouter.get("/roles/:roleID/permissions", groupMW_1["default"].defineActionPermissions(["read_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.get("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_7;
     var _a;
     return __generator(this, function (_b) {
@@ -257,7 +256,7 @@ groupMgmtRouter.get("/roles/:roleID/permissions", groupMW_1["default"].defineAct
     });
 }); });
 // Add Role Permissions
-groupMgmtRouter.post("/roles/:roleID/permissions", groupMW_1["default"].defineActionPermissions(["read_role_permissions", "create_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.post("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions", "create_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues_1, queryData, error_8;
     var _a;
     return __generator(this, function (_b) {
@@ -295,7 +294,7 @@ groupMgmtRouter.post("/roles/:roleID/permissions", groupMW_1["default"].defineAc
     });
 }); });
 // Remove Role Permissions
-groupMgmtRouter["delete"]("/roles/:roleID/permissions/:permissionID", groupMW_1["default"].defineActionPermissions(["read_role_permissions", "delete_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter["delete"]("/roles/:roleID/permissions/:permissionID", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_9;
     var _a;
     return __generator(this, function (_b) {
@@ -323,7 +322,7 @@ groupMgmtRouter["delete"]("/roles/:roleID/permissions/:permissionID", groupMW_1[
 }); });
 // Roles
 // Get Roles
-groupMgmtRouter.get("/roles", groupMW_1["default"].defineActionPermissions(["read_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.get("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_10;
     var _a;
     return __generator(this, function (_b) {
@@ -350,7 +349,7 @@ groupMgmtRouter.get("/roles", groupMW_1["default"].defineActionPermissions(["rea
     });
 }); });
 // Add Role
-groupMgmtRouter.post("/roles", groupMW_1["default"].defineActionPermissions(["read_role", "create_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter.post("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_role", "create_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_11;
     var _a;
     return __generator(this, function (_b) {
@@ -384,7 +383,7 @@ groupMgmtRouter.post("/roles", groupMW_1["default"].defineActionPermissions(["re
     });
 }); });
 // Remove Role
-groupMgmtRouter["delete"]("/roles/:roleID", groupMW_1["default"].defineActionPermissions(["read_role", "delete_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter["delete"]("/roles/:roleID", authorizationMW_1["default"].defineGroupPermissions(["read_role", "delete_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_12;
     var _a;
     return __generator(this, function (_b) {

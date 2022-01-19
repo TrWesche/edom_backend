@@ -47,7 +47,6 @@ var userEquipUpdateSchema_1 = require("../../schemas/equipment/userEquipUpdateSc
 var equipModel_1 = require("../../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../middleware/authorizationMW");
-var siteMW_1 = require("../../middleware/siteMW");
 var userEquipRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -56,7 +55,7 @@ var userEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["read_equip_self", "create_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.post("/create", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "create_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -96,7 +95,7 @@ userEquipRouter.post("/create", siteMW_1["default"].defineActionPermissions(["re
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.post("/:equipID/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.post("/:equipID/rooms/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -125,7 +124,7 @@ userEquipRouter.post("/:equipID/rooms/:roomID", siteMW_1["default"].defineAction
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -154,7 +153,7 @@ userEquipRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.get("/:equipID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -182,7 +181,7 @@ userEquipRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["r
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -237,7 +236,7 @@ userEquipRouter.patch("/:equipID", siteMW_1["default"].defineActionPermissions([
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "delete_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "delete_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
     return __generator(this, function (_b) {
@@ -258,7 +257,7 @@ userEquipRouter["delete"]("/:equipID", siteMW_1["default"].defineActionPermissio
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter["delete"]("/:equipID/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userEquipRouter["delete"]("/:equipID/rooms/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {

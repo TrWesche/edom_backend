@@ -12,8 +12,6 @@ import GroupModel from "../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../middleware/authorizationMW";
-import siteMW from "../../middleware/siteMW";
-import groupMW from "../../middleware/groupMW";
 
 
 import groupMgmtRouter from "./groupIDRouters/groupMgmtRouter";
@@ -35,7 +33,7 @@ groupIDRouter.use("/equips",  groupEquipRouter);
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.get("/", siteMW.defineActionPermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
+groupIDRouter.get("/", authMW.defineSitePermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -61,7 +59,7 @@ groupIDRouter.get("/", siteMW.defineActionPermissions(["view_group_public"]), au
 });
 
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.get("/", groupMW.defineActionPermissions(["read_group"]), authMW.validatePermissions, async (req, res, next) => {
+groupIDRouter.get("/", authMW.defineGroupPermissions(["read_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -88,7 +86,7 @@ groupIDRouter.get("/", groupMW.defineActionPermissions(["read_group"]), authMW.v
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/16/2022
-groupIDRouter.patch("/",  authMW.loadGroupPermissions, siteMW.defineActionPermissions(["update_group_self"]), groupMW.defineActionPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
+groupIDRouter.patch("/",  authMW.loadGroupPermissions, authMW.defineSitePermissions(["update_group_self"]), authMW.defineGroupPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -142,7 +140,7 @@ groupIDRouter.patch("/",  authMW.loadGroupPermissions, siteMW.defineActionPermis
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.delete("/", siteMW.defineActionPermissions(["delete_group_self"]), groupMW.defineActionPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
+groupIDRouter.delete("/", authMW.loadGroupPermissions, authMW.defineSitePermissions(["delete_group_self"]), authMW.defineGroupPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to delete groups || target group not specified`, 400);

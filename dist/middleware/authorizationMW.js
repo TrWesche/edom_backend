@@ -112,7 +112,7 @@ var authMW = /** @class */ (function () {
         });
     };
     ;
-    /** Validate Permissions Assigned */
+    /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
     authMW.validatePermissions = function (req, res, next) {
         var _a;
         try {
@@ -168,6 +168,65 @@ var authMW = /** @class */ (function () {
             return next({ status: 401, message: "Unauthorized" });
         }
     };
+    ;
+    /** Define Permissions Required to Access a Site Endpoint */
+    authMW.defineSitePermissions = function (permList) {
+        return function (req, res, next) {
+            try {
+                if (req.requiredPermissions) {
+                    req.requiredPermissions.site = permList;
+                }
+                else {
+                    req.requiredPermissions = {
+                        site: permList
+                    };
+                }
+                return next();
+            }
+            catch (err) {
+                return next();
+            }
+        };
+    };
+    ;
+    /** Move the GroupID from the Route Parameters into the Request Object */
+    authMW.addGroupIDToRequest = function (req, res, next) {
+        try {
+            if (req.params.groupID) {
+                req.groupID = req.params.groupID;
+            }
+            else {
+                req.groupID = undefined;
+            }
+            return next();
+        }
+        catch (err) {
+            return next();
+        }
+    };
+    ;
+    /** Define Permissions Required to Access a Group Endpoint */
+    authMW.defineGroupPermissions = function (permList) {
+        return function (req, res, next) {
+            try {
+                if (req.requiredPermissions) {
+                    req.requiredPermissions.group = permList;
+                }
+                else {
+                    req.requiredPermissions = {
+                        group: permList
+                    };
+                }
+                // console.log("Permission Definitions");
+                // console.log(req.requiredPermissions);
+                return next();
+            }
+            catch (err) {
+                return next();
+            }
+        };
+    };
+    ;
     return authMW;
 }());
 // /** Middleware: Requires user is authenticated. */

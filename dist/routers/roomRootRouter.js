@@ -44,13 +44,6 @@ var expresError_1 = require("../utils/expresError");
 var roomModel_1 = require("../models/roomModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
-var siteMW_1 = require("../middleware/siteMW");
-// interface equipRouterQuery {
-//     limit: number
-//     offset: number
-//     orderby: string
-//     ftsearch: string
-// }
 var roomRootRouter = express.Router();
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
@@ -58,7 +51,7 @@ var roomRootRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-roomRootRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -89,7 +82,7 @@ roomRootRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_r
         }
     });
 }); });
-roomRootRouter.get("/users/:userID", siteMW_1["default"].defineActionPermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -111,7 +104,7 @@ roomRootRouter.get("/users/:userID", siteMW_1["default"].defineActionPermissions
         }
     });
 }); });
-roomRootRouter.get("/groups/:groupID", siteMW_1["default"].defineActionPermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+roomRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -133,7 +126,7 @@ roomRootRouter.get("/groups/:groupID", siteMW_1["default"].defineActionPermissio
         }
     });
 }); });
-roomRootRouter.get("/:roomID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {

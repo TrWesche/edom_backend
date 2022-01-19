@@ -47,7 +47,6 @@ var userRoomUpdateSchema_1 = require("../../schemas/room/userRoomUpdateSchema");
 var roomModel_1 = require("../../models/roomModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../middleware/authorizationMW");
-var siteMW_1 = require("../../middleware/siteMW");
 var userRoomRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -56,7 +55,7 @@ var userRoomRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.post("/create", siteMW_1["default"].defineActionPermissions(["read_room_self", "create_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRoomRouter.post("/create", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "create_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -103,7 +102,7 @@ userRoomRouter.post("/create", siteMW_1["default"].defineActionPermissions(["rea
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRoomRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -132,7 +131,7 @@ userRoomRouter.get("/list", siteMW_1["default"].defineActionPermissions(["read_r
     });
 }); });
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.get("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRoomRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -160,7 +159,7 @@ userRoomRouter.get("/:roomID", siteMW_1["default"].defineActionPermissions(["rea
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.patch("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRoomRouter.patch("/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -214,7 +213,7 @@ userRoomRouter.patch("/:roomID", siteMW_1["default"].defineActionPermissions(["r
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userRoomRouter["delete"]("/:roomID", siteMW_1["default"].defineActionPermissions(["read_room_self", "delete_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRoomRouter["delete"]("/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "delete_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
     return __generator(this, function (_b) {

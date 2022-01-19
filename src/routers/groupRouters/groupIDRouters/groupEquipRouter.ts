@@ -13,7 +13,6 @@ import EquipModel from "../../../models/equipModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
-import groupMW from "../../../middleware/groupMW";
 
 
 const groupEquipRouter = express.Router();
@@ -26,7 +25,7 @@ const groupEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-groupEquipRouter.post("/", groupMW.defineActionPermissions(["view", "create"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         console.log("Start Create Group Equip");
 
@@ -68,7 +67,7 @@ groupEquipRouter.post("/", groupMW.defineActionPermissions(["view", "create"]), 
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-groupEquipRouter.get("/list", groupMW.defineActionPermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.groupID) {
@@ -87,7 +86,7 @@ groupEquipRouter.get("/list", groupMW.defineActionPermissions(["read_equip_self"
     }
 });
 
-groupEquipRouter.get("/:equipID", groupMW.defineActionPermissions(["view"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.get("/:equipID", authMW.defineGroupPermissions(["read_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
         if (!queryData) {
@@ -108,7 +107,7 @@ groupEquipRouter.get("/:equipID", groupMW.defineActionPermissions(["view"]), aut
    \___/|_|   |____/_/   \_\_| |_____|
 */
 
-groupEquipRouter.patch("/:equipID", groupMW.defineActionPermissions(["view", "update"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.patch("/:equipID", authMW.defineGroupPermissions(["read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -164,7 +163,7 @@ groupEquipRouter.patch("/:equipID", groupMW.defineActionPermissions(["view", "up
   |____/|_____|_____|_____| |_| |_____|
 */
 
-groupEquipRouter.delete("/:equipID", groupMW.defineActionPermissions(["view", "delete"]), authMW.validatePermissions, async (req, res, next) => {
+groupEquipRouter.delete("/:equipID", authMW.defineGroupPermissions(["read_equip", "delete_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id || !req.groupID) {
             throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);

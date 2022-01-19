@@ -49,9 +49,8 @@ var userRoomRouter_1 = require("./userRouters/userRoomRouter");
 var userEquipRouter_1 = require("./userRouters/userEquipRouter");
 // Model Imports
 var userModel_1 = require("../models/userModel");
-var authorizationMW_1 = require("../middleware/authorizationMW");
-var siteMW_1 = require("../middleware/siteMW");
 // Middleware Imports
+var authorizationMW_1 = require("../middleware/authorizationMW");
 var userRootRouter = express.Router();
 userRootRouter.use("/rooms", userRoomRouter_1["default"]);
 userRootRouter.use("/equips", userEquipRouter_1["default"]);
@@ -149,7 +148,7 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRootRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/profile", authorizationMW_1["default"].defineSitePermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -172,7 +171,7 @@ userRootRouter.get("/profile", siteMW_1["default"].defineActionPermissions(['rea
     });
 }); });
 // Manual Test - Basic Functionality: 01/13/2022
-userRootRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/up/:username", authorizationMW_1["default"].defineSitePermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -200,7 +199,7 @@ userRootRouter.get("/up/:username", siteMW_1["default"].defineActionPermissions(
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRootRouter.patch("/update", siteMW_1["default"].defineActionPermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -275,7 +274,7 @@ userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRootRouter["delete"]("/delete", siteMW_1["default"].defineActionPermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineSitePermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     var _a, _b;
     return __generator(this, function (_c) {

@@ -14,13 +14,12 @@ import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
-import groupMW from "../../../middleware/groupMW";
 
 
 const groupMgmtRouter = express.Router();
 // User Roles
 // Get User Roles
-groupMgmtRouter.get("/users/:userID/roles", groupMW.defineActionPermissions(["read_user_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.get("/users/:userID/roles", authMW.defineGroupPermissions(["read_user_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -40,7 +39,7 @@ groupMgmtRouter.get("/users/:userID/roles", groupMW.defineActionPermissions(["re
 });
 
 // Add User Role
-groupMgmtRouter.post("/users/:userID/roles", groupMW.defineActionPermissions(["read_user_role", "create_user_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.post("/users/:userID/roles", authMW.defineGroupPermissions(["read_user_role", "create_user_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.params.userID || !req.groupID) {
@@ -69,7 +68,7 @@ groupMgmtRouter.post("/users/:userID/roles", groupMW.defineActionPermissions(["r
 });
 
 // Remove User Role
-groupMgmtRouter.delete("/users/:userID/roles/:roleID", groupMW.defineActionPermissions(["read_user_role", "delete_user_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.delete("/users/:userID/roles/:roleID", authMW.defineGroupPermissions(["read_user_role", "delete_user_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.params.userID || !req.groupID || !req.params.roleID) {
@@ -91,7 +90,7 @@ groupMgmtRouter.delete("/users/:userID/roles/:roleID", groupMW.defineActionPermi
 
 // Users
 // Get Users
-groupMgmtRouter.get("/users", groupMW.defineActionPermissions(["read_group_user"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.get("/users", authMW.defineGroupPermissions(["read_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -111,7 +110,7 @@ groupMgmtRouter.get("/users", groupMW.defineActionPermissions(["read_group_user"
 });
 
 // Add User
-groupMgmtRouter.post("/users", groupMW.defineActionPermissions(["read_group_user", "create_group_user"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.post("/users", authMW.defineGroupPermissions(["read_group_user", "create_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.body.user_id || !req.groupID) {
@@ -141,7 +140,7 @@ groupMgmtRouter.post("/users", groupMW.defineActionPermissions(["read_group_user
 });
 
 // Remove user
-groupMgmtRouter.delete("/users/:userID", groupMW.defineActionPermissions(["read_group_user", "delete_group_user"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.delete("/users/:userID", authMW.defineGroupPermissions(["read_group_user", "delete_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.params.userID || !req.groupID) {
@@ -165,7 +164,7 @@ groupMgmtRouter.delete("/users/:userID", groupMW.defineActionPermissions(["read_
 
 // Role Permissions
 // Get Role Permissions
-groupMgmtRouter.get("/roles/:roleID/permissions", groupMW.defineActionPermissions(["read_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.get("/roles/:roleID/permissions", authMW.defineGroupPermissions(["read_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID || !req.params.roleID) {
@@ -185,7 +184,7 @@ groupMgmtRouter.get("/roles/:roleID/permissions", groupMW.defineActionPermission
 });
 
 // Add Role Permissions
-groupMgmtRouter.post("/roles/:roleID/permissions", groupMW.defineActionPermissions(["read_role_permissions", "create_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.post("/roles/:roleID/permissions", authMW.defineGroupPermissions(["read_role_permissions", "create_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.body.permissionList || !req.groupID || !req.params.roleID) {
@@ -218,7 +217,7 @@ groupMgmtRouter.post("/roles/:roleID/permissions", groupMW.defineActionPermissio
 });
 
 // Remove Role Permissions
-groupMgmtRouter.delete("/roles/:roleID/permissions/:permissionID", groupMW.defineActionPermissions(["read_role_permissions", "delete_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.delete("/roles/:roleID/permissions/:permissionID", authMW.defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.params.roleID || !req.groupID || !req.params.permissionID) {
@@ -241,7 +240,7 @@ groupMgmtRouter.delete("/roles/:roleID/permissions/:permissionID", groupMW.defin
 
 // Roles
 // Get Roles
-groupMgmtRouter.get("/roles", groupMW.defineActionPermissions(["read_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.get("/roles", authMW.defineGroupPermissions(["read_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.groupID) {
@@ -261,7 +260,7 @@ groupMgmtRouter.get("/roles", groupMW.defineActionPermissions(["read_role"]), au
 });
 
 // Add Role
-groupMgmtRouter.post("/roles", groupMW.defineActionPermissions(["read_role", "create_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.post("/roles", authMW.defineGroupPermissions(["read_role", "create_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.body.name || !req.groupID) {
@@ -291,7 +290,7 @@ groupMgmtRouter.post("/roles", groupMW.defineActionPermissions(["read_role", "cr
 });
 
 // Remove Role
-groupMgmtRouter.delete("/roles/:roleID", groupMW.defineActionPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.delete("/roles/:roleID", authMW.defineGroupPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id || !req.params.roleID || !req.groupID) {

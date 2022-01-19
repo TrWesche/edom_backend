@@ -5,21 +5,15 @@ import ExpressError from "../utils/expresError";
 
 // Schema Imports
 import validateCreateGroupSchema, { GroupCreateProps } from "../schemas/group/groupCreateSchema";
-// import validateUpdateGroupSchema, { GroupUpdateProps } from "../schemas/group/groupUpdateSchema";
 
 // Model Imports
 import GroupModel from "../models/groupModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
-import siteMW from "../middleware/siteMW";
-import groupMW from "../middleware/groupMW";
 
 // Sub Routers
 import groupIDRouter from "./groupRouters/groupIDRouter";
-// import groupMgmtRouter from "./groupRouters/groupMgmtRouter";
-// import groupRoomRouter from "./groupRouters/groupRoomRouter";
-// import groupEquipRouter from "./groupRouters/groupEquipRouter";
 
 
 const groupRootRouter = express.Router();
@@ -33,7 +27,7 @@ const groupRootRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022 - Retest w/ user_groups connection update
-groupRootRouter.post("/create", siteMW.defineActionPermissions(["create_group_self"]), async (req, res, next) => {
+groupRootRouter.post("/create", authMW.defineSitePermissions(["create_group_self"]), async (req, res, next) => {
     try {
         // Preflight
         const reqValues: GroupCreateProps = {
@@ -71,7 +65,7 @@ groupRootRouter.post("/create", siteMW.defineActionPermissions(["create_group_se
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/16/2022
-groupRootRouter.get("/list", siteMW.defineActionPermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
+groupRootRouter.get("/list", authMW.defineSitePermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
@@ -101,7 +95,7 @@ groupRootRouter.get("/list", siteMW.defineActionPermissions(["view_group_public"
     }
 });
 
-groupRootRouter.use("/:groupID", groupMW.addGroupIDToRequest, authMW.loadGroupPermissions, groupIDRouter);
+groupRootRouter.use("/:groupID", authMW.addGroupIDToRequest, authMW.loadGroupPermissions, groupIDRouter);
 
 
 export default groupRootRouter;

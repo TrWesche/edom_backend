@@ -47,7 +47,6 @@ var groupEquipUpdateSchema_1 = require("../../../schemas/equipment/groupEquipUpd
 var equipModel_1 = require("../../../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupMW_1 = require("../../../middleware/groupMW");
 var groupEquipRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -55,7 +54,7 @@ var groupEquipRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-groupEquipRouter.post("/", groupMW_1["default"].defineActionPermissions(["view", "create"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupEquipRouter.post("/", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "create_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -98,7 +97,7 @@ groupEquipRouter.post("/", groupMW_1["default"].defineActionPermissions(["view",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-groupEquipRouter.get("/list", groupMW_1["default"].defineActionPermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermissions(["read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -125,7 +124,7 @@ groupEquipRouter.get("/list", groupMW_1["default"].defineActionPermissions(["rea
         }
     });
 }); });
-groupEquipRouter.get("/:equipID", groupMW_1["default"].defineActionPermissions(["view"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupEquipRouter.get("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -152,7 +151,7 @@ groupEquipRouter.get("/:equipID", groupMW_1["default"].defineActionPermissions([
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-groupEquipRouter.patch("/:equipID", groupMW_1["default"].defineActionPermissions(["view", "update"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     var _a;
     return __generator(this, function (_b) {
@@ -211,7 +210,7 @@ groupEquipRouter.patch("/:equipID", groupMW_1["default"].defineActionPermissions
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-groupEquipRouter["delete"]("/:equipID", groupMW_1["default"].defineActionPermissions(["view", "delete"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "delete_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
     return __generator(this, function (_b) {

@@ -44,13 +44,6 @@ var expresError_1 = require("../utils/expresError");
 var equipModel_1 = require("../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
-var siteMW_1 = require("../middleware/siteMW");
-// interface equipRouterQuery {
-//     limit: number
-//     offset: number
-//     orderby: string
-//     ftsearch: string
-// }
 var equipRootRouter = express.Router();
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
@@ -59,7 +52,7 @@ var equipRootRouter = express.Router();
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -91,7 +84,7 @@ equipRootRouter.get("/list", siteMW_1["default"].defineActionPermissions(["view_
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/users/:userID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -113,7 +106,7 @@ equipRootRouter.get("/users/:userID", siteMW_1["default"].defineActionPermission
         }
     });
 }); });
-equipRootRouter.get("/groups/:groupID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -136,7 +129,7 @@ equipRootRouter.get("/groups/:groupID", siteMW_1["default"].defineActionPermissi
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/rooms/:roomID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/rooms/:roomID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -159,7 +152,7 @@ equipRootRouter.get("/rooms/:roomID", siteMW_1["default"].defineActionPermission
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/:equipID", siteMW_1["default"].defineActionPermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
