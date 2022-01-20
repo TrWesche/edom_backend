@@ -83,6 +83,7 @@ userRoomRouter.get("/list", authMW.defineSitePermissions(["read_room_self"]), au
     }
 });
 
+// Manual Test - Basic Functionality: 01/19/2022
 // Get List of Equipment Assigned to a Particular Room
 userRoomRouter.get("/:roomID/equips", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {

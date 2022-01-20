@@ -119,6 +119,7 @@ userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), 
     }
 });
 
+// Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: This will need to be changed to ensure data privacy
@@ -225,7 +226,7 @@ userEquipRouter.delete("/:equipID", authMW.defineSitePermissions(["read_equip_se
     }
 });
 
-
+// Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter.delete("/:equipID/rooms", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
