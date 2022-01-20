@@ -40,15 +40,13 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
-// Schema Imports
-var groupRoomCreateSchema_1 = require("../../../schemas/room/groupRoomCreateSchema");
 var groupRoomUpdateSchema_1 = require("../../../schemas/room/groupRoomUpdateSchema");
 // Model Imports
 var roomModel_1 = require("../../../models/roomModel");
 var equipModel_1 = require("../../../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupRoomRouter = express.Router();
+var groupRoomEquipRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|
@@ -56,51 +54,8 @@ var groupRoomRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/19/2022
-// Create Room
-groupRoomRouter.post("/", authorizationMW_1["default"].defineGroupPermissions(["read_room", "create_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 2, , 3]);
-                console.log("Start Create Group Room");
-                reqValues = {
-                    name: req.body.name,
-                    category_id: req.body.category_id,
-                    headline: req.body.headline,
-                    description: req.body.description,
-                    public: req.body.public
-                };
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to create rooms / Missing Group Definition", 400);
-                }
-                ;
-                if (!(0, groupRoomCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to Create Group Room: ".concat(groupRoomCreateSchema_1["default"].errors), 400);
-                }
-                ;
-                return [4 /*yield*/, roomModel_1["default"].create_group_room(req.groupID, reqValues)];
-            case 1:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Create Room Failed", 500);
-                }
-                ;
-                return [2 /*return*/, res.json({ rooms: [queryData] })];
-            case 2:
-                error_1 = _b.sent();
-                next(error_1);
-                return [3 /*break*/, 3];
-            case 3:
-                ;
-                return [2 /*return*/];
-        }
-    });
-}); });
-// Create Room - Equipment Association
-groupRoomRouter.post("/:roomID/equips", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, asscRooms, queryData, error_2;
+groupRoomEquipRouter.post("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var equipCheck, asscRooms, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -135,8 +90,8 @@ groupRoomRouter.post("/:roomID/equips", authorizationMW_1["default"].defineGroup
                 ;
                 return [2 /*return*/, res.json({ roomEquip: [queryData] })];
             case 4:
-                error_2 = _b.sent();
-                next(error_2);
+                error_1 = _b.sent();
+                next(error_1);
                 return [3 /*break*/, 5];
             case 5:
                 ;
@@ -151,9 +106,8 @@ groupRoomRouter.post("/:roomID/equips", authorizationMW_1["default"].defineGroup
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/19/2022
-// Get Room List
-groupRoomRouter.get("/list", authorizationMW_1["default"].defineGroupPermissions(["read_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+groupRoomEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermissions(["read_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -173,39 +127,16 @@ groupRoomRouter.get("/list", authorizationMW_1["default"].defineGroupPermissions
                 ;
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
-                error_3 = _b.sent();
-                next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-// Get List of Equipment Assigned to a Particular Room
-groupRoomRouter.get("/:roomID/equips", authorizationMW_1["default"].defineGroupPermissions(["read_room", "read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Room Not Found.", 404);
-                }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
-            case 2:
-                error_4 = _a.sent();
-                next(error_4);
+                error_2 = _b.sent();
+                next(error_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 // Manual Test - Basic Functionality: 01/19/2022
-// Get Details of an Individual Room
-groupRoomRouter.get("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_5;
+groupRoomEquipRouter.get("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -218,8 +149,8 @@ groupRoomRouter.get("/:roomID", authorizationMW_1["default"].defineGroupPermissi
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_5 = _a.sent();
-                next(error_5);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -232,9 +163,8 @@ groupRoomRouter.get("/:roomID", authorizationMW_1["default"].defineGroupPermissi
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/19/2022
-// Update Details of an Individual Room
-groupRoomRouter.patch("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_6;
+groupRoomEquipRouter.patch("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -273,8 +203,8 @@ groupRoomRouter.patch("/:roomID", authorizationMW_1["default"].defineGroupPermis
                 newData = _a.sent();
                 return [2 /*return*/, res.json({ rooms: [newData] })];
             case 3:
-                error_6 = _a.sent();
-                next(error_6);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -286,49 +216,8 @@ groupRoomRouter.patch("/:roomID", authorizationMW_1["default"].defineGroupPermis
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-// Delete Equipment -> Room Association
-groupRoomRouter["delete"]("/:roomID/equips", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, queryData, error_7;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 3, , 4]);
-                console.log("Start Delete Association: Group Room -> Equipment");
-                // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID || !req.body.equipID) {
-                    throw new expresError_1["default"]("Must be logged in to create rooms / Missing Group Definition / Target Equip ID not provided", 400);
-                }
-                ;
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_group_and_equip_id(req.groupID, req.body.equipID)];
-            case 1:
-                equipCheck = _b.sent();
-                if (!equipCheck.id) {
-                    throw new expresError_1["default"]("This piece of equipment is not associated with the target group", 401);
-                }
-                ;
-                return [4 /*yield*/, equipModel_1["default"].delete_equip_room_assc_by_room_equip_id(req.params.roomID, req.body.equipID)];
-            case 2:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Delete Group Room -> Equip Association Failed", 500);
-                }
-                ;
-                return [2 /*return*/, res.json({ roomEquip: [queryData] })];
-            case 3:
-                error_7 = _b.sent();
-                next(error_7);
-                return [3 /*break*/, 4];
-            case 4:
-                ;
-                return [2 /*return*/];
-        }
-    });
-}); });
 // Manual Test - Basic Functionality: 01/19/2022
-// Delete an Individual Room
-// TODO: --- Update to delete equipment -> room associations and revalidate
-groupRoomRouter["delete"]("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room", "delete_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRoomEquipRouter["delete"]("/:roomID", authorizationMW_1["default"].defineGroupPermissions(["read_room", "delete_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData;
     var _a;
     return __generator(this, function (_b) {
@@ -350,5 +239,5 @@ groupRoomRouter["delete"]("/:roomID", authorizationMW_1["default"].defineGroupPe
         return [2 /*return*/];
     });
 }); });
-exports["default"] = groupRoomRouter;
-//# sourceMappingURL=groupRoomRouter.js.map
+exports["default"] = groupRoomEquipRouter;
+//# sourceMappingURL=groupRoomEquipRouter.js.map

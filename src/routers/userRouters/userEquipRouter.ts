@@ -91,7 +91,7 @@ userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), 
         };
 
         // Processing
-        const queryData = await EquipModel.retrieve_user_equip_by_user_id_all(req.user?.id);
+        const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.user?.id);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
         };

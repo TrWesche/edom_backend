@@ -493,6 +493,52 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
+    EquipmentRepo.fetch_equip_by_group_and_equip_id = function (groupID, equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_18;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN group_equipment\n                ON equipment.id = group_equipment.equip_id\n                WHERE group_equipment.group_id = $1 AND group_equipment.equip_id = $2";
+                        queryParams = [groupID, equipID];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_18 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target group & equip id combination - ".concat(error_18), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.fetch_equip_by_user_and_equip_id = function (userID, equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, queryParams, result, rval, error_19;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id = $2";
+                        queryParams = [userID, equipID];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_19 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target user & equip id combination - ".concat(error_19), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     return EquipmentRepo;
 }());
 exports["default"] = EquipmentRepo;

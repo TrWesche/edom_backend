@@ -111,7 +111,7 @@ groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermission
                     throw new expresError_1["default"]("Invalid Call: Get Group Equipment - All", 401);
                 }
                 ;
-                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id_all(req.groupID)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id(req.groupID)];
             case 1:
                 queryData = _a.sent();
                 if (!queryData) {

@@ -124,50 +124,35 @@ class EquipModel {
         return equip;
     };
 
-    static async retrieve_user_equip_by_user_id_public(userID: string) {
-        const equip = await EquipRepo.fetch_equip_by_user_id(userID, true);
+
+    static async retrieve_user_equip_by_user_id(userID: string, userPublic?: boolean) {
+        const equip = await EquipRepo.fetch_equip_by_user_id(userID, userPublic);
         return equip;
     };
 
-    static async retrieve_user_equip_by_user_id_all(userID: string) {
-        const equip = await EquipRepo.fetch_equip_by_user_id(userID);
+    static async retrieve_group_equip_by_group_id(groupID: string, groupPublic?: boolean) {
+        const equip = await EquipRepo.fetch_equip_by_group_id(groupID, groupPublic);
         return equip;
     };
 
-    static async retrieve_group_equip_by_group_id_public(groupID: string) {
-        const equip = await EquipRepo.fetch_equip_by_group_id(groupID, true);
+    static async retrieve_room_equip_by_room_id(roomID: string, roomPublic?: boolean) {
+        const equip = await EquipRepo.fetch_equip_by_room_id(roomID, roomPublic);
         return equip;
     };
 
-    static async retrieve_group_equip_by_group_id_all(groupID: string) {
-        const equip = await EquipRepo.fetch_equip_by_group_id(groupID);
+    static async retrieve_equip_rooms_by_equip_id(equipID: string) {
+        const equip = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID);
         return equip;
     };
 
-    static async retrieve_room_equip_by_room_id_public(roomID: string) {
-        const equip = await EquipRepo.fetch_equip_by_room_id(roomID, true);
+    static async retrieve_equip_by_group_and_equip_id(groupID: string, equipID: string) {
+        const equip = await EquipRepo.fetch_equip_by_group_and_equip_id(groupID, equipID);
         return equip;
     };
 
-    static async retrieve_room_equip_by_room_id_all(roomID: string) {
-        const equip = await EquipRepo.fetch_equip_by_room_id(roomID);
+    static async retrieve_equip_by_user_and_equip_id(userID: string, equipID: string) {
+        const equip = await EquipRepo.fetch_equip_by_user_and_equip_id(userID, equipID);
         return equip;
-    };
-
-
-
-    static async retrieve_equip_user_by_equip_id(robotID: string) {
-        //TODO: Check if user profile is public
-        //TODO: Return user data
-    };
-
-    static async retrieve_equip_group_by_equip_id(robotID: string) {
-        //TODO: Check if group is public
-        //TODO: Return group data
-    };
-
-    static async retrieve_equip_room_by_equip_id(robotID: string) {
-        //TODO
     };
 
 

@@ -76,7 +76,7 @@ groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), aut
         };
 
         // Processing
-        const queryData = await EquipModel.retrieve_group_equip_by_group_id_all(req.groupID);
+        const queryData = await EquipModel.retrieve_group_equip_by_group_id(req.groupID);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
         };

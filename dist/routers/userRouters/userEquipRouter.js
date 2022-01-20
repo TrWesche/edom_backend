@@ -136,7 +136,7 @@ userEquipRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(
                     throw new expresError_1["default"]("Invalid Call: Get User Equipment - All", 401);
                 }
                 ;
-                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id_all((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
             case 1:
                 queryData = _c.sent();
                 if (!queryData) {

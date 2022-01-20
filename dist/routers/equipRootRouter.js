@@ -90,7 +90,7 @@ equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePer
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id_public(req.params.userID)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id(req.params.userID, true)];
             case 1:
                 queryData = _a.sent();
                 if (!queryData) {
@@ -113,7 +113,7 @@ equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSiteP
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id_public(req.params.groupID)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id(req.params.groupID, true)];
             case 1:
                 queryData = _a.sent();
                 if (!queryData) {
@@ -136,7 +136,7 @@ equipRootRouter.get("/rooms/:roomID", authorizationMW_1["default"].defineSitePer
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_room_equip_by_room_id_public(req.params.roomID)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID, true)];
             case 1:
                 queryData = _a.sent();
                 if (!queryData) {

@@ -230,12 +230,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_user_equip_by_user_id_public = function (userID) {
+    EquipModel.retrieve_user_equip_by_user_id = function (userID, userPublic) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_id(userID, true)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_id(userID, userPublic)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -244,12 +244,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_user_equip_by_user_id_all = function (userID) {
+    EquipModel.retrieve_group_equip_by_group_id = function (groupID, groupPublic) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_id(userID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_id(groupID, groupPublic)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -258,12 +258,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_group_equip_by_group_id_public = function (groupID) {
+    EquipModel.retrieve_room_equip_by_room_id = function (roomID, roomPublic) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_id(groupID, true)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_room_id(roomID, roomPublic)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -272,12 +272,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_group_equip_by_group_id_all = function (groupID) {
+    EquipModel.retrieve_equip_rooms_by_equip_id = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_id(groupID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -286,12 +286,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_room_equip_by_room_id_public = function (roomID) {
+    EquipModel.retrieve_equip_by_group_and_equip_id = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_room_id(roomID, true)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_and_equip_id(groupID, equipID)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -300,40 +300,16 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_room_equip_by_room_id_all = function (roomID) {
+    EquipModel.retrieve_equip_by_user_and_equip_id = function (userID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_room_id(roomID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_and_equip_id(userID, equipID)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
                 }
-            });
-        });
-    };
-    ;
-    EquipModel.retrieve_equip_user_by_equip_id = function (robotID) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
-            });
-        });
-    };
-    ;
-    EquipModel.retrieve_equip_group_by_equip_id = function (robotID) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
-            });
-        });
-    };
-    ;
-    EquipModel.retrieve_equip_room_by_equip_id = function (robotID) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
             });
         });
     };

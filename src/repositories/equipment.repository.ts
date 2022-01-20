@@ -403,6 +403,46 @@ class EquipmentRepo {
             throw new ExpressError(`An Error Occured: Unable to locate equipment rooms by equip id - ${error}`, 500);
         }
     };
+
+    static async fetch_equip_by_group_and_equip_id(groupID: string, equipID: string) {
+        try {
+            const query = `
+                SELECT id, name
+                FROM equipment
+                RIGHT JOIN group_equipment
+                ON equipment.id = group_equipment.equip_id
+                WHERE group_equipment.group_id = $1 AND group_equipment.equip_id = $2`;
+            
+            const queryParams = [groupID, equipID];
+
+            const result = await pgdb.query(query, queryParams);
+
+            const rval = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment with target group & equip id combination - ${error}`, 500);
+        }
+    };
+
+    static async fetch_equip_by_user_and_equip_id(userID: string, equipID: string) {
+        try {
+            const query = `
+                SELECT id, name
+                FROM equipment
+                RIGHT JOIN user_equipment
+                ON equipment.id = user_equipment.equip_id
+                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id = $2`;
+            
+            const queryParams = [userID, equipID];
+
+            const result = await pgdb.query(query, queryParams);
+
+            const rval = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment with target user & equip id combination - ${error}`, 500);
+        }
+    };
 }
 
 export default EquipmentRepo;

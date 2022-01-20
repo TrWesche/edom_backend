@@ -55,7 +55,7 @@ equipRootRouter.get("/list", authMW.defineSitePermissions(["view_equip_public"])
 equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
-        const queryData = await EquipModel.retrieve_user_equip_by_user_id_public(req.params.userID);
+        const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.params.userID, true);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found: Get User Equipment - Public", 404);
         };
@@ -70,7 +70,7 @@ equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_equip_
 equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
-        const queryData = await EquipModel.retrieve_group_equip_by_group_id_public(req.params.groupID);
+        const queryData = await EquipModel.retrieve_group_equip_by_group_id(req.params.groupID, true);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
         };
@@ -85,7 +85,7 @@ equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_equi
 equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
-        const queryData = await EquipModel.retrieve_room_equip_by_room_id_public(req.params.roomID);
+        const queryData = await EquipModel.retrieve_room_equip_by_room_id(req.params.roomID, true);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
         };
