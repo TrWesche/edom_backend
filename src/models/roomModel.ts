@@ -192,7 +192,10 @@ class RoomModel {
         try {
             await TransactionRepo.begin_transaction();
 
-            // Delete User -> Room Association Entry
+            // Delete Equip -> Room Association Entries
+            const equipAssoc = await EquipmentRepo.disassociate_room_from_equip_by_room_id(roomID);
+
+            // Delete Group -> Room Association Entry
             const roomAssoc = await RoomRepo.disassociate_group_from_room(groupID, roomID);
             if (!roomAssoc?.room_id) {
                 throw new ExpressError("Error while disassociating group from room entry", 500);

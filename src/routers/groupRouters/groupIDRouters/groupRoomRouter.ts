@@ -58,39 +58,6 @@ groupRoomRouter.post("/", authMW.defineGroupPermissions(["read_room", "create_ro
     };
 });
 
-// Create Room - Equipment Association
-groupRoomRouter.post("/:roomID/equips", authMW.defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        console.log("Start Create Association: Group Room -> Equipment");
-        // Preflight
-        if (!req.user?.id || !req.groupID || !req.body.equipID) {
-            throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition / Target Equip ID not provided`, 400);
-        };
-
-        // Validate Group Ownership of Target Equipment
-        const equipCheck = await EquipModel.retrieve_equip_by_group_and_equip_id(req.groupID, req.body.equipID);
-        if (!equipCheck.id) {
-            throw new ExpressError(`This piece of equipment is not associated with the target group`, 401);
-        };
-
-        // Check that Equip has not already been associated with another room.
-        const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.body.equipID);
-        if (asscRooms.length > 0) {
-            throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
-        };
-
-        // Processing
-        const queryData = await EquipModel.create_equip_room_association(req.params.roomID, req.body.equipID);
-        if (!queryData) {
-            throw new ExpressError("Create Group Room -> Equip Association Failed", 500);
-        };
-
-        return res.json({roomEquip: [queryData]});
-    } catch (error) {
-        next(error);
-    };
-});
-
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
@@ -98,6 +65,8 @@ groupRoomRouter.post("/:roomID/equips", authMW.defineGroupPermissions(["read_roo
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+
+
 // Manual Test - Basic Functionality: 01/19/2022
 // Get Room List
 groupRoomRouter.get("/list", authMW.defineGroupPermissions(["read_room"]), authMW.validatePermissions, async (req, res, next) => {
@@ -119,6 +88,7 @@ groupRoomRouter.get("/list", authMW.defineGroupPermissions(["read_room"]), authM
     }
 });
 
+// Manual Test - Basic Functionality: 01/19/2022
 // Get List of Equipment Assigned to a Particular Room
 groupRoomRouter.get("/:roomID/equips", authMW.defineGroupPermissions(["read_room", "read_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -207,37 +177,8 @@ groupRoomRouter.patch("/:roomID", authMW.defineGroupPermissions(["read_room", "u
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-// Delete Equipment -> Room Association
-groupRoomRouter.delete("/:roomID/equips", authMW.defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        console.log("Start Delete Association: Group Room -> Equipment");
-        // Preflight
-        if (!req.user?.id || !req.groupID || !req.body.equipID) {
-            throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition / Target Equip ID not provided`, 400);
-        };
-
-        // Validate Group Ownership of Target Equipment
-        const equipCheck = await EquipModel.retrieve_equip_by_group_and_equip_id(req.groupID, req.body.equipID);
-        if (!equipCheck.id) {
-            throw new ExpressError(`This piece of equipment is not associated with the target group`, 401);
-        };
-
-        // Processing
-        const queryData = await EquipModel.delete_equip_room_assc_by_room_equip_id(req.params.roomID, req.body.equipID);
-        if (!queryData) {
-            throw new ExpressError("Delete Group Room -> Equip Association Failed", 500);
-        };
-
-        return res.json({roomEquip: [queryData]});
-    } catch (error) {
-        next(error);
-    };
-});
-
-
 // Manual Test - Basic Functionality: 01/19/2022
 // Delete an Individual Room
-// TODO: --- Update to delete equipment -> room associations and revalidate
 groupRoomRouter.delete("/:roomID", authMW.defineGroupPermissions(["read_room", "delete_room"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight

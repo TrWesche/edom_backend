@@ -60,6 +60,40 @@ groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_
     }
 });
 
+// Manual Test - Basic Functionality: 01/19/2022
+// Create Room - Equipment Association
+groupEquipRouter.post("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        console.log("Start Create Association: Group Room -> Equipment");
+        // Preflight
+        if (!req.user?.id || !req.groupID || !req.body.roomID) {
+            throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition / Target Equip ID not provided`, 400);
+        };
+
+        // Validate Group Ownership of Target Equipment
+        const equipCheck = await EquipModel.retrieve_equip_by_group_and_equip_id(req.groupID, req.params.equipID);
+        if (!equipCheck.id) {
+            throw new ExpressError(`This piece of equipment is not associated with the target group`, 401);
+        };
+
+        // Check that Equip has not already been associated with another room.
+        const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+        if (asscRooms.length > 0) {
+            throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
+        };
+
+        // Processing
+        const queryData = await EquipModel.create_equip_room_association(req.body.roomID, req.params.equipID);
+        if (!queryData) {
+            throw new ExpressError("Create Group Room -> Equip Association Failed", 500);
+        };
+
+        return res.json({roomEquip: [queryData]});
+    } catch (error) {
+        next(error);
+    };
+});
+
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
@@ -82,6 +116,20 @@ groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), aut
         };
         
         return res.json({equip: [queryData]});
+    } catch (error) {
+        next(error)
+    }
+});
+
+// Manual Test - Basic Functionality: 01/19/2022
+groupEquipRouter.get("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "read_equip"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+        if (!queryData) {
+            throw new ExpressError("Equipment Not Found.", 404);
+        }
+        
+        return res.json({rooms: [queryData]});
     } catch (error) {
         next(error)
     }
@@ -180,6 +228,33 @@ groupEquipRouter.delete("/:equipID", authMW.defineGroupPermissions(["read_equip"
     } catch (error) {
         return next(error);
     }
+});
+
+// Manual Test - Basic Functionality: 01/19/2022
+groupEquipRouter.delete("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        console.log("Start Delete Association: Group Room -> Equipment");
+        // Preflight
+        if (!req.user?.id || !req.groupID || !req.body.roomID) {
+            throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition / Target Equip ID not provided`, 400);
+        };
+
+        // Validate Group Ownership of Target Equipment
+        const equipCheck = await EquipModel.retrieve_equip_by_group_and_equip_id(req.groupID, req.params.equipID);
+        if (!equipCheck.id) {
+            throw new ExpressError(`This piece of equipment is not associated with the target group`, 401);
+        };
+
+        // Processing
+        const queryData = await EquipModel.delete_equip_room_assc_by_room_equip_id(req.body.roomID, req.params.equipID);
+        if (!queryData) {
+            throw new ExpressError("Delete Group Room -> Equip Association Failed", 500);
+        };
+
+        return res.json({roomEquip: [queryData]});
+    } catch (error) {
+        next(error);
+    };
 });
 
 export default groupEquipRouter;

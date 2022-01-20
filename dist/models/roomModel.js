@@ -334,23 +334,26 @@ var RoomModel = /** @class */ (function () {
     ;
     RoomModel.delete_group_room = function (groupID, roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var roomAssoc, room, error_4;
+            var equipAssoc, roomAssoc, room, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 7]);
+                        _a.trys.push([0, 6, , 8]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, room_repository_1["default"].disassociate_group_from_room(groupID, roomID)];
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_room_id(roomID)];
                     case 2:
+                        equipAssoc = _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].disassociate_group_from_room(groupID, roomID)];
+                    case 3:
                         roomAssoc = _a.sent();
                         if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.room_id)) {
                             throw new expresError_1["default"]("Error while disassociating group from room entry", 500);
                         }
                         ;
                         return [4 /*yield*/, room_repository_1["default"].delete_room_by_room_id(roomAssoc.room_id)];
-                    case 3:
+                    case 4:
                         room = _a.sent();
                         if (!(room === null || room === void 0 ? void 0 : room.id)) {
                             throw new expresError_1["default"]("Error while deleting room entry", 500);
@@ -358,17 +361,17 @@ var RoomModel = /** @class */ (function () {
                         ;
                         // Commit to Database
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 4:
+                    case 5:
                         // Commit to Database
                         _a.sent();
                         return [2 /*return*/, room];
-                    case 5:
+                    case 6:
                         error_4 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 6:
+                    case 7:
                         _a.sent();
                         throw new expresError_1["default"](error_4.message, error_4.status);
-                    case 7:
+                    case 8:
                         ;
                         return [2 /*return*/];
                 }

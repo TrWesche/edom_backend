@@ -388,9 +388,9 @@ class EquipmentRepo {
         try {
                 const query = `
                     SELECT id, name
-                    FROM equipment
+                    FROM rooms
                     RIGHT JOIN room_equipment
-                    ON equipment.id = room_equipment.equip_id
+                    ON rooms.id = room_equipment.room_id
                     WHERE room_equipment.equip_id = $1`;
 
                 const queryParams = [equipID];

@@ -477,7 +477,7 @@ var EquipmentRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        query = "\n                    SELECT id, name\n                    FROM equipment\n                    RIGHT JOIN room_equipment\n                    ON equipment.id = room_equipment.equip_id\n                    WHERE room_equipment.equip_id = $1";
+                        query = "\n                    SELECT id, name\n                    FROM rooms\n                    RIGHT JOIN room_equipment\n                    ON rooms.id = room_equipment.room_id\n                    WHERE room_equipment.equip_id = $1";
                         queryParams = [equipID];
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
