@@ -124,6 +124,7 @@ groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), aut
 // Manual Test - Basic Functionality: 01/19/2022
 groupEquipRouter.get("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "read_equip"]), authMW.validatePermissions, async (req, res, next) => {
     try {
+        // TODO: This will need to be changed to ensure data privacy
         const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
         if (!queryData) {
             throw new ExpressError("Equipment Not Found.", 404);

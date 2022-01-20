@@ -10,6 +10,7 @@ import validateUserRoomUpdateSchema, { UserRoomUpdateProps } from "../../schemas
 
 // Model Imports
 import RoomModel from "../../models/roomModel";
+import EquipModel from "../../models/equipModel";
 
 // Middleware Imports
 import authMW from "../../middleware/authorizationMW";
@@ -77,6 +78,21 @@ userRoomRouter.get("/list", authMW.defineSitePermissions(["read_room_self"]), au
         };
         
         return res.json({rooms: queryData});
+    } catch (error) {
+        next(error)
+    }
+});
+
+// Get List of Equipment Assigned to a Particular Room
+userRoomRouter.get("/:roomID/equips", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        //TODO: Need to modify to ensure data security.
+        const queryData = await EquipModel.retrieve_room_equip_by_room_id(req.params.roomID);
+        if (!queryData) {
+            throw new ExpressError("Room Not Found.", 404);
+        }
+        
+        return res.json({equip: [queryData]});
     } catch (error) {
         next(error)
     }

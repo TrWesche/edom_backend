@@ -59,16 +59,33 @@ userEquipRouter.post("/create", authMW.defineSitePermissions(["read_equip_self",
     }
 });
 
-// Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.post("/:equipID/rooms/:roomID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+
+userEquipRouter.post("/:equipID/rooms", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
+        // Preflight
+        if (!req.user?.id || !req.body.roomID) {
+            throw new ExpressError(`Must be logged in to create rooms / Target Room ID not provided`, 400);
+        };
+
+        // Validate Group Ownership of Target Equipment
+        const equipCheck = await EquipModel.retrieve_equip_by_user_and_equip_id(req.user.id, req.params.equipID);
+        if (!equipCheck.id) {
+            throw new ExpressError(`This piece of equipment is not associated with the target user`, 401);
+        };
+
+        // Check that Equip has not already been associated with another room.
+        const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+        if (asscRooms.length > 0) {
+            throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
+        };
+
         // Processing
-        const queryData = await EquipModel.create_equip_room_association(req.params.roomID, req.params.equipID);
+        const queryData = await EquipModel.create_equip_room_association(req.body.roomID, req.params.equipID);
         if (!queryData) {
             throw new ExpressError("Assoicate Equipment to Room Failed", 500);
         };
         
-        return res.json({equipRoom: [queryData]});
+        return res.json({roomEquip: [queryData]});
     } catch (error) {
         next(error);
     }
@@ -102,6 +119,19 @@ userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), 
     }
 });
 
+userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // TODO: This will need to be changed to ensure data privacy
+        const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+        if (!queryData) {
+            throw new ExpressError("Equipment Not Found.", 404);
+        }
+        
+        return res.json({rooms: [queryData]});
+    } catch (error) {
+        next(error)
+    }
+});
 
 // Manual Test - Basic Functionality: 01/15/2022
 userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
@@ -195,16 +225,27 @@ userEquipRouter.delete("/:equipID", authMW.defineSitePermissions(["read_equip_se
     }
 });
 
-// Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.delete("/:equipID/rooms/:roomID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+
+userEquipRouter.delete("/:equipID/rooms", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
+        // Preflight
+        if (!req.user?.id || !req.body.roomID) {
+            throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition / Target Equip ID not provided`, 400);
+        };
+
+        // Validate Group Ownership of Target Equipment
+        const equipCheck = await EquipModel.retrieve_equip_by_user_and_equip_id(req.user.id, req.params.equipID);
+        if (!equipCheck.id) {
+            throw new ExpressError(`This piece of equipment is not associated with the target user`, 401);
+        };
+
         // Processing
-        const queryData = await EquipModel.delete_equip_room_assc_by_room_equip_id(req.params.roomID, req.params.equipID);
+        const queryData = await EquipModel.delete_equip_room_assc_by_room_equip_id(req.body.roomID, req.params.equipID);
         if (!queryData) {
             throw new ExpressError("Disassociate Equipment from Room Failed", 500);
         };
         
-        return res.json({equipRoom: [queryData]});
+        return res.json({roomEquip: [queryData]});
     } catch (error) {
         next(error);
     }
