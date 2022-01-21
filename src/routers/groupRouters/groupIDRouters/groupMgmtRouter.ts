@@ -160,9 +160,33 @@ groupMgmtRouter.delete("/users/:userID", authMW.defineGroupPermissions(["read_gr
 });
 
 
+// Group Permissions
+// Manual Test - Basic Functionality: 01/20/2022
+// TODO: It may make sense to create a separate set of permissions for each group with the same names so the permission ids are not duplicated for each group.
+// Get Group Permissions
+groupMgmtRouter.get("/permissions", authMW.defineGroupPermissions(["read_group_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.user?.id || !req.groupID) {
+            throw new ExpressError(`Must be logged in to view group permissions || target group missing`, 400);
+        }
+        
+        // Process
+        const queryData = await GroupModel.retrieve_permissions();
+        if (!queryData) {
+            throw new ExpressError("Retrieving Group Permissions Failed", 400);
+        }
+        
+        return res.json({GroupUser: [queryData]})
+    } catch (error) {
+        next(error)
+    }
+});
+
 
 
 // Role Permissions
+// Manual Test - Basic Functionality: 01/20/2022
 // Get Role Permissions
 groupMgmtRouter.get("/roles/:roleID/permissions", authMW.defineGroupPermissions(["read_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -172,7 +196,7 @@ groupMgmtRouter.get("/roles/:roleID/permissions", authMW.defineGroupPermissions(
         }
         
         // Process
-        const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.params.roleID);
+        const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.groupID, req.params.roleID);
         if (!queryData) {
             throw new ExpressError("Retrieving Group Role Permissions Failed", 400);
         }
@@ -184,21 +208,22 @@ groupMgmtRouter.get("/roles/:roleID/permissions", authMW.defineGroupPermissions(
 });
 
 // Add Role Permissions
+// Manual Test - Basic Functionality: 01/20/2022
 groupMgmtRouter.post("/roles/:roleID/permissions", authMW.defineGroupPermissions(["read_role_permissions", "create_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.body.permissionList || !req.groupID || !req.params.roleID) {
-            throw new ExpressError(`Must be logged in to create group role || target permission missing || target group missing || target role missing`, 400);
+        if (!req.user?.id || !req.body.permissions || req.body.permissions.length === 0 || !req.groupID || !req.params.roleID) {
+            throw new ExpressError(`Must be logged in to create group role || missing permissions to add || target group missing || target role missing`, 400);
         }
 
         const reqValues: Array<GroupRolePermissionCreateProps> = [];
-        req.body.permissionList.forEach(permissionID => {
+        req.body.permissions.forEach(permission => {
             const permissionEntry: GroupRolePermissionCreateProps = {
                 grouprole_id: req.params.roleID,
-                grouppermission_id: permissionID
+                grouppermission_id: permission
             };
             if(!validateCreateGroupRolePermissionSchema(permissionEntry)) {
-                throw new ExpressError(`Unable to Create Group Role: ${validateCreateGroupRolePermissionSchema.errors}`, 400);
+                throw new ExpressError(`Unable to Create Group Role Permission: ${validateCreateGroupRolePermissionSchema.errors}`, 400);
             }
 
             reqValues.push(permissionEntry);
@@ -207,7 +232,7 @@ groupMgmtRouter.post("/roles/:roleID/permissions", authMW.defineGroupPermissions
         // Process
         const queryData = await GroupModel.create_role_permissions(reqValues);
         if (!queryData) {
-            throw new ExpressError("Create Group Role Failed", 400);
+            throw new ExpressError("Create Group Role Permission Failed", 400);
         }
         
         return res.json({GroupRolePermissions: [queryData]})
@@ -217,15 +242,16 @@ groupMgmtRouter.post("/roles/:roleID/permissions", authMW.defineGroupPermissions
 });
 
 // Remove Role Permissions
-groupMgmtRouter.delete("/roles/:roleID/permissions/:permissionID", authMW.defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+// Manual Test - Basic Functionality: 01/20/2022
+groupMgmtRouter.delete("/roles/:roleID/permissions", authMW.defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.params.roleID || !req.groupID || !req.params.permissionID) {
+        if (!req.user?.id || !req.params.roleID || !req.groupID || !req.body.permissionID) {
             throw new ExpressError(`Must be logged in to delete permissions || target role missing || target group missing || target permission missing`, 400);
         }
 
         // Process
-        const queryData = await GroupModel.delete_role_pemission(req.params.roleID, req.params.permissionID);
+        const queryData = await GroupModel.delete_role_pemission(req.params.roleID, req.body.permissionID);
         if (!queryData) {
             throw new ExpressError("Delete Group Role Permission Failed", 400);
         }
@@ -239,6 +265,7 @@ groupMgmtRouter.delete("/roles/:roleID/permissions/:permissionID", authMW.define
 
 
 // Roles
+// Manual Test - Basic Functionality: 01/20/2022
 // Get Roles
 groupMgmtRouter.get("/roles", authMW.defineGroupPermissions(["read_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -259,6 +286,7 @@ groupMgmtRouter.get("/roles", authMW.defineGroupPermissions(["read_role"]), auth
     }
 });
 
+// Manual Test - Basic Functionality: 01/20/2022
 // Add Role
 groupMgmtRouter.post("/roles", authMW.defineGroupPermissions(["read_role", "create_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -289,16 +317,18 @@ groupMgmtRouter.post("/roles", authMW.defineGroupPermissions(["read_role", "crea
     }
 });
 
+// Manual Test - Basic Functionality: 01/20/2022
+// TODO: Need to Test With Deleting Associated Users
 // Remove Role
-groupMgmtRouter.delete("/roles/:roleID", authMW.defineGroupPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.delete("/roles", authMW.defineGroupPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.params.roleID || !req.groupID) {
+        if (!req.user?.id || !req.body.roleID || !req.groupID) {
             throw new ExpressError(`Must be logged in to delete roles || target role missing || target group missing`, 400);
         }
 
         // Process
-        const queryData = await GroupModel.delete_role(req.params.roleID);
+        const queryData = await GroupModel.delete_role(req.body.roleID);
         if (!queryData) {
             throw new ExpressError("Delete Group Role Failed", 400);
         }

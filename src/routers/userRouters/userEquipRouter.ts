@@ -59,7 +59,7 @@ userEquipRouter.post("/create", authMW.defineSitePermissions(["read_equip_self",
     }
 });
 
-
+// Manual Test - Basic Functionality: 01/20/2022
 userEquipRouter.post("/:equipID/rooms", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight

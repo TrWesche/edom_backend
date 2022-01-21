@@ -293,8 +293,18 @@ var GroupModel = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var roles;
             return __generator(this, function (_a) {
-                roles = groupPermissions_repository_1["default"].fetch_role_by_role_id(groupID);
+                roles = groupPermissions_repository_1["default"].fetch_roles_by_group_id(groupID);
                 return [2 /*return*/, roles];
+            });
+        });
+    };
+    ;
+    GroupModel.retrieve_permissions = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var permissions;
+            return __generator(this, function (_a) {
+                permissions = groupPermissions_repository_1["default"].fetch_permissions();
+                return [2 /*return*/, permissions];
             });
         });
     };
@@ -309,11 +319,11 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.retrieve_role_permissions_by_role_id = function (roleID) {
+    GroupModel.retrieve_role_permissions_by_role_id = function (groupID, roleID) {
         return __awaiter(this, void 0, void 0, function () {
             var permissions;
             return __generator(this, function (_a) {
-                permissions = groupPermissions_repository_1["default"].fetch_role_permissions_by_role_id(roleID);
+                permissions = groupPermissions_repository_1["default"].fetch_role_permissions_by_role_id(groupID, roleID);
                 return [2 /*return*/, permissions];
             });
         });
@@ -426,7 +436,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_role = function (roleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var permissions, users, role, error_5;
+            var role, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -436,18 +446,10 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permissions_by_role_id(roleID)];
                     case 2:
-                        permissions = _a.sent();
-                        if (!permissions) {
-                            throw new expresError_1["default"]("Failed to Delete Permissions Associated with Target Role", 500);
-                        }
-                        ;
+                        _a.sent();
                         return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_role_id(roleID)];
                     case 3:
-                        users = _a.sent();
-                        if (!users) {
-                            throw new expresError_1["default"]("Failed to Delete User Roles Associated with Target Role", 500);
-                        }
-                        ;
+                        _a.sent();
                         return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_by_role_id(roleID)];
                     case 4:
                         role = _a.sent();

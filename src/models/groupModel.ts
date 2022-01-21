@@ -173,17 +173,22 @@ class GroupModel {
     };
 
     static async retrieve_roles_by_group_id(groupID: string) {
-        const roles = GroupPermissionsRepo.fetch_role_by_role_id(groupID);
+        const roles = GroupPermissionsRepo.fetch_roles_by_group_id(groupID);
         return roles;
     };
     
+    static async retrieve_permissions() {
+        const permissions = GroupPermissionsRepo.fetch_permissions();
+        return permissions;
+    };
+
     static async retrieve_users_by_group_id(groupID: string) {
         const users = GroupRepo.fetch_group_users_by_group_id(groupID);
         return users;
     };
 
-    static async retrieve_role_permissions_by_role_id(roleID: string) {
-        const permissions = GroupPermissionsRepo.fetch_role_permissions_by_role_id(roleID);
+    static async retrieve_role_permissions_by_role_id(groupID: string, roleID: string) {
+        const permissions = GroupPermissionsRepo.fetch_role_permissions_by_role_id(groupID, roleID);
         return permissions;
     };
 
@@ -265,15 +270,9 @@ class GroupModel {
         try {
             await TransactionRepo.begin_transaction();
 
-            const permissions = await GroupPermissionsRepo.delete_role_permissions_by_role_id(roleID);
-            if (!permissions) {
-                throw new ExpressError("Failed to Delete Permissions Associated with Target Role", 500);
-            };
+            await GroupPermissionsRepo.delete_role_permissions_by_role_id(roleID);
 
-            const users = await GroupPermissionsRepo.delete_user_group_roles_by_role_id(roleID);
-            if (!users) {
-                throw new ExpressError("Failed to Delete User Roles Associated with Target Role", 500);
-            };
+            await GroupPermissionsRepo.delete_user_group_roles_by_role_id(roleID);
 
             const role = await GroupPermissionsRepo.delete_role_by_role_id(roleID);
             if (!role) {

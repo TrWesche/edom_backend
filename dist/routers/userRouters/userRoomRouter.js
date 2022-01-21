@@ -131,6 +131,7 @@ userRoomRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/19/2022
 // Get List of Equipment Assigned to a Particular Room
 userRoomRouter.get("/:roomID/equips", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;

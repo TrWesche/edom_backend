@@ -227,10 +227,41 @@ groupMgmtRouter["delete"]("/users/:userID", authorizationMW_1["default"].defineG
         }
     });
 }); });
+// Group Permissions
+// Manual Test - Basic Functionality: 01/20/2022
+// TODO: It may make sense to create a separate set of permissions for each group with the same names so the permission ids are not duplicated for each group.
+// Get Group Permissions
+groupMgmtRouter.get("/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_group_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_7;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                // Preflight
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Must be logged in to view group permissions || target group missing", 400);
+                }
+                return [4 /*yield*/, groupModel_1["default"].retrieve_permissions()];
+            case 1:
+                queryData = _b.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Retrieving Group Permissions Failed", 400);
+                }
+                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
+            case 2:
+                error_7 = _b.sent();
+                next(error_7);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 // Role Permissions
+// Manual Test - Basic Functionality: 01/20/2022
 // Get Role Permissions
 groupMgmtRouter.get("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_7;
+    var queryData, error_8;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -240,49 +271,11 @@ groupMgmtRouter.get("/roles/:roleID/permissions", authorizationMW_1["default"].d
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID || !req.params.roleID) {
                     throw new expresError_1["default"]("Must be logged in to view group roles || target group missing || target role missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_role_permissions_by_role_id(req.params.roleID)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_role_permissions_by_role_id(req.groupID, req.params.roleID)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
                     throw new expresError_1["default"]("Retrieving Group Role Permissions Failed", 400);
-                }
-                return [2 /*return*/, res.json({ GroupRolePermissions: [queryData] })];
-            case 2:
-                error_7 = _b.sent();
-                next(error_7);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-// Add Role Permissions
-groupMgmtRouter.post("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions", "create_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues_1, queryData, error_8;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 2, , 3]);
-                // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.permissionList || !req.groupID || !req.params.roleID) {
-                    throw new expresError_1["default"]("Must be logged in to create group role || target permission missing || target group missing || target role missing", 400);
-                }
-                reqValues_1 = [];
-                req.body.permissionList.forEach(function (permissionID) {
-                    var permissionEntry = {
-                        grouprole_id: req.params.roleID,
-                        grouppermission_id: permissionID
-                    };
-                    if (!(0, groupRolePermissionCreateSchema_1["default"])(permissionEntry)) {
-                        throw new expresError_1["default"]("Unable to Create Group Role: ".concat(groupRolePermissionCreateSchema_1["default"].errors), 400);
-                    }
-                    reqValues_1.push(permissionEntry);
-                });
-                return [4 /*yield*/, groupModel_1["default"].create_role_permissions(reqValues_1)];
-            case 1:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Create Group Role Failed", 400);
                 }
                 return [2 /*return*/, res.json({ GroupRolePermissions: [queryData] })];
             case 2:
@@ -293,23 +286,35 @@ groupMgmtRouter.post("/roles/:roleID/permissions", authorizationMW_1["default"].
         }
     });
 }); });
-// Remove Role Permissions
-groupMgmtRouter["delete"]("/roles/:roleID/permissions/:permissionID", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_9;
+// Add Role Permissions
+// Manual Test - Basic Functionality: 01/20/2022
+groupMgmtRouter.post("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions", "create_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var reqValues_1, queryData, error_9;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.roleID || !req.groupID || !req.params.permissionID) {
-                    throw new expresError_1["default"]("Must be logged in to delete permissions || target role missing || target group missing || target permission missing", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.permissions || req.body.permissions.length === 0 || !req.groupID || !req.params.roleID) {
+                    throw new expresError_1["default"]("Must be logged in to create group role || missing permissions to add || target group missing || target role missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].delete_role_pemission(req.params.roleID, req.params.permissionID)];
+                reqValues_1 = [];
+                req.body.permissions.forEach(function (permission) {
+                    var permissionEntry = {
+                        grouprole_id: req.params.roleID,
+                        grouppermission_id: permission
+                    };
+                    if (!(0, groupRolePermissionCreateSchema_1["default"])(permissionEntry)) {
+                        throw new expresError_1["default"]("Unable to Create Group Role Permission: ".concat(groupRolePermissionCreateSchema_1["default"].errors), 400);
+                    }
+                    reqValues_1.push(permissionEntry);
+                });
+                return [4 /*yield*/, groupModel_1["default"].create_role_permissions(reqValues_1)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Delete Group Role Permission Failed", 400);
+                    throw new expresError_1["default"]("Create Group Role Permission Failed", 400);
                 }
                 return [2 /*return*/, res.json({ GroupRolePermissions: [queryData] })];
             case 2:
@@ -320,10 +325,39 @@ groupMgmtRouter["delete"]("/roles/:roleID/permissions/:permissionID", authorizat
         }
     });
 }); });
+// Remove Role Permissions
+// Manual Test - Basic Functionality: 01/20/2022
+groupMgmtRouter["delete"]("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_10;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                // Preflight
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.roleID || !req.groupID || !req.body.permissionID) {
+                    throw new expresError_1["default"]("Must be logged in to delete permissions || target role missing || target group missing || target permission missing", 400);
+                }
+                return [4 /*yield*/, groupModel_1["default"].delete_role_pemission(req.params.roleID, req.body.permissionID)];
+            case 1:
+                queryData = _b.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Delete Group Role Permission Failed", 400);
+                }
+                return [2 /*return*/, res.json({ GroupRolePermissions: [queryData] })];
+            case 2:
+                error_10 = _b.sent();
+                next(error_10);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 // Roles
+// Manual Test - Basic Functionality: 01/20/2022
 // Get Roles
 groupMgmtRouter.get("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_10;
+    var queryData, error_11;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -341,16 +375,17 @@ groupMgmtRouter.get("/roles", authorizationMW_1["default"].defineGroupPermission
                 }
                 return [2 /*return*/, res.json({ GroupRoles: [queryData] })];
             case 2:
-                error_10 = _b.sent();
-                next(error_10);
+                error_11 = _b.sent();
+                next(error_11);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/20/2022
 // Add Role
 groupMgmtRouter.post("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_role", "create_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, error_11;
+    var reqValues, queryData, error_12;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -375,26 +410,28 @@ groupMgmtRouter.post("/roles", authorizationMW_1["default"].defineGroupPermissio
                 }
                 return [2 /*return*/, res.json({ GroupRoles: [queryData] })];
             case 2:
-                error_11 = _b.sent();
-                next(error_11);
+                error_12 = _b.sent();
+                next(error_12);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/20/2022
+// TODO: Need to Test With Deleting Associated Users
 // Remove Role
-groupMgmtRouter["delete"]("/roles/:roleID", authorizationMW_1["default"].defineGroupPermissions(["read_role", "delete_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_12;
+groupMgmtRouter["delete"]("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_role", "delete_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_13;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.roleID || !req.groupID) {
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.roleID || !req.groupID) {
                     throw new expresError_1["default"]("Must be logged in to delete roles || target role missing || target group missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].delete_role(req.params.roleID)];
+                return [4 /*yield*/, groupModel_1["default"].delete_role(req.body.roleID)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
@@ -402,8 +439,8 @@ groupMgmtRouter["delete"]("/roles/:roleID", authorizationMW_1["default"].defineG
                 }
                 return [2 /*return*/, res.json({ GroupRoles: [queryData] })];
             case 2:
-                error_12 = _b.sent();
-                next(error_12);
+                error_13 = _b.sent();
+                next(error_13);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

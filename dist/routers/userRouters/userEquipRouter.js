@@ -94,6 +94,7 @@ userEquipRouter.post("/create", authorizationMW_1["default"].defineSitePermissio
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/20/2022
 userEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var equipCheck, asscRooms, queryData, error_2;
     var _a;
@@ -171,6 +172,7 @@ userEquipRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
@@ -296,6 +298,7 @@ userEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineSitePe
         return [2 /*return*/];
     });
 }); });
+// Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var equipCheck, queryData, error_7;
     var _a;

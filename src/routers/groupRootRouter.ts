@@ -26,7 +26,10 @@ const groupRootRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/17/2022 - Retest w/ user_groups connection update
+// Manual Test - Basic Functionality: 01/17/2022
+// TODO:
+//   - Retest w/ user_groups connection update
+//   - Retest - Default User Permissions Creation has been updated
 groupRootRouter.post("/create", authMW.defineSitePermissions(["create_group_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
