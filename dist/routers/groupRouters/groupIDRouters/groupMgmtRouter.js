@@ -50,6 +50,7 @@ var groupModel_1 = require("../../../models/groupModel");
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
 var groupMgmtRouter = express.Router();
 // User Roles
+// Manual Test - Basic Functionality: 01/22/2022
 // Get User Roles
 groupMgmtRouter.get("/users/:userID/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_1;
@@ -77,6 +78,7 @@ groupMgmtRouter.get("/users/:userID/roles", authorizationMW_1["default"].defineG
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/22/2022
 // Add User Role
 groupMgmtRouter.post("/users/:userID/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "create_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_2;
@@ -86,8 +88,8 @@ groupMgmtRouter.post("/users/:userID/roles", authorizationMW_1["default"].define
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.userID || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to assign roles || target user missing || target group missing", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.userID || !req.groupID || !req.body.roleID) {
+                    throw new expresError_1["default"]("Must be logged in to assign roles || target user missing || target group missing || target role missing", 400);
                 }
                 reqValues = {
                     user_id: req.params.userID,
@@ -111,8 +113,9 @@ groupMgmtRouter.post("/users/:userID/roles", authorizationMW_1["default"].define
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/22/2022
 // Remove User Role
-groupMgmtRouter["delete"]("/users/:userID/roles/:roleID", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "delete_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupMgmtRouter["delete"]("/users/:userID/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "delete_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -120,10 +123,10 @@ groupMgmtRouter["delete"]("/users/:userID/roles/:roleID", authorizationMW_1["def
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.userID || !req.groupID || !req.params.roleID) {
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.userID || !req.groupID || !req.body.roleID) {
                     throw new expresError_1["default"]("Must be logged in to create group || target user missing || target group missing || target role missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].delete_group_user_role(req.params.roleID, req.params.userID)];
+                return [4 /*yield*/, groupModel_1["default"].delete_group_user_role(req.body.roleID, req.params.userID)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
@@ -139,6 +142,7 @@ groupMgmtRouter["delete"]("/users/:userID/roles/:roleID", authorizationMW_1["def
     });
 }); });
 // Users
+// Manual Test - Basic Functionality: 01/22/2022
 // Get Users
 groupMgmtRouter.get("/users", authorizationMW_1["default"].defineGroupPermissions(["read_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
@@ -166,6 +170,7 @@ groupMgmtRouter.get("/users", authorizationMW_1["default"].defineGroupPermission
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/20/2022
 // Add User
 groupMgmtRouter.post("/users", authorizationMW_1["default"].defineGroupPermissions(["read_group_user", "create_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_5;
@@ -175,7 +180,7 @@ groupMgmtRouter.post("/users", authorizationMW_1["default"].defineGroupPermissio
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.user_id || !req.groupID) {
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.userID || !req.groupID) {
                     throw new expresError_1["default"]("Must be logged in to create group || target user missing || target group missing", 400);
                 }
                 reqValues = {
@@ -200,6 +205,7 @@ groupMgmtRouter.post("/users", authorizationMW_1["default"].defineGroupPermissio
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/20/2022
 // Remove user
 groupMgmtRouter["delete"]("/users/:userID", authorizationMW_1["default"].defineGroupPermissions(["read_group_user", "delete_group_user"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;

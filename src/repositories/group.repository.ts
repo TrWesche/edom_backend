@@ -215,18 +215,18 @@ class GroupRepo {
 
             if (userPublic !== undefined) {
                 query = `
-                    SELECT id, name
+                    SELECT id, username
                     FROM users
                     RIGHT JOIN user_groups
-                    ON user.id = user_groups.user_id
+                    ON users.id = user_groups.user_id
                     WHERE user_groups.group_id = $1 AND users.public = $2`
                 queryParams.push(groupID, userPublic);
             } else {
                 query = `
-                    SELECT id, name
+                    SELECT id, username
                     FROM users
                     RIGHT JOIN user_groups
-                    ON user.id = user_groups.user_id
+                    ON users.id = user_groups.user_id
                     WHERE user_groups.group_id = $1`
                 queryParams.push(groupID);
             }

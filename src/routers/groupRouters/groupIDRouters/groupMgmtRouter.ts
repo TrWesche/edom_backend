@@ -18,6 +18,7 @@ import authMW from "../../../middleware/authorizationMW";
 
 const groupMgmtRouter = express.Router();
 // User Roles
+// Manual Test - Basic Functionality: 01/22/2022
 // Get User Roles
 groupMgmtRouter.get("/users/:userID/roles", authMW.defineGroupPermissions(["read_user_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -38,12 +39,13 @@ groupMgmtRouter.get("/users/:userID/roles", authMW.defineGroupPermissions(["read
     }
 });
 
+// Manual Test - Basic Functionality: 01/22/2022
 // Add User Role
 groupMgmtRouter.post("/users/:userID/roles", authMW.defineGroupPermissions(["read_user_role", "create_user_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.params.userID || !req.groupID) {
-            throw new ExpressError(`Must be logged in to assign roles || target user missing || target group missing`, 400);
+        if (!req.user?.id || !req.params.userID || !req.groupID || !req.body.roleID) {
+            throw new ExpressError(`Must be logged in to assign roles || target user missing || target group missing || target role missing`, 400);
         }
 
         const reqValues: GroupUserRoleCreateProps = {
@@ -67,16 +69,17 @@ groupMgmtRouter.post("/users/:userID/roles", authMW.defineGroupPermissions(["rea
     }
 });
 
+// Manual Test - Basic Functionality: 01/22/2022
 // Remove User Role
-groupMgmtRouter.delete("/users/:userID/roles/:roleID", authMW.defineGroupPermissions(["read_user_role", "delete_user_role"]), authMW.validatePermissions, async (req, res, next) => {
+groupMgmtRouter.delete("/users/:userID/roles", authMW.defineGroupPermissions(["read_user_role", "delete_user_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.params.userID || !req.groupID || !req.params.roleID) {
+        if (!req.user?.id || !req.params.userID || !req.groupID || !req.body.roleID) {
             throw new ExpressError(`Must be logged in to create group || target user missing || target group missing || target role missing`, 400);
         }
 
         // Process
-        const queryData = await GroupModel.delete_group_user_role(req.params.roleID, req.params.userID);
+        const queryData = await GroupModel.delete_group_user_role(req.body.roleID, req.params.userID);
         if (!queryData) {
             throw new ExpressError("Delete Group User Role Failed", 400);
         }
@@ -89,6 +92,7 @@ groupMgmtRouter.delete("/users/:userID/roles/:roleID", authMW.defineGroupPermiss
 
 
 // Users
+// Manual Test - Basic Functionality: 01/22/2022
 // Get Users
 groupMgmtRouter.get("/users", authMW.defineGroupPermissions(["read_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
@@ -109,11 +113,12 @@ groupMgmtRouter.get("/users", authMW.defineGroupPermissions(["read_group_user"])
     }
 });
 
+// Manual Test - Basic Functionality: 01/20/2022
 // Add User
 groupMgmtRouter.post("/users", authMW.defineGroupPermissions(["read_group_user", "create_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.body.user_id || !req.groupID) {
+        if (!req.user?.id || !req.body.userID || !req.groupID) {
             throw new ExpressError(`Must be logged in to create group || target user missing || target group missing`, 400);
         }
 
@@ -139,6 +144,7 @@ groupMgmtRouter.post("/users", authMW.defineGroupPermissions(["read_group_user",
     }
 });
 
+// Manual Test - Basic Functionality: 01/20/2022
 // Remove user
 groupMgmtRouter.delete("/users/:userID", authMW.defineGroupPermissions(["read_group_user", "delete_group_user"]), authMW.validatePermissions, async (req, res, next) => {
     try {

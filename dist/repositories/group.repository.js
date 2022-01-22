@@ -283,11 +283,11 @@ var GroupRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (userPublic !== undefined) {
-                            query = "\n                    SELECT id, name\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON user.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1 AND users.public = $2";
+                            query = "\n                    SELECT id, username\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON users.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1 AND users.public = $2";
                             queryParams.push(groupID, userPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON user.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1";
+                            query = "\n                    SELECT id, username\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON users.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
