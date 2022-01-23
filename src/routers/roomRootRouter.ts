@@ -51,7 +51,7 @@ roomRootRouter.get("/list", authMW.defineSitePermissions(["view_room_public"]), 
     }
 });
 
-
+// Manual Test - Basic Functionality: 01/22/2022
 roomRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing

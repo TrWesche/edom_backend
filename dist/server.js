@@ -23,7 +23,7 @@ var corsOptions = {
     preflightContinue: true,
     credentials: true,
     allowedHeaders: 'Content-Type,Authorization,Set-Cookie',
-    exposedHeaders: 'Content-Range,X-Content-Range'
+    exposedHeaders: 'Content-Range,X-Content-Range,auth-token'
 };
 // const host = hostname();
 var host = "localhost";

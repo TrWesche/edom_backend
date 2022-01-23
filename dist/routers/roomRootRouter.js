@@ -83,6 +83,7 @@ roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/22/2022
 roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     return __generator(this, function (_a) {

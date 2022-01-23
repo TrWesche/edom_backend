@@ -324,7 +324,6 @@ groupMgmtRouter.post("/roles", authMW.defineGroupPermissions(["read_role", "crea
 });
 
 // Manual Test - Basic Functionality: 01/20/2022
-// TODO: Need to Test With Deleting Associated Users
 // Remove Role
 groupMgmtRouter.delete("/roles", authMW.defineGroupPermissions(["read_role", "delete_role"]), authMW.validatePermissions, async (req, res, next) => {
     try {

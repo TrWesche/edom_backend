@@ -7,6 +7,8 @@ var AuthHandling = /** @class */ (function () {
     function AuthHandling() {
     }
     AuthHandling.generateToken = function (queryRes, queryData) {
+        // TODO: This will need to be updated to add user group roles and site / group permissions to the token based on the user request.
+        // Will need to look into how to manage the dynamic nature of this better.  Not good practice to be generating new tokens all the time.
         var token = jwt.sign(queryData, config_1.privatekey, { algorithm: 'RS256', expiresIn: '8h' });
         queryRes.header("auth-token", token);
     };

@@ -424,7 +424,6 @@ groupMgmtRouter.post("/roles", authorizationMW_1["default"].defineGroupPermissio
     });
 }); });
 // Manual Test - Basic Functionality: 01/20/2022
-// TODO: Need to Test With Deleting Associated Users
 // Remove Role
 groupMgmtRouter["delete"]("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_role", "delete_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_13;
