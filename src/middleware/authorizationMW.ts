@@ -1,15 +1,20 @@
+// Library Imports
+import { NextFunction, Request, Response } from "express";
+
 /** Middleware for handling req authorization for routes. */
 import AuthHandling from "../utils/authHandling";
 
 import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 
+
 class authMW {
 
   /** Middleware: Load JWT Data Into Request & Authenticate user. */
-  static loadJWT(req, res, next) {
+  static loadJWT(req: Request, res: Response, next: NextFunction) {
     try {
-      const payload = AuthHandling.validateToken(req);
+      // const payload = AuthHandling.validateToken(req);
+      const payload = AuthHandling.validateSessionCookies(req);
       req.user = payload; // create a current user
       return next();
     } catch (err) {
@@ -18,7 +23,7 @@ class authMW {
   };
 
   /** Middleware: Load User's Permissions for the site into the request. */
-  static async loadSitePermissions(req, res, next) {
+  static async loadSitePermissions(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.user?.id) {
         return next();
@@ -34,11 +39,15 @@ class authMW {
   };
 
   /** Middleware: Load User's Permissions for the group into the request. */
-  static async loadGroupPermissions(req, res, next) {
+  static async loadGroupPermissions(req: Request, res: Response, next: NextFunction) {
     try {
       // console.log("Loading Group Permissions");
       if (!req.user?.id || !req.groupID) {
-        req.user.group_permissions = undefined;
+        if (!req.user) {
+          req.user = undefined;
+        } else {
+          req.user.group_permissions = undefined;
+        }
         return next();
       };
 

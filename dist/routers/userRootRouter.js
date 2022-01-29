@@ -67,7 +67,6 @@ userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                console.log("Start Authentication");
                 authValues = {
                     username: req.body.username,
                     password: req.body.password
@@ -81,7 +80,8 @@ userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0
                 if (!queryData) {
                     throw new expresError_1["default"]("Invalid Email/Password", 400);
                 }
-                authHandling_1["default"].generateToken(res, queryData);
+                // AuthHandling.generateToken(res, queryData);
+                authHandling_1["default"].generateSessionCookies(res, queryData);
                 return [2 /*return*/, res.json({ "message": "Login successful." })];
             case 2:
                 error_1 = _a.sent();
@@ -131,7 +131,8 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
                 if (!queryData) {
                     throw new expresError_1["default"]("Registration Failed", 400);
                 }
-                authHandling_1["default"].generateToken(res, queryData);
+                // AuthHandling.generateToken(res, queryData);
+                authHandling_1["default"].generateSessionCookies(res, queryData);
                 return [2 /*return*/, res.json({ "message": "Registration Success!" })];
             case 2:
                 error_2 = _a.sent();

@@ -2,6 +2,7 @@
 import * as express from "express";
 import * as https from "https";
 import * as cors from "cors";
+import * as cookieParser from "cookie-parser";
 
 import mqttHandler from "./communication/mqtt";
 import wssHandler from "./communication/websocket";
@@ -29,9 +30,9 @@ const corsOptions = {
     optionsSuccessStatus: 200,
     methods: ['GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'DELETE'],
     preflightContinue: true,
-    credentials: true,
-    allowedHeaders: 'Content-Type,Authorization,Set-Cookie',
-    exposedHeaders: 'Content-Range,X-Content-Range,auth-token'
+    credentials: false,
+    allowedHeaders: 'Content-Type,Set-Cookie',
+    exposedHeaders: 'Content-Range,X-Content-Range'
 }
 
 // const host = hostname();
@@ -43,6 +44,7 @@ wssHandler(server);
 mqttHandler();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(authMW.loadJWT);
 app.use(session({

@@ -4,6 +4,7 @@ exports.__esModule = true;
 var express = require("express");
 var https = require("https");
 var cors = require("cors");
+var cookieParser = require("cookie-parser");
 var mqtt_1 = require("./communication/mqtt");
 var websocket_1 = require("./communication/websocket");
 var config_1 = require("./config/config");
@@ -21,9 +22,9 @@ var corsOptions = {
     optionsSuccessStatus: 200,
     methods: ['GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'DELETE'],
     preflightContinue: true,
-    credentials: true,
-    allowedHeaders: 'Content-Type,Authorization,Set-Cookie',
-    exposedHeaders: 'Content-Range,X-Content-Range,auth-token'
+    credentials: false,
+    allowedHeaders: 'Content-Type,Set-Cookie',
+    exposedHeaders: 'Content-Range,X-Content-Range'
 };
 // const host = hostname();
 var host = "localhost";
@@ -32,6 +33,7 @@ var server = https.createServer({ key: config_1.privatekey, cert: config_1.certi
 (0, websocket_1["default"])(server);
 (0, mqtt_1["default"])();
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(authorizationMW_1["default"].loadJWT);
 app.use((0, redis_1.session)({

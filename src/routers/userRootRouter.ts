@@ -35,7 +35,7 @@ userRootRouter.use("/equips", userEquipRouter);
 // Manual Test - Basic Functionality: 01/13/2022
 userRootRouter.post("/auth", async (req, res, next) => {
     try {
-        console.log("Start Authentication");
+        // console.log("Start Authentication");
         const authValues: UserAuthProps = {
             username: req.body.username,
             password: req.body.password
@@ -51,7 +51,8 @@ userRootRouter.post("/auth", async (req, res, next) => {
             throw new ExpressError("Invalid Email/Password", 400);
         }
         
-        AuthHandling.generateToken(res, queryData);
+        // AuthHandling.generateToken(res, queryData);
+        AuthHandling.generateSessionCookies(res, queryData);
         return res.json({ "message": "Login successful." })
     } catch (error) {
         next(error)
@@ -98,7 +99,8 @@ userRootRouter.post("/register", async (req, res, next) => {
             throw new ExpressError("Registration Failed", 400);
         }
         
-        AuthHandling.generateToken(res, queryData);
+        // AuthHandling.generateToken(res, queryData);
+        AuthHandling.generateSessionCookies(res, queryData);
         return res.json({ "message": "Registration Success!" })
     } catch (error) {
         next(error)

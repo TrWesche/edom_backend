@@ -46,7 +46,8 @@ var authMW = /** @class */ (function () {
     /** Middleware: Load JWT Data Into Request & Authenticate user. */
     authMW.loadJWT = function (req, res, next) {
         try {
-            var payload = authHandling_1["default"].validateToken(req);
+            // const payload = AuthHandling.validateToken(req);
+            var payload = authHandling_1["default"].validateSessionCookies(req);
             req.user = payload; // create a current user
             return next();
         }
@@ -93,7 +94,12 @@ var authMW = /** @class */ (function () {
                         _b.trys.push([0, 2, , 3]);
                         // console.log("Loading Group Permissions");
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                            req.user.group_permissions = undefined;
+                            if (!req.user) {
+                                req.user = undefined;
+                            }
+                            else {
+                                req.user.group_permissions = undefined;
+                            }
                             return [2 /*return*/, next()];
                         }
                         ;
