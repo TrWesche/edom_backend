@@ -24,13 +24,20 @@ import authMW from "./middleware/authorizationMW";
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
 
 
+const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://localhost:3001']
 
 const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+      },
     optionsSuccessStatus: 200,
     methods: ['GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'DELETE'],
     preflightContinue: true,
-    credentials: false,
+    credentials: true,
     allowedHeaders: 'Content-Type,Set-Cookie',
     exposedHeaders: 'Content-Range,X-Content-Range'
 }

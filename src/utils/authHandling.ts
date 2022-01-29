@@ -37,7 +37,7 @@ class AuthHandling {
         const token = jwt.sign(data, privatekey, { algorithm: 'RS256', expiresIn: '8h'});
         const split_token = token.split(".");
 
-        console.log(res.cookie);
+        // console.log(res.cookie);
         // Javascript Enabled Cookie - Full JWT
         // res.cookie("sid", token, {httpOnly: false, maxAge: 86400000, secure: true, sameSite: "None", path: '/', domain: ".twesche.com"});
         res.cookie("sid", token, {httpOnly: false, maxAge: 86400000, secure: true, sameSite: "none", path: '/'});
@@ -48,8 +48,8 @@ class AuthHandling {
     };
 
     static validateSessionCookies(req: Request) {
-        console.log("Validating Cookies");
-        console.log(req);
+        // console.log("Validating Cookies");
+        // console.log(req);
         const privateToken = req.cookies._sid;
         const split_publicToken = req.cookies.sid.split(".");
 

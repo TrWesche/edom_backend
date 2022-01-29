@@ -17,12 +17,20 @@ var groupRootRouter_1 = require("./routers/groupRootRouter");
 var authorizationMW_1 = require("./middleware/authorizationMW");
 // Database Connector Imports
 var redis_1 = require("./databases/redisSession/redis");
+var whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://localhost:3001'];
 var corsOptions = {
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     optionsSuccessStatus: 200,
     methods: ['GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'DELETE'],
     preflightContinue: true,
-    credentials: false,
+    credentials: true,
     allowedHeaders: 'Content-Type,Set-Cookie',
     exposedHeaders: 'Content-Range,X-Content-Range'
 };
