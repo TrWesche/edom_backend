@@ -92,7 +92,6 @@ var authMW = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        // console.log("Loading Group Permissions");
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
                             if (!req.user) {
                                 req.user = undefined;
@@ -107,7 +106,6 @@ var authMW = /** @class */ (function () {
                     case 1:
                         groupPermissions = _b.sent();
                         req.user.group_permissions = groupPermissions;
-                        // console.log(req.user);
                         return [2 /*return*/, next()];
                     case 2:
                         error_2 = _b.sent();
@@ -121,8 +119,6 @@ var authMW = /** @class */ (function () {
     /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
     authMW.validatePermissions = function (req, res, next) {
         var _a;
-        // console.log(req.user.group_permissions);
-        // console.log(req.requiredPermissions.group);
         try {
             if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                 return next({ status: 401, message: "Unauthorized" });

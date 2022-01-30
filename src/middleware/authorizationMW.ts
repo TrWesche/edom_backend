@@ -41,7 +41,6 @@ class authMW {
   /** Middleware: Load User's Permissions for the group into the request. */
   static async loadGroupPermissions(req: Request, res: Response, next: NextFunction) {
     try {
-      // console.log("Loading Group Permissions");
       if (!req.user?.id || !req.groupID) {
         if (!req.user) {
           req.user = undefined;
@@ -54,7 +53,6 @@ class authMW {
       const groupPermissions = await GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(req.user.id, req.groupID);
       req.user.group_permissions = groupPermissions;
 
-      // console.log(req.user);
       return next();
     } catch (error) {
       return next({ status: 401, message: "Unauthorized" });
@@ -63,8 +61,6 @@ class authMW {
 
   /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
   static validatePermissions(req, res, next) {
-    // console.log(req.user.group_permissions);
-    // console.log(req.requiredPermissions.group);
     try {
 
       if (!req.user?.id) {
