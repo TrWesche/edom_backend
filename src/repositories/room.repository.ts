@@ -73,6 +73,29 @@ class RoomRepo {
         };
     };
 
+
+    // static async fetch_room_by_room_id(userID: string, roomID: string) {
+    //     try {
+    //         let query: string;
+    //         let queryParams: Array<any> = [];
+    
+    //         query = `
+    //             SELECT id, name, category_id, headline, description, public
+    //             FROM rooms
+    //             WHERE id = $1 AND public = $2`;
+    //         queryParams.push(roomID, roomPublic);
+
+    //         const result = await pgdb.query(query, queryParams);
+    
+    //         const rval: RoomObjectProps | undefined = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to locate room - ${error}`, 500);
+    //     };
+    // };
+
+
+
     static async fetch_room_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`

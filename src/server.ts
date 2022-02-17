@@ -23,7 +23,7 @@ import authMW from "./middleware/authorizationMW";
 // Database Connector Imports
 import { session, redisClient, redisConfig, redisStore } from "./databases/redisSession/redis";
 
-
+// TODO: Need to diagnose how to get Postman working again
 const whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://localhost:3001']
 
 const corsOptions = {
@@ -63,10 +63,10 @@ app.use(session({
     resave: redisConfig.resave
 }))
 
-app.use("/equips", authMW.loadSitePermissions, equipRootRouter);
-app.use("/rooms", authMW.loadSitePermissions, roomRootRouter);
-app.use("/users", authMW.loadSitePermissions, userRootRouter);
-app.use("/groups", authMW.loadSitePermissions, groupRootRouter);
+app.use("/v1/equips", authMW.loadSitePermissions, equipRootRouter);
+app.use("/v1/rooms", authMW.loadSitePermissions, roomRootRouter);
+app.use("/v1/users", authMW.loadSitePermissions, userRootRouter);
+app.use("/v1/groups", authMW.loadSitePermissions, groupRootRouter);
 
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);

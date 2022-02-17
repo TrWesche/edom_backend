@@ -130,7 +130,7 @@ roomRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePe
     });
 }); });
 // Manual Test - Basic Functionality: 01/19/2022
-roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {

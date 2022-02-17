@@ -163,6 +163,10 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
+    // static async retrieve_room_by_room_id_v2(userID: string, roomID: string) {
+    //     const room = RoomRepo.fetch_room_by_room_id(userID, roomID);
+    //     return room;
+    // };
     RoomModel.retrieve_room_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms;

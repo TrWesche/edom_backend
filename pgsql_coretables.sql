@@ -3,15 +3,44 @@ SET TIME ZONE 'UTC';
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
-CREATE TABLE "users" (
+-- CREATE TABLE "users" (
+--   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+--   "email" text UNIQUE NOT NULL,
+--   "username" text UNIQUE NOT NULL,
+--   "password" text NOT NULL,
+--   "first_name" text,
+--   "last_name" text,
+--   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+--   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+-- );
+
+CREATE TABLE "users_account" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "email" text UNIQUE NOT NULL,
   "username" text UNIQUE NOT NULL,
   "password" text NOT NULL,
-  "first_name" text,
-  "last_name" text,
+  "account_status" text DEFAULT "active",
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "users_data" (
+  "account_id" uuid NOT NULL,
+  "email" text UNIQUE NOT NULL,
+  "public_email" boolean DEFAULT false,
+  "first_name" text,
+  "public_first_name" boolean DEFAULT false,
+  "last_name" text,
+  "public_last_name" boolean DEFAULT false,
+  "location" text,
+  "public_location" boolean DEFAULT false
+);
+
+CREATE TABLE "users_profile" (
+  "account_id" uuid NOT NULL,
+  "headline" text,
+  "about" text,
+  "image_url" text,
+  "public" boolean DEFAULT false
 );
 
 CREATE TABLE "groups" (
@@ -19,10 +48,12 @@ CREATE TABLE "groups" (
   "name" text UNIQUE NOT NULL,
   "headline" text,
   "description" text,
+  "image_url" text,
   "public" boolean DEFAULT false,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
+
 
 CREATE TABLE "equipment" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
@@ -30,11 +61,13 @@ CREATE TABLE "equipment" (
   "category_id" uuid NOT NULL,
   "headline" text,
   "description" text,
+  "image_url" text,
   "public" boolean DEFAULT false,
   "configuration" json NOT NULL,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
+
 
 CREATE TABLE "rooms" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
@@ -42,10 +75,12 @@ CREATE TABLE "rooms" (
   "category_id" uuid NOT NULL,
   "headline" text,
   "description" text,
+  "image_url" text,
   "public" boolean DEFAULT false,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
+
 
 CREATE TABLE "usertypes" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
@@ -176,6 +211,11 @@ CREATE TABLE "group_chat_log" (
   "message_contents" text,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
+
+
+ALTER TABLE "users_data" ADD FOREIGN KEY ("account_id") REFERENCES "users_account" ("id") ON DELETE NO ACTION;
+
+ALTER TABLE "users_profile" ADD FOREIGN KEY ("account_id") REFERENCES "users_account" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "equipment" ADD FOREIGN KEY ("category_id") REFERENCES "equipment_categories" ("id") ON DELETE NO ACTION;
 

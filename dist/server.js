@@ -17,6 +17,7 @@ var groupRootRouter_1 = require("./routers/groupRootRouter");
 var authorizationMW_1 = require("./middleware/authorizationMW");
 // Database Connector Imports
 var redis_1 = require("./databases/redisSession/redis");
+// TODO: Need to diagnose how to get Postman working again
 var whitelist = ['http://localhost:3000', 'http://localhost:3001', 'https://localhost:3001'];
 var corsOptions = {
     origin: function (origin, callback) {
@@ -52,10 +53,10 @@ app.use((0, redis_1.session)({
     saveUninitialized: redis_1.redisConfig.saveUninitialized,
     resave: redis_1.redisConfig.resave
 }));
-app.use("/equips", authorizationMW_1["default"].loadSitePermissions, equipRootRouter_1["default"]);
-app.use("/rooms", authorizationMW_1["default"].loadSitePermissions, roomRootRouter_1["default"]);
-app.use("/users", authorizationMW_1["default"].loadSitePermissions, userRootRouter_1["default"]);
-app.use("/groups", authorizationMW_1["default"].loadSitePermissions, groupRootRouter_1["default"]);
+app.use("/v1/equips", authorizationMW_1["default"].loadSitePermissions, equipRootRouter_1["default"]);
+app.use("/v1/rooms", authorizationMW_1["default"].loadSitePermissions, roomRootRouter_1["default"]);
+app.use("/v1/users", authorizationMW_1["default"].loadSitePermissions, userRootRouter_1["default"]);
+app.use("/v1/groups", authorizationMW_1["default"].loadSitePermissions, groupRootRouter_1["default"]);
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));
 });

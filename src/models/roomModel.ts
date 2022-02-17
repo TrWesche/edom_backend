@@ -94,6 +94,11 @@ class RoomModel {
         return room;
     };
 
+    // static async retrieve_room_by_room_id_v2(userID: string, roomID: string) {
+    //     const room = RoomRepo.fetch_room_by_room_id(userID, roomID);
+    //     return room;
+    // };
+
     static async retrieve_room_list_paginated(limit: number, offset: number) {
         const rooms = await RoomRepo.fetch_room_list_paginated(limit, offset);
         return rooms;

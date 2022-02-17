@@ -82,7 +82,7 @@ roomRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_room_
 });
 
 // Manual Test - Basic Functionality: 01/19/2022
-roomRootRouter.get("/:roomID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+roomRootRouter.get("/:roomID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID, true);
         if (!queryData) {
