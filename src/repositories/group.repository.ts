@@ -83,6 +83,29 @@ class GroupRepo {
         }
     };
 
+    static async fetch_group_list_by_user_id(userID: string, limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT
+                    groups.id AS id,
+                    groups.name AS name,
+                    groups.headline AS headline,
+                    groups.description AS description
+                FROM groups
+                LEFT JOIN user_groups ON groups.id = user_groups.group_id
+                WHERE user_groups.user_id = $1
+                LIMIT $2
+                OFFSET $3`,
+                [userID, limit, offset]
+            );
+    
+            const rval: Array<GroupObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate groups - ${error}`, 500);
+        }
+    };
+
     static async update_group_by_group_id(groupID: string, groupData: GroupObjectProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key

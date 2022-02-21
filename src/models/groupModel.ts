@@ -172,6 +172,11 @@ class GroupModel {
         return groups;
     };
 
+    static async retrieve_user_groups_list_by_user_id(userID: string, limit: number, offset: number) {
+        const groups = await GroupRepo.fetch_group_list_by_user_id(userID, limit, offset);
+        return groups;
+    };
+
     static async retrieve_roles_by_group_id(groupID: string) {
         const roles = GroupPermissionsRepo.fetch_roles_by_group_id(groupID);
         return roles;

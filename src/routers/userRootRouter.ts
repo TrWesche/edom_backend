@@ -18,12 +18,14 @@ import UserModel from "../models/userModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
+import userGroupRouter from "./userRouters/userGroupRouter";
 
 
 const userRootRouter = express.Router();
 
 userRootRouter.use("/rooms", userRoomRouter);
 userRootRouter.use("/equips", userEquipRouter);
+userRootRouter.use("/groups", userGroupRouter);
 
 /*    _   _   _ _____ _   _ 
      / \ | | | |_   _| | | |

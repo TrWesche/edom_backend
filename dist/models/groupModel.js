@@ -289,6 +289,20 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
+    GroupModel.retrieve_user_groups_list_by_user_id = function (userID, limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var groups;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, group_repository_1["default"].fetch_group_list_by_user_id(userID, limit, offset)];
+                    case 1:
+                        groups = _a.sent();
+                        return [2 /*return*/, groups];
+                }
+            });
+        });
+    };
+    ;
     GroupModel.retrieve_roles_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var roles;

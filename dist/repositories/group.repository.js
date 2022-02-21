@@ -123,9 +123,30 @@ var GroupRepo = /** @class */ (function () {
         });
     };
     ;
+    GroupRepo.fetch_group_list_by_user_id = function (userID, limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, rval, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    groups.id AS id,\n                    groups.name AS name,\n                    groups.headline AS headline,\n                    groups.description AS description\n                FROM groups\n                LEFT JOIN user_groups ON groups.id = user_groups.group_id\n                WHERE user_groups.user_id = $1\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                    case 2:
+                        error_4 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate groups - ".concat(error_4), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     GroupRepo.update_group_by_group_id = function (groupID, groupData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, query, values, result, rval, error_4;
+            var _a, query, values, result, rval, error_5;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -137,8 +158,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_4 = _b.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update group - ".concat(error_4), 500);
+                        error_5 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to update group - ".concat(error_5), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -147,7 +168,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.delete_group_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_5;
+            var result, rval, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -158,8 +179,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_5 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group - ".concat(error_5), 500);
+                        error_6 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group - ".concat(error_6), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -173,7 +194,7 @@ var GroupRepo = /** @class */ (function () {
     //  \___/|____/|_____|_| \_\
     GroupRepo.associate_user_to_group = function (userID, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_6;
+            var result, rval, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -187,8 +208,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_6 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create group association group -> user - ".concat(error_6), 500);
+                        error_7 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create group association group -> user - ".concat(error_7), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -197,7 +218,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.disassociate_user_from_group = function (userID, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_7;
+            var result, rval, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -211,8 +232,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_7 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> user - ".concat(error_7), 500);
+                        error_8 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> user - ".concat(error_8), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -221,7 +242,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.disassociate_users_from_group_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_8;
+            var result, rval, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -234,8 +255,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_8 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> users - ".concat(error_8), 500);
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> users - ".concat(error_9), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -244,7 +265,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.fetch_groups_by_user_id = function (userID, groupPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_9;
+            var query, queryParams, result, rval, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -265,8 +286,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_9 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate user groups by user id - ".concat(error_9), 500);
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate user groups by user id - ".concat(error_10), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -275,7 +296,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.fetch_group_users_by_group_id = function (groupID, userPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_10;
+            var query, queryParams, result, rval, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -296,8 +317,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_10 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate group users by group id - ".concat(error_10), 500);
+                        error_11 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate group users by group id - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });

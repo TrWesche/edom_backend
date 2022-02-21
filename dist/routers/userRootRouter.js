@@ -51,9 +51,11 @@ var userEquipRouter_1 = require("./userRouters/userEquipRouter");
 var userModel_1 = require("../models/userModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
+var userGroupRouter_1 = require("./userRouters/userGroupRouter");
 var userRootRouter = express.Router();
 userRootRouter.use("/rooms", userRoomRouter_1["default"]);
 userRootRouter.use("/equips", userEquipRouter_1["default"]);
+userRootRouter.use("/groups", userGroupRouter_1["default"]);
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |
     / _ \| | | | | | | |_| |
