@@ -43,7 +43,7 @@ userGroupRouter.get("/", authMW.defineSitePermissions(["read_group_self"]), auth
             throw new ExpressError("Groups Not Found: Get User Groups - All", 404);
         };
         
-        return res.json({groups: queryData});
+        return res.json({group: queryData});
     } catch (error) {
         next(error)
     }

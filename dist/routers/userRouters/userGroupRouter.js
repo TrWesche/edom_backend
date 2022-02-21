@@ -77,7 +77,7 @@ userGroupRouter.get("/", authorizationMW_1["default"].defineSitePermissions(["re
                     throw new expresError_1["default"]("Groups Not Found: Get User Groups - All", 404);
                 }
                 ;
-                return [2 /*return*/, res.json({ groups: queryData })];
+                return [2 /*return*/, res.json({ group: queryData })];
             case 2:
                 error_1 = _c.sent();
                 next(error_1);
