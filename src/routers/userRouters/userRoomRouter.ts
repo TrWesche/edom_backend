@@ -93,7 +93,7 @@ userRoomRouter.get("/:roomID/equips", authMW.defineSitePermissions(["read_room_s
             throw new ExpressError("Room Not Found.", 404);
         }
         
-        return res.json({equip: [queryData]});
+        return res.json({equip: queryData});
     } catch (error) {
         next(error)
     }

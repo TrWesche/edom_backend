@@ -165,7 +165,7 @@ groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermission
                     throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - All", 404);
                 }
                 ;
-                return [2 /*return*/, res.json({ equip: [queryData] })];
+                return [2 /*return*/, res.json({ equip: queryData })];
             case 2:
                 error_3 = _a.sent();
                 next(error_3);
@@ -187,7 +187,7 @@ groupEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineGroup
                 if (!queryData) {
                     throw new expresError_1["default"]("Equipment Not Found.", 404);
                 }
-                return [2 /*return*/, res.json({ rooms: [queryData] })];
+                return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
                 error_4 = _a.sent();
                 next(error_4);

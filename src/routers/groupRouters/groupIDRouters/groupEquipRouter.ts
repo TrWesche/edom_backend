@@ -115,7 +115,7 @@ groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), aut
             throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
         };
         
-        return res.json({equip: [queryData]});
+        return res.json({equip: queryData});
     } catch (error) {
         next(error)
     }
@@ -130,7 +130,7 @@ groupEquipRouter.get("/:equipID/rooms", authMW.defineGroupPermissions(["read_roo
             throw new ExpressError("Equipment Not Found.", 404);
         }
         
-        return res.json({rooms: [queryData]});
+        return res.json({rooms: queryData});
     } catch (error) {
         next(error)
     }

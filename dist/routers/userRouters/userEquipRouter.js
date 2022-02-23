@@ -185,7 +185,7 @@ userEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineSitePe
                 if (!queryData) {
                     throw new expresError_1["default"]("Equipment Not Found.", 404);
                 }
-                return [2 /*return*/, res.json({ rooms: [queryData] })];
+                return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
                 error_4 = _a.sent();
                 next(error_4);

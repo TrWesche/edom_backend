@@ -128,7 +128,7 @@ userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_
             throw new ExpressError("Equipment Not Found.", 404);
         }
         
-        return res.json({rooms: [queryData]});
+        return res.json({rooms: queryData});
     } catch (error) {
         next(error)
     }

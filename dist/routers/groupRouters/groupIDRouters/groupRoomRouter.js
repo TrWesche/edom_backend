@@ -148,7 +148,7 @@ groupRoomRouter.get("/:roomID/equips", authorizationMW_1["default"].defineGroupP
                 if (!queryData) {
                     throw new expresError_1["default"]("Room Not Found.", 404);
                 }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
+                return [2 /*return*/, res.json({ equip: queryData })];
             case 2:
                 error_3 = _a.sent();
                 next(error_3);
