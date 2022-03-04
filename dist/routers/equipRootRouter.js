@@ -165,7 +165,7 @@ equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineSitePermissi
                 if (!queryData) {
                     throw new expresError_1["default"]("Equipment Not Found.", 404);
                 }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
+                return [2 /*return*/, res.json({ equip: queryData })];
             case 2:
                 error_5 = _a.sent();
                 next(error_5);

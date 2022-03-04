@@ -104,7 +104,7 @@ equipRootRouter.get("/:equipID", authMW.defineSitePermissions(["view_equip_publi
             throw new ExpressError("Equipment Not Found.", 404);
         }
         
-        return res.json({equip: [queryData]});
+        return res.json({equip: queryData});
     } catch (error) {
         next(error)
     }
