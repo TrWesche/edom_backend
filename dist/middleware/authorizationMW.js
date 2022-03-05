@@ -40,6 +40,7 @@ exports.__esModule = true;
 var authHandling_1 = require("../utils/authHandling");
 var groupPermissions_repository_1 = require("../repositories/groupPermissions.repository");
 var sitePermissions_repository_1 = require("../repositories/sitePermissions.repository");
+var permissions_repository_1 = require("../repositories/permissions.repository");
 var authMW = /** @class */ (function () {
     function authMW() {
     }
@@ -109,6 +110,35 @@ var authMW = /** @class */ (function () {
                         return [2 /*return*/, next()];
                     case 2:
                         error_2 = _b.sent();
+                        return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    /** Middleware: Load All User Permissions. */
+    // Version 1 of this, need to think about how to make it faster
+    authMW.loadUserPermissions = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userPermissions, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        if (!req.user || !req.user.id) {
+                            req.user = undefined;
+                            return [2 /*return*/, next()];
+                        }
+                        ;
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_permissions_by_user_id(req.user.id)];
+                    case 1:
+                        userPermissions = _a.sent();
+                        req.user.premissions = userPermissions;
+                        console.log(req.user.premissions);
+                        return [2 /*return*/, next()];
+                    case 2:
+                        error_3 = _a.sent();
                         return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                     case 3: return [2 /*return*/];
                 }

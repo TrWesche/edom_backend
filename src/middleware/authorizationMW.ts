@@ -6,6 +6,7 @@ import AuthHandling from "../utils/authHandling";
 
 import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
+import PermissionsRepo from "../repositories/permissions.repository";
 
 
 class authMW {
@@ -58,6 +59,27 @@ class authMW {
       return next({ status: 401, message: "Unauthorized" });
     }
   };
+
+  /** Middleware: Load All User Permissions. */
+  // Version 1 of this, need to think about how to make it faster
+  static async loadUserPermissions(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user || !req.user.id) {
+        req.user = undefined;
+        return next();
+      };
+
+      const userPermissions = await PermissionsRepo.fetch_permissions_by_user_id(req.user.id);
+      req.user.premissions = userPermissions;
+
+      console.log(req.user.premissions);
+
+      return next();
+    } catch (error) {
+      return next({ status: 401, message: "Unauthorized" });
+    }
+  };
+
 
   /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
   static validatePermissions(req, res, next) {

@@ -12,7 +12,13 @@ export interface UserObjectProps {
     password?: string,
     roles?: Array<UserRolesProps>,
     site_permissions?: Array<string>,
-    group_permissions?: Array<string>
+    group_permissions?: Array<string>,
+    premissions?: Array<PermissionProps>
+}
+
+interface PermissionProps {
+    permission_name: string,
+    context: string
 }
 
 interface UserRolesProps {
