@@ -96,4 +96,26 @@ roomRootRouter.get("/:roomID", authMW.defineSitePermissions(["view_room_public"]
 });
 
 
+
+roomRootRouter.get("/test/:roomID", 
+    authMW.defineRoutePermissions({
+        user: ["read_room_self"],
+        group: ["read_room"],
+        public: ["view_room_public"]
+    }),
+    authMW.validateRoutePermissions, 
+    async (req, res, next) => {
+    try {
+        console.log(req.resolvedPerms);
+        const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
+        if (!queryData) {
+            throw new ExpressError("Room Not Found.", 404);
+        }
+        
+        return res.json({room: queryData});
+    } catch (error) {
+        next(error)
+    }
+});
+
 export default roomRootRouter;

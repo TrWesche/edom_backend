@@ -234,3 +234,6 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
+
+
+-- TODO: Future will need to handle Public Users, currently the database is not structured appropriately

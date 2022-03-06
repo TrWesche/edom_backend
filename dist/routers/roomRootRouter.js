@@ -151,5 +151,31 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermission
         }
     });
 }); });
+roomRootRouter.get("/test/:roomID", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["read_room_self"],
+    group: ["read_room"],
+    public: ["view_room_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                console.log(req.resolvedPerms);
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID)];
+            case 1:
+                queryData = _a.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Room Not Found.", 404);
+                }
+                return [2 /*return*/, res.json({ room: queryData })];
+            case 2:
+                error_5 = _a.sent();
+                next(error_5);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 exports["default"] = roomRootRouter;
 //# sourceMappingURL=roomRootRouter.js.map

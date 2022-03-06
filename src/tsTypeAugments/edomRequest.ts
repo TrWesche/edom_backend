@@ -9,6 +9,8 @@ declare module 'express-serve-static-core' {
       // sitePermissions?: Array<any>
       // groupPermissions?: Array<any>
       requiredPermissions?: Object
+      reqPerms?: Object
+      resolvedPerms?: Array<Object>
     }
     // interface Response {
     //   myField?: string

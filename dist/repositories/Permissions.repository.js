@@ -62,97 +62,111 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    PermissionsRepo.fetch_site_permissions = function (userID, permList) {
-        return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        filterList = permList.join(",");
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    sitepermissions.name AS permissions_name\n                FROM users\n                LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id \n                LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id\n                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id \n                LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id \n                WHERE users.id = $1 AND sitepermissions.name IN ($2)\n                ", [userID, filterList])];
-                    case 1:
-                        result = _a.sent();
-                        return [2 /*return*/, result.rows];
-                    case 2:
-                        error_2 = _a.sent();
-                        // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user group permissions for the target equip - ".concat(error_2), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    PermissionsRepo.fetch_group_permissions = function (userID, groupID, permList) {
-        return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        filterList = permList.join(",");
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    grouppermissions.name AS permissions_name\n                FROM groups\n                LEFT JOIN grouproles ON grouproles.group_id = groups.id \n                LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id\n                LEFT JOIN users ON users.id = user_grouproles.user_id\n                LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id \n                LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id\n                WHERE users.id = $1 AND groups.id = $2 AND grouppermissions.name IN ($3)            \n                ", [userID, groupID, filterList])];
-                    case 1:
-                        result = _a.sent();
-                        return [2 /*return*/, result.rows];
-                    case 2:
-                        error_3 = _a.sent();
-                        // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user group permissions for the target equip - ".concat(error_3), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    PermissionsRepo.fetch_equip_permissions_group = function (userID, equipID, permList) {
-        return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_4;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        filterList = permList.join(",");
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    grouppermissions.name AS permissions_name\n                FROM equipment\n                LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id -- I want the group that is associated with this piece of equipment\n                LEFT JOIN groups ON groups.id = group_equipment.group_id -- So I can determine\n                LEFT JOIN grouproles ON grouproles.group_id = groups.id -- The role identifiers for that group\n                LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id -- And determine which the user has\n                LEFT JOIN users ON users.id = user_grouproles.user_id\n                LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id -- Such that when I filter\n                LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id -- I only see what the user has for the target equip\n                WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)\n                ", [userID, equipID, filterList])];
-                    case 1:
-                        result = _a.sent();
-                        return [2 /*return*/, result.rows];
-                    case 2:
-                        error_4 = _a.sent();
-                        // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user group permissions for the target equip - ".concat(error_4), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    PermissionsRepo.fetch_equip_permissions_user = function (userID, equipID, permList) {
-        return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_5;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        filterList = permList.join(",");
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    sitepermissions.name AS permissions_name\n                FROM equipment\n                LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id \n                LEFT JOIN users ON users.id = user_equipment.user_id\n                LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id \n                LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id\n                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id \n                LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id \n                WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($3)\n                ", [userID, equipID, filterList])];
-                    case 1:
-                        result = _a.sent();
-                        return [2 /*return*/, result.rows];
-                    case 2:
-                        error_5 = _a.sent();
-                        // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target equip - ".concat(error_5), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
+    // static async fetch_site_permissions(userID: string, permList: Array<string>) {
+    //     try {
+    //         const filterList = permList.join(",");
+    //         // ,
+    //         // user_siteroles.user_id AS user_id
+    //         const result = await pgdb.query(
+    //             `SELECT DISTINCT
+    //                 sitepermissions.name AS permissions_name
+    //             FROM users
+    //             LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+    //             LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+    //             LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+    //             LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+    //             WHERE users.id = $1 AND sitepermissions.name IN ($2)
+    //             `,
+    //                 [userID, filterList]
+    //         );
+    //         return result.rows;
+    //     } catch (error) {
+    //         // console.log(error);
+    //         throw new ExpressError(`An Error Occured: Unable to get user group permissions for the target equip - ${error}`, 500);
+    //     }  
+    // };
+    // static async fetch_group_permissions(userID: string, groupID: string, permList: Array<string>) {
+    //     try {
+    //         const filterList = permList.join(",");
+    //         // ,
+    //         //         user_grouproles.user_id AS user_id,
+    //         //         groups.id AS group_id
+    //         const result = await pgdb.query(
+    //             `SELECT DISTINCT
+    //                 grouppermissions.name AS permissions_name
+    //             FROM groups
+    //             LEFT JOIN grouproles ON grouproles.group_id = groups.id 
+    //             LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
+    //             LEFT JOIN users ON users.id = user_grouproles.user_id
+    //             LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id 
+    //             LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
+    //             WHERE users.id = $1 AND groups.id = $2 AND grouppermissions.name IN ($3)            
+    //             `,
+    //                 [userID, groupID, filterList]
+    //         );
+    //         return result.rows;
+    //     } catch (error) {
+    //         // console.log(error);
+    //         throw new ExpressError(`An Error Occured: Unable to get user group permissions for the target equip - ${error}`, 500);
+    //     }  
+    // };
+    // static async fetch_equip_permissions_group(userID: string, equipID: string, permList: Array<string>) {
+    //     try {
+    //         const filterList = permList.join(",");
+    //         // ,
+    //         //         user_grouproles.user_id AS user_id,
+    //         //         groups.id AS group_id,
+    //         //         equipment.id AS equipment_id
+    //         const result = await pgdb.query(
+    //             `SELECT DISTINCT
+    //                 grouppermissions.name AS permissions_name
+    //             FROM equipment
+    //             LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id -- I want the group that is associated with this piece of equipment
+    //             LEFT JOIN groups ON groups.id = group_equipment.group_id -- So I can determine
+    //             LEFT JOIN grouproles ON grouproles.group_id = groups.id -- The role identifiers for that group
+    //             LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id -- And determine which the user has
+    //             LEFT JOIN users ON users.id = user_grouproles.user_id
+    //             LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id -- Such that when I filter
+    //             LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id -- I only see what the user has for the target equip
+    //             WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)
+    //             `,
+    //                 [userID, equipID, filterList]
+    //         );
+    //         return result.rows;
+    //     } catch (error) {
+    //         // console.log(error);
+    //         throw new ExpressError(`An Error Occured: Unable to get user group permissions for the target equip - ${error}`, 500);
+    //     }  
+    // };
+    // static async fetch_equip_permissions_user(userID: string, equipID: string, permList: Array<string>) {
+    //     try {
+    //         const filterList = permList.join(",");
+    //         // ,
+    //         // user_siteroles.user_id AS user_id,
+    //         // equipment.id AS equipment_id
+    //         const result = await pgdb.query(
+    //             `SELECT DISTINCT
+    //                 sitepermissions.name AS permissions_name
+    //             FROM equipment
+    //             LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
+    //             LEFT JOIN users ON users.id = user_equipment.user_id
+    //             LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+    //             LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+    //             LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+    //             LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+    //             WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($3)
+    //             `,
+    //                 [userID, equipID, filterList]
+    //         );
+    //         return result.rows;
+    //     } catch (error) {
+    //         // console.log(error);
+    //         throw new ExpressError(`An Error Occured: Unable to get user permissions for the target equip - ${error}`, 500);
+    //     }  
+    // };
     PermissionsRepo.fetch_user_equip_permissions = function (userID, equipID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
-            var permListUser, permListGroup, permListPublic, result, error_6;
+            var permListUser, permListGroup, permListPublic, result, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -218,53 +232,56 @@ var PermissionsRepo = /** @class */ (function () {
                         // );
                         return [2 /*return*/, result.rows];
                     case 2:
-                        error_6 = _a.sent();
+                        error_2 = _a.sent();
                         // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target equip - ".concat(error_6), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target equip - ".concat(error_2), 500);
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     ;
-    PermissionsRepo.fetch_room_permissions_group = function (userID, roomID, permList) {
+    PermissionsRepo.fetch_user_room_permissions = function (userID, equipID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_7;
+            var permListUser, permListGroup, permListPublic, result, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        filterList = permList.join(",");
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    grouppermissions.name AS permissions_name\n                FROM rooms\n                LEFT JOIN group_rooms ON group_rooms.room_id = rooms.id\n                LEFT JOIN groups ON groups.id = group_rooms.group_id \n                LEFT JOIN grouproles ON grouproles.group_id = groups.id \n                LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id\n                LEFT JOIN users ON users.id = user_grouproles.user_id\n                LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id \n                LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id\n                WHERE users.id = $1 AND rooms.id = $2 AND grouppermissions.name IN ($3)\n                ", [userID, roomID, filterList])];
+                        permListUser = permissions.user ? permissions.user : ["NotApplicable"];
+                        permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
+                        permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_room($1, $2, $3, $4, $5)", [userID, equipID, permListGroup, permListUser, permListPublic])];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
                     case 2:
-                        error_7 = _a.sent();
+                        error_3 = _a.sent();
                         // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user group permissions for the target room - ".concat(error_7), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target room - ".concat(error_3), 500);
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     ;
-    PermissionsRepo.fetch_room_permissions_user = function (userID, roomID, permList) {
+    PermissionsRepo.fetch_user_group_permissions = function (userID, equipID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_8;
+            var permListGroup, permListPublic, result, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        filterList = permList.join(",");
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    sitepermissions.name AS permissions_name\n                FROM rooms\n                LEFT JOIN user_rooms ON user_rooms.room_id = rooms.id \n                LEFT JOIN users ON users.id = user_rooms.user_id\n                LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id \n                LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id\n                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id \n                LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id \n                WHERE users.id = $1 AND rooms.id = $2 AND sitepermissions.name IN ($3)\n                ", [userID, roomID, filterList])];
+                        permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
+                        permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_group($1, $2, $3, $4,)", [userID, equipID, permListGroup, permListPublic])];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
                     case 2:
-                        error_8 = _a.sent();
+                        error_4 = _a.sent();
                         // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target room - ".concat(error_8), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target room - ".concat(error_4), 500);
                     case 3: return [2 /*return*/];
                 }
             });

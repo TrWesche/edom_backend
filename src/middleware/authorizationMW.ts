@@ -203,7 +203,7 @@ class authMW {
     }
   };
 
-  static async validateRoutePermissions (req, res, next) {
+  static async validateRoutePermissions (req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.user?.id) {
         return next({ status: 401, message: "Unauthorized" });
@@ -219,20 +219,19 @@ class authMW {
         permissions = await PermissionsRepo.fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms);
       } else 
       if (req.params.roomID) {
-        permissions = await PermissionsRepo.fetch_room_permissions_group(req.user.id, req.params.roomID, req.requiredPermissions.group);
+        permissions = await PermissionsRepo.fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms);
       } else 
       if (req.params.groupID) {
-        permissions = await PermissionsRepo.fetch_group_permissions(req.user.id, req.params.groupID, req.requiredPermissions.group);
+        permissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.params.groupID, req.reqPerms);
       };
       
-      console.log("Validate Permissions Group");
-      console.log(permissions);
       // TODO: The return from this check could be useful in limiting the data returned by the query.
       if (permissions.length === 0) {
-        console.log("Permissions Failure - Group");
         return next({ status: 401, message: "Unauthorized" });
       };
-  
+      
+      req.resolvedPerms = permissions;
+
       return next();
     } catch (error) {
       return next({ status: 401, message: "Error - Unauthorized" });
@@ -240,74 +239,74 @@ class authMW {
   };
 
 
-  static async validatePermissionsGroup(req, res, next) {
-    try {
-      if (!req.user?.id) {
-        return next({ status: 401, message: "Unauthorized" });
-      };
+  // static async validatePermissionsGroup(req, res, next) {
+  //   try {
+  //     if (!req.user?.id) {
+  //       return next({ status: 401, message: "Unauthorized" });
+  //     };
   
-      if (!req.requiredPermissions.site) {
-        return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
-      };
+  //     if (!req.requiredPermissions.site) {
+  //       return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
+  //     };
   
-      let permissions;
+  //     let permissions;
   
-      if (req.params.equipID) {
-        permissions = await PermissionsRepo.fetch_equip_permissions_group(req.user.id, req.params.equipID, req.requiredPermissions.group);
-      } else if (req.params.roomID) {
-        permissions = await PermissionsRepo.fetch_room_permissions_group(req.user.id, req.params.roomID, req.requiredPermissions.group);
-      } else if (req.params.groupID) {
-        permissions = await PermissionsRepo.fetch_group_permissions(req.user.id, req.params.groupID, req.requiredPermissions.group);
-      };
+  //     if (req.params.equipID) {
+  //       permissions = await PermissionsRepo.fetch_equip_permissions_group(req.user.id, req.params.equipID, req.requiredPermissions.group);
+  //     } else if (req.params.roomID) {
+  //       permissions = await PermissionsRepo.fetch_room_permissions_group(req.user.id, req.params.roomID, req.requiredPermissions.group);
+  //     } else if (req.params.groupID) {
+  //       permissions = await PermissionsRepo.fetch_group_permissions(req.user.id, req.params.groupID, req.requiredPermissions.group);
+  //     };
       
-      console.log("Validate Permissions Group");
-      console.log(permissions);
-      // TODO: The return from this check could be useful in limiting the data returned by the query.
-      if (permissions.length === 0) {
-        console.log("Permissions Failure - Group");
-        return next({ status: 401, message: "Unauthorized" });
-      };
+  //     console.log("Validate Permissions Group");
+  //     console.log(permissions);
+  //     // TODO: The return from this check could be useful in limiting the data returned by the query.
+  //     if (permissions.length === 0) {
+  //       console.log("Permissions Failure - Group");
+  //       return next({ status: 401, message: "Unauthorized" });
+  //     };
   
-      return next();
-    } catch (error) {
-      return next({ status: 401, message: "Error - Unauthorized" });
-    }
-  };
+  //     return next();
+  //   } catch (error) {
+  //     return next({ status: 401, message: "Error - Unauthorized" });
+  //   }
+  // };
 
-  static async validatePermissionsSite(req, res, next) {
-    try {
-      if (!req.user?.id) {
-        return next({ status: 401, message: "Unauthorized" });
-      };
+  // static async validatePermissionsSite(req, res, next) {
+  //   try {
+  //     if (!req.user?.id) {
+  //       return next({ status: 401, message: "Unauthorized" });
+  //     };
   
-      if (!req.requiredPermissions.site) {
-        return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
-      };
+  //     if (!req.requiredPermissions.site) {
+  //       return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
+  //     };
   
-      let permissions;
+  //     let permissions;
   
-      if (req.params.equipID) {
-        permissions = await PermissionsRepo.fetch_equip_permissions_user(req.user.id, req.params.equipID, req.requiredPermissions.site);
-      } else if (req.params.roomID) {
-        permissions = await PermissionsRepo.fetch_room_permissions_user(req.user.id, req.params.roomID, req.requiredPermissions.site);
-      } else {
-        permissions = await PermissionsRepo.fetch_site_permissions(req.user.id, req.requiredPermissions.site);
-      };
+  //     if (req.params.equipID) {
+  //       permissions = await PermissionsRepo.fetch_equip_permissions_user(req.user.id, req.params.equipID, req.requiredPermissions.site);
+  //     } else if (req.params.roomID) {
+  //       permissions = await PermissionsRepo.fetch_room_permissions_user(req.user.id, req.params.roomID, req.requiredPermissions.site);
+  //     } else {
+  //       permissions = await PermissionsRepo.fetch_site_permissions(req.user.id, req.requiredPermissions.site);
+  //     };
       
-      console.log("Validate Permissions Site");
-      console.log(permissions);
-      // TODO: The return from this check could be useful in limiting the data returned by the query.
-      // TODO: Perhaps a good strategy would be to use the permissions list to determine all applicable permissions and return them for use in the route
-      if (permissions.length === 0) {
-        console.log("Permissions Failure - Site");
-        return next({ status: 401, message: "Unauthorized" });
-      };
+  //     console.log("Validate Permissions Site");
+  //     console.log(permissions);
+  //     // TODO: The return from this check could be useful in limiting the data returned by the query.
+  //     // TODO: Perhaps a good strategy would be to use the permissions list to determine all applicable permissions and return them for use in the route
+  //     if (permissions.length === 0) {
+  //       console.log("Permissions Failure - Site");
+  //       return next({ status: 401, message: "Unauthorized" });
+  //     };
   
-      return next();
-    } catch (error) {
-      return next({ status: 401, message: "Error - Unauthorized" });
-    }
-  };
+  //     return next();
+  //   } catch (error) {
+  //     return next({ status: 401, message: "Error - Unauthorized" });
+  //   }
+  // };
 
 }
 
