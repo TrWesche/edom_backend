@@ -62,7 +62,7 @@ app.use(session({
     saveUninitialized: redisConfig.saveUninitialized,
     resave: redisConfig.resave
 }))
-app.use(authMW.loadUserPermissions);
+// app.use(authMW.loadUserPermissions);
 
 app.use("/v1/equips", authMW.loadSitePermissions, equipRootRouter);
 app.use("/v1/rooms", authMW.loadSitePermissions, roomRootRouter);

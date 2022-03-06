@@ -8,7 +8,6 @@ import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 import PermissionsRepo from "../repositories/permissions.repository";
 
-
 class authMW {
 
   /** Middleware: Load JWT Data Into Request & Authenticate user. */
@@ -80,16 +79,73 @@ class authMW {
     }
   };
 
-  static async checkElevatedPermissionsGroup(req: Request, res: Response, next: NextFunction) {
-
+  static async validatePermissionsGroup(req, res, next) {
+    try {
+      if (!req.user?.id) {
+        return next({ status: 401, message: "Unauthorized" });
+      };
+  
+      if (!req.requiredPermissions.site) {
+        return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
+      };
+  
+      let permissions;
+  
+      if (req.params.equipID) {
+        permissions = await PermissionsRepo.fetch_equip_permissions_group(req.user.id, req.params.equipID, req.requiredPermissions.group);
+      } else if (req.params.roomID) {
+        permissions = await PermissionsRepo.fetch_room_permissions_group(req.user.id, req.params.roomID, req.requiredPermissions.group);
+      } else if (req.params.groupID) {
+        permissions = await PermissionsRepo.fetch_group_permissions(req.user.id, req.params.groupID, req.requiredPermissions.group);
+      };
+      
+      console.log("Validate Permissions Group");
+      console.log(permissions);
+      // TODO: The return from this check could be useful in limiting the data returned by the query.
+      if (permissions.length === 0) {
+        console.log("Permissions Failure - Group");
+        return next({ status: 401, message: "Unauthorized" });
+      };
+  
+      return next();
+    } catch (error) {
+      return next({ status: 401, message: "Error - Unauthorized" });
+    }
   };
 
-  static async checkElevatedPermissionsSite(req: Request, res: Response, next: NextFunction) {
-
-  };
-
-  static async checkViewOnlyPermissions(req: Request, res: Response, next: NextFunction) {
-
+  static async validatePermissionsSite(req, res, next) {
+    try {
+      if (!req.user?.id) {
+        return next({ status: 401, message: "Unauthorized" });
+      };
+  
+      if (!req.requiredPermissions.site) {
+        return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
+      };
+  
+      let permissions;
+  
+      if (req.params.equipID) {
+        permissions = await PermissionsRepo.fetch_equip_permissions_user(req.user.id, req.params.equipID, req.requiredPermissions.site);
+      } else if (req.params.roomID) {
+        permissions = await PermissionsRepo.fetch_room_permissions_user(req.user.id, req.params.roomID, req.requiredPermissions.site);
+      } else {
+        permissions = await PermissionsRepo.fetch_site_permissions(req.user.id, req.requiredPermissions.site);
+      };
+      
+      console.log("Validate Permissions Site");
+      console.log(permissions);
+      // TODO: The return from this check could be useful in limiting the data returned by the query.
+      // TODO: Perhaps a good strategy would be to use the permissions list to determine all applicable permissions and return them for use in the route
+      if (permissions.length === 0) {
+        console.log("Permissions Failure - Site");
+        return next({ status: 401, message: "Unauthorized" });
+      };
+  
+      return next();
+    } catch (error) {
+      return next({ status: 401, message: "Error - Unauthorized" });
+    }
   };
 
   /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
@@ -192,6 +248,27 @@ class authMW {
             } else {
                 req.requiredPermissions = {
                     group: permList
+                };
+            }
+            return next();
+          } catch (err) {
+            return next();
+          }
+    }
+  };
+
+
+  
+
+  /** Define Permissions Required to Access a Site Endpoint */
+  static defineRoutePermissions (permList: Array<string>) {
+    return (req, res, next) => {
+        try {
+            if (req.requiredPermissions) {
+                req.requiredPermissions.site = permList;
+            } else {
+                req.requiredPermissions = {
+                    site: permList
                 };
             }
             return next();

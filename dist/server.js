@@ -53,7 +53,7 @@ app.use((0, redis_1.session)({
     saveUninitialized: redis_1.redisConfig.saveUninitialized,
     resave: redis_1.redisConfig.resave
 }));
-app.use(authorizationMW_1["default"].loadUserPermissions);
+// app.use(authMW.loadUserPermissions);
 app.use("/v1/equips", authorizationMW_1["default"].loadSitePermissions, equipRootRouter_1["default"]);
 app.use("/v1/rooms", authorizationMW_1["default"].loadSitePermissions, roomRootRouter_1["default"]);
 app.use("/v1/users", authorizationMW_1["default"].loadSitePermissions, userRootRouter_1["default"]);

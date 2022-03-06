@@ -146,26 +146,109 @@ var authMW = /** @class */ (function () {
         });
     };
     ;
-    authMW.checkElevatedPermissionsGroup = function (req, res, next) {
+    authMW.validatePermissionsGroup = function (req, res, next) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
+            var permissions, error_4;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 7, , 8]);
+                        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                            return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
+                        }
+                        ;
+                        if (!req.requiredPermissions.site) {
+                            return [2 /*return*/, next({ status: 500, message: "Route Configuration Error - SP Def Missing" })];
+                        }
+                        ;
+                        permissions = void 0;
+                        if (!req.params.equipID) return [3 /*break*/, 2];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_equip_permissions_group(req.user.id, req.params.equipID, req.requiredPermissions.group)];
+                    case 1:
+                        permissions = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 2:
+                        if (!req.params.roomID) return [3 /*break*/, 4];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_room_permissions_group(req.user.id, req.params.roomID, req.requiredPermissions.group)];
+                    case 3:
+                        permissions = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 4:
+                        if (!req.params.groupID) return [3 /*break*/, 6];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_group_permissions(req.user.id, req.params.groupID, req.requiredPermissions.group)];
+                    case 5:
+                        permissions = _b.sent();
+                        _b.label = 6;
+                    case 6:
+                        ;
+                        console.log("Validate Permissions Group");
+                        console.log(permissions);
+                        // TODO: The return from this check could be useful in limiting the data returned by the query.
+                        if (permissions.length === 0) {
+                            console.log("Permissions Failure - Group");
+                            return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
+                        }
+                        ;
+                        return [2 /*return*/, next()];
+                    case 7:
+                        error_4 = _b.sent();
+                        return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
+                    case 8: return [2 /*return*/];
+                }
             });
         });
     };
     ;
-    authMW.checkElevatedPermissionsSite = function (req, res, next) {
+    authMW.validatePermissionsSite = function (req, res, next) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
-            });
-        });
-    };
-    ;
-    authMW.checkViewOnlyPermissions = function (req, res, next) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/];
+            var permissions, error_5;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 7, , 8]);
+                        if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                            return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
+                        }
+                        ;
+                        if (!req.requiredPermissions.site) {
+                            return [2 /*return*/, next({ status: 500, message: "Route Configuration Error - SP Def Missing" })];
+                        }
+                        ;
+                        permissions = void 0;
+                        if (!req.params.equipID) return [3 /*break*/, 2];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_equip_permissions_user(req.user.id, req.params.equipID, req.requiredPermissions.site)];
+                    case 1:
+                        permissions = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 2:
+                        if (!req.params.roomID) return [3 /*break*/, 4];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_room_permissions_user(req.user.id, req.params.roomID, req.requiredPermissions.site)];
+                    case 3:
+                        permissions = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 4: return [4 /*yield*/, permissions_repository_1["default"].fetch_site_permissions(req.user.id, req.requiredPermissions.site)];
+                    case 5:
+                        permissions = _b.sent();
+                        _b.label = 6;
+                    case 6:
+                        ;
+                        console.log("Validate Permissions Site");
+                        console.log(permissions);
+                        // TODO: The return from this check could be useful in limiting the data returned by the query.
+                        // TODO: Perhaps a good strategy would be to use the permissions list to determine all applicable permissions and return them for use in the route
+                        if (permissions.length === 0) {
+                            console.log("Permissions Failure - Site");
+                            return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
+                        }
+                        ;
+                        return [2 /*return*/, next()];
+                    case 7:
+                        error_5 = _b.sent();
+                        return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
+                    case 8: return [2 /*return*/];
+                }
             });
         });
     };
@@ -268,6 +351,26 @@ var authMW = /** @class */ (function () {
                 else {
                     req.requiredPermissions = {
                         group: permList
+                    };
+                }
+                return next();
+            }
+            catch (err) {
+                return next();
+            }
+        };
+    };
+    ;
+    /** Define Permissions Required to Access a Site Endpoint */
+    authMW.defineRoutePermissions = function (permList) {
+        return function (req, res, next) {
+            try {
+                if (req.requiredPermissions) {
+                    req.requiredPermissions.site = permList;
+                }
+                else {
+                    req.requiredPermissions = {
+                        site: permList
                     };
                 }
                 return next();
