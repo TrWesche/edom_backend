@@ -1,6 +1,11 @@
 import ExpressError from "../utils/expresError";
 import pgdb from "../databases/postgreSQL/pgdb";
 
+interface RoutePermissions {
+    user?: Array<string>
+    group?: Array<string>
+    public?: Array<string>
+}
 
 class PermissionsRepo {
     static async fetch_permissions_by_user_id(userID: string) {
@@ -133,6 +138,93 @@ class PermissionsRepo {
             throw new ExpressError(`An Error Occured: Unable to get user permissions for the target equip - ${error}`, 500);
         }  
     };
+
+    
+    static async fetch_user_equip_permissions(userID: string, equipID: string, permissions: RoutePermissions) {
+        try {
+            const permListUser = permissions.user ? permissions.user.join(",") : "NotApplicable";
+            const permListGroup = permissions.group ? permissions.group.join(",") : "NotApplicable";
+            const permListPublic = permissions.public ? permissions.public.join(",") : "NotApplicable";
+
+
+            // SELECT DISTINCT
+            //     grouppermissions.name AS permissions_name
+            // FROM equipment
+            // LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
+            // LEFT JOIN groups ON groups.id = group_equipment.group_id
+            // LEFT JOIN grouproles ON grouproles.group_id = groups.id
+            // LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
+            // LEFT JOIN users ON users.id = user_grouproles.user_id
+            // LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
+            // LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
+            // WHERE users.id = '1d8b1631-6824-4871-874a-12b7238736b0' AND equipment.id = '54c90a37-fcf4-46ca-b21b-f16d6de12a9d' AND grouppermissions.name IN ('read_equip')
+            // UNION
+            // SELECT DISTINCT
+            //     sitepermissions.name AS permissions_name
+            // FROM equipment
+            // LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
+            // LEFT JOIN users ON users.id = user_equipment.user_id
+            // LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+            // LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+            // LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+            // LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+            // WHERE users.id = '1d8b1631-6824-4871-874a-12b7238736b0' AND equipment.id = '54c90a37-fcf4-46ca-b21b-f16d6de12a9d' AND sitepermissions.name IN ('read_equip_self')
+            
+            // -- After query above is run then check if the equipment is public
+            
+            // SELECT DISTINCT
+            //     equipment.id AS permissions_name
+            // FROM equipment
+            // WHERE equipment.public = TRUE AND equipment.id = '54c90a37-fcf4-46ca-b21b-f16d6de12a9d'
+            
+            // -- If equipment is public then run next query
+            
+            // SELECT DISTINCT
+            //     sitepermissions.name AS permissions_name
+            // FROM users
+            // LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+            // LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+            // LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+            // LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+            // WHERE users.id = '1d8b1631-6824-4871-874a-12b7238736b0' AND sitepermissions.name IN ('view_equip_public')
+        
+        
+
+
+            const result = await pgdb.query(
+                    `SELECT DISTINCT
+                        grouppermissions.name AS permissions_name
+                    FROM equipment
+                    LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
+                    LEFT JOIN groups ON groups.id = group_equipment.group_id
+                    LEFT JOIN grouproles ON grouproles.group_id = groups.id
+                    LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
+                    LEFT JOIN users ON users.id = user_grouproles.user_id
+                    LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
+                    LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
+                    WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)
+                    UNION
+                    SELECT DISTINCT
+                        sitepermissions.name AS permissions_name
+                    FROM equipment
+                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
+                    LEFT JOIN users ON users.id = user_equipment.user_id
+                    LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+                    LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+                    LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+                    LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+                    WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($4)
+                `,
+                    [userID, equipID, permListGroup, permListUser]
+            );
+
+            return result.rows;
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user permissions for the target equip - ${error}`, 500);
+        } 
+    };
+
 
     static async fetch_room_permissions_group(userID: string, roomID: string, permList: Array<string>) {
         try {

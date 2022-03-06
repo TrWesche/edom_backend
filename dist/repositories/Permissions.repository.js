@@ -150,9 +150,33 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
+    PermissionsRepo.fetch_user_equip_permissions = function (userID, equipID, permissions) {
+        return __awaiter(this, void 0, void 0, function () {
+            var permListUser, permListGroup, permListPublic, result, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        permListUser = permissions.user ? permissions.user.join(",") : "NotApplicable";
+                        permListGroup = permissions.group ? permissions.group.join(",") : "NotApplicable";
+                        permListPublic = permissions.public ? permissions.public.join(",") : "NotApplicable";
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        grouppermissions.name AS permissions_name\n                    FROM equipment\n                    LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id\n                    LEFT JOIN groups ON groups.id = group_equipment.group_id\n                    LEFT JOIN grouproles ON grouproles.group_id = groups.id\n                    LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id\n                    LEFT JOIN users ON users.id = user_grouproles.user_id\n                    LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id\n                    LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id\n                    WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)\n                    UNION\n                    SELECT DISTINCT\n                        sitepermissions.name AS permissions_name\n                    FROM equipment\n                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id \n                    LEFT JOIN users ON users.id = user_equipment.user_id\n                    LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id \n                    LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id\n                    LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id \n                    LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id \n                    WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($4)\n                ", [userID, equipID, permListGroup, permListUser])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_6 = _a.sent();
+                        // console.log(error);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target equip - ".concat(error_6), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     PermissionsRepo.fetch_room_permissions_group = function (userID, roomID, permList) {
         return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_6;
+            var filterList, result, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -163,9 +187,9 @@ var PermissionsRepo = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
                     case 2:
-                        error_6 = _a.sent();
+                        error_7 = _a.sent();
                         // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user group permissions for the target room - ".concat(error_6), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user group permissions for the target room - ".concat(error_7), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -174,7 +198,7 @@ var PermissionsRepo = /** @class */ (function () {
     ;
     PermissionsRepo.fetch_room_permissions_user = function (userID, roomID, permList) {
         return __awaiter(this, void 0, void 0, function () {
-            var filterList, result, error_7;
+            var filterList, result, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -185,9 +209,9 @@ var PermissionsRepo = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
                     case 2:
-                        error_7 = _a.sent();
+                        error_8 = _a.sent();
                         // console.log(error);
-                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target room - ".concat(error_7), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target room - ".concat(error_8), 500);
                     case 3: return [2 /*return*/];
                 }
             });
