@@ -146,6 +146,30 @@ var authMW = /** @class */ (function () {
         });
     };
     ;
+    authMW.checkElevatedPermissionsGroup = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
+    authMW.checkElevatedPermissionsSite = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
+    authMW.checkViewOnlyPermissions = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
     /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
     authMW.validatePermissions = function (req, res, next) {
         var _a;

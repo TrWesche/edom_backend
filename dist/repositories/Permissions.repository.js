@@ -62,6 +62,66 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
+    PermissionsRepo.fetch_group_permissions_by_userid_and_groupid = function (userID, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
+    PermissionsRepo.fetch_equip_permissions_group = function (userID, equipID, permList) {
+        return __awaiter(this, void 0, void 0, function () {
+            var filterList, result, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        filterList = permList.join(",");
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    grouppermissions.name AS permissions_name\n                FROM equipment\n                LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id -- I want the group that is associated with this piece of equipment\n                LEFT JOIN groups ON groups.id = group_equipment.group_id -- So I can determine\n                LEFT JOIN grouproles ON grouproles.group_id = groups.id -- The role identifiers for that group\n                LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id -- And determine which the user has\n                LEFT JOIN users ON users.id = user_grouproles.user_id\n                LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id -- Such that when I filter\n                LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id -- I only see what the user has for the target equip\n                WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3);", [userID, equipID, filterList])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_2 = _a.sent();
+                        // console.log(error);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target equip - ".concat(error_2), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    PermissionsRepo.fetch_equip_permissions_user = function (userID, equipID, permList) {
+        return __awaiter(this, void 0, void 0, function () {
+            var filterList, result, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        filterList = permList.join(",");
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                    sitepermissions.name AS permissions_name\n                FROM equipment\n                LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id \n                LEFT JOIN users ON users.id = user_equipment.user_id\n                LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id \n                LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id\n                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id \n                LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id \n                WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($3)", [userID, equipID, filterList])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_3 = _a.sent();
+                        // console.log(error);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target equip - ".concat(error_3), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    PermissionsRepo.fetch_room_permissions_by_userid_and_roomid = function (userID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/];
+            });
+        });
+    };
+    ;
     return PermissionsRepo;
 }());
 exports["default"] = PermissionsRepo;

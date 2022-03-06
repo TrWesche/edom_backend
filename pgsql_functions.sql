@@ -47,9 +47,11 @@ BEGIN
 		UNION
 		SELECT DISTINCT
 			grouppermissions.name AS permission_name,
-			grouproles_grouppermissions.grouprole_id AS context
+			groups.id AS context
 		FROM grouppermissions
 		LEFT JOIN grouproles_grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
+		LEFT JOIN grouproles ON grouproles.id = grouproles_grouppermissions.grouprole_id
+		LEFT JOIN groups ON groups.id = grouproles.group_id
 		LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id
 		WHERE user_grouproles.user_id = search_uid;
 END;

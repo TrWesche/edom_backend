@@ -4,7 +4,6 @@ import pgdb from "../databases/postgreSQL/pgdb";
 
 class PermissionsRepo {
     static async fetch_permissions_by_user_id(userID: string) {
-
         try {
             const result = await pgdb.query(
                 `SELECT * FROM get_user_permissions($1)`,
@@ -16,6 +15,74 @@ class PermissionsRepo {
             // console.log(error);
             throw new ExpressError(`An Error Occured: Unable to get user permissions for the target user - ${error}`, 500);
         }  
+    };
+
+    static async fetch_group_permissions_by_userid_and_groupid(userID: string, groupID: string) {
+
+    };
+
+    static async fetch_equip_permissions_group(userID: string, equipID: string, permList: Array<string>) {
+        try {
+            const filterList = permList.join(",");
+
+            // ,
+            //         user_grouproles.user_id AS user_id,
+            //         groups.id AS group_id,
+            //         equipment.id AS equipment_id
+
+            const result = await pgdb.query(
+                `SELECT DISTINCT
+                    grouppermissions.name AS permissions_name
+                FROM equipment
+                LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id -- I want the group that is associated with this piece of equipment
+                LEFT JOIN groups ON groups.id = group_equipment.group_id -- So I can determine
+                LEFT JOIN grouproles ON grouproles.group_id = groups.id -- The role identifiers for that group
+                LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id -- And determine which the user has
+                LEFT JOIN users ON users.id = user_grouproles.user_id
+                LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id -- Such that when I filter
+                LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id -- I only see what the user has for the target equip
+                WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3);`,
+                    [userID, equipID, filterList]
+            );
+
+            return result.rows;
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user permissions for the target equip - ${error}`, 500);
+        }  
+    };
+
+    static async fetch_equip_permissions_user(userID: string, equipID: string, permList: Array<string>) {
+        try {
+            const filterList = permList.join(",");
+            // ,
+            // user_siteroles.user_id AS user_id,
+            // equipment.id AS equipment_id
+
+            const result = await pgdb.query(
+                `SELECT DISTINCT
+                    sitepermissions.name AS permissions_name
+                FROM equipment
+                LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
+                LEFT JOIN users ON users.id = user_equipment.user_id
+                LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+                LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+                LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+                WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($3)`,
+                    [userID, equipID, filterList]
+            );
+
+            return result.rows;
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user permissions for the target equip - ${error}`, 500);
+        }  
+    };
+
+
+    static async fetch_room_permissions_by_userid_and_roomid(userID: string, roomID: string) {
+
     };
 }
 

@@ -80,6 +80,17 @@ class authMW {
     }
   };
 
+  static async checkElevatedPermissionsGroup(req: Request, res: Response, next: NextFunction) {
+
+  };
+
+  static async checkElevatedPermissionsSite(req: Request, res: Response, next: NextFunction) {
+
+  };
+
+  static async checkViewOnlyPermissions(req: Request, res: Response, next: NextFunction) {
+
+  };
 
   /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
   static validatePermissions(req, res, next) {

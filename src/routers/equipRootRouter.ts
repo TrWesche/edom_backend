@@ -111,4 +111,5 @@ equipRootRouter.get("/:equipID", authMW.defineSitePermissions(["view_equip_publi
 });
 
 
+
 export default equipRootRouter;
