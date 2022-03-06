@@ -114,8 +114,12 @@ equipRootRouter.get("/:equipID", authMW.defineSitePermissions(["view_equip_publi
 // Check for elevated permissions through user id
 equipRootRouter.get(
     "/test/:equipID", 
-    authMW.defineSitePermissions(["read_equip_self"]),
-    authMW.validatePermissionsSite, 
+    authMW.defineRoutePermissions({
+        user: ["read_equip_self"],
+        group: ["read_equip"],
+        public: ["view_equip_public"]
+    }),
+    authMW.validateRoutePermissions,
     async (req, res, next) => {
         try {
             const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
@@ -131,42 +135,42 @@ equipRootRouter.get(
 );
 
 // Check for elevated permissions through group id
-equipRootRouter.get(
-    "/test/:equipID", 
-    authMW.defineGroupPermissions(["read_equip"]), 
-    authMW.validatePermissionsGroup, 
-    async (req, res, next) => {
-        try {
-            const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
-            if (!queryData) {
-                throw new ExpressError("Equipment Not Found.", 404);
-            }
-            console.log("Resolved with Group Equip Elevated Privilidges.");
-            return res.json({equip: [queryData]});
-        } catch (error) {
-            next(error)
-        }
-    }
-);
+// equipRootRouter.get(
+//     "/test/:equipID", 
+//     authMW.defineGroupPermissions(["read_equip"]), 
+//     authMW.validatePermissionsGroup, 
+//     async (req, res, next) => {
+//         try {
+//             const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
+//             if (!queryData) {
+//                 throw new ExpressError("Equipment Not Found.", 404);
+//             }
+//             console.log("Resolved with Group Equip Elevated Privilidges.");
+//             return res.json({equip: [queryData]});
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// );
 
 // Default to public view
-equipRootRouter.get(
-    "/test/:equipID", 
-    authMW.defineSitePermissions(["view_equip_public"]), 
-    authMW.validatePermissionsSite, 
-    async (req, res, next) => {
-        try {
-            const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID, true);
-            if (!queryData) {
-                throw new ExpressError("Equipment Not Found.", 404);
-            }
-            console.log("Resolved with Public Privilidges.");
-            return res.json({equip: queryData});
-        } catch (error) {
-            next(error)
-        }
-    }
-);
+// equipRootRouter.get(
+//     "/test/:equipID", 
+//     authMW.defineSitePermissions(["view_equip_public"]), 
+//     authMW.validatePermissionsSite, 
+//     async (req, res, next) => {
+//         try {
+//             const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID, true);
+//             if (!queryData) {
+//                 throw new ExpressError("Equipment Not Found.", 404);
+//             }
+//             console.log("Resolved with Public Privilidges.");
+//             return res.json({equip: queryData});
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// );
 
 
 

@@ -6,7 +6,7 @@ import AuthHandling from "../utils/authHandling";
 
 import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
-import PermissionsRepo from "../repositories/permissions.repository";
+import PermissionsRepo, { RoutePermissions } from "../repositories/permissions.repository";
 
 class authMW {
 
@@ -188,25 +188,54 @@ class authMW {
           }
     }
   };
-
-
   
 
   /** Define Permissions Required to Access a Site Endpoint */
-  static defineRoutePermissions (permList: Array<string>) {
+  static defineRoutePermissions (permissions: RoutePermissions) {
     return (req, res, next) => {
         try {
-            if (req.requiredPermissions) {
-                req.requiredPermissions.site = permList;
-            } else {
-                req.requiredPermissions = {
-                    site: permList
-                };
-            }
+            req.reqPerms = permissions;
+
             return next();
           } catch (err) {
             return next();
           }
+    }
+  };
+
+  static async validateRoutePermissions (req, res, next) {
+    try {
+      if (!req.user?.id) {
+        return next({ status: 401, message: "Unauthorized" });
+      };
+  
+      if (!req.reqPerms) {
+        return next({ status: 500, message: "Route Configuration Error - Permissions Definition Missing" });
+      };
+  
+      let permissions;
+  
+      if (req.params.equipID) {
+        permissions = await PermissionsRepo.fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms);
+      } else 
+      if (req.params.roomID) {
+        permissions = await PermissionsRepo.fetch_room_permissions_group(req.user.id, req.params.roomID, req.requiredPermissions.group);
+      } else 
+      if (req.params.groupID) {
+        permissions = await PermissionsRepo.fetch_group_permissions(req.user.id, req.params.groupID, req.requiredPermissions.group);
+      };
+      
+      console.log("Validate Permissions Group");
+      console.log(permissions);
+      // TODO: The return from this check could be useful in limiting the data returned by the query.
+      if (permissions.length === 0) {
+        console.log("Permissions Failure - Group");
+        return next({ status: 401, message: "Unauthorized" });
+      };
+  
+      return next();
+    } catch (error) {
+      return next({ status: 401, message: "Error - Unauthorized" });
     }
   };
 

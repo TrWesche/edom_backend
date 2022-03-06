@@ -157,12 +157,65 @@ var PermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        permListUser = permissions.user ? permissions.user.join(",") : "NotApplicable";
-                        permListGroup = permissions.group ? permissions.group.join(",") : "NotApplicable";
-                        permListPublic = permissions.public ? permissions.public.join(",") : "NotApplicable";
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        grouppermissions.name AS permissions_name\n                    FROM equipment\n                    LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id\n                    LEFT JOIN groups ON groups.id = group_equipment.group_id\n                    LEFT JOIN grouproles ON grouproles.group_id = groups.id\n                    LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id\n                    LEFT JOIN users ON users.id = user_grouproles.user_id\n                    LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id\n                    LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id\n                    WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)\n                    UNION\n                    SELECT DISTINCT\n                        sitepermissions.name AS permissions_name\n                    FROM equipment\n                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id \n                    LEFT JOIN users ON users.id = user_equipment.user_id\n                    LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id \n                    LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id\n                    LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id \n                    LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id \n                    WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($4)\n                ", [userID, equipID, permListGroup, permListUser])];
+                        permListUser = permissions.user ? permissions.user : ["NotApplicable"];
+                        permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
+                        permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_equipment($1, $2, $3, $4, $5)", [userID, equipID, permListGroup, permListUser, permListPublic])
+                            // const result = await pgdb.query(
+                            //         `SELECT DISTINCT
+                            //             grouppermissions.name AS permissions_name
+                            //         FROM equipment
+                            //         LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
+                            //         LEFT JOIN groups ON groups.id = group_equipment.group_id
+                            //         LEFT JOIN grouproles ON grouproles.group_id = groups.id
+                            //         LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
+                            //         LEFT JOIN users ON users.id = user_grouproles.user_id
+                            //         LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
+                            //         LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
+                            //         WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)
+                            //         UNION
+                            //         SELECT DISTINCT
+                            //             sitepermissions.name AS permissions_name
+                            //         FROM equipment
+                            //         LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
+                            //         LEFT JOIN users ON users.id = user_equipment.user_id
+                            //         LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+                            //         LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+                            //         LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+                            //         LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+                            //         WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($4)
+                            //     `,
+                            //         [userID, equipID, permListGroup, permListUser]
+                            // );
+                        ];
                     case 1:
                         result = _a.sent();
+                        // const result = await pgdb.query(
+                        //         `SELECT DISTINCT
+                        //             grouppermissions.name AS permissions_name
+                        //         FROM equipment
+                        //         LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
+                        //         LEFT JOIN groups ON groups.id = group_equipment.group_id
+                        //         LEFT JOIN grouproles ON grouproles.group_id = groups.id
+                        //         LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
+                        //         LEFT JOIN users ON users.id = user_grouproles.user_id
+                        //         LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
+                        //         LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
+                        //         WHERE users.id = $1 AND equipment.id = $2 AND grouppermissions.name IN ($3)
+                        //         UNION
+                        //         SELECT DISTINCT
+                        //             sitepermissions.name AS permissions_name
+                        //         FROM equipment
+                        //         LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
+                        //         LEFT JOIN users ON users.id = user_equipment.user_id
+                        //         LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+                        //         LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+                        //         LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+                        //         LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+                        //         WHERE users.id = $1 AND equipment.id = $2 AND sitepermissions.name IN ($4)
+                        //     `,
+                        //         [userID, equipID, permListGroup, permListUser]
+                        // );
                         return [2 /*return*/, result.rows];
                     case 2:
                         error_6 = _a.sent();
