@@ -296,14 +296,13 @@ var authMW = /** @class */ (function () {
                         permissions = _b.sent();
                         return [3 /*break*/, 6];
                     case 4:
-                        if (!req.params.groupID) return [3 /*break*/, 6];
-                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_group_permissions(req.user.id, req.params.groupID, req.reqPerms)];
+                        if (!req.groupID) return [3 /*break*/, 6];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms)];
                     case 5:
                         permissions = _b.sent();
                         _b.label = 6;
                     case 6:
                         ;
-                        // TODO: The return from this check could be useful in limiting the data returned by the query.
                         if (permissions.length === 0) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }

@@ -241,7 +241,7 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    PermissionsRepo.fetch_user_room_permissions = function (userID, equipID, permissions) {
+    PermissionsRepo.fetch_user_room_permissions = function (userID, roomID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
             var permListUser, permListGroup, permListPublic, result, error_3;
             return __generator(this, function (_a) {
@@ -251,7 +251,7 @@ var PermissionsRepo = /** @class */ (function () {
                         permListUser = permissions.user ? permissions.user : ["NotApplicable"];
                         permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
                         permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_room($1, $2, $3, $4, $5)", [userID, equipID, permListGroup, permListUser, permListPublic])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_room($1, $2, $3, $4, $5)", [userID, roomID, permListGroup, permListUser, permListPublic])];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
@@ -265,7 +265,7 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    PermissionsRepo.fetch_user_group_permissions = function (userID, equipID, permissions) {
+    PermissionsRepo.fetch_user_group_permissions = function (userID, groupID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
             var permListGroup, permListPublic, result, error_4;
             return __generator(this, function (_a) {
@@ -274,7 +274,7 @@ var PermissionsRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
                         permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_group($1, $2, $3, $4,)", [userID, equipID, permListGroup, permListPublic])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_group($1, $2, $3, $4)", [userID, groupID, permListGroup, permListPublic])];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, result.rows];

@@ -61,9 +61,39 @@ groupIDRouter.use("/users", authorizationMW_1["default"].defineSitePermissions([
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+groupIDRouter.get("/test", authorizationMW_1["default"].defineRoutePermissions({
+    group: ["read_group"],
+    public: ["view_group_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_1;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                // Preflight
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Must be logged in to view groups || group not found", 400);
+                }
+                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID)];
+            case 1:
+                queryData = _b.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Unable to find group.", 404);
+                }
+                ;
+                return [2 /*return*/, res.json({ group: queryData })];
+            case 2:
+                error_1 = _b.sent();
+                next(error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 // Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.get("/", authorizationMW_1["default"].defineSitePermissions(["view_group_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_1;
+    var queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -88,8 +118,8 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineSitePermissions(["view
                 ;
                 return [2 /*return*/, res.json({ group: queryData })];
             case 2:
-                error_1 = _b.sent();
-                next(error_1);
+                error_2 = _b.sent();
+                next(error_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -97,7 +127,7 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineSitePermissions(["view
 }); });
 // Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["read_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_2;
+    var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -116,8 +146,8 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["rea
                 ;
                 return [2 /*return*/, res.json({ group: queryData })];
             case 2:
-                error_2 = _b.sent();
-                next(error_2);
+                error_3 = _b.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -131,7 +161,7 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["rea
 */
 // Manual Test - Basic Functionality: 01/16/2022
 groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["update_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -174,8 +204,8 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["up
                 newData = _b.sent();
                 return [2 /*return*/, res.json({ group: [newData] })];
             case 3:
-                error_3 = _b.sent();
-                next(error_3);
+                error_4 = _b.sent();
+                next(error_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -189,7 +219,7 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["up
 */
 // Manual Test - Basic Functionality: 01/17/2022
 groupIDRouter["delete"]("/", authorizationMW_1["default"].defineSitePermissions(["delete_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
+    var queryData, error_5;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -206,8 +236,8 @@ groupIDRouter["delete"]("/", authorizationMW_1["default"].defineSitePermissions(
                 }
                 return [2 /*return*/, res.json({ message: "Group deleted." })];
             case 2:
-                error_4 = _b.sent();
-                return [2 /*return*/, next(error_4)];
+                error_5 = _b.sent();
+                return [2 /*return*/, next(error_5)];
             case 3: return [2 /*return*/];
         }
     });

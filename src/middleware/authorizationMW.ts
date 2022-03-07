@@ -214,18 +214,17 @@ class authMW {
       };
   
       let permissions;
-  
+
       if (req.params.equipID) {
         permissions = await PermissionsRepo.fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms);
       } else 
       if (req.params.roomID) {
         permissions = await PermissionsRepo.fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms);
       } else 
-      if (req.params.groupID) {
-        permissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.params.groupID, req.reqPerms);
+      if (req.groupID) {
+        permissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms);
       };
       
-      // TODO: The return from this check could be useful in limiting the data returned by the query.
       if (permissions.length === 0) {
         return next({ status: 401, message: "Unauthorized" });
       };

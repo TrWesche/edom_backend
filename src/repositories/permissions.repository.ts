@@ -185,7 +185,7 @@ class PermissionsRepo {
         } 
     };
 
-    static async fetch_user_room_permissions(userID: string, equipID: string, permissions: RoutePermissions) {
+    static async fetch_user_room_permissions(userID: string, roomID: string, permissions: RoutePermissions) {
         try {
             const permListUser = permissions.user ? permissions.user : ["NotApplicable"];
             const permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
@@ -193,7 +193,7 @@ class PermissionsRepo {
 
             const result = await pgdb.query(
                 `SELECT * FROM retrieve_user_auth_for_room($1, $2, $3, $4, $5)`,
-                [userID, equipID, permListGroup, permListUser, permListPublic]
+                [userID, roomID, permListGroup, permListUser, permListPublic]
             )
 
             return result.rows;
@@ -203,14 +203,14 @@ class PermissionsRepo {
         } 
     };
 
-    static async fetch_user_group_permissions(userID: string, equipID: string, permissions: RoutePermissions) {
+    static async fetch_user_group_permissions(userID: string, groupID: string, permissions: RoutePermissions) {
         try {
             const permListGroup = permissions.group ? permissions.group : ["NotApplicable"];
             const permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
 
             const result = await pgdb.query(
-                `SELECT * FROM retrieve_user_auth_for_group($1, $2, $3, $4,)`,
-                [userID, equipID, permListGroup, permListPublic]
+                `SELECT * FROM retrieve_user_auth_for_group($1, $2, $3, $4)`,
+                [userID, groupID, permListGroup, permListPublic]
             )
 
             return result.rows;
