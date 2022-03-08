@@ -19,6 +19,7 @@ import UserModel from "../models/userModel";
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
 import userGroupRouter from "./userRouters/userGroupRouter";
+import userDeviceMasterRouter from "./userRouters/userDMRouter";
 
 
 const userRootRouter = express.Router();
@@ -26,6 +27,7 @@ const userRootRouter = express.Router();
 userRootRouter.use("/rooms", userRoomRouter);
 userRootRouter.use("/equips", userEquipRouter);
 userRootRouter.use("/groups", userGroupRouter);
+userRoomRouter.use("/dm", userDeviceMasterRouter);
 
 /*    _   _   _ _____ _   _ 
      / \ | | | |_   _| | | |
@@ -130,18 +132,17 @@ userRootRouter.get("/profile", authMW.defineSitePermissions(['read_user_self']),
     }
 });
 
-// Manual Test - Basic Functionality: 01/13/2022
-userRootRouter.get("/up/:username", authMW.defineSitePermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.get("/list", authMW.defineSitePermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
-        // TODO: User needs a public / private selection & additional details
-        const queryData = await UserModel.retrieve_user_by_username(req.params.username);
+        // TODO: Need a user retrieval route
+        const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
         if (!queryData) {
-            throw new ExpressError("Unable to find a user with provided username.", 404);
+            throw new ExpressError("Unable to find user account.", 404);
         }
         
         return res.json({user: queryData});
     } catch (error) {
-        next(error)
+        next(error);
     }
 });
 

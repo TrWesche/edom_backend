@@ -52,10 +52,12 @@ var userModel_1 = require("../models/userModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
 var userGroupRouter_1 = require("./userRouters/userGroupRouter");
+var userDMRouter_1 = require("./userRouters/userDMRouter");
 var userRootRouter = express.Router();
 userRootRouter.use("/rooms", userRoomRouter_1["default"]);
 userRootRouter.use("/equips", userEquipRouter_1["default"]);
 userRootRouter.use("/groups", userGroupRouter_1["default"]);
+userRoomRouter_1["default"].use("/dm", userDMRouter_1["default"]);
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |
     / _ \| | | | | | | |_| |
@@ -173,22 +175,22 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineSitePermission
         }
     });
 }); });
-// Manual Test - Basic Functionality: 01/13/2022
-userRootRouter.get("/up/:username", authorizationMW_1["default"].defineSitePermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_username(req.params.username)];
+                _b.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
             case 1:
-                queryData = _a.sent();
+                queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Unable to find a user with provided username.", 404);
+                    throw new expresError_1["default"]("Unable to find user account.", 404);
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 2:
-                error_4 = _a.sent();
+                error_4 = _b.sent();
                 next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
