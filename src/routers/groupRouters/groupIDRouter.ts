@@ -34,7 +34,7 @@ groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), group
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-groupIDRouter.get("/test",
+groupIDRouter.get("/",
     authMW.defineRoutePermissions({
         group: ["read_group"],
         public: ["view_group_public"]
@@ -60,54 +60,6 @@ groupIDRouter.get("/test",
         }
     }
 );
-
-// Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.get("/", authMW.defineSitePermissions(["view_group_public"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to view groups || group not found`, 400);
-        }
-
-        // TODO: User needs a public / private selection & additional details
-        const queryData = await GroupModel.retrieve_group_by_group_id(req.groupID);
-        if (!queryData) {
-            throw new ExpressError("Unable to find group.", 404);
-        };
-        
-        if (queryData.public !== true) {
-            console.log("Group Not Public, Forward to Group MW Check");
-            // req.fwdData = queryData;
-            return next();
-        };
-
-        return res.json({group: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
-
-// Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.get("/", authMW.defineGroupPermissions(["read_group"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to view groups || group not found`, 400);
-        }
-
-        // TODO: User needs a public / private selection & additional details
-        const queryData = await GroupModel.retrieve_group_by_group_id(req.groupID);
-        if (!queryData) {
-            throw new ExpressError("Unable to find group.", 404);
-        };
-        
-
-        return res.json({group: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
-
 
 
 /* _   _ ____  ____    _  _____ _____ 

@@ -81,23 +81,8 @@ roomRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_room_
     }
 });
 
-// Manual Test - Basic Functionality: 01/19/2022
-roomRootRouter.get("/:roomID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID, true);
-        if (!queryData) {
-            throw new ExpressError("Room Not Found.", 404);
-        }
-        
-        return res.json({room: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
 
-
-
-roomRootRouter.get("/test/:roomID", 
+roomRootRouter.get("/:roomID", 
     authMW.defineRoutePermissions({
         user: ["read_room_self"],
         group: ["read_room"],
@@ -106,7 +91,6 @@ roomRootRouter.get("/test/:roomID",
     authMW.validateRoutePermissions, 
     async (req, res, next) => {
     try {
-        console.log(req.resolvedPerms);
         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
         if (!queryData) {
             throw new ExpressError("Room Not Found.", 404);
