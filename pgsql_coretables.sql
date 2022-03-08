@@ -2,28 +2,15 @@ SET TIME ZONE 'UTC';
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-
--- CREATE TABLE "users" (
---   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
---   "email" text UNIQUE NOT NULL,
---   "username" text UNIQUE NOT NULL,
---   "password" text NOT NULL,
---   "first_name" text,
---   "last_name" text,
---   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
---   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
--- );
-
-CREATE TABLE "users_account" (
+CREATE TABLE "useraccount" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "username" text UNIQUE NOT NULL,
   "password" text NOT NULL,
-  "account_status" text DEFAULT "active",
+  "account_status" text DEFAULT 'active',
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE TABLE "users_data" (
+CREATE TABLE "userdata" (
   "account_id" uuid NOT NULL,
   "email" text UNIQUE NOT NULL,
   "public_email" boolean DEFAULT false,
@@ -35,20 +22,35 @@ CREATE TABLE "users_data" (
   "public_location" boolean DEFAULT false
 );
 
-CREATE TABLE "users_profile" (
+CREATE TABLE "userprofile" (
   "account_id" uuid NOT NULL,
+  "username" text UNIQUE NOT NULL,
   "headline" text,
   "about" text,
   "image_url" text,
   "public" boolean DEFAULT false
 );
 
-CREATE TABLE "groups" (
+CREATE TABLE "subscriptiontypes" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "name" text UNIQUE NOT NULL,
+  "definition" json NOT NULL,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+CREATE TABLE "user_subscription" (
+  "user_id" uuid NOT NULL,
+  "subscription_id" uuid NOT NULL
+);
+
+CREATE TABLE "sitegroups" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text UNIQUE NOT NULL,
   "headline" text,
   "description" text,
   "image_url" text,
+  "location" text,
   "public" boolean DEFAULT false,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
@@ -77,14 +79,6 @@ CREATE TABLE "rooms" (
   "description" text,
   "image_url" text,
   "public" boolean DEFAULT false,
-  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
-  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
-);
-
-
-CREATE TABLE "usertypes" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name" text UNIQUE NOT NULL,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
@@ -132,10 +126,6 @@ CREATE TABLE "room_categories" (
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE TABLE "user_usertype" (
-  "user_id" uuid,
-  "usertype_id" uuid
-);
 
 CREATE TABLE "user_groups" (
   "user_id" uuid,
@@ -213,33 +203,33 @@ CREATE TABLE "group_chat_log" (
 );
 
 
-ALTER TABLE "users_data" ADD FOREIGN KEY ("account_id") REFERENCES "users_account" ("id") ON DELETE NO ACTION;
+ALTER TABLE "userdata" ADD FOREIGN KEY ("account_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "users_profile" ADD FOREIGN KEY ("account_id") REFERENCES "users_account" ("id") ON DELETE NO ACTION;
+ALTER TABLE "userprofile" ADD FOREIGN KEY ("account_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "equipment" ADD FOREIGN KEY ("category_id") REFERENCES "equipment_categories" ("id") ON DELETE NO ACTION;
 
+ALTER TABLE "user_subscription" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
+
+ALTER TABLE "user_subscription" ADD FOREIGN KEY ("subscription_id") REFERENCES "subscriptiontypes" ("id") ON DELETE NO ACTION;
+
 ALTER TABLE "rooms" ADD FOREIGN KEY ("category_id") REFERENCES "room_categories" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "grouproles" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
+ALTER TABLE "grouproles" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_usertype" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_groups" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_usertype" ADD FOREIGN KEY ("usertype_id") REFERENCES "usertypes" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_groups" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_groups" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
-
-ALTER TABLE "user_groups" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
-
-ALTER TABLE "user_equipment" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_equipment" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "user_equipment" ADD FOREIGN KEY ("equip_id") REFERENCES "equipment" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_rooms" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_rooms" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "user_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id") ON DELETE NO ACTION;
 
@@ -251,15 +241,15 @@ ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouprole_id") REFER
 
 ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouppermission_id") REFERENCES "grouppermissions" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_equipment" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_equipment" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "group_equipment" ADD FOREIGN KEY ("equip_id") REFERENCES "equipment" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_rooms" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_rooms" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "group_rooms" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
@@ -269,12 +259,12 @@ ALTER TABLE "room_equipment" ADD FOREIGN KEY ("equip_id") REFERENCES "equipment"
 
 ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("room_id") REFERENCES "rooms" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "room_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_threads" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_chat_threads" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("group_id") REFERENCES "groups" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("thread_id") REFERENCES "group_chat_threads" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE NO ACTION;
+ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;

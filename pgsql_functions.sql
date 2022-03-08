@@ -47,11 +47,11 @@ BEGIN
 		UNION
 		SELECT DISTINCT
 			grouppermissions.name AS permission_name,
-			groups.id AS context
+			sitegroups.id AS context
 		FROM grouppermissions
 		LEFT JOIN grouproles_grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
 		LEFT JOIN grouproles ON grouproles.id = grouproles_grouppermissions.grouprole_id
-		LEFT JOIN groups ON groups.id = grouproles.group_id
+		LEFT JOIN sitegroups ON sitegroups.id = grouproles.group_id
 		LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id
 		WHERE user_grouproles.user_id = search_uid;
 END;
@@ -69,12 +69,12 @@ DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
 		sitepermissions.name AS permissions_name
-	FROM users
-	LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+	FROM useraccount
+	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
 	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
 	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE users.id = UserID AND sitepermissions.name IN (SELECT unnest(PermList));
+	WHERE useraccount.id = UserID AND sitepermissions.name IN (SELECT unnest(PermList));
 END;
 $BODY$
 LANGUAGE plpgsql;
@@ -110,24 +110,24 @@ BEGIN
 		grouppermissions.name AS permissions_name
 	FROM equipment
 	LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
-	LEFT JOIN groups ON groups.id = group_equipment.group_id
-	LEFT JOIN grouproles ON grouproles.group_id = groups.id
+	LEFT JOIN sitegroups ON sitegroups.id = group_equipment.group_id
+	LEFT JOIN grouproles ON grouproles.group_id = sitegroups.id
 	LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
-	LEFT JOIN users ON users.id = user_grouproles.user_id
+	LEFT JOIN useraccount ON useraccount.id = user_grouproles.user_id
 	LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
 	LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-	WHERE users.id = UserID AND equipment.id = EquipmentID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
+	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
 	UNION
 	SELECT DISTINCT
 		sitepermissions.name AS permissions_name
 	FROM equipment
 	LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
-	LEFT JOIN users ON users.id = user_equipment.user_id
-	LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+	LEFT JOIN useraccount ON useraccount.id = user_equipment.user_id
+	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
 	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
 	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE users.id = UserID AND equipment.id = EquipmentID AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND sitepermissions.name IN (SELECT unnest(UserPermList))
    	UNION
 	SELECT * FROM retrieve_user_auth_for_public_equipment(UserID, EquipmentID, PublicPermList);
 END;
@@ -166,31 +166,29 @@ BEGIN
 		grouppermissions.name AS permissions_name
 	FROM rooms
 	LEFT JOIN group_rooms ON group_rooms.room_id = rooms.id
-	LEFT JOIN groups ON groups.id = group_rooms.group_id
-	LEFT JOIN grouproles ON grouproles.group_id = groups.id
+	LEFT JOIN sitegroups ON sitegroups.id = group_rooms.group_id
+	LEFT JOIN grouproles ON grouproles.group_id = sitegroups.id
 	LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
-	LEFT JOIN users ON users.id = user_grouproles.user_id
+	LEFT JOIN useraccount ON useraccount.id = user_grouproles.user_id
 	LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
 	LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-	WHERE users.id = UserID AND rooms.id = RoomID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
+	WHERE useraccount.id = UserID AND rooms.id = RoomID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
 	UNION
 	SELECT DISTINCT
 		sitepermissions.name AS permissions_name
 	FROM rooms
 	LEFT JOIN user_rooms ON user_rooms.room_id = rooms.id 
-	LEFT JOIN users ON users.id = user_rooms.user_id
-	LEFT JOIN user_siteroles ON user_siteroles.user_id = users.id 
+	LEFT JOIN useraccount ON useraccount.id = user_rooms.user_id
+	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
 	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
 	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE users.id = UserID AND rooms.id = RoomID AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	WHERE useraccount.id = UserID AND rooms.id = RoomID AND sitepermissions.name IN (SELECT unnest(UserPermList))
    	UNION
 	SELECT * FROM retrieve_user_auth_for_public_room(UserID, RoomID, PublicPermList);
 END;
 $BODY$
 LANGUAGE plpgsql;
-
-
 
 
 
@@ -203,7 +201,7 @@ AS
 $BODY$
 DECLARE
 BEGIN
-	IF (SELECT groups.public FROM groups WHERE groups.id=GroupID) THEN
+	IF (SELECT sitegroups.public FROM sitegroups WHERE sitegroups.id=GroupID) THEN
 		RETURN QUERY SELECT * FROM retrieve_user_public_authorization(UserID, PermList);
 	END IF;
 END;
@@ -222,13 +220,13 @@ DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
 		grouppermissions.name AS permissions_name
-	FROM groups
-	LEFT JOIN grouproles ON grouproles.group_id = groups.id
+	FROM sitegroups
+	LEFT JOIN grouproles ON grouproles.group_id = sitegroups.id
 	LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
-	LEFT JOIN users ON users.id = user_grouproles.user_id
+	LEFT JOIN useraccount ON useraccount.id = user_grouproles.user_id
 	LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
 	LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-	WHERE users.id = UserID AND groups.id = GroupID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
+	WHERE useraccount.id = UserID AND sitegroups.id = GroupID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
 	UNION
 	SELECT * FROM retrieve_user_auth_for_public_group(UserID, GroupID, PublicPermList);
 END;
@@ -236,4 +234,45 @@ $BODY$
 LANGUAGE plpgsql;
 
 
--- TODO: Future will need to handle Public Users, currently the database is not structured appropriately
+-- TODO: Need to validate these functions
+
+-- Filter out Public / Site Wide permissions for user which is not marked as public
+CREATE OR REPLACE FUNCTION retrieve_user_auth_for_public_user (UserID uuid, PermList text[])
+RETURNS TABLE (
+	permissions_name text
+)
+AS 
+$BODY$
+DECLARE
+BEGIN
+	IF (SELECT userprofile.public FROM userprofile WHERE userprofile.id=UserID) THEN
+		RETURN QUERY SELECT * FROM retrieve_user_public_authorization(UserID, PermList);
+	END IF;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+
+-- Retrieve All User Authorizations for a target group
+CREATE OR REPLACE FUNCTION retrieve_user_auth_for_user(UserID uuid, UserPermList text[], PublicPermList text[])
+RETURNS TABLE (
+	permissions_name text
+)
+AS 
+$BODY$
+DECLARE
+BEGIN
+	SELECT DISTINCT
+		sitepermissions.name AS permissions_name
+	FROM userprofile
+	LEFT JOIN useraccount ON useraccount.id = userprofile.account_id
+	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
+	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
+	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
+	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
+	WHERE useraccount.id = UserID AND rooms.id = RoomID AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	UNION
+	SELECT * FROM retrieve_user_auth_for_public_user(UserID, PublicPermList);
+END;
+$BODY$
+LANGUAGE plpgsql;

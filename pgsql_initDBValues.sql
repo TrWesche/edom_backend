@@ -219,12 +219,12 @@ VALUES
 
 
 -- Populate User Types
-INSERT INTO public.usertypes
-    (name)
+INSERT INTO public.subscriptiontypes
+    (name, definition)
 VALUES
-    ('Free'),
-    ('T1 Subscriber'),
-    ('T2 Subscriber'),
-    ('T3 Subscriber'),
-    ('Enterprise'),
-    ('Ubermensch');
+    ('Free', '{"max_equip": 5}'),
+    ('T1 Subscriber', '{"max_equip": 10}'),
+    ('T2 Subscriber', '{"max_equip": 20}'),
+    ('T3 Subscriber', '{"max_equip": 50}'),
+    ('Enterprise', '{"max_equip": 500}'),
+    ('Ubermensch', '{"max_equip": 2000}');
