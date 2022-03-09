@@ -46,17 +46,15 @@ var userRegisterSchema_1 = require("../schemas/user/userRegisterSchema");
 var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
 // Router Imports
 var userRoomRouter_1 = require("./userRouters/userRoomRouter");
-var userEquipRouter_1 = require("./userRouters/userEquipRouter");
 // Model Imports
 var userModel_1 = require("../models/userModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
-var userGroupRouter_1 = require("./userRouters/userGroupRouter");
 var userDMRouter_1 = require("./userRouters/userDMRouter");
 var userRootRouter = express.Router();
-userRootRouter.use("/rooms", userRoomRouter_1["default"]);
-userRootRouter.use("/equips", userEquipRouter_1["default"]);
-userRootRouter.use("/groups", userGroupRouter_1["default"]);
+// userRootRouter.use("/rooms", userRoomRouter);
+// userRootRouter.use("/equips", userEquipRouter);
+// userRootRouter.use("/groups", userGroupRouter);
 userRoomRouter_1["default"].use("/dm", userDMRouter_1["default"]);
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |

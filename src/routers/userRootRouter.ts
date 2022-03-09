@@ -24,9 +24,9 @@ import userDeviceMasterRouter from "./userRouters/userDMRouter";
 
 const userRootRouter = express.Router();
 
-userRootRouter.use("/rooms", userRoomRouter);
-userRootRouter.use("/equips", userEquipRouter);
-userRootRouter.use("/groups", userGroupRouter);
+// userRootRouter.use("/rooms", userRoomRouter);
+// userRootRouter.use("/equips", userEquipRouter);
+// userRootRouter.use("/groups", userGroupRouter);
 userRoomRouter.use("/dm", userDeviceMasterRouter);
 
 /*    _   _   _ _____ _   _ 
@@ -75,12 +75,18 @@ userRootRouter.post("/auth", async (req, res, next) => {
 userRootRouter.post("/register", async (req, res, next) => {
     try {
         const regValues: UserRegisterProps = {
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-            first_name: req.body.first_name,
-            last_name: req.body.last_name
-        }
+            user_account: {
+                password: req.body.password
+            },
+            user_profile: {
+                username: req.body.username,
+            },
+            user_data: {
+                email: req.body.email,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name
+            }
+        };
 
         if(!validateUserRegisterSchema(regValues)) {
             console.log(validateUserRegisterSchema.errors);
@@ -95,13 +101,13 @@ userRootRouter.post("/register", async (req, res, next) => {
             //     [1]   }
             //     [1] ]
             throw new ExpressError(`Username & Password Required: ${validateUserRegisterSchema.errors}`, 400);
-        }
+        };
 
         // Validate username & password combination
         const queryData = await UserModel.register(regValues);
         if (!queryData) {
             throw new ExpressError("Registration Failed", 400);
-        }
+        };
         
         // AuthHandling.generateToken(res, queryData);
         AuthHandling.generateSessionCookies(res, queryData);
@@ -163,11 +169,26 @@ userRootRouter.patch("/update", authMW.defineSitePermissions(['update_user_self'
 
 
         const updateValues: UserUpdateProps = {
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-            first_name: req.body.first_name,
-            last_name: req.body.last_name
+            user_account: {
+                password: req.body.password
+            },
+            user_profile: {
+                username: req.body.username,
+                headline: req.body.headline,
+                about: req.body.about,
+                image_url: req.body.image_url,
+                public: req.body.public
+            },
+            user_data: {
+                email: req.body.email,
+                public_email: req.body.public_email,
+                first_name: req.body.first_name,
+                public_first_name: req.body.public_first_name,
+                last_name: req.body.last_name,
+                public_last_name: req.body.public_last_name,
+                location: req.body.location,
+                public_location: req.body.public_location
+            }
         };
 
         if(!validateUserUpdateSchema(updateValues)) {

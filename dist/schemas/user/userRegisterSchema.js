@@ -5,6 +5,10 @@ var ajv_formats_1 = require("ajv-formats");
 var ajv = new ajv_1["default"]();
 (0, ajv_formats_1["default"])(ajv, ["email", "password"]);
 ;
+;
+;
+;
+;
 var schema = {
     type: "object",
     properties: {

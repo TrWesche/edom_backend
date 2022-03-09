@@ -5,11 +5,12 @@ import ExpressError from "../utils/expresError";
 import UserRepo, { UserObjectProps } from "../repositories/user.repository";
 import TransactionRepo from "../repositories/transactionRepository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
+import { UserAuthProps } from "../schemas/user/userAuthSchema";
 
 /** Standard User Creation & Authentication */
 class UserModel {
   /** Authenticate user with email & password. Returns user or throws error. */
-  static async authenticate(data: UserObjectProps) {
+  static async authenticate(data: UserAuthProps) {
     if (!data.username){
       throw new ExpressError("Invalid Authentication Call", 400)
     }

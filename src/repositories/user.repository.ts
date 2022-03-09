@@ -5,16 +5,37 @@ import pgdb from "../databases/postgreSQL/pgdb";
 
 export interface UserObjectProps {
     id?: string,
-    email?: string,
-    username?: string,
-    first_name?: string,
-    last_name?: string,
-    password?: string,
+    user_account?: UserAccountProps,
+    user_profile?: UserProfileProps,
+    user_data?: UserDataProps
     roles?: Array<UserRolesProps>,
     site_permissions?: Array<string>,
     group_permissions?: Array<string>,
     premissions?: Array<PermissionProps>
 }
+
+interface UserAccountProps {
+    password?: string
+};
+
+interface UserProfileProps {
+    username?: string,
+    headline?: string,
+    about?: string,
+    image_url?: string,
+    public?: boolean
+};
+
+interface UserDataProps {
+    email?: string,
+    public_email?: boolean,
+    first_name?: string,
+    public_first_name?: boolean,
+    last_name?: string,
+    public_last_name?: boolean,
+    location?: string,
+    public_location?: boolean
+};
 
 interface PermissionProps {
     permission_name: string,
