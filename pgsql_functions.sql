@@ -276,3 +276,55 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
+
+
+-- Create New User
+CREATE OR REPLACE FUNCTION create_user_account (
+	_username text, 
+	_password text, 
+	_email text, 
+	_first_name text DEFAULT null, 
+	_last_name text DEFAULT null
+)
+RETURNS TABLE (
+	id uuid,
+	username text
+) 
+AS 
+$BODY$
+DECLARE
+	_id uuid;
+	_userrole_id uuid;
+BEGIN
+	INSERT INTO useraccount
+		("password", "account_status")
+	VALUES
+		(_password, 'active')
+	RETURNING useraccount.id
+	INTO _id;
+	
+	INSERT INTO userdata
+		("account_id", "email", "public_email", "first_name", "public_first_name", "last_name", "public_last_name")
+	VALUES
+		(_id, _email, FALSE, _first_name, FALSE, _last_name, FALSE);
+		
+	INSERT INTO userprofile
+		("account_id", "username")
+	VALUES
+		(_id, _username);
+		
+	SELECT siteroles.id INTO _userrole_id FROM siteroles WHERE name = 'user';
+	
+	INSERT INTO user_siteroles
+		(user_id, siterole_id)
+	VALUES
+		(_id, _userrole_id);
+	
+	RETURN QUERY SELECT 
+		useraccount.id AS id, 
+		userprofile.username AS username 
+	FROM useraccount 
+	LEFT JOIN userprofile on useraccount.id = userprofile.account_id;
+END;
+$BODY$
+LANGUAGE plpgsql;

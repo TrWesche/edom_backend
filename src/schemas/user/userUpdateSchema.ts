@@ -1,3 +1,6 @@
+/**
+ * The UserUpdateSchema provides the ability to update all values associated with a user account.
+ */
 import Ajv, {JSONSchemaType} from "ajv";
 import addFormats from "ajv-formats";
 

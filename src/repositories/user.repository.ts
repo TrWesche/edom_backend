@@ -40,11 +40,11 @@ interface UserDataProps {
 interface PermissionProps {
     permission_name: string,
     context: string
-}
+};
 
 interface UserRolesProps {
     name?: string | undefined
-}
+};
 
 
 class UserRepo {
