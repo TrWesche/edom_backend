@@ -65,6 +65,7 @@ interface UserRolesProps {
     name?: string | undefined
 };
 
+type fetchType = "unique" | "auth" | "profile" | "account"
 
 class UserRepo {
     static async create_new_user(userData: UserRegisterProps) {
@@ -98,23 +99,72 @@ class UserRepo {
         }
     };
 
-    static async fetch_user_by_user_email(userEmail: string, authenticate?: boolean) {
+    static async fetch_user_by_user_email(userEmail: string, fetchType?: fetchType) {
         try {
             let query: string;
-            if (authenticate === true) {
-                query = `
-                    SELECT
+            switch (fetchType) {
+                case 'unique': 
+                    query = `
+                        SELECT email
+                        FROM userdata
+                        WHERE email ILIKE $1`;
+                    break;
+                case 'auth':
+                    query = `SELECT
                         userdata.account_id AS id,
                         userdata.email AS email,
                         useraccount.password AS password
                     FROM userdata
                     LEFT JOIN useraccount ON useraccount.id = userdata.account_id
                     WHERE email ILIKE $1`;
-            } else {
-                query = `
-                    SELECT email
-                    FROM userdata
-                    WHERE email ILIKE $1`
+                    break;
+                case 'profile':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        userprofile.headline AS headline,
+                        userprofile.about AS about,
+                        userprofile.image_url AS image_url,
+                        userprofile.public AS public_profile,
+                        userdata.email AS email,
+                        userdata.public_email AS public_email,
+                        userdata.first_name AS first_name,
+                        userdata.public_first_name AS public_first_name,
+                        userdata.last_name AS last_name,
+                        userdata.public_last_name AS public_last_name,
+                        userdata.location AS location,
+                        userdata.public_location AS public_location
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    WHERE email ILIKE $1`;
+                case 'account':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        userprofile.headline AS headline,
+                        userprofile.about AS about,
+                        userprofile.image_url AS image_url,
+                        userprofile.public AS public_profile,
+                        userdata.email AS email,
+                        userdata.public_email AS public_email,
+                        userdata.first_name AS first_name,
+                        userdata.public_first_name AS public_first_name,
+                        userdata.last_name AS last_name,
+                        userdata.public_last_name AS public_last_name,
+                        userdata.location AS location,
+                        userdata.public_location AS public_location
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    WHERE email ILIKE $1`;
+                    break;
+                default:
+                    query = `
+                        SELECT email
+                        FROM userdata
+                        WHERE email ILIKE $1`;
+                    break;
             };
 
             const result = await pgdb.query(
@@ -125,27 +175,88 @@ class UserRepo {
             const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
+            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
         };
     };
     
 
-    static async fetch_user_by_username(username: string) {
+    static async fetch_user_by_username(username: string, fetchType?: fetchType) {
         try {
+            let query: string;
+            switch (fetchType) {
+                case 'unique': 
+                    query = `
+                        SELECT username
+                        FROM userprofile
+                        WHERE username ILIKE $1`;
+                    break;
+                case 'auth':
+                    query = `SELECT
+                        userprofile.account_id AS id,
+                        userprofile.username AS username,
+                        useraccount.password AS password
+                    FROM userprofile
+                    LEFT JOIN useraccount ON useraccount.id = userprofile.account_id
+                    WHERE username ILIKE $1`;
+                    break;
+                case 'profile':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        userprofile.headline AS headline,
+                        userprofile.about AS about,
+                        userprofile.image_url AS image_url,
+                        userprofile.public AS public_profile,
+                        userdata.email AS email,
+                        userdata.public_email AS public_email,
+                        userdata.first_name AS first_name,
+                        userdata.public_first_name AS public_first_name,
+                        userdata.last_name AS last_name,
+                        userdata.public_last_name AS public_last_name,
+                        userdata.location AS location,
+                        userdata.public_location AS public_location
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    WHERE username ILIKE $1`;
+                case 'account':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        userprofile.headline AS headline,
+                        userprofile.about AS about,
+                        userprofile.image_url AS image_url,
+                        userprofile.public AS public_profile,
+                        userdata.email AS email,
+                        userdata.public_email AS public_email,
+                        userdata.first_name AS first_name,
+                        userdata.public_first_name AS public_first_name,
+                        userdata.last_name AS last_name,
+                        userdata.public_last_name AS public_last_name,
+                        userdata.location AS location,
+                        userdata.public_location AS public_location
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    WHERE username ILIKE $1`;
+                    break;
+                default:
+                    query = `
+                        SELECT username
+                        FROM userprofile
+                        WHERE username ILIKE $1`;
+                    break;
+            };
+
             const result = await pgdb.query(
-                `SELECT id, 
-                        email, 
-                        username,
-                        password
-                  FROM users 
-                  WHERE username ILIKE $1`,
-                  [username]
+                query,
+                [username]
             );
     
-            const rval: UserObjectProps | undefined = result.rows[0];
+            const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
+            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
         };
     };
 
