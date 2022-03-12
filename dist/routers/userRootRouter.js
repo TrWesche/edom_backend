@@ -107,9 +107,9 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 regValues = {
+                    password: req.body.password,
                     username: req.body.username,
                     email: req.body.email,
-                    password: req.body.password,
                     first_name: req.body.first_name,
                     last_name: req.body.last_name
                 };
@@ -127,12 +127,14 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
                     //     [1] ]
                     throw new expresError_1["default"]("Username & Password Required: ".concat(userRegisterSchema_1["default"].errors), 400);
                 }
+                ;
                 return [4 /*yield*/, userModel_1["default"].register(regValues)];
             case 1:
                 queryData = _a.sent();
                 if (!queryData) {
                     throw new expresError_1["default"]("Registration Failed", 400);
                 }
+                ;
                 // AuthHandling.generateToken(res, queryData);
                 authHandling_1["default"].generateSessionCookies(res, queryData);
                 return [2 /*return*/, res.json({ "message": "Registration Success!" })];
@@ -217,11 +219,26 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissio
                 }
                 ;
                 updateValues_1 = {
-                    username: req.body.username,
-                    email: req.body.email,
-                    password: req.body.password,
-                    first_name: req.body.first_name,
-                    last_name: req.body.last_name
+                    user_account: {
+                        password: req.body.password
+                    },
+                    user_profile: {
+                        username: req.body.username,
+                        headline: req.body.headline,
+                        about: req.body.about,
+                        image_url: req.body.image_url,
+                        public: req.body.public
+                    },
+                    user_data: {
+                        email: req.body.email,
+                        public_email: req.body.public_email,
+                        first_name: req.body.first_name,
+                        public_first_name: req.body.public_first_name,
+                        last_name: req.body.last_name,
+                        public_last_name: req.body.public_last_name,
+                        location: req.body.location,
+                        public_location: req.body.public_location
+                    }
                 };
                 if (!(0, userUpdateSchema_1["default"])(updateValues_1)) {
                     throw new expresError_1["default"]("Update Error: ".concat(userUpdateSchema_1["default"].errors), 400);

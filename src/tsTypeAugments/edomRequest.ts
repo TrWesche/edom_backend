@@ -4,7 +4,7 @@ import { UserObjectProps } from "../repositories/user.repository";
 
 declare module 'express-serve-static-core' {
     interface Request {
-      user?: UserObjectProps
+      user?: UserSessionProps
       groupID?: string
       // sitePermissions?: Array<any>
       // groupPermissions?: Array<any>
@@ -16,3 +16,11 @@ declare module 'express-serve-static-core' {
     //   myField?: string
     // }
 }
+
+interface UserSessionProps {
+  id?: string,
+  session_id?: string,
+  site_permissions?: Array<string>,
+  group_permissions?: Array<string>,
+  premissions?: Array<Object>
+};

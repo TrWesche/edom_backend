@@ -1,13 +1,14 @@
 "use strict";
 exports.__esModule = true;
+/**
+ * The UserRegisterSchema validates inputs sent during the user registration process.  The user is required to provide a unique username,
+ * email address, and password for their account.  The register stop additionally provides the opportunity to enter a first and last
+ * name which will be associated with the account.  Other user information will be collected separately from registration.
+ */
 var ajv_1 = require("ajv");
 var ajv_formats_1 = require("ajv-formats");
 var ajv = new ajv_1["default"]();
 (0, ajv_formats_1["default"])(ajv, ["email", "password"]);
-;
-;
-;
-;
 ;
 var schema = {
     type: "object",

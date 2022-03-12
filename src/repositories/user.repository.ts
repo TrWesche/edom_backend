@@ -71,22 +71,34 @@ type fetchType = "unique" | "auth" | "profile" | "account"
 class UserRepo {
     static async create_new_user(userData: UserRegisterProps) {
         try {
-            const idxValues: Array<string> = [];
-            const insertValues: Array<any> = [];
+            // const idxValues: Array<string> = [];
+            // const insertValues: Array<any> = [];
 
-            let idx = 1;
-            for (const key in userData) {
-                if (userData[key]) {
-                    idxValues.push(`$${idx}`);
-                    insertValues.push(userData[key]);
+            // let idx = 1;
+            // for (const key in userData) {
+            //     if (userData[key]) {
+            //         idxValues.push(`$${idx}`);
+            //         insertValues.push(userData[key]);
 
-                    idx++;
-                }
-            };
+            //         idx++;
+            //     }
+            // };
 
+            // const query = `
+            //     SELECT * FROM create_user_account(${idxValues.join(",")})
+            // `
             const query = `
-                SELECT * FROM create_user_account(${idxValues.join(",")})
-            `
+                SELECT * FROM create_user_account($1, $2, $3, $4, $5)
+            `;
+
+            const insertValues = [
+                userData.username,
+                userData.password,
+                userData.email,
+                userData.first_name ? userData.first_name : "",
+                userData.last_name ? userData.last_name : ""
+            ];
+
 
             const result = await pgdb.query(
                 query,
@@ -343,42 +355,80 @@ class UserRepo {
     };
     
 
-    static async update_user_auth_by_user_id(userID: string, password: string) {
-        try {
-            const query = `
-                UPDATE useraccount
-                SET password = $1
-                WHERE id = $2
-                RETURNING useraccount.id`;
+    // static async update_user_auth_by_user_id(userID: string, password: string) {
+    //     try {
+    //         const query = `
+    //             UPDATE useraccount
+    //             SET password = $1
+    //             WHERE id = $2
+    //             RETURNING useraccount.id`;
 
-            const result = await pgdb.query(
-                query,
-                [password, userID]
-            );
+    //         const result = await pgdb.query(
+    //             query,
+    //             [password, userID]
+    //         );
     
-            const rval: UserDataProps | undefined = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
-        }
-    };
+    //         const rval: UserDataProps | undefined = result.rows[0];
+    //         return true;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
+    //     }
+    // };
 
     static async update_user_by_user_id(userID: string, userData: UserUpdateProps) {
         try {
+            let updateSuccess = true;
 
-            // Parital Update: table name, payload data, lookup column name, lookup key
-            let {query, values} = createUpdateQueryPGSQL(
-                "users",
-                userData,
-                "id",
-                userID
-            );
+            await pgdb.query("BEGIN");
 
-            const result = await pgdb.query(query, values);
+            // Password Update
+            if (userData.user_account) {
+                // Parital Update: table name, payload data, lookup column name, lookup key
+                const {query, values} = createUpdateQueryPGSQL(
+                    "useraccount",
+                    userData.user_account,
+                    "id",
+                    userID
+                );
 
-            const rval: UserObjectProps | undefined = result.rows[0];
-            return rval;
+                const result = await pgdb.query(query, values);
+                updateSuccess = updateSuccess && (result.rowCount != 0);
+            };
+
+            // User Data Update
+            if (userData.user_data) {
+                // Parital Update: table name, payload data, lookup column name, lookup key
+                const {query, values} = createUpdateQueryPGSQL(
+                    "userdata",
+                    userData.user_data,
+                    "id",
+                    userID
+                );
+
+                const result = await pgdb.query(query, values);
+                updateSuccess = updateSuccess && (result.rowCount != 0);
+            };
+
+
+            // User Profile Update
+            if (userData.user_profile) {
+                // Parital Update: table name, payload data, lookup column name, lookup key
+                const {query, values} = createUpdateQueryPGSQL(
+                    "userprofile",
+                    userData.user_profile,
+                    "id",
+                    userID
+                );
+
+                const result = await pgdb.query(query, values);
+                updateSuccess = updateSuccess && (result.rowCount != 0);
+            };
+
+            await pgdb.query("COMMIT");
+
+            return updateSuccess;
         } catch (error) {
+            await pgdb.query("ROLLBACK");
             throw new ExpressError(`An Error Occured: Unable to update user - ${error}`, 500);
         }
     };

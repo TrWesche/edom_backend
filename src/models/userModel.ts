@@ -115,13 +115,12 @@ class UserModel {
     }
 
     // Perform User Update
-    const user = await UserRepo.update_user_by_user_id(id, data);
-    if (!user) {
+    const updateSuccess = await UserRepo.update_user_by_user_id(id, data);
+    if (!updateSuccess) {
       throw new ExpressError("Unable to update target user", 400);
-    }
+    };
 
-    // Cleanse Return Data
-    delete user.user_data?.password;
+    const user = await UserRepo.fetch_user_by_user_id(id, 'account');
     return user;
   }
 

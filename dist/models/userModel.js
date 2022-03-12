@@ -49,47 +49,29 @@ var UserModel = /** @class */ (function () {
     /** Authenticate user with email & password. Returns user or throws error. */
     UserModel.authenticate = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var user, isValid, siteRole, permissionAssignment;
+            var user, isValid;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!data.username) {
                             throw new expresError_1["default"]("Invalid Authentication Call", 400);
                         }
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
+                        ;
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username, 'auth')];
                     case 1:
                         user = _a.sent();
-                        if (!(user && user.password && data.password)) return [3 /*break*/, 10];
+                        if (!(user && user.password && data.password)) return [3 /*break*/, 3];
                         return [4 /*yield*/, bcrypt.compare(data.password, user.password)];
                     case 2:
                         isValid = _a.sent();
-                        if (!isValid) return [3 /*break*/, 10];
-                        delete user.password;
-                        delete user.email;
-                        return [4 /*yield*/, sitePermissions_repository_1["default"].fetch_role_by_role_name('user')];
+                        if (isValid) {
+                            delete user.password;
+                            return [2 /*return*/, user];
+                        }
+                        _a.label = 3;
                     case 3:
-                        siteRole = _a.sent();
-                        if (!((siteRole === null || siteRole === void 0 ? void 0 : siteRole.id) && user.id)) return [3 /*break*/, 8];
-                        return [4 /*yield*/, sitePermissions_repository_1["default"].create_user_site_role(user.id, siteRole.id)];
-                    case 4:
-                        permissionAssignment = _a.sent();
-                        if (!(permissionAssignment.length > 0)) return [3 /*break*/, 6];
-                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 5:
-                        _a.sent();
-                        if (user.roles) {
-                            user.roles.push({ name: siteRole.name });
-                        }
-                        else {
-                            user.roles = [{ name: siteRole.name }];
-                        }
                         ;
-                        return [3 /*break*/, 7];
-                    case 6: throw new expresError_1["default"]("Error encountered while assigning user role", 400);
-                    case 7: return [3 /*break*/, 9];
-                    case 8: throw new expresError_1["default"]("Error encountered while retrieving role information", 400);
-                    case 9: return [2 /*return*/, user];
-                    case 10: throw new expresError_1["default"]("Invalid Credentials", 401);
+                        throw new expresError_1["default"]("Invalid Credentials", 401);
                 }
             });
         });
@@ -97,21 +79,21 @@ var UserModel = /** @class */ (function () {
     /** Register user with data. Returns new user data. */
     UserModel.register = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var emailCheck, usernameCheck, hashedPassword, user, siteRole, permissionAssignment, error_1;
+            var emailCheck, usernameCheck, hashedPassword, user, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!data.username || !data.email || !data.password) {
                             throw new expresError_1["default"]("Invalid Register Call", 400);
                         }
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email(data.email)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email(data.email, 'unique')];
                     case 1:
                         emailCheck = _a.sent();
                         if (emailCheck) {
                             throw new expresError_1["default"]("An account is already registered with that email", 400);
                         }
                         ;
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username, 'unique')];
                     case 2:
                         usernameCheck = _a.sent();
                         if (usernameCheck) {
@@ -119,48 +101,19 @@ var UserModel = /** @class */ (function () {
                         }
                         _a.label = 3;
                     case 3:
-                        _a.trys.push([3, 14, , 16]);
-                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
-                    case 4:
-                        _a.sent();
+                        _a.trys.push([3, 6, , 7]);
                         return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
-                    case 5:
+                    case 4:
                         hashedPassword = _a.sent();
                         data.password = hashedPassword;
-                        return [4 /*yield*/, user_repository_1["default"].create_new_user(data, hashedPassword)];
-                    case 6:
+                        return [4 /*yield*/, user_repository_1["default"].create_new_user(data)];
+                    case 5:
                         user = _a.sent();
-                        if (!user) return [3 /*break*/, 13];
-                        return [4 /*yield*/, sitePermissions_repository_1["default"].fetch_role_by_role_name('user')];
-                    case 7:
-                        siteRole = _a.sent();
-                        if (!((siteRole === null || siteRole === void 0 ? void 0 : siteRole.id) && user.id)) return [3 /*break*/, 12];
-                        return [4 /*yield*/, sitePermissions_repository_1["default"].create_user_site_role(user.id, siteRole.id)];
-                    case 8:
-                        permissionAssignment = _a.sent();
-                        if (!(permissionAssignment.length > 0)) return [3 /*break*/, 10];
-                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 9:
-                        _a.sent();
-                        if (user.roles) {
-                            user.roles.push({ name: siteRole.name });
-                        }
-                        else {
-                            user.roles = [{ name: siteRole.name }];
-                        }
-                        ;
-                        return [3 /*break*/, 11];
-                    case 10: throw new expresError_1["default"]("Error encountered while assigning user role", 400);
-                    case 11: return [3 /*break*/, 13];
-                    case 12: throw new expresError_1["default"]("Error encountered while retrieving role information", 400);
-                    case 13: return [2 /*return*/, user];
-                    case 14:
+                        return [2 /*return*/, user];
+                    case 6:
                         error_1 = _a.sent();
-                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 15:
-                        _a.sent();
                         throw new expresError_1["default"](error_1.message, 400);
-                    case 16: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -175,7 +128,7 @@ var UserModel = /** @class */ (function () {
                         if (!id) {
                             throw new expresError_1["default"]("Error: User ID not provided", 400);
                         }
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id, 'profile')];
                     case 1:
                         user = _a.sent();
                         if (!user) {
@@ -195,7 +148,7 @@ var UserModel = /** @class */ (function () {
                         if (!username) {
                             throw new expresError_1["default"]("Error: Username not provided", 400);
                         }
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(username)];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(username, 'profile')];
                     case 1:
                         user = _a.sent();
                         if (!user) {
@@ -211,49 +164,51 @@ var UserModel = /** @class */ (function () {
     };
     /** Update user data with `data` */
     UserModel.modify_user = function (id, data) {
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, duplicateCheck, duplicateCheck, user;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var _f, duplicateCheck, duplicateCheck, updateSuccess, user;
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
                         if (!id) {
                             throw new expresError_1["default"]("Error: User ID not provided", 400);
                         }
-                        if (!data.password) return [3 /*break*/, 2];
-                        console.log("Changing Password");
-                        _a = data;
-                        return [4 /*yield*/, bcrypt.hash(data.password, config_1.bcrypt_work_factor)];
+                        if (!((_a = data.user_account) === null || _a === void 0 ? void 0 : _a.password)) return [3 /*break*/, 2];
+                        _f = data.user_account;
+                        return [4 /*yield*/, bcrypt.hash(data.user_account.password, config_1.bcrypt_work_factor)];
                     case 1:
-                        _a.password = _b.sent();
-                        _b.label = 2;
+                        _f.password = _g.sent();
+                        _g.label = 2;
                     case 2:
-                        if (!data.email) return [3 /*break*/, 4];
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email(data.email)];
+                        if (!((_b = data.user_data) === null || _b === void 0 ? void 0 : _b.email)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email((_c = data.user_data) === null || _c === void 0 ? void 0 : _c.email)];
                     case 3:
-                        duplicateCheck = _b.sent();
+                        duplicateCheck = _g.sent();
                         if (duplicateCheck && duplicateCheck.id !== id) {
                             throw new expresError_1["default"]("A user already exists with that email", 400);
                         }
                         ;
-                        _b.label = 4;
+                        _g.label = 4;
                     case 4:
-                        if (!data.username) return [3 /*break*/, 6];
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username(data.username)];
+                        if (!((_d = data.user_profile) === null || _d === void 0 ? void 0 : _d.username)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username((_e = data.user_profile) === null || _e === void 0 ? void 0 : _e.username)];
                     case 5:
-                        duplicateCheck = _b.sent();
+                        duplicateCheck = _g.sent();
                         if (duplicateCheck && duplicateCheck.id !== id) {
                             throw new expresError_1["default"]("A user already exists with that username", 400);
                         }
                         ;
-                        _b.label = 6;
+                        _g.label = 6;
                     case 6: return [4 /*yield*/, user_repository_1["default"].update_user_by_user_id(id, data)];
                     case 7:
-                        user = _b.sent();
-                        if (!user) {
+                        updateSuccess = _g.sent();
+                        if (!updateSuccess) {
                             throw new expresError_1["default"]("Unable to update target user", 400);
                         }
-                        // Cleanse Return Data
-                        delete user.password;
+                        ;
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id, 'account')];
+                    case 8:
+                        user = _g.sent();
                         return [2 /*return*/, user];
                 }
             });

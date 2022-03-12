@@ -64,10 +64,10 @@ app.use(session({
 }))
 // app.use(authMW.loadUserPermissions);
 
-app.use("/v1/equips", authMW.loadSitePermissions, equipRootRouter);
-app.use("/v1/rooms", authMW.loadSitePermissions, roomRootRouter);
-app.use("/v1/users", authMW.loadSitePermissions, userRootRouter);
-app.use("/v1/groups", authMW.loadSitePermissions, groupRootRouter);
+app.use("/v1/equip", authMW.loadSitePermissions, equipRootRouter);
+app.use("/v1/room", authMW.loadSitePermissions, roomRootRouter);
+app.use("/v1/user", authMW.loadSitePermissions, userRootRouter);
+app.use("/v1/group", authMW.loadSitePermissions, groupRootRouter);
 
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);
