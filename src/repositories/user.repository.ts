@@ -98,19 +98,31 @@ class UserRepo {
         }
     };
 
-    static async fetch_user_by_user_email(userEmail: string) {
+    static async fetch_user_by_user_email(userEmail: string, authenticate?: boolean) {
         try {
+            let query: string;
+            if (authenticate === true) {
+                query = `
+                    SELECT
+                        userdata.account_id AS id,
+                        userdata.email AS email,
+                        useraccount.password AS password
+                    FROM userdata
+                    LEFT JOIN useraccount ON useraccount.id = userdata.account_id
+                    WHERE email ILIKE $1`;
+            } else {
+                query = `
+                    SELECT email
+                    FROM userdata
+                    WHERE email ILIKE $1`
+            };
+
             const result = await pgdb.query(
-                `SELECT id, 
-                        email, 
-                        username,
-                        password
-                  FROM users 
-                  WHERE email ILIKE $1`,
-                  [userEmail]
+                query,
+                [userEmail]
             );
     
-            const rval: UserObjectProps | undefined = result.rows[0];
+            const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
