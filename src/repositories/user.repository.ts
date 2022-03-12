@@ -343,9 +343,28 @@ class UserRepo {
     };
     
 
+    static async update_user_auth_by_user_id(userID: string, password: string) {
+        try {
+            const query = `
+                UPDATE useraccount
+                SET password = $1
+                WHERE id = $2
+                RETURNING useraccount.id`;
+
+            const result = await pgdb.query(
+                query,
+                [password, userID]
+            );
+    
+            const rval: UserDataProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
+        }
+    };
+
     static async update_user_by_user_id(userID: string, userData: UserUpdateProps) {
         try {
-            
 
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
