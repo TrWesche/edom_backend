@@ -2,6 +2,7 @@ import ExpressError from "../utils/expresError";
 import createUpdateQueryPGSQL from "../utils/createUpdateQueryPGSQL";
 import pgdb from "../databases/postgreSQL/pgdb";
 import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
+import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
 
 
 export interface UserObjectProps {
@@ -342,8 +343,10 @@ class UserRepo {
     };
     
 
-    static async update_user_by_user_id(userID: string, userData: UserObjectProps) {
+    static async update_user_by_user_id(userID: string, userData: UserUpdateProps) {
         try {
+            
+
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
                 "users",

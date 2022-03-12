@@ -7,6 +7,7 @@ import TransactionRepo from "../repositories/transactionRepository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 import { UserAuthProps } from "../schemas/user/userAuthSchema";
 import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
+import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
 
 /** Standard User Creation & Authentication */
 class UserModel {
@@ -16,13 +17,12 @@ class UserModel {
       throw new ExpressError("Invalid Authentication Call", 400)
     };
 
-    const user = await UserRepo.fetch_user_by_username(data.username);
+    const user = await UserRepo.fetch_user_by_username(data.username, 'auth');
 
-    if (user && user.user_account?.password && data.password) {
-      const isValid = await bcrypt.compare(data.password, user.user_account.password);
+    if (user && user.password && data.password) {
+      const isValid = await bcrypt.compare(data.password, user.password);
       if (isValid) {
-        delete user.user_account;
-
+        delete user.password;
         return user;
       }
     };
@@ -36,12 +36,12 @@ class UserModel {
       throw new ExpressError("Invalid Register Call", 400)
     }
 
-    const emailCheck = await UserRepo.fetch_user_by_user_email(data.email);
+    const emailCheck = await UserRepo.fetch_user_by_user_email(data.email, 'unique');
     if (emailCheck) {
       throw new ExpressError("An account is already registered with that email", 400);
     };
 
-    const usernameCheck = await UserRepo.fetch_user_by_username(data.username);
+    const usernameCheck = await UserRepo.fetch_user_by_username(data.username, 'unique');
     if (usernameCheck) {
       throw new ExpressError("That username has already been taken", 400);
     }
@@ -62,7 +62,7 @@ class UserModel {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
     }
-    const user = await UserRepo.fetch_user_by_user_id(id);
+    const user = await UserRepo.fetch_user_by_user_id(id, 'profile');
 
     if (!user) {
       throw new ExpressError("Unable to locate target user", 404);
@@ -75,7 +75,7 @@ class UserModel {
       throw new ExpressError("Error: Username not provided", 400);
     }
 
-    const user = await UserRepo.fetch_user_by_username(username);
+    const user = await UserRepo.fetch_user_by_username(username, 'profile');
 
     if (!user) {
       throw new ExpressError("Unable to locate target user", 404);
@@ -88,28 +88,27 @@ class UserModel {
   }
 
   /** Update user data with `data` */
-  static async modify_user(id: string | undefined, data: UserObjectProps) {
+  static async modify_user(id: string | undefined, data: UserUpdateProps) {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
     }
     
     // Handle Password Change
-    if (data.password) {
-      console.log("Changing Password");
-      data.password = await bcrypt.hash(data.password, bcrypt_work_factor);
+    if (data.user_account?.password) {
+      data.user_account.password = await bcrypt.hash(data.user_account.password, bcrypt_work_factor);
     }
 
     // Handle Email Change
-    if (data.email) {
-      const duplicateCheck = await UserRepo.fetch_user_by_user_email(data.email);
+    if (data.user_data?.email) {
+      const duplicateCheck = await UserRepo.fetch_user_by_user_email(data.user_data?.email);
       if (duplicateCheck && duplicateCheck.id !== id) {
         throw new ExpressError("A user already exists with that email", 400);
       };
     }
 
     // Handle Username Change
-    if (data.username) {
-      const duplicateCheck = await UserRepo.fetch_user_by_username(data.username);
+    if (data.user_profile?.username) {
+      const duplicateCheck = await UserRepo.fetch_user_by_username(data.user_profile?.username);
       if (duplicateCheck && duplicateCheck.id !== id) {
         throw new ExpressError("A user already exists with that username", 400);
       };
@@ -122,7 +121,7 @@ class UserModel {
     }
 
     // Cleanse Return Data
-    delete user.password;
+    delete user.user_data?.password;
     return user;
   }
 
