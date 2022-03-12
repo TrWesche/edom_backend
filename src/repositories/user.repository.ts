@@ -1,41 +1,60 @@
 import ExpressError from "../utils/expresError";
 import createUpdateQueryPGSQL from "../utils/createUpdateQueryPGSQL";
 import pgdb from "../databases/postgreSQL/pgdb";
+import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 
 
 export interface UserObjectProps {
-    id?: string,
-    user_account?: UserAccountProps,
-    user_profile?: UserProfileProps,
+    // id?: string,
+    // user_account?: UserAccountProps,
+    // user_profile?: UserProfileProps,
     user_data?: UserDataProps
     roles?: Array<UserRolesProps>,
     site_permissions?: Array<string>,
     group_permissions?: Array<string>,
     premissions?: Array<PermissionProps>
-}
-
-interface UserAccountProps {
-    password?: string
 };
 
-interface UserProfileProps {
+interface UserDataProps {
+    id?: string,
+    password?: string,
     username?: string,
     headline?: string,
     about?: string,
     image_url?: string,
-    public?: boolean
+    email?: string,
+    first_name?: string,
+    last_name?: string,
+    location?: string,
+    public_profile?: boolean,
+    public_email?: boolean,
+    public_first_name?: boolean,
+    public_last_name?: boolean,
+    public_location?: boolean  
 };
 
-interface UserDataProps {
-    email?: string,
-    public_email?: boolean,
-    first_name?: string,
-    public_first_name?: boolean,
-    last_name?: string,
-    public_last_name?: boolean,
-    location?: string,
-    public_location?: boolean
-};
+// interface UserAccountProps {
+//     password?: string
+// };
+
+// interface UserProfileProps {
+//     username?: string,
+//     headline?: string,
+//     about?: string,
+//     image_url?: string,
+//     public?: boolean
+// };
+
+// interface UserDataProps {
+//     email?: string,
+//     public_email?: boolean,
+//     first_name?: string,
+//     public_first_name?: boolean,
+//     last_name?: string,
+//     public_last_name?: boolean,
+//     location?: string,
+//     public_location?: boolean
+// };
 
 interface PermissionProps {
     permission_name: string,
@@ -48,16 +67,14 @@ interface UserRolesProps {
 
 
 class UserRepo {
-    static async create_new_user(userData: UserObjectProps, hashedPassword: string) {
+    static async create_new_user(userData: UserRegisterProps) {
         try {
-            const targetColumns: Array<string> = [];
             const idxValues: Array<string> = [];
             const insertValues: Array<any> = [];
 
             let idx = 1;
             for (const key in userData) {
                 if (userData[key]) {
-                    targetColumns.push(key);
                     idxValues.push(`$${idx}`);
                     insertValues.push(userData[key]);
 
@@ -66,24 +83,20 @@ class UserRepo {
             };
 
             const query = `
-                INSERT INTO users 
-                    (${targetColumns.join(", ")}) 
-                VALUES (${idxValues.join(", ")}) 
-                RETURNING id, email, username
-            `;
+                SELECT * FROM create_user_account(${idxValues.join(",")})
+            `
 
             const result = await pgdb.query(
                 query,
                 insertValues
             );
-            
-            const rval: UserObjectProps | undefined = result.rows[0];
+
+            const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create new user - ${error}`, 500);
         }
     };
-    
 
     static async fetch_user_by_user_email(userEmail: string) {
         try {

@@ -75,17 +75,11 @@ userRootRouter.post("/auth", async (req, res, next) => {
 userRootRouter.post("/register", async (req, res, next) => {
     try {
         const regValues: UserRegisterProps = {
-            user_account: {
-                password: req.body.password
-            },
-            user_profile: {
-                username: req.body.username,
-            },
-            user_data: {
-                email: req.body.email,
-                first_name: req.body.first_name,
-                last_name: req.body.last_name
-            }
+            password: req.body.password,
+            username: req.body.username,
+            email: req.body.email,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name
         };
 
         if(!validateUserRegisterSchema(regValues)) {

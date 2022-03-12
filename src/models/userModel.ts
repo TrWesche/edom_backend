@@ -6,6 +6,7 @@ import UserRepo, { UserObjectProps } from "../repositories/user.repository";
 import TransactionRepo from "../repositories/transactionRepository";
 import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 import { UserAuthProps } from "../schemas/user/userAuthSchema";
+import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 
 /** Standard User Creation & Authentication */
 class UserModel {
@@ -13,45 +14,24 @@ class UserModel {
   static async authenticate(data: UserAuthProps) {
     if (!data.username){
       throw new ExpressError("Invalid Authentication Call", 400)
-    }
+    };
 
     const user = await UserRepo.fetch_user_by_username(data.username);
 
-    if (user && user.password && data.password) {
-      // compare hashed password to a new hash from password
-      const isValid = await bcrypt.compare(data.password, user.password);
+    if (user && user.user_account?.password && data.password) {
+      const isValid = await bcrypt.compare(data.password, user.user_account.password);
       if (isValid) {
-        delete user.password;
-        delete user.email;
-
-        const siteRole = await SitePermissionsRepo.fetch_role_by_role_name('user');
-        if (siteRole?.id && user.id) {
-          const permissionAssignment = await SitePermissionsRepo.create_user_site_role(user.id, siteRole.id);
-
-          if (permissionAssignment.length > 0) {
-            await TransactionRepo.commit_transaction();
-            if (user.roles) {
-              user.roles.push({name: siteRole.name});
-            } else {
-              user.roles = [{name: siteRole.name}]
-            };
-          } else {
-            throw new ExpressError("Error encountered while assigning user role", 400);
-          }
-
-        } else {
-          throw new ExpressError("Error encountered while retrieving role information", 400);
-        }
+        delete user.user_account;
 
         return user;
       }
-    }
+    };
 
     throw new ExpressError("Invalid Credentials", 401);
   }
 
   /** Register user with data. Returns new user data. */
-  static async register(data: UserObjectProps) {
+  static async register(data: UserRegisterProps) {
     if (!data.username || !data.email || !data.password){
       throw new ExpressError("Invalid Register Call", 400)
     }
@@ -67,36 +47,12 @@ class UserModel {
     }
 
     try {
-      await TransactionRepo.begin_transaction()
-
       const hashedPassword = await bcrypt.hash(data.password, bcrypt_work_factor);
       data.password = hashedPassword;
-      const user = await UserRepo.create_new_user(data, hashedPassword);
-
-      if (user) {
-        const siteRole = await SitePermissionsRepo.fetch_role_by_role_name('user');
-        if (siteRole?.id && user.id) {
-          const permissionAssignment = await SitePermissionsRepo.create_user_site_role(user.id, siteRole.id);
-
-          if (permissionAssignment.length > 0) {
-            await TransactionRepo.commit_transaction();
-            if (user.roles) {
-              user.roles.push({name: siteRole.name});
-            } else {
-              user.roles = [{name: siteRole.name}]
-            };
-          } else {
-            throw new ExpressError("Error encountered while assigning user role", 400);
-          }
-
-        } else {
-          throw new ExpressError("Error encountered while retrieving role information", 400);
-        }
-      }
+      const user = await UserRepo.create_new_user(data);
   
       return user;  
     } catch (error) {
-      await TransactionRepo.rollback_transaction();
       throw new ExpressError(error.message , 400);
     }
   }
