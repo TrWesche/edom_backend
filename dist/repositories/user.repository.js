@@ -198,23 +198,6 @@ var UserRepo = /** @class */ (function () {
         });
     };
     ;
-    // static async update_user_auth_by_user_id(userID: string, password: string) {
-    //     try {
-    //         const query = `
-    //             UPDATE useraccount
-    //             SET password = $1
-    //             WHERE id = $2
-    //             RETURNING useraccount.id`;
-    //         const result = await pgdb.query(
-    //             query,
-    //             [password, userID]
-    //         );
-    //         const rval: UserDataProps | undefined = result.rows[0];
-    //         return true;
-    //     } catch (error) {
-    //         throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
-    //     }
-    // };
     UserRepo.update_user_by_user_id = function (userID, userData) {
         return __awaiter(this, void 0, void 0, function () {
             var updateSuccess, _a, query, values, result, _b, query, values, result, _c, query, values, result, error_5;
@@ -236,7 +219,7 @@ var UserRepo = /** @class */ (function () {
                     case 3:
                         ;
                         if (!userData.user_data) return [3 /*break*/, 5];
-                        _b = (0, createUpdateQueryPGSQL_1["default"])("userdata", userData.user_data, "id", userID), query = _b.query, values = _b.values;
+                        _b = (0, createUpdateQueryPGSQL_1["default"])("userdata", userData.user_data, "account_id", userID), query = _b.query, values = _b.values;
                         return [4 /*yield*/, pgdb_1["default"].query(query, values)];
                     case 4:
                         result = _d.sent();
@@ -245,7 +228,7 @@ var UserRepo = /** @class */ (function () {
                     case 5:
                         ;
                         if (!userData.user_profile) return [3 /*break*/, 7];
-                        _c = (0, createUpdateQueryPGSQL_1["default"])("userprofile", userData.user_profile, "id", userID), query = _c.query, values = _c.values;
+                        _c = (0, createUpdateQueryPGSQL_1["default"])("userprofile", userData.user_profile, "account_id", userID), query = _c.query, values = _c.values;
                         return [4 /*yield*/, pgdb_1["default"].query(query, values)];
                     case 6:
                         result = _d.sent();

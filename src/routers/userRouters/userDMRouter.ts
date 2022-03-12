@@ -28,6 +28,7 @@ const userDeviceMasterRouter = express.Router();
   |_| \_\_____/_/   \_\____/ 
 */
 
+// Manual Test Success - 2022/03/12
 /** Get User Profile Route - Based on Username */
 userDeviceMasterRouter.get("/:username", authMW.defineSitePermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {

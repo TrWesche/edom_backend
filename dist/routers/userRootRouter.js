@@ -44,8 +44,6 @@ var authHandling_1 = require("../utils/authHandling");
 var userAuthSchema_1 = require("../schemas/user/userAuthSchema");
 var userRegisterSchema_1 = require("../schemas/user/userRegisterSchema");
 var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
-// Router Imports
-var userRoomRouter_1 = require("./userRouters/userRoomRouter");
 // Model Imports
 var userModel_1 = require("../models/userModel");
 // Middleware Imports
@@ -55,14 +53,13 @@ var userRootRouter = express.Router();
 // userRootRouter.use("/rooms", userRoomRouter);
 // userRootRouter.use("/equips", userEquipRouter);
 // userRootRouter.use("/groups", userGroupRouter);
-userRoomRouter_1["default"].use("/dm", userDMRouter_1["default"]);
+userRootRouter.use("/dm", userDMRouter_1["default"]);
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |
     / _ \| | | | | | | |_| |
    / ___ \ |_| | | | |  _  |
   /_/   \_\___/  |_| |_| |_|
 */
-// Manual Test - Basic Functionality: 01/13/2022
 userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var authValues, queryData, error_1;
     return __generator(this, function (_a) {
@@ -99,7 +96,7 @@ userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test Success - 2022/03/12
 userRootRouter.post("/register", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var regValues, queryData, error_2;
     return __generator(this, function (_a) {
@@ -152,7 +149,7 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test Success - 2022/03/12
 userRootRouter.get("/profile", authorizationMW_1["default"].defineSitePermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
@@ -203,9 +200,9 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test Success - 2022/03/12
 userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
+    var prevValues, updateValues, group, item, newData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -213,12 +210,12 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissio
                 _c.trys.push([0, 3, , 4]);
                 return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
             case 1:
-                prevValues_1 = _c.sent();
-                if (!prevValues_1) {
+                prevValues = _c.sent();
+                if (!prevValues) {
                     throw new expresError_1["default"]("Update Failed: User Not Found", 404);
                 }
                 ;
-                updateValues_1 = {
+                updateValues = {
                     user_account: {
                         password: req.body.password
                     },
@@ -240,22 +237,31 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissio
                         public_location: req.body.public_location
                     }
                 };
-                if (!(0, userUpdateSchema_1["default"])(updateValues_1)) {
+                if (!(0, userUpdateSchema_1["default"])(updateValues)) {
                     throw new expresError_1["default"]("Update Error: ".concat(userUpdateSchema_1["default"].errors), 400);
                 }
                 ;
-                itemsList_1 = {};
-                newKeys = Object.keys(req.body);
-                newKeys.map(function (key) {
-                    if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
-                        itemsList_1[key] = req.body[key];
+                group = void 0;
+                item = void 0;
+                // Clean-Up Update List
+                for (group in updateValues) {
+                    for (item in updateValues[group]) {
+                        if (!updateValues[group][item]) {
+                            delete updateValues[group][item];
+                        }
                     }
-                });
-                // If no changes return original data
-                if (Object.keys(itemsList_1).length === 0) {
-                    return [2 /*return*/, res.json({ user: prevValues_1 })];
+                    ;
+                    if (Object.keys(updateValues[group]).length === 0) {
+                        delete updateValues[group];
+                    }
+                    ;
                 }
-                return [4 /*yield*/, userModel_1["default"].modify_user((_b = req.user) === null || _b === void 0 ? void 0 : _b.id, itemsList_1)];
+                // If no changes return original data
+                if (Object.keys(updateValues).length === 0) {
+                    return [2 /*return*/, res.json({ user: prevValues })];
+                }
+                ;
+                return [4 /*yield*/, userModel_1["default"].modify_user((_b = req.user) === null || _b === void 0 ? void 0 : _b.id, updateValues)];
             case 2:
                 newData = _c.sent();
                 return [2 /*return*/, res.json({ user: newData })];
@@ -273,7 +279,6 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissio
   | |__| |_| | |_| | |_| | |_| | | |
   |_____\___/ \____|\___/ \___/  |_|
 */
-// Manual Test - Basic Functionality: 01/13/2022
 userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Logging Out");
@@ -293,7 +298,6 @@ userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022
 userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineSitePermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     var _a, _b;

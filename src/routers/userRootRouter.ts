@@ -27,7 +27,7 @@ const userRootRouter = express.Router();
 // userRootRouter.use("/rooms", userRoomRouter);
 // userRootRouter.use("/equips", userEquipRouter);
 // userRootRouter.use("/groups", userGroupRouter);
-userRoomRouter.use("/dm", userDeviceMasterRouter);
+userRootRouter.use("/dm", userDeviceMasterRouter);
 
 /*    _   _   _ _____ _   _ 
      / \ | | | |_   _| | | |
@@ -36,7 +36,7 @@ userRoomRouter.use("/dm", userDeviceMasterRouter);
   /_/   \_\___/  |_| |_| |_|
 */
 
-// Manual Test - Basic Functionality: 01/13/2022
+
 userRootRouter.post("/auth", async (req, res, next) => {
     try {
         // console.log("Start Authentication");
@@ -71,7 +71,7 @@ userRootRouter.post("/auth", async (req, res, next) => {
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test Success - 2022/03/12
 userRootRouter.post("/register", async (req, res, next) => {
     try {
         const regValues: UserRegisterProps = {
@@ -118,7 +118,7 @@ userRootRouter.post("/register", async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test Success - 2022/03/12
 userRootRouter.get("/profile", authMW.defineSitePermissions(['read_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
@@ -153,7 +153,7 @@ userRootRouter.get("/list", authMW.defineSitePermissions(['view_user_public']), 
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test Success - 2022/03/12
 userRootRouter.patch("/update", authMW.defineSitePermissions(['update_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
@@ -190,23 +190,27 @@ userRootRouter.patch("/update", authMW.defineSitePermissions(['update_user_self'
         };
 
 
-        // Build update list for patch query 
-        const itemsList = {};
-        const newKeys = Object.keys(req.body);
-        newKeys.map(key => {
-            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
-                itemsList[key] = req.body[key];
-            }
-        })
-
-
-        // If no changes return original data
-        if(Object.keys(itemsList).length === 0) {
-            return res.json({user: prevValues});
+        let group: any;
+        let item: any;
+        // Clean-Up Update List
+        for(group in updateValues) {
+            for (item in updateValues[group]) {
+                if (!updateValues[group][item]) {
+                    delete updateValues[group][item];
+                }
+            };
+            if (Object.keys(updateValues[group]).length === 0) {
+                delete updateValues[group];
+            };
         }
 
+        // If no changes return original data
+        if (Object.keys(updateValues).length === 0 ) {
+            return res.json({user: prevValues});
+        };
+
         // Update the user data with the itemsList information
-        const newData = await UserModel.modify_user(req.user?.id, itemsList);
+        const newData = await UserModel.modify_user(req.user?.id, updateValues);
         return res.json({user: newData});
     } catch (error) {
         next(error);
@@ -221,7 +225,7 @@ userRootRouter.patch("/update", authMW.defineSitePermissions(['update_user_self'
   | |__| |_| | |_| | |_| | |_| | | |  
   |_____\___/ \____|\___/ \___/  |_|  
 */
-// Manual Test - Basic Functionality: 01/13/2022
+
 userRootRouter.post("/logout", async (req, res, next) => {
     console.log("Logging Out");
     try {
@@ -239,7 +243,7 @@ userRootRouter.post("/logout", async (req, res, next) => {
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022
+
 userRootRouter.delete("/delete", authMW.defineSitePermissions(['delete_user_self']),  authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         if (!req.user?.id) {

@@ -6,9 +6,6 @@ import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
 
 
 export interface UserObjectProps {
-    // id?: string,
-    // user_account?: UserAccountProps,
-    // user_profile?: UserProfileProps,
     user_data?: UserDataProps
     roles?: Array<UserRolesProps>,
     site_permissions?: Array<string>,
@@ -34,29 +31,6 @@ interface UserDataProps {
     public_location?: boolean  
 };
 
-// interface UserAccountProps {
-//     password?: string
-// };
-
-// interface UserProfileProps {
-//     username?: string,
-//     headline?: string,
-//     about?: string,
-//     image_url?: string,
-//     public?: boolean
-// };
-
-// interface UserDataProps {
-//     email?: string,
-//     public_email?: boolean,
-//     first_name?: string,
-//     public_first_name?: boolean,
-//     last_name?: string,
-//     public_last_name?: boolean,
-//     location?: string,
-//     public_location?: boolean
-// };
-
 interface PermissionProps {
     permission_name: string,
     context: string
@@ -71,22 +45,6 @@ type fetchType = "unique" | "auth" | "profile" | "account"
 class UserRepo {
     static async create_new_user(userData: UserRegisterProps) {
         try {
-            // const idxValues: Array<string> = [];
-            // const insertValues: Array<any> = [];
-
-            // let idx = 1;
-            // for (const key in userData) {
-            //     if (userData[key]) {
-            //         idxValues.push(`$${idx}`);
-            //         insertValues.push(userData[key]);
-
-            //         idx++;
-            //     }
-            // };
-
-            // const query = `
-            //     SELECT * FROM create_user_account(${idxValues.join(",")})
-            // `
             const query = `
                 SELECT * FROM create_user_account($1, $2, $3, $4, $5)
             `;
@@ -191,7 +149,6 @@ class UserRepo {
             throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
         };
     };
-    
 
     static async fetch_user_by_username(username: string, fetchType?: fetchType) {
         try {
@@ -273,7 +230,6 @@ class UserRepo {
         };
     };
 
-
     static async fetch_user_by_user_id(userID: string, fetchType?: fetchType) {
         try {
             let query: string;
@@ -353,27 +309,6 @@ class UserRepo {
             throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
         };
     };
-    
-
-    // static async update_user_auth_by_user_id(userID: string, password: string) {
-    //     try {
-    //         const query = `
-    //             UPDATE useraccount
-    //             SET password = $1
-    //             WHERE id = $2
-    //             RETURNING useraccount.id`;
-
-    //         const result = await pgdb.query(
-    //             query,
-    //             [password, userID]
-    //         );
-    
-    //         const rval: UserDataProps | undefined = result.rows[0];
-    //         return true;
-    //     } catch (error) {
-    //         throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
-    //     }
-    // };
 
     static async update_user_by_user_id(userID: string, userData: UserUpdateProps) {
         try {
@@ -401,7 +336,7 @@ class UserRepo {
                 const {query, values} = createUpdateQueryPGSQL(
                     "userdata",
                     userData.user_data,
-                    "id",
+                    "account_id",
                     userID
                 );
 
@@ -416,7 +351,7 @@ class UserRepo {
                 const {query, values} = createUpdateQueryPGSQL(
                     "userprofile",
                     userData.user_profile,
-                    "id",
+                    "account_id",
                     userID
                 );
 
@@ -433,7 +368,7 @@ class UserRepo {
         }
     };
     
-    
+
     static async delete_user_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(
