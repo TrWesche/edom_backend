@@ -261,20 +261,84 @@ class UserRepo {
     };
 
 
-    static async fetch_user_by_user_id(userID: string) {
+    static async fetch_user_by_user_id(userID: string, fetchType?: fetchType) {
         try {
-            const result = await pgdb.query(`
-                SELECT id, email, username, first_name, last_name
-                FROM users
-                WHERE id = $1`,
+            let query: string;
+            switch (fetchType) {
+                case 'unique': 
+                    query = `
+                        SELECT id
+                        FROM useraccount
+                        WHERE id = $1`;
+                    break;
+                case 'auth':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        useraccount.password AS password
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    WHERE id = $1`;
+                    break;
+                case 'profile':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        userprofile.headline AS headline,
+                        userprofile.about AS about,
+                        userprofile.image_url AS image_url,
+                        userprofile.public AS public_profile,
+                        userdata.email AS email,
+                        userdata.public_email AS public_email,
+                        userdata.first_name AS first_name,
+                        userdata.public_first_name AS public_first_name,
+                        userdata.last_name AS last_name,
+                        userdata.public_last_name AS public_last_name,
+                        userdata.location AS location,
+                        userdata.public_location AS public_location
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    WHERE id = $1`;
+                case 'account':
+                    query = `SELECT
+                        useraccount.id AS id,
+                        userprofile.username AS username,
+                        userprofile.headline AS headline,
+                        userprofile.about AS about,
+                        userprofile.image_url AS image_url,
+                        userprofile.public AS public_profile,
+                        userdata.email AS email,
+                        userdata.public_email AS public_email,
+                        userdata.first_name AS first_name,
+                        userdata.public_first_name AS public_first_name,
+                        userdata.last_name AS last_name,
+                        userdata.public_last_name AS public_last_name,
+                        userdata.location AS location,
+                        userdata.public_location AS public_location
+                    FROM useraccount
+                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    WHERE id = $1`;
+                    break;
+                default:
+                    query = `
+                        SELECT id
+                        FROM useraccount
+                        WHERE id = $1`;
+                    break;
+            };
+
+            const result = await pgdb.query(
+                query,
                 [userID]
             );
     
-            const rval: UserObjectProps | undefined = result.rows[0];
+            const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate user - ${error}`, 500);
-        }
+            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
+        };
     };
     
 
