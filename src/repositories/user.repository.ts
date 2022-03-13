@@ -43,6 +43,7 @@ interface UserRolesProps {
 type fetchType = "unique" | "auth" | "profile" | "account"
 
 class UserRepo {
+    // Tested - 03/12/2022
     static async create_new_user(userData: UserRegisterProps) {
         try {
             const query = `
@@ -70,6 +71,7 @@ class UserRepo {
         }
     };
 
+    // Tested - 03/12/2022
     static async fetch_user_by_user_email(userEmail: string, fetchType?: fetchType) {
         try {
             let query: string;
@@ -150,6 +152,7 @@ class UserRepo {
         };
     };
 
+    // Tested - 03/12/2022
     static async fetch_user_by_username(username: string, fetchType?: fetchType) {
         try {
             let query: string;
@@ -230,6 +233,7 @@ class UserRepo {
         };
     };
 
+    // Tested - 03/12/2022
     static async fetch_user_by_user_id(userID: string, fetchType?: fetchType) {
         try {
             let query: string;
@@ -310,6 +314,25 @@ class UserRepo {
         };
     };
 
+    static async fetch_user_list_paginated(limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT username, headline, image_url
+                FROM userprofile
+                WHERE userprofile.public = TRUE
+                LIMIT $1
+                OFFSET $2`,
+                [limit, offset]
+            );
+    
+            const rval: Array<UserDataProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate users - ${error}`, 500);
+        }
+    };
+
+    // Tested - 03/12/2022
     static async update_user_by_user_id(userID: string, userData: UserUpdateProps) {
         try {
             let updateSuccess = true;

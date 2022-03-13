@@ -172,22 +172,22 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineSitePermission
         }
     });
 }); });
+// Manual Test Success - 2022/03/13
 userRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, userModel_1["default"].retrieve_user_list_paginated(10, 0)];
             case 1:
-                queryData = _b.sent();
+                queryData = _a.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Unable to find user account.", 404);
+                    throw new expresError_1["default"]("Unable to retrieve user list.", 404);
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 2:
-                error_4 = _b.sent();
+                error_4 = _a.sent();
                 next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];

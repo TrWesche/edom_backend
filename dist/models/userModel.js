@@ -119,6 +119,20 @@ var UserModel = /** @class */ (function () {
         });
     };
     /** Get user data by id */
+    UserModel.retrieve_user_list_paginated = function (limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var users;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_user_list_paginated(limit, offset)];
+                    case 1:
+                        users = _a.sent();
+                        return [2 /*return*/, users];
+                }
+            });
+        });
+    };
+    ;
     UserModel.retrieve_user_by_user_id = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var user;

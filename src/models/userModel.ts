@@ -58,6 +58,12 @@ class UserModel {
   }
   
   /** Get user data by id */
+  static async retrieve_user_list_paginated(limit: number, offset: number) {
+    const users = await UserRepo.fetch_user_list_paginated(limit, offset);
+    return users;
+};
+
+
   static async retrieve_user_by_user_id(id: string | undefined) {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);

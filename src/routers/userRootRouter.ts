@@ -132,12 +132,13 @@ userRootRouter.get("/profile", authMW.defineSitePermissions(['read_user_self']),
     }
 });
 
+// Manual Test Success - 2022/03/13
 userRootRouter.get("/list", authMW.defineSitePermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Need a user retrieval route
-        const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
+        const queryData = await UserModel.retrieve_user_list_paginated(10, 0);
         if (!queryData) {
-            throw new ExpressError("Unable to find user account.", 404);
+            throw new ExpressError("Unable to retrieve user list.", 404);
         }
         
         return res.json({user: queryData});
