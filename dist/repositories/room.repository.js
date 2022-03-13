@@ -39,6 +39,8 @@ exports.__esModule = true;
 var expresError_1 = require("../utils/expresError");
 var createUpdateQueryPGSQL_1 = require("../utils/createUpdateQueryPGSQL");
 var pgdb_1 = require("../databases/postgreSQL/pgdb");
+;
+;
 var RoomRepo = /** @class */ (function () {
     function RoomRepo() {
     }
@@ -111,22 +113,6 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
-    // static async fetch_room_by_room_id(userID: string, roomID: string) {
-    //     try {
-    //         let query: string;
-    //         let queryParams: Array<any> = [];
-    //         query = `
-    //             SELECT id, name, category_id, headline, description, public
-    //             FROM rooms
-    //             WHERE id = $1 AND public = $2`;
-    //         queryParams.push(roomID, roomPublic);
-    //         const result = await pgdb.query(query, queryParams);
-    //         const rval: RoomObjectProps | undefined = result.rows[0];
-    //         return rval;
-    //     } catch (error) {
-    //         throw new ExpressError(`An Error Occured: Unable to locate room - ${error}`, 500);
-    //     };
-    // };
     RoomRepo.fetch_room_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_3;
@@ -276,6 +262,40 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
+    RoomRepo.delete_room_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_1, idxParams_1, query, queryParams_1, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_1 = 1;
+                        idxParams_1 = [];
+                        query = void 0;
+                        queryParams_1 = [];
+                        userID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_1.push(val.id);
+                                idxParams_1.push("$".concat(idx_1));
+                                idx_1++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM rooms\n                WHERE rooms.id IN (\n                    SELECT rooms.id FROM rooms\n                    LEFT JOIN user_rooms ON user_rooms.room_id = rooms.id\n                    WHERE user_rooms.user_id IN (".concat(idxParams_1.join(', '), ")\n                );\n\n                DELETE FROM user_rooms\n                WHERE user_rooms.user_id IN (").concat(idxParams_1.join(', '), ");");
+                        console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_1)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     //      ____ ____   ___  _   _ ____  
     //     / ___|  _ \ / _ \| | | |  _ \ 
     //    | |  _| |_) | | | | | | | |_) |
@@ -283,7 +303,7 @@ var RoomRepo = /** @class */ (function () {
     //     \____|_| \_\\___/ \___/|_|    
     RoomRepo.associate_group_to_room = function (groupID, roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_9;
+            var result, rval, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -297,8 +317,8 @@ var RoomRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_9 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create room association group -> room - ".concat(error_9), 500);
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create room association group -> room - ".concat(error_10), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -307,7 +327,7 @@ var RoomRepo = /** @class */ (function () {
     ;
     RoomRepo.disassociate_group_from_room = function (groupId, roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_10;
+            var result, rval, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -321,8 +341,42 @@ var RoomRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_10 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete room association group -> room - ".concat(error_10), 500);
+                        error_11 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete room association group -> room - ".concat(error_11), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomRepo.delete_room_by_group_id = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_2, idxParams_2, query, queryParams_2, error_12;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_2 = 1;
+                        idxParams_2 = [];
+                        query = void 0;
+                        queryParams_2 = [];
+                        groupID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_2.push(val.id);
+                                idxParams_2.push("$".concat(idx_2));
+                                idx_2++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM rooms\n                WHERE rooms.id IN (\n                    SELECT rooms.id FROM rooms\n                    LEFT JOIN group_rooms ON group_rooms.room_id = rooms.id\n                    WHERE group_rooms.group_id IN (".concat(idxParams_2.join(', '), ");\n                );\n                \n                DELETE FROM group_rooms\n                WHERE group_rooms.group_id IN (").concat(idxParams_2.join(', '), ");");
+                        console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_12), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -331,7 +385,7 @@ var RoomRepo = /** @class */ (function () {
     ;
     RoomRepo.fetch_rooms_by_group_id = function (groupID, roomPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_11;
+            var query, queryParams, result, rval, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -352,8 +406,8 @@ var RoomRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_11 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate rooms by group id - ".concat(error_11), 500);
+                        error_13 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate rooms by group id - ".concat(error_13), 500);
                     case 3: return [2 /*return*/];
                 }
             });

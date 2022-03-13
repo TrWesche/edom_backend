@@ -8,6 +8,8 @@ import { GroupCreateProps } from "../schemas/group/groupCreateSchema";
 // Utils
 import ExpressError from "../utils/expresError";
 import TransactionRepo from "../repositories/transactionRepository";
+import EquipmentRepo from "../repositories/equipment.repository";
+import RoomRepo from "../repositories/room.repository";
 
 // TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
 // the database server and the front end.
@@ -238,33 +240,20 @@ class GroupModel {
         try {
             await TransactionRepo.begin_transaction();
 
-            const permissions = await GroupPermissionsRepo.delete_role_permissions_by_group_id(groupID);
-            if (!permissions) {
-                throw new ExpressError("Failed to Delete Permissions Associated with Target Group", 500);
-            };
+            const groupList = [{id: groupID}];
 
-            const user_roles = await GroupPermissionsRepo.delete_user_group_roles_by_group_id(groupID);
-            if (!user_roles) {
-                throw new ExpressError("Failed to Delete Roles Associated with Users for the Target Group", 500);
-            };
+            await EquipmentRepo.delete_equip_by_group_id(groupList);
 
-            const roles = await GroupPermissionsRepo.delete_roles_by_group_id(groupID);
-            if (!roles) {
-                throw new ExpressError("Failed to Delete Roles Associated with Target Group", 500);
-            };
-
-            const users = await GroupRepo.disassociate_users_from_group_by_group_id(groupID);
-            if (!users?.user_id) {
-                throw new ExpressError("Failed to Delete Users Associated with Target Group", 500);
-            };
-
-            const group = await GroupRepo.delete_group_by_group_id(groupID);
-            if (!group) {
-                throw new ExpressError("Unable to delete target group", 400);
-            };
+            await RoomRepo.delete_room_by_group_id(groupList);
+    
+            await GroupRepo.delete_group_users_by_group_id(groupList);
+    
+            await GroupPermissionsRepo.delete_roles_by_group_id(groupList);
+    
+            await GroupRepo.delete_groups_by_group_id(groupList);
 
             await TransactionRepo.commit_transaction();
-            return group;
+            return groupList;
         } catch (error) {
             await TransactionRepo.rollback_transaction();
             throw new ExpressError(error.message, error.status);

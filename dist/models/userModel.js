@@ -41,7 +41,10 @@ var config_1 = require("../config/config");
 var expresError_1 = require("../utils/expresError");
 var user_repository_1 = require("../repositories/user.repository");
 var transactionRepository_1 = require("../repositories/transactionRepository");
-var sitePermissions_repository_1 = require("../repositories/sitePermissions.repository");
+var group_repository_1 = require("../repositories/group.repository");
+var equipment_repository_1 = require("../repositories/equipment.repository");
+var room_repository_1 = require("../repositories/room.repository");
+var groupPermissions_repository_1 = require("../repositories/groupPermissions.repository");
 /** Standard User Creation & Authentication */
 var UserModel = /** @class */ (function () {
     function UserModel() {
@@ -231,37 +234,68 @@ var UserModel = /** @class */ (function () {
     /** Delete target user from database; returns undefined. */
     UserModel.delete_user = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var siteRoleCleanupSuccess, result, error_2;
+            var userList, ownedGroups, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 7]);
+                        _a.trys.push([0, 14, , 16]);
+                        userList = [{ id: id }];
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, sitePermissions_repository_1["default"].delete_user_site_roles_all(id)];
+                        return [4 /*yield*/, group_repository_1["default"].fetch_group_ids_by_user_id(id, 'owner')];
                     case 2:
-                        siteRoleCleanupSuccess = _a.sent();
-                        if (!siteRoleCleanupSuccess) {
-                            throw new expresError_1["default"]("Site Role Cleanup Failed", 500);
-                        }
-                        return [4 /*yield*/, user_repository_1["default"].delete_user_by_user_id(id)];
+                        ownedGroups = _a.sent();
+                        if (!(ownedGroups.length > 0)) return [3 /*break*/, 8];
+                        return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_group_id(ownedGroups)];
                     case 3:
-                        result = _a.sent();
-                        if (!result) {
-                            throw new expresError_1["default"]("Delete failed, unable to locate target user", 400);
-                        }
-                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_group_id(ownedGroups)];
                     case 4:
                         _a.sent();
-                        return [2 /*return*/, result];
+                        return [4 /*yield*/, group_repository_1["default"].delete_group_users_by_group_id(ownedGroups)];
                     case 5:
-                        error_2 = _a.sent();
-                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                        _a.sent();
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(ownedGroups)];
                     case 6:
                         _a.sent();
-                        return [3 /*break*/, 7];
-                    case 7: return [2 /*return*/];
+                        return [4 /*yield*/, group_repository_1["default"].delete_groups_by_group_id(ownedGroups)];
+                    case 7:
+                        _a.sent();
+                        _a.label = 8;
+                    case 8:
+                        ;
+                        // Cleanup User Group & GroupRoles
+                        return [4 /*yield*/, group_repository_1["default"].delete_user_groups_by_user_id(userList)];
+                    case 9:
+                        // Cleanup User Group & GroupRoles
+                        _a.sent();
+                        // Cleanup User Equipment
+                        return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_user_id(userList)];
+                    case 10:
+                        // Cleanup User Equipment
+                        _a.sent();
+                        // Cleanup User Rooms
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_user_id(userList)];
+                    case 11:
+                        // Cleanup User Rooms
+                        _a.sent();
+                        // Clean Up User Tables & Site Roles:
+                        return [4 /*yield*/, user_repository_1["default"].delete_user_by_user_id(id)];
+                    case 12:
+                        // Clean Up User Tables & Site Roles:
+                        _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 13:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 14:
+                        error_2 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 15:
+                        _a.sent();
+                        throw new expresError_1["default"]("Delete Failed", 500);
+                    case 16: return [2 /*return*/];
                 }
             });
         });

@@ -13,6 +13,9 @@ export interface EquipObjectProps {
     config?: object 
 }
 
+interface IDList {
+    id?: string
+}
 
 class EquipmentRepo {
     static async create_new_equip(equipData: EquipObjectProps) {
@@ -200,6 +203,41 @@ class EquipmentRepo {
         }
     };
 
+    static async delete_equip_by_user_id(userID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM equipment
+                WHERE equipment.id IN (
+                    SELECT equipment.id FROM equipment
+                    LEFT JOIN user_equipment ON user_equipment.equipment_id = equipment.id
+                    WHERE user_equipment.user_id IN (${idxParams.join(', ')})
+                );
+
+                DELETE FROM user_equipment
+                WHERE user_equipment.user_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
 //      ____ ____   ___  _   _ ____  
 //     / ___|  _ \ / _ \| | | |  _ \ 
 //    | |  _| |_) | | | | | | | |_) |
@@ -274,6 +312,40 @@ class EquipmentRepo {
         }
     };
 
+    static async delete_equip_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM equipment
+                WHERE equipment.id IN (
+                    SELECT equipment.id FROM equipment
+                    LEFT JOIN group_equipment ON group_equipment.equipment_id = equipment.id
+                    WHERE group_equipment.group_id IN (${idxParams.join(', ')});
+                );
+                
+                DELETE FROM group_equipment
+                WHERE group_equipment.group_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
 
 
     //  ____   ___   ___  __  __ 

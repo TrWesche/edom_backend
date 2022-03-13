@@ -10,8 +10,11 @@ export interface RoomObjectProps {
     headline?: string,
     description?: string,
     public?: boolean,
-}
+};
 
+interface IDList {
+    id?: string
+};
 
 class RoomRepo {
     static async create_new_room(roomData: RoomObjectProps) {
@@ -72,29 +75,6 @@ class RoomRepo {
             throw new ExpressError(`An Error Occured: Unable to locate room - ${error}`, 500);
         };
     };
-
-
-    // static async fetch_room_by_room_id(userID: string, roomID: string) {
-    //     try {
-    //         let query: string;
-    //         let queryParams: Array<any> = [];
-    
-    //         query = `
-    //             SELECT id, name, category_id, headline, description, public
-    //             FROM rooms
-    //             WHERE id = $1 AND public = $2`;
-    //         queryParams.push(roomID, roomPublic);
-
-    //         const result = await pgdb.query(query, queryParams);
-    
-    //         const rval: RoomObjectProps | undefined = result.rows[0];
-    //         return rval;
-    //     } catch (error) {
-    //         throw new ExpressError(`An Error Occured: Unable to locate room - ${error}`, 500);
-    //     };
-    // };
-
-
 
     static async fetch_room_list_paginated(limit: number, offset: number) {
         try {
@@ -225,6 +205,42 @@ class RoomRepo {
         }
     };
 
+
+    static async delete_room_by_user_id(userID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM rooms
+                WHERE rooms.id IN (
+                    SELECT rooms.id FROM rooms
+                    LEFT JOIN user_rooms ON user_rooms.room_id = rooms.id
+                    WHERE user_rooms.user_id IN (${idxParams.join(', ')})
+                );
+
+                DELETE FROM user_rooms
+                WHERE user_rooms.user_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+            
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
 //      ____ ____   ___  _   _ ____  
 //     / ___|  _ \ / _ \| | | |  _ \ 
 //    | |  _| |_) | | | | | | | |_) |
@@ -264,6 +280,41 @@ class RoomRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete room association group -> room - ${error}`, 500);
+        }
+    };
+
+    static async delete_room_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM rooms
+                WHERE rooms.id IN (
+                    SELECT rooms.id FROM rooms
+                    LEFT JOIN group_rooms ON group_rooms.room_id = rooms.id
+                    WHERE group_rooms.group_id IN (${idxParams.join(', ')});
+                );
+                
+                DELETE FROM group_rooms
+                WHERE group_rooms.group_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+            
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
 

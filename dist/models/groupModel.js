@@ -42,6 +42,8 @@ var groupPermissions_repository_1 = require("../repositories/groupPermissions.re
 // Utils
 var expresError_1 = require("../utils/expresError");
 var transactionRepository_1 = require("../repositories/transactionRepository");
+var equipment_repository_1 = require("../repositories/equipment.repository");
+var room_repository_1 = require("../repositories/room.repository");
 // TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
 // the database server and the front end.
 var GroupModel = /** @class */ (function () {
@@ -389,7 +391,7 @@ var GroupModel = /** @class */ (function () {
     */
     GroupModel.delete_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var permissions, user_roles, roles, users, group, error_4;
+            var groupList, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -397,45 +399,26 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permissions_by_group_id(groupID)];
+                        groupList = [{ id: groupID }];
+                        return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_group_id(groupList)];
                     case 2:
-                        permissions = _a.sent();
-                        if (!permissions) {
-                            throw new expresError_1["default"]("Failed to Delete Permissions Associated with Target Group", 500);
-                        }
-                        ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_group_id(groupID)];
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_group_id(groupList)];
                     case 3:
-                        user_roles = _a.sent();
-                        if (!user_roles) {
-                            throw new expresError_1["default"]("Failed to Delete Roles Associated with Users for the Target Group", 500);
-                        }
-                        ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(groupID)];
+                        _a.sent();
+                        return [4 /*yield*/, group_repository_1["default"].delete_group_users_by_group_id(groupList)];
                     case 4:
-                        roles = _a.sent();
-                        if (!roles) {
-                            throw new expresError_1["default"]("Failed to Delete Roles Associated with Target Group", 500);
-                        }
-                        ;
-                        return [4 /*yield*/, group_repository_1["default"].disassociate_users_from_group_by_group_id(groupID)];
+                        _a.sent();
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(groupList)];
                     case 5:
-                        users = _a.sent();
-                        if (!(users === null || users === void 0 ? void 0 : users.user_id)) {
-                            throw new expresError_1["default"]("Failed to Delete Users Associated with Target Group", 500);
-                        }
-                        ;
-                        return [4 /*yield*/, group_repository_1["default"].delete_group_by_group_id(groupID)];
+                        _a.sent();
+                        return [4 /*yield*/, group_repository_1["default"].delete_groups_by_group_id(groupList)];
                     case 6:
-                        group = _a.sent();
-                        if (!group) {
-                            throw new expresError_1["default"]("Unable to delete target group", 400);
-                        }
-                        ;
+                        _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
                     case 7:
                         _a.sent();
-                        return [2 /*return*/, group];
+                        return [2 /*return*/, groupList];
                     case 8:
                         error_4 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];

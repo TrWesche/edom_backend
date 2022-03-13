@@ -328,3 +328,32 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql;
+
+
+
+-- Delete User Account
+CREATE OR REPLACE FUNCTION public.delete_user_account(_user_id uuid)
+RETURNS text
+LANGUAGE 'plpgsql'
+COST 100
+VOLATILE PARALLEL UNSAFE
+
+AS $BODY$
+DECLARE
+	funcresult text;
+BEGIN
+	DELETE FROM user_siteroles
+	WHERE user_siteroles.user_id = _user_id;
+	
+	DELETE FROM userprofile
+	WHERE userprofile.account_id = _user_id;
+	
+	DELETE FROM userdata
+	WHERE userdata.account_id = _user_id;
+	
+	DELETE FROM useraccount
+	WHERE useraccount.account_id = _user_id;
+	
+	RETURN 'success';
+END;
+$BODY$;

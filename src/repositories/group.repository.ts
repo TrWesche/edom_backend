@@ -16,6 +16,9 @@ export interface GroupUserProps {
     user_id?: string
 };
 
+interface IDList {
+    id?: string
+};
 
 class GroupRepo {
     static async create_new_group(groupData: GroupObjectProps) {
@@ -125,20 +128,68 @@ class GroupRepo {
         }
     };
     
-    static async delete_group_by_group_id(groupID: string) {
+    static async delete_groups_by_group_id(groupID: Array<IDList>) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM groups
-                WHERE id = $1
-                RETURNING id`,
-            [groupID]);
-    
-            const rval: GroupObjectProps | undefined = result.rows[0];
-            return rval;
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM sitegroups
+                WHERE sitegroups.id IN IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete group - ${error}`, 500);
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
+
+    static async delete_group_users_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_grouproles
+                WHERE user_grouproles IN (
+                    SELECT grouproles.id FROM grouproles
+                    WHERE grouproles.group_id IN (${idxParams.join(', ')});
+                );
+                
+                DELETE FROM user_groups
+                WHERE user_groups.group_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
 
     //  _   _ ____  _____ ____  
     // | | | / ___|| ____|  _ \ 
@@ -182,18 +233,56 @@ class GroupRepo {
         }
     };
 
+    static async delete_user_groups_by_user_id(userID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_grouproles
+                WHERE user_grouproles IN (
+                    SELECT grouproles.id FROM grouproles
+                    WHERE user_groupsroles.user_id IN (${idxParams.join(', ')});
+                );
+                
+                DELETE FROM user_groups
+                WHERE user_groups.user_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
     static async disassociate_users_from_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM user_groups
-                WHERE group_id = $1
-                RETURNING user_id, group_id`,
+                `DELETE FROM user_grouproles
+                WHERE user_grouproles IN (
+                    SELECT grouproles.id FROM grouproles
+                    WHERE grouproles.group_id = $1;
+                );
+                
+                DELETE FROM user_groups
+                WHERE user_groups.group_id = $1;`,
             [
                 groupID
             ]);
             
-            const rval: GroupUserProps | undefined = result.rows[0];
-            return rval;
+            return true;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete group association group -> users - ${error}`, 500);
         }
@@ -260,6 +349,66 @@ class GroupRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate group users by group id - ${error}`, 500);
+        }
+    };
+
+    static async fetch_group_ids_by_user_id(userID: string, userRole?: string) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            if (userRole !== undefined) {
+                query = `
+                SELECT
+                    sitegroups.id AS id
+                FROM sitegroups
+                LEFT JOIN user_groups ON user_groups.group_id = sitegroups.id
+                LEFT JOIN user_grouproles ON user_groupsroles.user_id = user_groups.user_id
+                LEFT JOIN grouproles ON grouproles.id = user_grouproles.grouprole_id
+                WHERE user_groups.user_id = $1 AND grouproles.name = $2`
+                queryParams.push(userID, userRole);
+            } else {
+                query = `
+                    SELECT
+                        sitegroups.id AS id
+                    FROM sitegroups
+                    LEFT JOIN user_groups ON user_groups.group_id = sitegroups.id
+                    WHERE user_groups.user_id = $1`
+                queryParams.push(userID);
+            }
+            
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval: Array<GroupObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
+    static async fetch_user_groups_by_user_id(userID: string) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            query = `
+                SELECT 
+                    user_groups.group_id AS id, 
+                    userprofile.username
+                FROM userprofile
+                RIGHT JOIN user_groups
+                ON userprofile.account_id = user_groups.user_id
+                WHERE userprofile.account_id = $1`
+            queryParams.push(userID);
+
+            const result = await pgdb.query(query, queryParams);
+    
+            // TODO: This return type is wrong
+            const rval: Array<GroupObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
 }

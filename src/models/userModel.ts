@@ -8,6 +8,10 @@ import SitePermissionsRepo from "../repositories/sitePermissions.repository";
 import { UserAuthProps } from "../schemas/user/userAuthSchema";
 import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
+import GroupRepo from "../repositories/group.repository";
+import EquipmentRepo from "../repositories/equipment.repository";
+import RoomRepo from "../repositories/room.repository";
+import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 
 /** Standard User Creation & Authentication */
 class UserModel {
@@ -133,25 +137,44 @@ class UserModel {
   /** Delete target user from database; returns undefined. */
   static async delete_user(id: string) {
     try {
+      const userList = [{id}]
+
       await TransactionRepo.begin_transaction();
-      // Clean Up User Site Roles:
-      const siteRoleCleanupSuccess = await SitePermissionsRepo.delete_user_site_roles_all(id);
-      if (!siteRoleCleanupSuccess) {
-        throw new ExpressError(`Site Role Cleanup Failed`, 500);
-      }
 
-      // Clean Up User Table:
-      const result = await UserRepo.delete_user_by_user_id(id);
+      // Check for owned Groups
+      const ownedGroups = await GroupRepo.fetch_group_ids_by_user_id(id, 'owner');
 
-      if (!result) {
-        throw new ExpressError("Delete failed, unable to locate target user", 400);
-      }
+      // If Groups Found Delete Groups & Cleanup
+      if (ownedGroups.length > 0)  {
+        await EquipmentRepo.delete_equip_by_group_id(ownedGroups);
+
+        await RoomRepo.delete_room_by_group_id(ownedGroups);
+
+        await GroupRepo.delete_group_users_by_group_id(ownedGroups);
+
+        await GroupPermissionsRepo.delete_roles_by_group_id(ownedGroups);
+
+        await GroupRepo.delete_groups_by_group_id(ownedGroups);
+      };
+
+      // Cleanup User Group & GroupRoles
+      await GroupRepo.delete_user_groups_by_user_id(userList);
+
+      // Cleanup User Equipment
+      await EquipmentRepo.delete_equip_by_user_id(userList);
+
+      // Cleanup User Rooms
+      await RoomRepo.delete_room_by_user_id(userList);
+
+      // Clean Up User Tables & Site Roles:
+      await UserRepo.delete_user_by_user_id(id);
 
       await TransactionRepo.commit_transaction()
 
-      return result;
+      return true;
     } catch (error) {
       await TransactionRepo.rollback_transaction(); 
+      throw new ExpressError("Delete Failed", 500);
     }    
   }
 }

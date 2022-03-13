@@ -24,6 +24,10 @@ export interface GroupUserRoleProps {
     grouprole_id?: string
 }
 
+interface IDList {
+    id?: string
+};
+
 class GroupPermissionsRepo {
     // ROLE Management
     static async create_role(groupRoleData: GroupRoleProps) {
@@ -178,21 +182,39 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async delete_roles_by_group_id(groupID: string) {
+    static async delete_roles_by_group_id(groupID: Array<IDList>) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM grouproles
-                WHERE group_id = $1
-                RETURNING id`,
-            [groupID]);
-    
-            const rval: GroupRoleProps | undefined = result.rows[0];
-            return rval;
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM grouproles_grouppermissions
+                WHERE grouproles_grouppermissions.grouprole_id IN (
+                    SELECT grouproles.id FROM grouproles
+                    WHERE grouproles.group_id IN (${idxParams.join(', ')});
+                );
+                
+                DELETE FROM grouproles
+                WHERE grouproles.group_id IN (${idxParams.join(', ')});`;
+            
+            console.log(query);
+            await pgdb.query(query, queryParams);
+            
+            return true;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete group roles - ${error}`, 500);
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
-
 
     // PERMISSIONS Management
     static async create_permission(groupPermData: GroupPermProps) {
