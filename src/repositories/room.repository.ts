@@ -227,14 +227,41 @@ class RoomRepo {
                     SELECT rooms.id FROM rooms
                     LEFT JOIN user_rooms ON user_rooms.room_id = rooms.id
                     WHERE user_rooms.user_id IN (${idxParams.join(', ')})
-                );
-
-                DELETE FROM user_rooms
-                WHERE user_rooms.user_id IN (${idxParams.join(', ')});`;
+                )`;
             
-            console.log(query);
+            // console.log(query);
             await pgdb.query(query, queryParams);
+            // console.log("Delete Room");
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
+    static async delete_user_room_by_user_id(userID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
             
+            userID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_rooms
+                WHERE user_rooms.user_id IN (${idxParams.join(', ')})`;
+            
+            // console.log(query);
+            await pgdb.query(query, queryParams);
+            // console.log("Delete User Room");
+
             return true;
         } catch (error) {
             throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);

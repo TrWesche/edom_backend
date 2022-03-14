@@ -275,15 +275,55 @@ var EquipmentRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM equipment\n                WHERE equipment.id IN (\n                    SELECT equipment.id FROM equipment\n                    LEFT JOIN user_equipment ON user_equipment.equipment_id = equipment.id\n                    WHERE user_equipment.user_id IN (".concat(idxParams_1.join(', '), ")\n                );\n\n                DELETE FROM user_equipment\n                WHERE user_equipment.user_id IN (").concat(idxParams_1.join(', '), ");");
-                        console.log(query);
+                        query = "\n                DELETE FROM equipment\n                WHERE equipment.id IN (\n                    SELECT equipment.id FROM equipment\n                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id\n                    WHERE user_equipment.user_id IN  (".concat(idxParams_1.join(', '), ")\n                )");
+                        // console.log("Delete Equip by UserID Called");
+                        // console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_1)];
                     case 1:
+                        // console.log("Delete Equip by UserID Called");
+                        // console.log(query);
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
                         error_9 = _a.sent();
                         throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    EquipmentRepo.delete_user_equip_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_2, idxParams_2, query, queryParams_2, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_2 = 1;
+                        idxParams_2 = [];
+                        query = void 0;
+                        queryParams_2 = [];
+                        userID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_2.push(val.id);
+                                idxParams_2.push("$".concat(idx_2));
+                                idx_2++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM user_equipment\n                WHERE user_equipment.user_id IN (".concat(idxParams_2.join(', '), ")");
+                        // console.log("Delete User Equip by UserID Called");
+                        // console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
+                    case 1:
+                        // console.log("Delete User Equip by UserID Called");
+                        // console.log(query);
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_10), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -297,7 +337,7 @@ var EquipmentRepo = /** @class */ (function () {
     //     \____|_| \_\\___/ \___/|_|    
     EquipmentRepo.associate_group_to_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_10;
+            var result, rval, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -311,8 +351,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_10 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association group -> equipment - ".concat(error_10), 500);
+                        error_11 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association group -> equipment - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -321,7 +361,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.disassociate_group_from_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_11;
+            var result, rval, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -335,8 +375,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_11 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association group -> equipment - ".concat(error_11), 500);
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association group -> equipment - ".concat(error_12), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -345,7 +385,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.fetch_equip_by_group_id = function (groupID, equipPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_12;
+            var query, queryParams, result, rval, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -366,8 +406,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_12 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_12), 500);
+                        error_13 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by group id - ".concat(error_13), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -376,32 +416,32 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.delete_equip_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var idx_2, idxParams_2, query, queryParams_2, error_13;
+            var idx_3, idxParams_3, query, queryParams_3, error_14;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        idx_2 = 1;
-                        idxParams_2 = [];
+                        idx_3 = 1;
+                        idxParams_3 = [];
                         query = void 0;
-                        queryParams_2 = [];
+                        queryParams_3 = [];
                         groupID.forEach(function (val) {
                             if (val.id) {
-                                queryParams_2.push(val.id);
-                                idxParams_2.push("$".concat(idx_2));
-                                idx_2++;
+                                queryParams_3.push(val.id);
+                                idxParams_3.push("$".concat(idx_3));
+                                idx_3++;
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM equipment\n                WHERE equipment.id IN (\n                    SELECT equipment.id FROM equipment\n                    LEFT JOIN group_equipment ON group_equipment.equipment_id = equipment.id\n                    WHERE group_equipment.group_id IN (".concat(idxParams_2.join(', '), ");\n                );\n                \n                DELETE FROM group_equipment\n                WHERE group_equipment.group_id IN (").concat(idxParams_2.join(', '), ");");
+                        query = "\n                DELETE FROM equipment\n                WHERE equipment.id IN (\n                    SELECT equipment.id FROM equipment\n                    LEFT JOIN group_equipment ON group_equipment.equipment_id = equipment.id\n                    WHERE group_equipment.group_id IN (".concat(idxParams_3.join(', '), ");\n                );\n                \n                DELETE FROM group_equipment\n                WHERE group_equipment.group_id IN (").concat(idxParams_3.join(', '), ");");
                         console.log(query);
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
-                        error_13 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_13), 500);
+                        error_14 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_14), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -415,7 +455,7 @@ var EquipmentRepo = /** @class */ (function () {
     // |_| \_\\___/ \___/|_|  |_|
     EquipmentRepo.associate_room_to_equip = function (roomID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_14;
+            var result, rval, error_15;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -429,8 +469,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_14 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association room -> equipment - ".concat(error_14), 500);
+                        error_15 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create equipment association room -> equipment - ".concat(error_15), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -439,7 +479,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.disassociate_room_from_equip_by_room_equip_id = function (roomID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_15;
+            var result, rval, error_16;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -453,8 +493,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_15 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association room -> equipment - ".concat(error_15), 500);
+                        error_16 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment association room -> equipment - ".concat(error_16), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -463,7 +503,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.disassociate_room_from_equip_by_room_id = function (roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_16;
+            var result, rval, error_17;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -476,8 +516,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_16 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment associations room -> equipment, all room instances - ".concat(error_16), 500);
+                        error_17 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment associations room -> equipment, all room instances - ".concat(error_17), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -486,7 +526,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.disassociate_room_from_equip_by_equip_id = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_17;
+            var result, rval, error_18;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -499,8 +539,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_17 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment associations room -> equipment, all equipment instances - ".concat(error_17), 500);
+                        error_18 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete equipment associations room -> equipment, all equipment instances - ".concat(error_18), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -509,7 +549,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.fetch_equip_by_room_id = function (roomID, roomPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_18;
+            var query, queryParams, result, rval, error_19;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -530,8 +570,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_18 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by room id - ".concat(error_18), 500);
+                        error_19 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment by room id - ".concat(error_19), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -540,7 +580,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.fetch_equip_rooms_by_equip_id = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_19;
+            var query, queryParams, result, rval, error_20;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -553,8 +593,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_19 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment rooms by equip id - ".concat(error_19), 500);
+                        error_20 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment rooms by equip id - ".concat(error_20), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -563,7 +603,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.fetch_equip_by_group_and_equip_id = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_20;
+            var query, queryParams, result, rval, error_21;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -576,8 +616,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_20 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target group & equip id combination - ".concat(error_20), 500);
+                        error_21 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target group & equip id combination - ".concat(error_21), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -586,7 +626,7 @@ var EquipmentRepo = /** @class */ (function () {
     ;
     EquipmentRepo.fetch_equip_by_user_and_equip_id = function (userID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_21;
+            var query, queryParams, result, rval, error_22;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -599,8 +639,8 @@ var EquipmentRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_21 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target user & equip id combination - ".concat(error_21), 500);
+                        error_22 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target user & equip id combination - ".concat(error_22), 500);
                     case 3: return [2 /*return*/];
                 }
             });

@@ -146,6 +146,8 @@ class UserModel {
 
       // If Groups Found Delete Groups & Cleanup
       if (ownedGroups.length > 0)  {
+        console.log("User owns groups");
+
         await EquipmentRepo.delete_equip_by_group_id(ownedGroups);
 
         await RoomRepo.delete_room_by_group_id(ownedGroups);
@@ -158,13 +160,16 @@ class UserModel {
       };
 
       // Cleanup User Group & GroupRoles
+      await GroupRepo.delete_user_grouproles_by_user_id(userList);
       await GroupRepo.delete_user_groups_by_user_id(userList);
 
       // Cleanup User Equipment
       await EquipmentRepo.delete_equip_by_user_id(userList);
+      await EquipmentRepo.delete_user_equip_by_user_id(userList);
 
       // Cleanup User Rooms
       await RoomRepo.delete_room_by_user_id(userList);
+      await RoomRepo.delete_user_room_by_user_id(userList);
 
       // Clean Up User Tables & Site Roles:
       await UserRepo.delete_user_by_user_id(id);

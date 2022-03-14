@@ -233,7 +233,7 @@ class GroupRepo {
         }
     };
 
-    static async delete_user_groups_by_user_id(userID: Array<IDList>) {
+    static async delete_user_grouproles_by_user_id(userID: Array<IDList>) {
         try {
             let idx = 1;
             const idxParams: Array<string> = [];
@@ -250,22 +250,49 @@ class GroupRepo {
 
             query = `
                 DELETE FROM user_grouproles
-                WHERE user_grouproles IN (
-                    SELECT grouproles.id FROM grouproles
-                    WHERE user_groupsroles.user_id IN (${idxParams.join(', ')});
-                );
-                
-                DELETE FROM user_groups
-                WHERE user_groups.user_id IN (${idxParams.join(', ')});`;
+                WHERE user_grouproles.user_id IN (${idxParams.join(', ')})`;
             
-            console.log(query);
+            // console.log(query);
+            // console.log(queryParams);
             await pgdb.query(query, queryParams);
+            // console.log("Delete User Groups Success");
 
             return true;
         } catch (error) {
             throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
+
+    static async delete_user_groups_by_user_id(userID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_groups
+                WHERE user_groups.user_id IN (${idxParams.join(', ')})`;
+            
+            // console.log(query);
+            // console.log(queryParams);
+            await pgdb.query(query, queryParams);
+            // console.log("Delete User Groups Success");
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
 
     static async disassociate_users_from_group_by_group_id(groupID: string) {
         try {
@@ -363,7 +390,7 @@ class GroupRepo {
                     sitegroups.id AS id
                 FROM sitegroups
                 LEFT JOIN user_groups ON user_groups.group_id = sitegroups.id
-                LEFT JOIN user_grouproles ON user_groupsroles.user_id = user_groups.user_id
+                LEFT JOIN user_grouproles ON user_grouproles.user_id = user_groups.user_id
                 LEFT JOIN grouproles ON grouproles.id = user_grouproles.grouprole_id
                 WHERE user_groups.user_id = $1 AND grouproles.name = $2`
                 queryParams.push(userID, userRole);
@@ -375,11 +402,10 @@ class GroupRepo {
                     LEFT JOIN user_groups ON user_groups.group_id = sitegroups.id
                     WHERE user_groups.user_id = $1`
                 queryParams.push(userID);
-            }
-            
+            };
 
             const result = await pgdb.query(query, queryParams);
-    
+
             const rval: Array<GroupObjectProps> | undefined = result.rows;
             return rval;
         } catch (error) {

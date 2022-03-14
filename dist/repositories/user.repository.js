@@ -280,16 +280,16 @@ var UserRepo = /** @class */ (function () {
     ;
     UserRepo.delete_user_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_7;
+            var error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM users \n                WHERE id = $1\n                RETURNING id", [userID])];
+                        console.log("Called Delete User by User ID");
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT delete_user_account($1)", [userID])];
                     case 1:
-                        result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
+                        _a.sent();
+                        return [2 /*return*/, true];
                     case 2:
                         error_7 = _a.sent();
                         throw new expresError_1["default"]("An Error Occured: Unable to delete user - ".concat(error_7), 500);

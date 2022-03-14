@@ -238,7 +238,7 @@ var UserModel = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 14, , 16]);
+                        _a.trys.push([0, 17, , 19]);
                         userList = [{ id: id }];
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
@@ -247,6 +247,7 @@ var UserModel = /** @class */ (function () {
                     case 2:
                         ownedGroups = _a.sent();
                         if (!(ownedGroups.length > 0)) return [3 /*break*/, 8];
+                        console.log("User owns groups");
                         return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_group_id(ownedGroups)];
                     case 3:
                         _a.sent();
@@ -266,36 +267,45 @@ var UserModel = /** @class */ (function () {
                     case 8:
                         ;
                         // Cleanup User Group & GroupRoles
-                        return [4 /*yield*/, group_repository_1["default"].delete_user_groups_by_user_id(userList)];
+                        return [4 /*yield*/, group_repository_1["default"].delete_user_grouproles_by_user_id(userList)];
                     case 9:
                         // Cleanup User Group & GroupRoles
                         _a.sent();
+                        return [4 /*yield*/, group_repository_1["default"].delete_user_groups_by_user_id(userList)];
+                    case 10:
+                        _a.sent();
                         // Cleanup User Equipment
                         return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_user_id(userList)];
-                    case 10:
+                    case 11:
                         // Cleanup User Equipment
+                        _a.sent();
+                        return [4 /*yield*/, equipment_repository_1["default"].delete_user_equip_by_user_id(userList)];
+                    case 12:
                         _a.sent();
                         // Cleanup User Rooms
                         return [4 /*yield*/, room_repository_1["default"].delete_room_by_user_id(userList)];
-                    case 11:
+                    case 13:
                         // Cleanup User Rooms
+                        _a.sent();
+                        return [4 /*yield*/, room_repository_1["default"].delete_user_room_by_user_id(userList)];
+                    case 14:
                         _a.sent();
                         // Clean Up User Tables & Site Roles:
                         return [4 /*yield*/, user_repository_1["default"].delete_user_by_user_id(id)];
-                    case 12:
+                    case 15:
                         // Clean Up User Tables & Site Roles:
                         _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 13:
+                    case 16:
                         _a.sent();
                         return [2 /*return*/, true];
-                    case 14:
+                    case 17:
                         error_2 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 15:
+                    case 18:
                         _a.sent();
                         throw new expresError_1["default"]("Delete Failed", 500);
-                    case 16: return [2 /*return*/];
+                    case 19: return [2 /*return*/];
                 }
             });
         });

@@ -222,14 +222,12 @@ class EquipmentRepo {
                 DELETE FROM equipment
                 WHERE equipment.id IN (
                     SELECT equipment.id FROM equipment
-                    LEFT JOIN user_equipment ON user_equipment.equipment_id = equipment.id
-                    WHERE user_equipment.user_id IN (${idxParams.join(', ')})
-                );
-
-                DELETE FROM user_equipment
-                WHERE user_equipment.user_id IN (${idxParams.join(', ')});`;
+                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id
+                    WHERE user_equipment.user_id IN  (${idxParams.join(', ')})
+                )`;
             
-            console.log(query);
+            // console.log("Delete Equip by UserID Called");
+            // console.log(query);
             await pgdb.query(query, queryParams);
 
             return true;
@@ -237,6 +235,36 @@ class EquipmentRepo {
             throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
+
+    static async delete_user_equip_by_user_id(userID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_equipment
+                WHERE user_equipment.user_id IN (${idxParams.join(', ')})`;
+            
+            // console.log("Delete User Equip by UserID Called");
+            // console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
 
 //      ____ ____   ___  _   _ ____  
 //     / ___|  _ \ / _ \| | | |  _ \ 

@@ -352,7 +352,7 @@ BEGIN
 	WHERE userdata.account_id = _user_id;
 	
 	DELETE FROM useraccount
-	WHERE useraccount.account_id = _user_id;
+	WHERE useraccount.id = _user_id;
 	
 	RETURN 'success';
 END;

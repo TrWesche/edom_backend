@@ -394,14 +394,12 @@ class UserRepo {
 
     static async delete_user_by_user_id(userID: string) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM users 
-                WHERE id = $1
-                RETURNING id`,
-            [userID]);
-    
-            const rval: UserObjectProps | undefined = result.rows[0];
-            return rval;
+            console.log("Called Delete User by User ID");
+            await pgdb.query(
+                `SELECT delete_user_account($1)`,
+                [userID]);
+
+            return true;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete user - ${error}`, 500);
         }
