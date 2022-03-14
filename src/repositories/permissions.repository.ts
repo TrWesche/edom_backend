@@ -102,6 +102,24 @@ class PermissionsRepo {
             throw new ExpressError(`An Error Occured: Unable to get user permissions for the target room - ${error}`, 500);
         } 
     };
+
+    static async fetch_user_site_permissions(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT sitepermissions.name FROM sitepermissions
+                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.sitepermission_id = sitepermissions.id
+                LEFT JOIN user_siteroles ON user_siteroles.siterole_id = siterole_sitepermissions.siterole_id
+                WHERE user_siteroles.user_id = $1`,
+                [userID]
+            );
+
+            return result.rows;
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user permissions for the target user - ${error}`, 500);
+        }  
+        
+    };
 }
 
 

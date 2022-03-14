@@ -223,8 +223,10 @@ class authMW {
       } else 
       if (req.groupID) {
         permissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms);
+      } else {
+        permissions = await PermissionsRepo.fetch_user_site_permissions(req.user.id);
       };
-      
+
       if (permissions.length === 0) {
         return next({ status: 401, message: "Unauthorized" });
       };

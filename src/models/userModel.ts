@@ -1,21 +1,27 @@
+// Library Imports
 import * as bcrypt from "bcrypt";
 import { bcrypt_work_factor } from "../config/config";
+
+// Helper Function Imports
 import ExpressError from "../utils/expresError";
 
-import UserRepo, { UserObjectProps } from "../repositories/user.repository";
+// SQL Repository Imports
+import UserRepo from "../repositories/user.repository";
 import TransactionRepo from "../repositories/transactionRepository";
-import SitePermissionsRepo from "../repositories/sitePermissions.repository";
-import { UserAuthProps } from "../schemas/user/userAuthSchema";
-import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
-import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
 import GroupRepo from "../repositories/group.repository";
 import EquipmentRepo from "../repositories/equipment.repository";
 import RoomRepo from "../repositories/room.repository";
 import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 
+// Schema Imports
+import { UserAuthProps } from "../schemas/user/userAuthSchema";
+import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
+import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
+
 /** Standard User Creation & Authentication */
 class UserModel {
   /** Authenticate user with email & password. Returns user or throws error. */
+  // Manual Test Success 2022/03/13
   static async authenticate(data: UserAuthProps) {
     if (!data.username){
       throw new ExpressError("Invalid Authentication Call", 400)
@@ -35,6 +41,7 @@ class UserModel {
   }
 
   /** Register user with data. Returns new user data. */
+  // Manual Test Success 2022/03/13
   static async register(data: UserRegisterProps) {
     if (!data.username || !data.email || !data.password){
       throw new ExpressError("Invalid Register Call", 400)
@@ -61,13 +68,15 @@ class UserModel {
     }
   }
   
-  /** Get user data by id */
+  /** Get user list */
+  // Manual Test Success 2022/03/13
   static async retrieve_user_list_paginated(limit: number, offset: number) {
     const users = await UserRepo.fetch_user_list_paginated(limit, offset);
     return users;
-};
+  };
 
-
+  /** Get user data by id */
+  // Manual Test Success 2022/03/13
   static async retrieve_user_by_user_id(id: string | undefined) {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
@@ -78,8 +87,10 @@ class UserModel {
       throw new ExpressError("Unable to locate target user", 404);
     }
     return user;
-  }
+  };
 
+  /** Get user data by username */
+  // Manual Test Success 2022/03/13
   static async retrieve_user_by_username(username: string | undefined) {
     if (!username) {
       throw new ExpressError("Error: Username not provided", 400);
@@ -95,9 +106,10 @@ class UserModel {
     delete user.password;
     delete user.email;
     return user;
-  }
+  };
 
   /** Update user data with `data` */
+  // Manual Test Success 2022/03/13
   static async modify_user(id: string | undefined, data: UserUpdateProps) {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
@@ -132,9 +144,10 @@ class UserModel {
 
     const user = await UserRepo.fetch_user_by_user_id(id, 'account');
     return user;
-  }
+  };
 
   /** Delete target user from database; returns undefined. */
+  // Manual Test - 2022/03/13 (Only delete_user_by_user_id() verified to work)
   static async delete_user(id: string) {
     try {
       const userList = [{id}]
@@ -181,7 +194,7 @@ class UserModel {
       await TransactionRepo.rollback_transaction(); 
       throw new ExpressError("Delete Failed", 500);
     }    
-  }
+  };
 }
   
   

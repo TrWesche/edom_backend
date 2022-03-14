@@ -36,9 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+// Library Imports
 var bcrypt = require("bcrypt");
 var config_1 = require("../config/config");
+// Helper Function Imports
 var expresError_1 = require("../utils/expresError");
+// SQL Repository Imports
 var user_repository_1 = require("../repositories/user.repository");
 var transactionRepository_1 = require("../repositories/transactionRepository");
 var group_repository_1 = require("../repositories/group.repository");
@@ -50,6 +53,7 @@ var UserModel = /** @class */ (function () {
     function UserModel() {
     }
     /** Authenticate user with email & password. Returns user or throws error. */
+    // Manual Test Success 2022/03/13
     UserModel.authenticate = function (data) {
         return __awaiter(this, void 0, void 0, function () {
             var user, isValid;
@@ -80,6 +84,7 @@ var UserModel = /** @class */ (function () {
         });
     };
     /** Register user with data. Returns new user data. */
+    // Manual Test Success 2022/03/13
     UserModel.register = function (data) {
         return __awaiter(this, void 0, void 0, function () {
             var emailCheck, usernameCheck, hashedPassword, user, error_1;
@@ -121,7 +126,8 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /** Get user data by id */
+    /** Get user list */
+    // Manual Test Success 2022/03/13
     UserModel.retrieve_user_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var users;
@@ -136,6 +142,8 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
+    /** Get user data by id */
+    // Manual Test Success 2022/03/13
     UserModel.retrieve_user_by_user_id = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var user;
@@ -156,6 +164,9 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
+    ;
+    /** Get user data by username */
+    // Manual Test Success 2022/03/13
     UserModel.retrieve_user_by_username = function (username) {
         return __awaiter(this, void 0, void 0, function () {
             var user;
@@ -179,7 +190,9 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
+    ;
     /** Update user data with `data` */
+    // Manual Test Success 2022/03/13
     UserModel.modify_user = function (id, data) {
         var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function () {
@@ -231,7 +244,9 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
+    ;
     /** Delete target user from database; returns undefined. */
+    // Manual Test - 2022/03/13 (Only delete_user_by_user_id() verified to work)
     UserModel.delete_user = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var userList, ownedGroups, error_2;
@@ -310,6 +325,7 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
+    ;
     return UserModel;
 }());
 exports["default"] = UserModel;

@@ -205,7 +205,6 @@ class RoomRepo {
         }
     };
 
-
     static async delete_room_by_user_id(userID: Array<IDList>) {
         try {
             let idx = 1;

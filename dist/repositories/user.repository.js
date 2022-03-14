@@ -202,6 +202,7 @@ var UserRepo = /** @class */ (function () {
         });
     };
     ;
+    // Tested - 03/13/2022
     UserRepo.fetch_user_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_5;
@@ -278,6 +279,7 @@ var UserRepo = /** @class */ (function () {
         });
     };
     ;
+    // Tested - 03/13/2022
     UserRepo.delete_user_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
             var error_7;

@@ -274,7 +274,7 @@ var authMW = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 7, , 8]);
+                        _b.trys.push([0, 9, , 10]);
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
@@ -288,20 +288,24 @@ var authMW = /** @class */ (function () {
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms)];
                     case 1:
                         permissions = _b.sent();
-                        return [3 /*break*/, 6];
+                        return [3 /*break*/, 8];
                     case 2:
                         if (!req.params.roomID) return [3 /*break*/, 4];
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms)];
                     case 3:
                         permissions = _b.sent();
-                        return [3 /*break*/, 6];
+                        return [3 /*break*/, 8];
                     case 4:
                         if (!req.groupID) return [3 /*break*/, 6];
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms)];
                     case 5:
                         permissions = _b.sent();
-                        _b.label = 6;
-                    case 6:
+                        return [3 /*break*/, 8];
+                    case 6: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions(req.user.id)];
+                    case 7:
+                        permissions = _b.sent();
+                        _b.label = 8;
+                    case 8:
                         ;
                         if (permissions.length === 0) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
@@ -309,10 +313,10 @@ var authMW = /** @class */ (function () {
                         ;
                         req.resolvedPerms = permissions;
                         return [2 /*return*/, next()];
-                    case 7:
+                    case 9:
                         error_4 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
-                    case 8: return [2 /*return*/];
+                    case 10: return [2 /*return*/];
                 }
             });
         });

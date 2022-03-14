@@ -9,24 +9,16 @@ import validateUserAuthSchema, { UserAuthProps } from "../schemas/user/userAuthS
 import validateUserRegisterSchema, { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userUpdateSchema";
 
-// Router Imports
-import userRoomRouter from "./userRouters/userRoomRouter";
-import userEquipRouter from "./userRouters/userEquipRouter";
-
 // Model Imports
 import UserModel from "../models/userModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
-import userGroupRouter from "./userRouters/userGroupRouter";
 import userDeviceMasterRouter from "./userRouters/userDMRouter";
 
 
 const userRootRouter = express.Router();
 
-// userRootRouter.use("/rooms", userRoomRouter);
-// userRootRouter.use("/equips", userEquipRouter);
-// userRootRouter.use("/groups", userGroupRouter);
 userRootRouter.use("/dm", userDeviceMasterRouter);
 
 /*    _   _   _ _____ _   _ 
@@ -119,17 +111,28 @@ userRootRouter.post("/register", async (req, res, next) => {
 */
 
 // Manual Test Success - 2022/03/12
-userRootRouter.get("/profile", authMW.defineSitePermissions(['read_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
-    try {
-        const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
-        if (!queryData) {
-            throw new ExpressError("Unable to find user account.", 404);
+userRootRouter.get(
+    "/profile", 
+    authMW.defineRoutePermissions({
+        user: ["read_user_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    // authMW.defineSitePermissions(['read_user_self']), 
+    // authMW.loadSitePermissions, 
+    // authMW.validatePermissions, 
+    async (req, res, next) => {
+        try {
+            const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
+            if (!queryData) {
+                throw new ExpressError("Unable to find user account.", 404);
+            }
+            
+            return res.json({user: queryData});
+        } catch (error) {
+            next(error);
         }
-        
-        return res.json({user: queryData});
-    } catch (error) {
-        next(error);
-    }
 });
 
 // Manual Test Success - 2022/03/13

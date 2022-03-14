@@ -314,6 +314,7 @@ class UserRepo {
         };
     };
 
+    // Tested - 03/13/2022
     static async fetch_user_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
@@ -391,7 +392,7 @@ class UserRepo {
         }
     };
     
-
+    // Tested - 03/13/2022
     static async delete_user_by_user_id(userID: string) {
         try {
             console.log("Called Delete User by User ID");

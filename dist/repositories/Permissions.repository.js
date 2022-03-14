@@ -186,6 +186,27 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
+    PermissionsRepo.fetch_user_site_permissions = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, error_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT sitepermissions.name FROM sitepermissions\n                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.sitepermission_id = sitepermissions.id\n                LEFT JOIN user_siteroles ON user_siteroles.siterole_id = siterole_sitepermissions.siterole_id\n                WHERE user_siteroles.user_id = $1", [userID])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_5 = _a.sent();
+                        // console.log(error);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target user - ".concat(error_5), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     return PermissionsRepo;
 }());
 exports["default"] = PermissionsRepo;

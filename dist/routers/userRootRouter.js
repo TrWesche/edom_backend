@@ -50,9 +50,6 @@ var userModel_1 = require("../models/userModel");
 var authorizationMW_1 = require("../middleware/authorizationMW");
 var userDMRouter_1 = require("./userRouters/userDMRouter");
 var userRootRouter = express.Router();
-// userRootRouter.use("/rooms", userRoomRouter);
-// userRootRouter.use("/equips", userEquipRouter);
-// userRootRouter.use("/groups", userGroupRouter);
 userRootRouter.use("/dm", userDMRouter_1["default"]);
 /*    _   _   _ _____ _   _
      / \ | | | |_   _| | | |
@@ -150,7 +147,15 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test Success - 2022/03/12
-userRootRouter.get("/profile", authorizationMW_1["default"].defineSitePermissions(['read_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["read_user_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, 
+// authMW.defineSitePermissions(['read_user_self']), 
+// authMW.loadSitePermissions, 
+// authMW.validatePermissions, 
+function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
