@@ -153,7 +153,6 @@ class UserRepo {
     };
 
     // Tested - 03/12/2022
-    // TODO: FAIL on correct data coming back for private user accounts.
     static async fetch_user_by_username(username: string, fetchType?: fetchType) {
         try {
             let query: string;
@@ -174,25 +173,22 @@ class UserRepo {
                     WHERE username ILIKE $1`;
                     break;
                 case 'profile':
-                    query = `SELECT
-                        useraccount.id AS id,
-                        userprofile.username AS username,
-                        userprofile.headline AS headline,
-                        userprofile.about AS about,
-                        userprofile.image_url AS image_url,
-                        userprofile.public AS public_profile,
-                        userdata.email AS email,
-                        userdata.public_email AS public_email,
-                        userdata.first_name AS first_name,
-                        userdata.public_first_name AS public_first_name,
-                        userdata.last_name AS last_name,
-                        userdata.public_last_name AS public_last_name,
-                        userdata.location AS location,
-                        userdata.public_location AS public_location
-                    FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
-                    WHERE username ILIKE $1`;
+                        query = `
+                        SELECT
+                            useraccount.id AS id,
+                            userprofile.username AS username,
+                            userprofile.headline AS headline,
+                            userprofile.about AS about,
+                            userprofile.image_url AS image_url,
+                            (SELECT userdata.email AS email FROM userdata WHERE userdata.public_email = TRUE),
+                            (SELECT userdata.first_name AS first_name FROM userdata WHERE userdata.public_first_name = TRUE),
+                            (SELECT userdata.last_name AS last_name FROM userdata WHERE userdata.public_last_name = TRUE),
+                            (SELECT userdata.location AS location FROM userdata WHERE userdata.public_location = TRUE)
+                        FROM useraccount
+                        LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                        LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                        WHERE EXISTS (SELECT account_id FROM userprofile WHERE userprofile.username ILIKE $1 AND userprofile.public = TRUE)`;
+                        break;
                 case 'account':
                     query = `SELECT
                         useraccount.id AS id,

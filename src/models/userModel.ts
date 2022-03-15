@@ -81,7 +81,7 @@ class UserModel {
     if (!id) {
       throw new ExpressError("Error: User ID not provided", 400);
     }
-    const user = await UserRepo.fetch_user_by_user_id(id, 'profile');
+    const user = await UserRepo.fetch_user_by_user_id(id, 'account');
 
     if (!user) {
       throw new ExpressError("Unable to locate target user", 404);

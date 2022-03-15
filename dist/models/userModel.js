@@ -153,7 +153,7 @@ var UserModel = /** @class */ (function () {
                         if (!id) {
                             throw new expresError_1["default"]("Error: User ID not provided", 400);
                         }
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id, 'profile')];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id, 'account')];
                     case 1:
                         user = _a.sent();
                         if (!user) {
