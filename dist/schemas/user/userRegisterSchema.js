@@ -17,14 +17,15 @@ var schema = {
             $id: "#/properties/username",
             type: "string",
             "default": "",
-            minLength: 1
+            minLength: 4,
+            pattern: "^[A-z0-9]+$"
         },
         email: {
             $id: "#/properties/email",
             type: "string",
             format: "email",
             "default": "",
-            minLength: 1
+            minLength: 6
         },
         password: {
             $id: "#/properties/password",

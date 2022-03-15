@@ -231,7 +231,10 @@ class authMW {
         return next({ status: 401, message: "Unauthorized" });
       };
       
+      const currentUser = await PermissionsRepo.fetch_username_by_user_id(req.user.id);
+
       req.resolvedPerms = permissions;
+      req.currentuser = currentUser.username.toLowerCase();
 
       return next();
     } catch (error) {

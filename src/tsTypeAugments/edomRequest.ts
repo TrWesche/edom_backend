@@ -11,6 +11,7 @@ declare module 'express-serve-static-core' {
       requiredPermissions?: Object
       reqPerms?: Object
       resolvedPerms?: Array<Object>
+      currentuser?: string
     }
     // interface Response {
     //   myField?: string

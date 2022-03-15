@@ -65,7 +65,8 @@ const schema: JSONSchemaType<UserUpdateProps> = {
                     type: "string",
                     default: "",
                     minLength: 4,
-                    nullable: true
+                    nullable: true,
+                    pattern: "^[A-z0-9]+$"
                 },
                 headline: {
                     $id:"#/properties/user_profile/properties/headline",

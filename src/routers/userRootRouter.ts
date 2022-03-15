@@ -119,9 +119,6 @@ userRootRouter.get(
         public: []
     }),
     authMW.validateRoutePermissions,
-    // authMW.defineSitePermissions(['read_user_self']), 
-    // authMW.loadSitePermissions, 
-    // authMW.validatePermissions, 
     async (req, res, next) => {
         try {
             const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
@@ -136,7 +133,15 @@ userRootRouter.get(
 });
 
 // Manual Test Success - 2022/03/13
-userRootRouter.get("/list", authMW.defineSitePermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.get(
+    "/list", 
+    authMW.defineRoutePermissions({
+        user: ["view_user_public"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
         // TODO: Need a user retrieval route
         const queryData = await UserModel.retrieve_user_list_paginated(10, 0);
@@ -158,7 +163,14 @@ userRootRouter.get("/list", authMW.defineSitePermissions(['view_user_public']), 
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test Success - 2022/03/12
-userRootRouter.patch("/update", authMW.defineSitePermissions(['update_user_self']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.patch("/update", 
+    authMW.defineRoutePermissions({
+        user: ["update_user_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
         const prevValues = await UserModel.retrieve_user_by_user_id(req.user?.id);
         if (!prevValues) {
@@ -248,7 +260,14 @@ userRootRouter.post("/logout", async (req, res, next) => {
   |____/|_____|_____|_____| |_| |_____|
 */
 
-userRootRouter.delete("/delete", authMW.defineSitePermissions(['delete_user_self']),  authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userRootRouter.delete("/delete", 
+    authMW.defineRoutePermissions({
+        user: ["delete_user_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
         if (!req.user?.id) {
             throw new ExpressError("Delete user failed, userid not provided.", 400);

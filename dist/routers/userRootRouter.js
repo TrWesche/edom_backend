@@ -151,11 +151,7 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissio
     user: ["read_user_self"],
     group: [],
     public: []
-}), authorizationMW_1["default"].validateRoutePermissions, 
-// authMW.defineSitePermissions(['read_user_self']), 
-// authMW.loadSitePermissions, 
-// authMW.validatePermissions, 
-function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -178,7 +174,11 @@ function (req, res, next) { return __awaiter(void 0, void 0, void 0, function ()
     });
 }); });
 // Manual Test Success - 2022/03/13
-userRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["view_user_public"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -206,7 +206,11 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test Success - 2022/03/12
-userRootRouter.patch("/update", authorizationMW_1["default"].defineSitePermissions(['update_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["update_user_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues, updateValues, group, item, newData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -303,7 +307,11 @@ userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineSitePermissions(['delete_user_self']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["delete_user_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     var _a, _b;
     return __generator(this, function (_c) {

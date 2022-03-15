@@ -120,7 +120,22 @@ class PermissionsRepo {
         }  
         
     };
-}
+
+    static async fetch_username_by_user_id(userID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT username FROM userprofile
+                WHERE userprofile.account_id = $1`,
+                    [userID]
+            );
+
+            return result.rows[0];
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user permissions for the target user - ${error}`, 500);
+        }  
+    };
+};
 
 
 export default PermissionsRepo;

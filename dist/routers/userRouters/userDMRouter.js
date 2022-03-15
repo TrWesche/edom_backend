@@ -56,29 +56,47 @@ var userDeviceMasterRouter = express.Router();
 */
 // Manual Test Success - 2022/03/12
 /** Get User Profile Route - Based on Username */
-userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineSitePermissions(['view_user_public']), authorizationMW_1["default"].loadSitePermissions, authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["view_user_public"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_username(req.params.username)];
+                _b.trys.push([0, 5, , 6]);
+                queryData = void 0;
+                if (!(req.currentuser === req.params.username.toLowerCase())) return [3 /*break*/, 2];
+                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
             case 1:
-                queryData = _a.sent();
+                queryData = _b.sent();
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, userModel_1["default"].retrieve_user_by_username(req.params.username)];
+            case 3:
+                queryData = _b.sent();
+                _b.label = 4;
+            case 4:
+                ;
                 if (!queryData) {
                     throw new expresError_1["default"]("Unable to find a user with provided username.", 404);
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
-            case 2:
-                error_1 = _a.sent();
+            case 5:
+                error_1 = _b.sent();
                 next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });
 /** Get User Groups Route - Based on Username */
-userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["read_group_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -94,7 +112,7 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
             case 1:
                 queryData = _c.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - All", 404);
+                    throw new expresError_1["default"]("Group Not Found: Get User Groups - All", 404);
                 }
                 ;
                 return [2 /*return*/, res.json({ equip: queryData })];
@@ -107,7 +125,11 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
     });
 }); });
 /** Get User Rooms Route - Based on Username */
-userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["read_room_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -116,14 +138,14 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
                 _c.trys.push([0, 2, , 3]);
                 // Preflight
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                    throw new expresError_1["default"]("Invalid Call: Get User Groups - All", 401);
+                    throw new expresError_1["default"]("Invalid Call: Get User Rooms - All", 401);
                 }
                 ;
                 return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_by_user_id_all((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
             case 1:
                 queryData = _c.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - All", 404);
+                    throw new expresError_1["default"]("Rooms Not Found: Get User Rooms - All", 404);
                 }
                 ;
                 return [2 /*return*/, res.json({ equip: queryData })];
@@ -136,7 +158,11 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
     });
 }); });
 /** Get User Equip Route */
-userDeviceMasterRouter.get("/:username/equip", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+userDeviceMasterRouter.get("/:username/equip", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["read_equip_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     var _a, _b;
     return __generator(this, function (_c) {
@@ -145,7 +171,7 @@ userDeviceMasterRouter.get("/:username/equip", authorizationMW_1["default"].defi
                 _c.trys.push([0, 2, , 3]);
                 // Preflight
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                    throw new expresError_1["default"]("Invalid Call: Get User Groups - All", 401);
+                    throw new expresError_1["default"]("Invalid Call: Get User Equip - All", 401);
                 }
                 ;
                 return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];

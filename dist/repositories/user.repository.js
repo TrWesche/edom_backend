@@ -119,6 +119,7 @@ var UserRepo = /** @class */ (function () {
     };
     ;
     // Tested - 03/12/2022
+    // TODO: FAIL on correct data coming back for private user accounts.
     UserRepo.fetch_user_by_username = function (username, fetchType) {
         return __awaiter(this, void 0, void 0, function () {
             var query, result, rval, error_3;

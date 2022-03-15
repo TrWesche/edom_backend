@@ -30,9 +30,24 @@ const userDeviceMasterRouter = express.Router();
 
 // Manual Test Success - 2022/03/12
 /** Get User Profile Route - Based on Username */
-userDeviceMasterRouter.get("/:username", authMW.defineSitePermissions(['view_user_public']), authMW.loadSitePermissions, authMW.validatePermissions, async (req, res, next) => {
+userDeviceMasterRouter.get("/:username", 
+    authMW.defineRoutePermissions({
+        user: ["view_user_public"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
-        const queryData = await UserModel.retrieve_user_by_username(req.params.username);
+        let queryData;
+
+        if (req.currentuser === req.params.username.toLowerCase()) {
+            queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
+        } else {
+            queryData = await UserModel.retrieve_user_by_username(req.params.username);
+        };
+
+        
         if (!queryData) {
             throw new ExpressError("Unable to find a user with provided username.", 404);
         }
@@ -44,7 +59,14 @@ userDeviceMasterRouter.get("/:username", authMW.defineSitePermissions(['view_use
 });
 
 /** Get User Groups Route - Based on Username */
-userDeviceMasterRouter.get("/:username/group", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userDeviceMasterRouter.get("/:username/group", 
+    authMW.defineRoutePermissions({
+        user: ["read_group_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {
@@ -55,7 +77,7 @@ userDeviceMasterRouter.get("/:username/group", authMW.defineSitePermissions(["re
         // TODO - Needs to be based on username
         const queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, 10, 0);
         if (!queryData) {
-            throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+            throw new ExpressError("Group Not Found: Get User Groups - All", 404);
         };
         
         return res.json({equip: queryData});
@@ -65,17 +87,24 @@ userDeviceMasterRouter.get("/:username/group", authMW.defineSitePermissions(["re
 });
 
 /** Get User Rooms Route - Based on Username */
-userDeviceMasterRouter.get("/:username/room", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userDeviceMasterRouter.get("/:username/room", 
+    authMW.defineRoutePermissions({
+        user: ["read_room_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Groups - All", 401);
+            throw new ExpressError("Invalid Call: Get User Rooms - All", 401);
         };
 
         // Processing
         const queryData = await RoomModel.retrieve_user_rooms_by_user_id_all(req.user?.id);
         if (!queryData) {
-            throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+            throw new ExpressError("Rooms Not Found: Get User Rooms - All", 404);
         };
         
         return res.json({equip: queryData});
@@ -85,11 +114,18 @@ userDeviceMasterRouter.get("/:username/room", authMW.defineSitePermissions(["rea
 });
 
 /** Get User Equip Route */
-userDeviceMasterRouter.get("/:username/equip", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+userDeviceMasterRouter.get("/:username/equip", 
+    authMW.defineRoutePermissions({
+        user: ["read_equip_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,    
+    async (req, res, next) => {
     try {
         // Preflight
         if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Groups - All", 401);
+            throw new ExpressError("Invalid Call: Get User Equip - All", 401);
         };
 
         // Processing

@@ -270,11 +270,11 @@ var authMW = /** @class */ (function () {
     authMW.validateRoutePermissions = function (req, res, next) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var permissions, error_4;
+            var permissions, currentUser, error_4;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 9, , 10]);
+                        _b.trys.push([0, 10, , 11]);
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
@@ -311,12 +311,16 @@ var authMW = /** @class */ (function () {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
                         ;
-                        req.resolvedPerms = permissions;
-                        return [2 /*return*/, next()];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_username_by_user_id(req.user.id)];
                     case 9:
+                        currentUser = _b.sent();
+                        req.resolvedPerms = permissions;
+                        req.currentuser = currentUser.username.toLowerCase();
+                        return [2 /*return*/, next()];
+                    case 10:
                         error_4 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
-                    case 10: return [2 /*return*/];
+                    case 11: return [2 /*return*/];
                 }
             });
         });
