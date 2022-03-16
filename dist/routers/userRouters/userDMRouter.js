@@ -57,9 +57,9 @@ var userDeviceMasterRouter = express.Router();
 // Manual Test Success - 2022/03/12
 /** Get User Profile Route - Based on Username */
 userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["view_user_public"],
+    user: [],
     group: [],
-    public: []
+    public: ["view_user_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_1;
     var _a;
@@ -95,7 +95,7 @@ userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRout
 userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defineRoutePermissions({
     user: ["read_group_self"],
     group: [],
-    public: []
+    public: ["view_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a, _b;

@@ -204,6 +204,7 @@ class authMW {
   };
 
   static async validateRoutePermissions (req: Request, res: Response, next: NextFunction) {
+    // TODO: This should also handle the case where the username is provided for permission determination
     try {
       if (!req.user?.id) {
         return next({ status: 401, message: "Unauthorized" });

@@ -11,7 +11,7 @@ CREATE TABLE "useraccount" (
 );
 
 CREATE TABLE "userdata" (
-  "account_id" uuid NOT NULL,
+  "user_id" uuid NOT NULL,
   "email" text UNIQUE NOT NULL,
   "public_email" boolean DEFAULT false,
   "first_name" text,
@@ -23,7 +23,7 @@ CREATE TABLE "userdata" (
 );
 
 CREATE TABLE "userprofile" (
-  "account_id" uuid NOT NULL,
+  "user_id" uuid NOT NULL,
   "username" text UNIQUE NOT NULL,
   "headline" text,
   "about" text,
@@ -203,9 +203,9 @@ CREATE TABLE "group_chat_log" (
 );
 
 
-ALTER TABLE "userdata" ADD FOREIGN KEY ("account_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
+ALTER TABLE "userdata" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "userprofile" ADD FOREIGN KEY ("account_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
+ALTER TABLE "userprofile" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "equipment" ADD FOREIGN KEY ("category_id") REFERENCES "equipment_categories" ("id") ON DELETE NO ACTION;
 

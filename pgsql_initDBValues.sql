@@ -2,6 +2,7 @@
 INSERT INTO public.siteroles
  	(id, name)
 VALUES
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', 'public'),
 	('853724f0-ef31-467d-a739-58bcc081a540', 'user'),
 	('b8ad054d-8c88-4163-8bac-7bb9659162a2', 'moderator'),
 	('5f21659e-888a-4354-8b10-277ebf7b088a', 'l1_support'),
@@ -29,8 +30,6 @@ VALUES
 	('0f58ae58-108f-4ce7-9c9b-54326bbf37aa', 'remove_role'),
 
     -- User Roles
-	('b4071041-8e47-4b46-9d07-748a984fecb1', 'site_access'),
-
 	('1077c00a-4d3a-458a-be88-56d1d3cfdf56', 'read_user_self'),
 	('7e5e9bbc-1d5a-4977-ad8c-905072571adb', 'update_user_self'),
 	('1eb0719d-838e-4c57-a3a7-9e1439650459', 'delete_user_self'),
@@ -50,6 +49,8 @@ VALUES
 	('6a5664f0-1d28-4269-883a-d8b362b1cf57', 'update_equip_self'),
 	('c3934131-658e-43c9-a8b5-3f207d88140f', 'delete_equip_self'),
 	
+	-- Public Roles
+	('b4071041-8e47-4b46-9d07-748a984fecb1', 'site_access'),
 	('2332da90-06c7-45d4-95a5-95fc7e4c9853', 'browse_users_public'),
 	('72eef18a-90bb-40ea-aac4-75883ef51a64', 'browse_groups_public'),
 	('61fc32b7-d165-4c42-a3ea-67e70ffc2652', 'browse_rooms_public'),
@@ -94,7 +95,6 @@ INSERT INTO public.siterole_sitepermissions
     (siterole_id, sitepermission_id)
 VALUES
 -- user role id, permission_id
-	('853724f0-ef31-467d-a739-58bcc081a540', 'b4071041-8e47-4b46-9d07-748a984fecb1'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '1077c00a-4d3a-458a-be88-56d1d3cfdf56'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '7e5e9bbc-1d5a-4977-ad8c-905072571adb'),
     ('853724f0-ef31-467d-a739-58bcc081a540', '1eb0719d-838e-4c57-a3a7-9e1439650459'),
@@ -111,14 +111,16 @@ VALUES
     ('853724f0-ef31-467d-a739-58bcc081a540', '6a5664f0-1d28-4269-883a-d8b362b1cf57'),
     ('853724f0-ef31-467d-a739-58bcc081a540', 'c3934131-658e-43c9-a8b5-3f207d88140f'),
 
-	('853724f0-ef31-467d-a739-58bcc081a540', '2332da90-06c7-45d4-95a5-95fc7e4c9853'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '72eef18a-90bb-40ea-aac4-75883ef51a64'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '61fc32b7-d165-4c42-a3ea-67e70ffc2652'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '87813dbe-496b-4b10-8ac7-5f790a87c07d'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '9f379465-0adb-4daa-a7b8-1c42949dba4f'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '6bf76d45-d706-434b-8ae5-8b87cf3b4fc6'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '9823bc6b-104e-4fd2-b03b-b63faf102f90'),
-	('853724f0-ef31-467d-a739-58bcc081a540', '6259f8e4-6412-4e88-a961-77965300f0d5'),
+-- public role id, permission_id
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', 'b4071041-8e47-4b46-9d07-748a984fecb1'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '2332da90-06c7-45d4-95a5-95fc7e4c9853'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '72eef18a-90bb-40ea-aac4-75883ef51a64'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '61fc32b7-d165-4c42-a3ea-67e70ffc2652'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '87813dbe-496b-4b10-8ac7-5f790a87c07d'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '9f379465-0adb-4daa-a7b8-1c42949dba4f'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '6bf76d45-d706-434b-8ae5-8b87cf3b4fc6'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '9823bc6b-104e-4fd2-b03b-b63faf102f90'),
+	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '6259f8e4-6412-4e88-a961-77965300f0d5'),
 
 -- administrator role id, permission_id
     ('3acdd306-7225-4ffc-ad11-97c09c9ed32b', '516b9952-d3fb-42d7-b187-2c49255bdb69'),

@@ -32,9 +32,9 @@ const userDeviceMasterRouter = express.Router();
 /** Get User Profile Route - Based on Username */
 userDeviceMasterRouter.get("/:username", 
     authMW.defineRoutePermissions({
-        user: ["view_user_public"],
+        user: [],
         group: [],
-        public: []
+        public: ["view_user_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
@@ -63,7 +63,7 @@ userDeviceMasterRouter.get("/:username/group",
     authMW.defineRoutePermissions({
         user: ["read_group_self"],
         group: [],
-        public: []
+        public: ["view_group_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
