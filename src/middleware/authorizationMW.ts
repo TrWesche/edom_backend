@@ -188,7 +188,6 @@ class authMW {
           }
     }
   };
-  
 
   /** Define Permissions Required to Access a Site Endpoint */
   static defineRoutePermissions (permissions: RoutePermissions) {
@@ -206,6 +205,7 @@ class authMW {
   static async validateRoutePermissions (req: Request, res: Response, next: NextFunction) {
     // TODO: This should also handle the case where the username is provided for permission determination
     try {
+      console.log("Validating Route Permissions");
       if (!req.user?.id) {
         return next({ status: 401, message: "Unauthorized" });
       };
@@ -217,25 +217,40 @@ class authMW {
       let permissions;
 
       if (req.params.equipID) {
+        console.log("Checking Equip Permissions");
         permissions = await PermissionsRepo.fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms);
       } else 
       if (req.params.roomID) {
+        console.log("Checking Room Permissions");
         permissions = await PermissionsRepo.fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms);
       } else 
       if (req.groupID) {
+        console.log("Checking Group Permissions");
         permissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms);
+      } else 
+      if (req.params.username) {
+        console.log("Checking Username Permissions");
+        const comparisonUID = await PermissionsRepo.fetch_user_id_by_username(req.params.username);
+        if (req.user.id === comparisonUID) {
+          permissions = await PermissionsRepo.fetch_user_site_permissions_all(req.user.id, req.reqPerms);
+        } else {
+          permissions = await PermissionsRepo.fetch_user_site_permissions_public(req.user.id, req.reqPerms);  
+        }
       } else {
-        permissions = await PermissionsRepo.fetch_user_site_permissions(req.user.id);
+        console.log("Checking General Permissions");
+        permissions = await PermissionsRepo.fetch_user_site_permissions_all(req.user.id, req.reqPerms);
       };
+
+      console.log(permissions);
 
       if (permissions.length === 0) {
         return next({ status: 401, message: "Unauthorized" });
       };
       
-      const currentUser = await PermissionsRepo.fetch_username_by_user_id(req.user.id);
+      // const currentUser = await PermissionsRepo.fetch_username_by_user_id(req.user.id);
 
       req.resolvedPerms = permissions;
-      req.currentuser = currentUser.username.toLowerCase();
+      // req.currentuser = currentUser.username.toLowerCase();
 
       return next();
     } catch (error) {

@@ -111,26 +111,26 @@ userRootRouter.post("/register", async (req, res, next) => {
 */
 
 // Manual Test Success - 2022/03/12
-userRootRouter.get(
-    "/profile", 
-    authMW.defineRoutePermissions({
-        user: ["read_user_self"],
-        group: [],
-        public: []
-    }),
-    authMW.validateRoutePermissions,
-    async (req, res, next) => {
-        try {
-            const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
-            if (!queryData) {
-                throw new ExpressError("Unable to find user account.", 404);
-            }
+// userRootRouter.get(
+//     "/profile", 
+//     authMW.defineRoutePermissions({
+//         user: ["read_user_self"],
+//         group: [],
+//         public: []
+//     }),
+//     authMW.validateRoutePermissions,
+//     async (req, res, next) => {
+//         try {
+//             const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
+//             if (!queryData) {
+//                 throw new ExpressError("Unable to find user account.", 404);
+//             }
             
-            return res.json({user: queryData});
-        } catch (error) {
-            next(error);
-        }
-});
+//             return res.json({user: queryData});
+//         } catch (error) {
+//             next(error);
+//         }
+// });
 
 // Manual Test Success - 2022/03/13
 userRootRouter.get(

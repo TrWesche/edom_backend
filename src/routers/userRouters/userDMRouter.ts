@@ -32,7 +32,7 @@ const userDeviceMasterRouter = express.Router();
 /** Get User Profile Route - Based on Username */
 userDeviceMasterRouter.get("/:username", 
     authMW.defineRoutePermissions({
-        user: [],
+        user: ["read_user_self"],
         group: [],
         public: ["view_user_public"]
     }),

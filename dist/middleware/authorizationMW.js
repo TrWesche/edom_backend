@@ -270,11 +270,12 @@ var authMW = /** @class */ (function () {
     authMW.validateRoutePermissions = function (req, res, next) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var permissions, currentUser, error_4;
+            var permissions, comparisonUID, error_4;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 10, , 11]);
+                        _b.trys.push([0, 15, , 16]);
+                        console.log("Validating Route Permissions");
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
@@ -285,42 +286,62 @@ var authMW = /** @class */ (function () {
                         ;
                         permissions = void 0;
                         if (!req.params.equipID) return [3 /*break*/, 2];
+                        console.log("Checking Equip Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms)];
                     case 1:
                         permissions = _b.sent();
-                        return [3 /*break*/, 8];
+                        return [3 /*break*/, 14];
                     case 2:
                         if (!req.params.roomID) return [3 /*break*/, 4];
+                        console.log("Checking Room Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms)];
                     case 3:
                         permissions = _b.sent();
-                        return [3 /*break*/, 8];
+                        return [3 /*break*/, 14];
                     case 4:
                         if (!req.groupID) return [3 /*break*/, 6];
+                        console.log("Checking Group Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms)];
                     case 5:
                         permissions = _b.sent();
-                        return [3 /*break*/, 8];
-                    case 6: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions(req.user.id)];
+                        return [3 /*break*/, 14];
+                    case 6:
+                        if (!req.params.username) return [3 /*break*/, 12];
+                        console.log("Checking Username Permissions");
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_id_by_username(req.params.username)];
                     case 7:
-                        permissions = _b.sent();
-                        _b.label = 8;
+                        comparisonUID = _b.sent();
+                        if (!(req.user.id === comparisonUID)) return [3 /*break*/, 9];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_all(req.user.id, req.reqPerms)];
                     case 8:
+                        permissions = _b.sent();
+                        return [3 /*break*/, 11];
+                    case 9: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_public(req.user.id, req.reqPerms)];
+                    case 10:
+                        permissions = _b.sent();
+                        _b.label = 11;
+                    case 11: return [3 /*break*/, 14];
+                    case 12:
+                        console.log("Checking General Permissions");
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_all(req.user.id, req.reqPerms)];
+                    case 13:
+                        permissions = _b.sent();
+                        _b.label = 14;
+                    case 14:
                         ;
+                        console.log(permissions);
                         if (permissions.length === 0) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
                         ;
-                        return [4 /*yield*/, permissions_repository_1["default"].fetch_username_by_user_id(req.user.id)];
-                    case 9:
-                        currentUser = _b.sent();
+                        // const currentUser = await PermissionsRepo.fetch_username_by_user_id(req.user.id);
                         req.resolvedPerms = permissions;
-                        req.currentuser = currentUser.username.toLowerCase();
+                        // req.currentuser = currentUser.username.toLowerCase();
                         return [2 /*return*/, next()];
-                    case 10:
+                    case 15:
                         error_4 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
-                    case 11: return [2 /*return*/];
+                    case 16: return [2 /*return*/];
                 }
             });
         });

@@ -186,14 +186,15 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    PermissionsRepo.fetch_user_site_permissions = function (userID) {
+    PermissionsRepo.fetch_user_site_permissions_public = function (userID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, error_5;
+            var permListPublic, result, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT sitepermissions.name FROM sitepermissions\n                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.sitepermission_id = sitepermissions.id\n                LEFT JOIN user_siteroles ON user_siteroles.siterole_id = siterole_sitepermissions.siterole_id\n                WHERE user_siteroles.user_id = $1", [userID])];
+                        permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_public_user($1, $2)", [userID, permListPublic])];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, result.rows];
@@ -207,21 +208,69 @@ var PermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    PermissionsRepo.fetch_username_by_user_id = function (userID) {
+    PermissionsRepo.fetch_user_site_permissions_all = function (userID, permissions) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, error_6;
+            var permListUser, permListPublic, result, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT username FROM userprofile\n                WHERE userprofile.account_id = $1", [userID])];
+                        permListUser = permissions.user ? permissions.user : ["NotApplicable"];
+                        permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+                        console.log(userID);
+                        console.log(permListPublic);
+                        console.log(permListUser);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT * FROM retrieve_user_auth_for_user($1, $2, $3)", [userID, permListUser, permListPublic])];
                     case 1:
                         result = _a.sent();
-                        return [2 /*return*/, result.rows[0]];
+                        console.log(result);
+                        return [2 /*return*/, result.rows];
                     case 2:
                         error_6 = _a.sent();
                         // console.log(error);
                         throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target user - ".concat(error_6), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    PermissionsRepo.fetch_username_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT username FROM userprofile\n                WHERE userprofile.user_id = $1", [userID])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows[0]];
+                    case 2:
+                        error_7 = _a.sent();
+                        // console.log(error);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user permissions for the target user - ".concat(error_7), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    PermissionsRepo.fetch_user_id_by_username = function (username) {
+        return __awaiter(this, void 0, void 0, function () {
+            var result, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT user_id FROM userprofile\n                WHERE userprofile.username = $1", [username])];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows[0].user_id];
+                    case 2:
+                        error_8 = _a.sent();
+                        // console.log(error);
+                        throw new expresError_1["default"]("An Error Occured: Unable to get user id for the target username - ".concat(error_8), 500);
                     case 3: return [2 /*return*/];
                 }
             });

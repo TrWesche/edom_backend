@@ -147,39 +147,32 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test Success - 2022/03/12
-userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_user_self"],
-    group: [],
-    public: []
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
-            case 1:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Unable to find user account.", 404);
-                }
-                return [2 /*return*/, res.json({ user: queryData })];
-            case 2:
-                error_3 = _b.sent();
-                next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// userRootRouter.get(
+//     "/profile", 
+//     authMW.defineRoutePermissions({
+//         user: ["read_user_self"],
+//         group: [],
+//         public: []
+//     }),
+//     authMW.validateRoutePermissions,
+//     async (req, res, next) => {
+//         try {
+//             const queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
+//             if (!queryData) {
+//                 throw new ExpressError("Unable to find user account.", 404);
+//             }
+//             return res.json({user: queryData});
+//         } catch (error) {
+//             next(error);
+//         }
+// });
 // Manual Test Success - 2022/03/13
 userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
     user: ["view_user_public"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
+    var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -192,8 +185,8 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 2:
-                error_4 = _a.sent();
-                next(error_4);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -211,7 +204,7 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues, updateValues, group, item, newData, error_5;
+    var prevValues, updateValues, group, item, newData, error_4;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -275,8 +268,8 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
                 newData = _c.sent();
                 return [2 /*return*/, res.json({ user: newData })];
             case 3:
-                error_5 = _c.sent();
-                next(error_5);
+                error_4 = _c.sent();
+                next(error_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -312,7 +305,7 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_6;
+    var queryData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -330,8 +323,8 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
                 res.setHeader("Authorization", "");
                 return [2 /*return*/, res.json({ message: "Your account has been deleted." })];
             case 2:
-                error_6 = _c.sent();
-                return [2 /*return*/, next(error_6)];
+                error_5 = _c.sent();
+                return [2 /*return*/, next(error_5)];
             case 3: return [2 /*return*/];
         }
     });

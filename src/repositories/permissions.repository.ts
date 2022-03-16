@@ -103,36 +103,73 @@ class PermissionsRepo {
         } 
     };
 
-    static async fetch_user_site_permissions(userID: string) {
+    static async fetch_user_site_permissions_public(userID: string, permissions: RoutePermissions) {
         try {
+            const permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+
             const result = await pgdb.query(
-                `SELECT sitepermissions.name FROM sitepermissions
-                LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.sitepermission_id = sitepermissions.id
-                LEFT JOIN user_siteroles ON user_siteroles.siterole_id = siterole_sitepermissions.siterole_id
-                WHERE user_siteroles.user_id = $1`,
-                [userID]
-            );
+                `SELECT * FROM retrieve_user_auth_for_public_user($1, $2)`,
+                [userID, permListPublic]
+            )
 
             return result.rows;
         } catch (error) {
             // console.log(error);
             throw new ExpressError(`An Error Occured: Unable to get user permissions for the target user - ${error}`, 500);
-        }  
+        } 
         
+    };
+
+    static async fetch_user_site_permissions_all(userID: string, permissions: RoutePermissions) {
+        try {
+            const permListUser = permissions.user ? permissions.user : ["NotApplicable"];
+            const permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
+
+            console.log(userID);
+            console.log(permListPublic)
+            console.log(permListUser)
+
+            const result = await pgdb.query(
+                `SELECT * FROM retrieve_user_auth_for_user($1, $2, $3)`,
+                [userID, permListUser, permListPublic]
+            )
+
+            console.log(result);
+
+            return result.rows;
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user permissions for the target user - ${error}`, 500);
+        } 
     };
 
     static async fetch_username_by_user_id(userID: string) {
         try {
             const result = await pgdb.query(
                 `SELECT username FROM userprofile
-                WHERE userprofile.account_id = $1`,
-                    [userID]
+                WHERE userprofile.user_id = $1`,
+                [userID]
             );
 
             return result.rows[0];
         } catch (error) {
             // console.log(error);
             throw new ExpressError(`An Error Occured: Unable to get user permissions for the target user - ${error}`, 500);
+        }  
+    };
+
+    static async fetch_user_id_by_username(username: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT user_id FROM userprofile
+                WHERE userprofile.username = $1`,
+                [username]
+            );
+
+            return result.rows[0].user_id;
+        } catch (error) {
+            // console.log(error);
+            throw new ExpressError(`An Error Occured: Unable to get user id for the target username - ${error}`, 500);
         }  
     };
 };

@@ -59,12 +59,20 @@ $BODY$ LANGUAGE plpgsql;
 
 
 -- Retrieve Public / Site Wide User Authorizations
-CREATE OR REPLACE FUNCTION retrieve_user_public_authorization (UserID uuid, PermList text[])
-RETURNS TABLE (
-	permissions_name text
-)
-AS 
-$BODY$
+-- FUNCTION: public.retrieve_user_public_authorization(uuid, text[])
+
+-- DROP FUNCTION IF EXISTS public.retrieve_user_public_authorization(uuid, text[]);
+
+CREATE OR REPLACE FUNCTION public.retrieve_user_public_authorization(
+	userid uuid,
+	permlist text[])
+    RETURNS TABLE(permissions_name text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
@@ -74,10 +82,9 @@ BEGIN
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
 	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
 	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = UserID AND sitepermissions.name IN (SELECT unnest(PermList));
+	WHERE useraccount.id = UserID AND siteroles.name = 'public' AND sitepermissions.name IN (SELECT unnest(PermList));
 END;
-$BODY$
-LANGUAGE plpgsql;
+$BODY$;
 
 
 -- Filter out Public / Site Wide permissions for equipment which is not marked as public
@@ -98,12 +105,23 @@ LANGUAGE plpgsql;
 
 
 -- Retrieve All User Authorizations for a target piece of equipment
-CREATE OR REPLACE FUNCTION retrieve_user_auth_for_equipment (UserID uuid, EquipmentID uuid, GroupPermList text[], UserPermList text[], PublicPermList text[])
-RETURNS TABLE (
-	permissions_name text
-)
-AS 
-$BODY$
+-- FUNCTION: public.retrieve_user_auth_for_equipment(uuid, uuid, text[], text[], text[])
+
+-- DROP FUNCTION IF EXISTS public.retrieve_user_auth_for_equipment(uuid, uuid, text[], text[], text[]);
+
+CREATE OR REPLACE FUNCTION public.retrieve_user_auth_for_equipment(
+	userid uuid,
+	equipmentid uuid,
+	grouppermlist text[],
+	userpermlist text[],
+	publicpermlist text[])
+    RETURNS TABLE(permissions_name text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
@@ -127,13 +145,11 @@ BEGIN
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
 	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
 	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND siteroles.name = 'user' AND sitepermissions.name IN (SELECT unnest(UserPermList))
    	UNION
 	SELECT * FROM retrieve_user_auth_for_public_equipment(UserID, EquipmentID, PublicPermList);
 END;
-$BODY$
-LANGUAGE plpgsql;
-
+$BODY$;
 
 
 -- Filter out Public / Site Wide permissions for room which is not marked as public
@@ -234,64 +250,80 @@ $BODY$
 LANGUAGE plpgsql;
 
 
--- TODO: Need to validate these functions
-
 -- Filter out Public / Site Wide permissions for user which is not marked as public
-CREATE OR REPLACE FUNCTION retrieve_user_auth_for_public_user (UserID uuid, PermList text[])
-RETURNS TABLE (
-	permissions_name text
-)
-AS 
-$BODY$
+-- FUNCTION: public.retrieve_user_auth_for_public_user(uuid, text[])
+
+-- DROP FUNCTION IF EXISTS public.retrieve_user_auth_for_public_user(uuid, text[]);
+
+CREATE OR REPLACE FUNCTION public.retrieve_user_auth_for_public_user(
+	userid uuid,
+	permlist text[])
+    RETURNS TABLE(permissions_name text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
 DECLARE
 BEGIN
-	IF (SELECT userprofile.public FROM userprofile WHERE userprofile.id=UserID) THEN
+	IF (SELECT userprofile.public FROM userprofile WHERE userprofile.user_id=UserID) THEN
 		RETURN QUERY SELECT * FROM retrieve_user_public_authorization(UserID, PermList);
 	END IF;
 END;
-$BODY$
-LANGUAGE plpgsql;
+$BODY$;
 
 
 -- Retrieve All User Authorizations for a target group
-CREATE OR REPLACE FUNCTION retrieve_user_auth_for_user(UserID uuid, UserPermList text[], PublicPermList text[])
-RETURNS TABLE (
-	permissions_name text
-)
-AS 
-$BODY$
+-- FUNCTION: public.retrieve_user_auth_for_user(uuid, text[], text[])
+
+-- DROP FUNCTION IF EXISTS public.retrieve_user_auth_for_user(uuid, text[], text[]);
+
+CREATE OR REPLACE FUNCTION public.retrieve_user_auth_for_user(
+	_userid uuid,
+	_userpermlist text[],
+	_publicpermlist text[])
+    RETURNS TABLE(permissions_name text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
 DECLARE
 BEGIN
-	SELECT DISTINCT
+	RETURN QUERY SELECT DISTINCT
 		sitepermissions.name AS permissions_name
 	FROM userprofile
-	LEFT JOIN useraccount ON useraccount.id = userprofile.account_id
+	LEFT JOIN useraccount ON useraccount.id = userprofile.user_id
 	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
 	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
 	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = UserID AND rooms.id = RoomID AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	WHERE useraccount.id = _userid AND siteroles.name = 'user' AND sitepermissions.name IN (SELECT unnest(_userpermlist))
 	UNION
-	SELECT * FROM retrieve_user_auth_for_public_user(UserID, PublicPermList);
+	SELECT * FROM retrieve_user_auth_for_public_user(_userid, _publicpermlist);
 END;
-$BODY$
-LANGUAGE plpgsql;
+$BODY$;
 
 
 -- Create New User
-CREATE OR REPLACE FUNCTION create_user_account (
-	_username text, 
-	_password text, 
-	_email text, 
-	_first_name text DEFAULT null, 
-	_last_name text DEFAULT null
-)
-RETURNS TABLE (
-	id uuid,
-	username text
-) 
-AS 
-$BODY$
+-- FUNCTION: public.create_user_account(text, text, text, text, text)
+
+-- DROP FUNCTION IF EXISTS public.create_user_account(text, text, text, text, text);
+CREATE OR REPLACE FUNCTION public.create_user_account(
+	_username text,
+	_password text,
+	_email text,
+	_first_name text DEFAULT NULL::text,
+	_last_name text DEFAULT NULL::text)
+    RETURNS TABLE(id uuid, username text) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
 DECLARE
 	_id uuid;
 	_userrole_id uuid;
@@ -304,12 +336,12 @@ BEGIN
 	INTO _id;
 	
 	INSERT INTO userdata
-		("account_id", "email", "public_email", "first_name", "public_first_name", "last_name", "public_last_name")
+		("user_id", "email", "public_email", "first_name", "public_first_name", "last_name", "public_last_name")
 	VALUES
 		(_id, _email, FALSE, _first_name, FALSE, _last_name, FALSE);
 		
 	INSERT INTO userprofile
-		("account_id", "username")
+		("user_id", "username")
 	VALUES
 		(_id, _username);
 		
@@ -320,24 +352,35 @@ BEGIN
 	VALUES
 		(_id, _userrole_id);
 	
+	
+	SELECT siteroles.id INTO _userrole_id FROM siteroles WHERE name = 'public';
+	
+	INSERT INTO user_siteroles
+		(user_id, siterole_id)
+	VALUES
+		(_id, _userrole_id);
+	
 	RETURN QUERY SELECT 
 		useraccount.id AS id, 
 		userprofile.username AS username 
 	FROM useraccount 
-	LEFT JOIN userprofile on useraccount.id = userprofile.account_id;
+	LEFT JOIN userprofile on useraccount.id = userprofile.user_id;
 END;
-$BODY$
-LANGUAGE plpgsql;
+$BODY$;
 
 
 
 -- Delete User Account
-CREATE OR REPLACE FUNCTION public.delete_user_account(_user_id uuid)
-RETURNS text
-LANGUAGE 'plpgsql'
-COST 100
-VOLATILE PARALLEL UNSAFE
+-- FUNCTION: public.delete_user_account(uuid)
 
+-- DROP FUNCTION IF EXISTS public.delete_user_account(uuid);
+
+CREATE OR REPLACE FUNCTION public.delete_user_account(
+	_user_id uuid)
+    RETURNS text
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
 AS $BODY$
 DECLARE
 	funcresult text;
@@ -346,10 +389,10 @@ BEGIN
 	WHERE user_siteroles.user_id = _user_id;
 	
 	DELETE FROM userprofile
-	WHERE userprofile.account_id = _user_id;
+	WHERE userprofile.user_id = _user_id;
 	
 	DELETE FROM userdata
-	WHERE userdata.account_id = _user_id;
+	WHERE userdata.user_id = _user_id;
 	
 	DELETE FROM useraccount
 	WHERE useraccount.id = _user_id;
