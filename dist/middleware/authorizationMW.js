@@ -274,8 +274,8 @@ var authMW = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 15, , 16]);
-                        console.log("Validating Route Permissions");
+                        _b.trys.push([0, 17, , 18]);
+                        // console.log("Validating Route Permissions");
                         if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
@@ -286,50 +286,57 @@ var authMW = /** @class */ (function () {
                         ;
                         permissions = void 0;
                         if (!req.params.equipID) return [3 /*break*/, 2];
-                        console.log("Checking Equip Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms)];
                     case 1:
+                        // console.log("Checking Equip Permissions");
                         permissions = _b.sent();
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 16];
                     case 2:
                         if (!req.params.roomID) return [3 /*break*/, 4];
-                        console.log("Checking Room Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms)];
                     case 3:
+                        // console.log("Checking Room Permissions");
                         permissions = _b.sent();
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 16];
                     case 4:
                         if (!req.groupID) return [3 /*break*/, 6];
-                        console.log("Checking Group Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms)];
                     case 5:
+                        // console.log("Checking Group Permissions");
                         permissions = _b.sent();
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 16];
                     case 6:
                         if (!req.params.username) return [3 /*break*/, 12];
-                        console.log("Checking Username Permissions");
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_id_by_username(req.params.username)];
                     case 7:
                         comparisonUID = _b.sent();
-                        if (!(req.user.id === comparisonUID)) return [3 /*break*/, 9];
-                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_all(req.user.id, req.reqPerms)];
+                        if (!(comparisonUID !== undefined && req.user.id === comparisonUID.user_id)) return [3 /*break*/, 9];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_account_permissions_all(req.user.id, req.reqPerms)];
                     case 8:
+                        // console.log("Same User");
                         permissions = _b.sent();
                         return [3 /*break*/, 11];
-                    case 9: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_public(req.user.id, req.reqPerms)];
+                    case 9: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_account_permissions_public(req.user.id, req.reqPerms)];
                     case 10:
+                        // console.log("Other User");
                         permissions = _b.sent();
                         _b.label = 11;
-                    case 11: return [3 /*break*/, 14];
+                    case 11: return [3 /*break*/, 16];
                     case 12:
-                        console.log("Checking General Permissions");
-                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_all(req.user.id, req.reqPerms)];
+                        if (!(req.reqPerms.user && req.reqPerms.user.length > 0)) return [3 /*break*/, 14];
+                        return [4 /*yield*/, permissions_repository_1["default"].fetch_user_account_permissions_all(req.user.id, req.reqPerms)];
                     case 13:
+                        // console.log("Checking User Acocunt Elevated Permissions");
                         permissions = _b.sent();
-                        _b.label = 14;
-                    case 14:
+                        return [3 /*break*/, 16];
+                    case 14: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_site_permissions_public(req.user.id, req.reqPerms)];
+                    case 15:
+                        // console.log("Checking General Site Permissions");
+                        permissions = _b.sent();
+                        _b.label = 16;
+                    case 16:
                         ;
-                        console.log(permissions);
+                        // console.log(permissions);
                         if (permissions.length === 0) {
                             return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
                         }
@@ -338,10 +345,10 @@ var authMW = /** @class */ (function () {
                         req.resolvedPerms = permissions;
                         // req.currentuser = currentUser.username.toLowerCase();
                         return [2 /*return*/, next()];
-                    case 15:
+                    case 17:
                         error_4 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
-                    case 16: return [2 /*return*/];
+                    case 18: return [2 /*return*/];
                 }
             });
         });

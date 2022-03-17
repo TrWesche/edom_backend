@@ -84,11 +84,11 @@ class UserRepo {
                     break;
                 case 'auth':
                     query = `SELECT
-                        userdata.account_id AS id,
+                        userdata.user_id AS id,
                         userdata.email AS email,
                         useraccount.password AS password
                     FROM userdata
-                    LEFT JOIN useraccount ON useraccount.id = userdata.account_id
+                    LEFT JOIN useraccount ON useraccount.id = userdata.user_id
                     WHERE email ILIKE $1`;
                     break;
                 case 'profile':
@@ -108,8 +108,8 @@ class UserRepo {
                         userdata.location AS location,
                         userdata.public_location AS public_location
                     FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.user_id = useraccount.id
                     WHERE email ILIKE $1`;
                 case 'account':
                     query = `SELECT
@@ -128,8 +128,8 @@ class UserRepo {
                         userdata.location AS location,
                         userdata.public_location AS public_location
                     FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.user_id = useraccount.id
                     WHERE email ILIKE $1`;
                     break;
                 default:
@@ -148,7 +148,7 @@ class UserRepo {
             const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
         };
     };
 
@@ -165,11 +165,11 @@ class UserRepo {
                     break;
                 case 'auth':
                     query = `SELECT
-                        userprofile.account_id AS id,
+                        userprofile.user_id AS id,
                         userprofile.username AS username,
                         useraccount.password AS password
                     FROM userprofile
-                    LEFT JOIN useraccount ON useraccount.id = userprofile.account_id
+                    LEFT JOIN useraccount ON useraccount.id = userprofile.user_id
                     WHERE username ILIKE $1`;
                     break;
                 case 'profile':
@@ -185,9 +185,9 @@ class UserRepo {
                             (SELECT userdata.last_name AS last_name FROM userdata WHERE userdata.public_last_name = TRUE),
                             (SELECT userdata.location AS location FROM userdata WHERE userdata.public_location = TRUE)
                         FROM useraccount
-                        LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                        LEFT JOIN userdata ON userdata.account_id = useraccount.id
-                        WHERE EXISTS (SELECT account_id FROM userprofile WHERE userprofile.username ILIKE $1 AND userprofile.public = TRUE)`;
+                        LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
+                        LEFT JOIN userdata ON userdata.user_id = useraccount.id
+                        WHERE EXISTS (SELECT user_id FROM userprofile WHERE userprofile.username ILIKE $1 AND userprofile.public = TRUE)`;
                         break;
                 case 'account':
                     query = `SELECT
@@ -206,8 +206,8 @@ class UserRepo {
                         userdata.location AS location,
                         userdata.public_location AS public_location
                     FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.user_id = useraccount.id
                     WHERE username ILIKE $1`;
                     break;
                 default:
@@ -226,7 +226,7 @@ class UserRepo {
             const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
         };
     };
 
@@ -247,7 +247,7 @@ class UserRepo {
                         userprofile.username AS username,
                         useraccount.password AS password
                     FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
+                    LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
                     WHERE id = $1`;
                     break;
                 case 'profile':
@@ -267,8 +267,8 @@ class UserRepo {
                         userdata.location AS location,
                         userdata.public_location AS public_location
                     FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.user_id = useraccount.id
                     WHERE id = $1`;
                 case 'account':
                     query = `SELECT
@@ -287,8 +287,8 @@ class UserRepo {
                         userdata.location AS location,
                         userdata.public_location AS public_location
                     FROM useraccount
-                    LEFT JOIN userprofile ON userprofile.account_id = useraccount.id
-                    LEFT JOIN userdata ON userdata.account_id = useraccount.id
+                    LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
+                    LEFT JOIN userdata ON userdata.user_id = useraccount.id
                     WHERE id = $1`;
                     break;
                 default:
@@ -307,7 +307,7 @@ class UserRepo {
             const rval: UserDataProps | undefined = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured During Query Execution - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
         };
     };
 
@@ -357,7 +357,7 @@ class UserRepo {
                 const {query, values} = createUpdateQueryPGSQL(
                     "userdata",
                     userData.user_data,
-                    "account_id",
+                    "user_id",
                     userID
                 );
 
@@ -372,7 +372,7 @@ class UserRepo {
                 const {query, values} = createUpdateQueryPGSQL(
                     "userprofile",
                     userData.user_profile,
-                    "account_id",
+                    "user_id",
                     userID
                 );
 

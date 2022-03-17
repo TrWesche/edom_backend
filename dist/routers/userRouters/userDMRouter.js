@@ -61,22 +61,25 @@ userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRout
     group: [],
     public: ["view_user_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var queryData, userSelf, error_1;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _b.trys.push([0, 5, , 6]);
+                _c.trys.push([0, 5, , 6]);
                 queryData = void 0;
-                if (!(req.currentuser === req.params.username.toLowerCase())) return [3 /*break*/, 2];
-                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)];
+                userSelf = (_a = req.resolvedPerms) === null || _a === void 0 ? void 0 : _a.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "read_user_self");
+                }, false);
+                if (!userSelf) return [3 /*break*/, 2];
+                return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
             case 1:
-                queryData = _b.sent();
+                queryData = _c.sent();
                 return [3 /*break*/, 4];
             case 2: return [4 /*yield*/, userModel_1["default"].retrieve_user_by_username(req.params.username)];
             case 3:
-                queryData = _b.sent();
-                _b.label = 4;
+                queryData = _c.sent();
+                _c.label = 4;
             case 4:
                 ;
                 if (!queryData) {
@@ -84,7 +87,7 @@ userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRout
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 5:
-                error_1 = _b.sent();
+                error_1 = _c.sent();
                 next(error_1);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];

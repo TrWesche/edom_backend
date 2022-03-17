@@ -1,5 +1,6 @@
 // https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript
 
+import { RoutePermissions } from "../repositories/permissions.repository";
 import { UserObjectProps } from "../repositories/user.repository";
 
 declare module 'express-serve-static-core' {
@@ -9,9 +10,8 @@ declare module 'express-serve-static-core' {
       // sitePermissions?: Array<any>
       // groupPermissions?: Array<any>
       requiredPermissions?: Object
-      reqPerms?: Object
+      reqPerms?: RoutePermissions
       resolvedPerms?: Array<Object>
-      currentuser?: string
     }
     // interface Response {
     //   myField?: string

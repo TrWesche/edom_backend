@@ -41,12 +41,16 @@ userDeviceMasterRouter.get("/:username",
     try {
         let queryData;
 
-        if (req.currentuser === req.params.username.toLowerCase()) {
+        const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
+            return acc = acc || (val.permissions_name === "read_user_self")
+        }, false);
+        
+
+        if (userSelf) {
             queryData = await UserModel.retrieve_user_by_user_id(req.user?.id)
         } else {
             queryData = await UserModel.retrieve_user_by_username(req.params.username);
         };
-
         
         if (!queryData) {
             throw new ExpressError("Unable to find a user with provided username.", 404);
