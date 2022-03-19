@@ -8,6 +8,7 @@ import { GroupEquipCreateProps } from "../schemas/equipment/groupEquipCreateSche
 // Repository Imports
 import TransactionRepo from "../repositories/transactionRepository";
 import EquipRepo, { EquipObjectProps } from "../repositories/equipment.repository";
+import { EquipCreateProps } from "../schemas/equipment/equipCreateSchema";
 
 class EquipModel {
     /*    ____ ____  _____    _  _____ _____ 
@@ -16,7 +17,7 @@ class EquipModel {
         | |___|  _ <| |___ / ___ \| | | |___ 
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    static async create_user_equip(userID: string, data: UserEquipCreateProps) {
+    static async create_user_equip(data: EquipCreateProps) {
         // Preflight
         if (!data.name || !data.category_id || !data.configuration) {
             throw new ExpressError("Invalid Create Equipment Call", 400);
@@ -26,14 +27,24 @@ class EquipModel {
         try {
             await TransactionRepo.begin_transaction();
 
+            const dbEntryProps = {
+                name: data.name,
+                category_id: data.category_id,
+                headline: data.headline,
+                description: data.description,
+                image_url: data.image_url,
+                configuration: data.configuration,
+                public: data.public
+            };
+
             // Create Equipment in Database
-            const equipEntry = await EquipRepo.create_new_equip(data);
+            const equipEntry = await EquipRepo.create_new_equip(dbEntryProps);
             if (!equipEntry?.id) {
                 throw new ExpressError("Error while creating new equipment entry", 500);
             };
 
             // Associate Equipment with Uploading User
-            const equipAssoc = await EquipRepo.associate_user_to_equip(userID, equipEntry.id);
+            const equipAssoc = await EquipRepo.associate_user_to_equip(data.ownerid, equipEntry.id);
             if (!equipAssoc.equip_id) {
                 throw new ExpressError("Error while associating user to equipment entry", 500);
             };
@@ -48,7 +59,7 @@ class EquipModel {
         };
     };
 
-    static async create_group_equip(groupID: string, data: GroupEquipCreateProps) {
+    static async create_group_equip(data: EquipCreateProps) {
         // Preflight
         if (!data.name || !data.category_id || !data.configuration) {
             throw new ExpressError("Invalid Create Equipment Call", 400);
@@ -58,14 +69,24 @@ class EquipModel {
         try {
             await TransactionRepo.begin_transaction();
 
+            const dbEntryProps = {
+                name: data.name,
+                category_id: data.category_id,
+                headline: data.headline,
+                description: data.description,
+                image_url: data.image_url,
+                configuration: data.configuration,
+                public: data.public
+            };
+
             // Create Equipment in Database
-            const equipEntry = await EquipRepo.create_new_equip(data);
+            const equipEntry = await EquipRepo.create_new_equip(dbEntryProps);
             if (!equipEntry?.id) {
                 throw new ExpressError("Error while creating new equipment entry", 500);
             };
 
             // Associate Equipment with Uploading User
-            const equipAssoc = await EquipRepo.associate_group_to_equip(groupID, equipEntry.id);
+            const equipAssoc = await EquipRepo.associate_group_to_equip(data.ownerid, equipEntry.id);
             if (!equipAssoc.equip_id) {
                 throw new ExpressError("Error while associating group to equipment entry", 500);
             };

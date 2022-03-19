@@ -10,8 +10,11 @@ var schema = {
             $id: "#/properties/name",
             type: "string",
             "default": "",
-            minLength: 1,
-            pattern: "^[A-z0-9]+$"
+            minLength: 1
+        },
+        category_id: {
+            $id: "#/properties/category_id",
+            type: "string"
         },
         headline: {
             $id: "#/properties/headline",
@@ -22,23 +25,21 @@ var schema = {
             $id: "#/properties/description",
             type: "string"
         },
-        image_url: {
-            $id: "#/properties/image_url",
-            type: "string"
-        },
-        location: {
-            $id: "#/properties/location",
-            type: "string"
-        },
         public: {
             $id: "#/properties/public",
             type: "boolean",
             "default": false
+        },
+        configuration: {
+            $id: "#/properties/configuration",
+            type: "object"
         }
     },
-    required: [],
+    required: [
+        "name", "category_id", "configuration"
+    ],
     additionalProperties: true
 };
-var validateUpdateGroupSchema = ajv.compile(schema);
-exports["default"] = validateUpdateGroupSchema;
-//# sourceMappingURL=groupUpdateSchema.js.map
+var validateGroupEquipCreateSchema = ajv.compile(schema);
+exports["default"] = validateGroupEquipCreateSchema;
+//# sourceMappingURL=groupEquipCreateSchema%20copy.js.map

@@ -13,6 +13,10 @@ var schema = {
             minLength: 1,
             pattern: "^[A-z0-9]+$"
         },
+        category_id: {
+            $id: "#/properties/category_id",
+            type: "string"
+        },
         headline: {
             $id: "#/properties/headline",
             type: "string",
@@ -26,19 +30,21 @@ var schema = {
             $id: "#/properties/image_url",
             type: "string"
         },
-        location: {
-            $id: "#/properties/location",
-            type: "string"
-        },
         public: {
             $id: "#/properties/public",
             type: "boolean",
             "default": false
+        },
+        configuration: {
+            $id: "#/properties/configuration",
+            type: "object"
         }
     },
-    required: [],
+    required: [
+        "name", "category_id", "configuration"
+    ],
     additionalProperties: true
 };
-var validateUpdateGroupSchema = ajv.compile(schema);
-exports["default"] = validateUpdateGroupSchema;
-//# sourceMappingURL=groupUpdateSchema.js.map
+var validateEquipUpdateSchema = ajv.compile(schema);
+exports["default"] = validateEquipUpdateSchema;
+//# sourceMappingURL=equipUpdateSchema.js.map

@@ -50,9 +50,9 @@ var EquipModel = /** @class */ (function () {
         | |___|  _ <| |___ / ___ \| | | |___
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    EquipModel.create_user_equip = function (userID, data) {
+    EquipModel.create_user_equip = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var equipEntry, equipAssoc, error_1;
+            var dbEntryProps, equipEntry, equipAssoc, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -67,14 +67,23 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].create_new_equip(data)];
+                        dbEntryProps = {
+                            name: data.name,
+                            category_id: data.category_id,
+                            headline: data.headline,
+                            description: data.description,
+                            image_url: data.image_url,
+                            configuration: data.configuration,
+                            public: data.public
+                        };
+                        return [4 /*yield*/, equipment_repository_1["default"].create_new_equip(dbEntryProps)];
                     case 3:
                         equipEntry = _a.sent();
                         if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
                             throw new expresError_1["default"]("Error while creating new equipment entry", 500);
                         }
                         ;
-                        return [4 /*yield*/, equipment_repository_1["default"].associate_user_to_equip(userID, equipEntry.id)];
+                        return [4 /*yield*/, equipment_repository_1["default"].associate_user_to_equip(data.ownerid, equipEntry.id)];
                     case 4:
                         equipAssoc = _a.sent();
                         if (!equipAssoc.equip_id) {
@@ -101,9 +110,9 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.create_group_equip = function (groupID, data) {
+    EquipModel.create_group_equip = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var equipEntry, equipAssoc, error_2;
+            var dbEntryProps, equipEntry, equipAssoc, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -118,14 +127,23 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].create_new_equip(data)];
+                        dbEntryProps = {
+                            name: data.name,
+                            category_id: data.category_id,
+                            headline: data.headline,
+                            description: data.description,
+                            image_url: data.image_url,
+                            configuration: data.configuration,
+                            public: data.public
+                        };
+                        return [4 /*yield*/, equipment_repository_1["default"].create_new_equip(dbEntryProps)];
                     case 3:
                         equipEntry = _a.sent();
                         if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
                             throw new expresError_1["default"]("Error while creating new equipment entry", 500);
                         }
                         ;
-                        return [4 /*yield*/, equipment_repository_1["default"].associate_group_to_equip(groupID, equipEntry.id)];
+                        return [4 /*yield*/, equipment_repository_1["default"].associate_group_to_equip(data.ownerid, equipEntry.id)];
                     case 4:
                         equipAssoc = _a.sent();
                         if (!equipAssoc.equip_id) {

@@ -12,7 +12,8 @@ var schema = {
         },
         name: {
             $id: "#/properties/name",
-            type: "string"
+            type: "string",
+            pattern: "^[A-z0-9]+$"
         }
     },
     required: [

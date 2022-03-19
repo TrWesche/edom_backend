@@ -25,39 +25,39 @@ const userEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.post("/create", authMW.defineSitePermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // console.log(req.body);
+// userEquipRouter.post("/create", authMW.defineSitePermissions(["read_equip_self", "create_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // console.log(req.body);
 
-        // Preflight
-        const reqValues: UserEquipCreateProps = {
-            name: req.body.name,
-            category_id: req.body.category_id,
-            headline: req.body.headline,
-            description: req.body.description,
-            public: req.body.public,
-            configuration: req.body.configuration
-        };
+//         // Preflight
+//         const reqValues: UserEquipCreateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public,
+//             configuration: req.body.configuration
+//         };
 
-        if (!req.user?.id) {
-            throw new ExpressError(`Must be logged in to create equipment`, 400);
-        };
+//         if (!req.user?.id) {
+//             throw new ExpressError(`Must be logged in to create equipment`, 400);
+//         };
 
-        if(!validateUserEquipCreateSchema(reqValues)) {
-            throw new ExpressError(`Unable to Create User Equipment: ${validateUserEquipCreateSchema.errors}`, 400);
-        };
+//         if(!validateUserEquipCreateSchema(reqValues)) {
+//             throw new ExpressError(`Unable to Create User Equipment: ${validateUserEquipCreateSchema.errors}`, 400);
+//         };
 
-        // Processing
-        const queryData = await EquipModel.create_user_equip(req.user.id, reqValues);
-        if (!queryData) {
-            throw new ExpressError("Create Equipment Failed", 400);
-        };
+//         // Processing
+//         const queryData = await EquipModel.create_user_equip(req.user.id, reqValues);
+//         if (!queryData) {
+//             throw new ExpressError("Create Equipment Failed", 400);
+//         };
         
-        return res.json({equip: [queryData]});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({equip: [queryData]});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 // Manual Test - Basic Functionality: 01/20/2022
 userEquipRouter.post("/:equipID/rooms", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {

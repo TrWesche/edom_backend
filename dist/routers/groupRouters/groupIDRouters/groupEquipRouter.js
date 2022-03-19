@@ -40,8 +40,6 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
-// Schema Imports
-var groupEquipCreateSchema_1 = require("../../../schemas/equipment/groupEquipCreateSchema");
 var groupEquipUpdateSchema_1 = require("../../../schemas/equipment/groupEquipUpdateSchema");
 // Model Imports
 var equipModel_1 = require("../../../models/equipModel");
@@ -55,48 +53,39 @@ var groupEquipRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/18/2022
-groupEquipRouter.post("/", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "create_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 2, , 3]);
-                console.log("Start Create Group Equip");
-                reqValues = {
-                    name: req.body.name,
-                    category_id: req.body.category_id,
-                    headline: req.body.headline,
-                    description: req.body.description,
-                    public: req.body.public,
-                    configuration: req.body.configuration
-                };
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to create equipment || group not found", 400);
-                }
-                if (!(0, groupEquipCreateSchema_1["default"])(reqValues)) {
-                    console.log(groupEquipCreateSchema_1["default"].errors);
-                    throw new expresError_1["default"]("Unable to Create Group Equipment: ".concat(groupEquipCreateSchema_1["default"].errors), 400);
-                }
-                return [4 /*yield*/, equipModel_1["default"].create_group_equip(req.groupID, reqValues)];
-            case 1:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Create Equipment Failed", 400);
-                }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
-            case 2:
-                error_1 = _b.sent();
-                next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_equip"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         console.log("Start Create Group Equip");
+//         // Preflight
+//         const reqValues: GroupEquipCreateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public,
+//             configuration: req.body.configuration
+//         }
+//         if (!req.user?.id || !req.groupID) {
+//             throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);
+//         }
+//         if(!validateGroupEquipCreateSchema(reqValues)) {
+//             console.log(validateGroupEquipCreateSchema.errors);
+//             throw new ExpressError(`Unable to Create Group Equipment: ${validateGroupEquipCreateSchema.errors}`, 400);
+//         }
+//         // Process
+//         const queryData = await EquipModel.create_group_equip(req.groupID, reqValues);
+//         if (!queryData) {
+//             throw new ExpressError("Create Equipment Failed", 400);
+//         }
+//         return res.json({equip: [queryData]})
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 // Manual Test - Basic Functionality: 01/19/2022
 // Create Room - Equipment Association
 groupEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, asscRooms, queryData, error_2;
+    var equipCheck, asscRooms, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -131,8 +120,8 @@ groupEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineGrou
                 ;
                 return [2 /*return*/, res.json({ roomEquip: [queryData] })];
             case 4:
-                error_2 = _b.sent();
-                next(error_2);
+                error_1 = _b.sent();
+                next(error_1);
                 return [3 /*break*/, 5];
             case 5:
                 ;
@@ -148,7 +137,7 @@ groupEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineGrou
 */
 // Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermissions(["read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+    var queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -167,8 +156,8 @@ groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermission
                 ;
                 return [2 /*return*/, res.json({ equip: queryData })];
             case 2:
-                error_3 = _a.sent();
-                next(error_3);
+                error_2 = _a.sent();
+                next(error_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -176,7 +165,7 @@ groupEquipRouter.get("/list", authorizationMW_1["default"].defineGroupPermission
 }); });
 // Manual Test - Basic Functionality: 01/19/2022
 groupEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineGroupPermissions(["read_room", "read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
+    var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -189,8 +178,8 @@ groupEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineGroup
                 }
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
-                error_4 = _a.sent();
-                next(error_4);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -198,7 +187,7 @@ groupEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineGroup
 }); });
 // Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.get("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_5;
+    var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -211,8 +200,8 @@ groupEquipRouter.get("/:equipID", authorizationMW_1["default"].defineGroupPermis
                 }
                 return [2 /*return*/, res.json({ equip: [queryData] })];
             case 2:
-                error_5 = _a.sent();
-                next(error_5);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -226,7 +215,7 @@ groupEquipRouter.get("/:equipID", authorizationMW_1["default"].defineGroupPermis
 */
 // Manual Test - Basic Functionality: 01/18/2022
 groupEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_6;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -271,8 +260,8 @@ groupEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineGroupPerm
                 newData = _b.sent();
                 return [2 /*return*/, res.json({ equip: [newData] })];
             case 3:
-                error_6 = _b.sent();
-                next(error_6);
+                error_5 = _b.sent();
+                next(error_5);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -307,7 +296,7 @@ groupEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineGroup
 }); });
 // Manual Test - Basic Functionality: 01/19/2022
 groupEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, queryData, error_7;
+    var equipCheck, queryData, error_6;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -335,8 +324,8 @@ groupEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defin
                 ;
                 return [2 /*return*/, res.json({ roomEquip: [queryData] })];
             case 3:
-                error_7 = _b.sent();
-                next(error_7);
+                error_6 = _b.sent();
+                next(error_6);
                 return [3 /*break*/, 4];
             case 4:
                 ;

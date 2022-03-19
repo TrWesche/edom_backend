@@ -2,30 +2,19 @@ import Ajv, {JSONSchemaType} from "ajv";
 
 const ajv = new Ajv();
 
-export interface GroupCreateProps {
-    context: string
-    ownerid: string
+export interface EquipUpdateProps {
     name: string
+    category_id: string
     headline: string
     description: string
     image_url: string
-    location: string
     public: boolean
+    configuration: object
 };
 
-const schema: JSONSchemaType<GroupCreateProps> = {
+const schema: JSONSchemaType<EquipUpdateProps> = {
     type: "object",
     properties: {
-        context: {
-            $id: "$/properties/context",
-            type: "string",
-            default: "user"
-        },
-        ownerid: {
-            $id: "$/properties/ownerid",
-            type: "string",
-            nullable: true
-        },
         name: {
             $id:"#/properties/name",
             type: "string",
@@ -33,8 +22,12 @@ const schema: JSONSchemaType<GroupCreateProps> = {
             minLength: 1,
             pattern: "^[A-z0-9]+$"
         },
+        category_id: {
+            $id:"#/properties/category_id",
+            type: "string"
+        },
         headline: {
-            $id:"#/properties/headline",
+            $id: "#/properties/headline",
             type: "string",
             maxLength: 255
         },
@@ -46,22 +39,22 @@ const schema: JSONSchemaType<GroupCreateProps> = {
             $id: "#/properties/image_url",
             type: "string"
         },
-        location: {
-            $id: "#/properties/location",
-            type: "string"
-        },
         public: {
             $id: "#/properties/public",
             type: "boolean",
             default: false
+        },
+        configuration: {
+            $id: "#/properties/configuration",
+            type: "object"
         }
     },
     required: [
-        "name"
+        "name", "category_id", "configuration"
     ],
     additionalProperties: true
 };
 
-const validateCreateGroupSchema = ajv.compile(schema)
+const validateEquipUpdateSchema = ajv.compile(schema)
 
-export default validateCreateGroupSchema;
+export default validateEquipUpdateSchema;

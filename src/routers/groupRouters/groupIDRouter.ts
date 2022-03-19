@@ -34,6 +34,7 @@ groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), group
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 03/19/2022
 groupIDRouter.get(
     "/",
     authMW.defineRoutePermissions({
@@ -139,7 +140,7 @@ groupIDRouter.patch(
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 01/17/2022
+// Manual Test - Basic Functionality: 03/19/2022
 groupIDRouter.delete(
     "/", 
     authMW.defineRoutePermissions({

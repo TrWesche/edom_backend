@@ -38,9 +38,11 @@ groupRootRouter.post(
     async (req, res, next) => {
     try {
         // Preflight
+        if (!req.user?.id) {throw new ExpressError(`Must be logged in to create group`, 401);};
+
         const reqValues: GroupCreateProps = {
-            context: req.body.context ? req.body.console : "user",
-            ownerid: req.user?.id ? req.user.id : "",
+            context: req.body.context ? req.body.context : "user",
+            ownerid: req.user.id,
             name: req.body.name,
             headline: req.body.headline,
             description: req.body.description,
@@ -48,9 +50,6 @@ groupRootRouter.post(
             location: req.body.location,
             public: req.body.public
         };
-        
-        
-        if (!req.user?.id) {throw new ExpressError(`Must be logged in to create group`, 401);};
 
         if(!validateCreateGroupSchema(reqValues)) {
             throw new ExpressError(`Unable to Create Group - Schema Validation Error: ${validateCreateGroupSchema.errors}`, 400);

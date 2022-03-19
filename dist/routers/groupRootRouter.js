@@ -61,14 +61,19 @@ groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissi
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, _a, error_1;
-    var _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _d.trys.push([0, 4, , 5]);
+                _c.trys.push([0, 4, , 5]);
+                // Preflight
+                if (!((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)) {
+                    throw new expresError_1["default"]("Must be logged in to create group", 401);
+                }
+                ;
                 reqValues = {
-                    context: req.body.context ? req.body.console : "user",
-                    ownerid: ((_b = req.user) === null || _b === void 0 ? void 0 : _b.id) ? req.user.id : "",
+                    context: req.body.context ? req.body.context : "user",
+                    ownerid: req.user.id,
                     name: req.body.name,
                     headline: req.body.headline,
                     description: req.body.description,
@@ -76,10 +81,6 @@ groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissi
                     location: req.body.location,
                     public: req.body.public
                 };
-                if (!((_c = req.user) === null || _c === void 0 ? void 0 : _c.id)) {
-                    throw new expresError_1["default"]("Must be logged in to create group", 401);
-                }
-                ;
                 if (!(0, groupCreateSchema_1["default"])(reqValues)) {
                     throw new expresError_1["default"]("Unable to Create Group - Schema Validation Error: ".concat(groupCreateSchema_1["default"].errors), 400);
                 }
@@ -92,7 +93,7 @@ groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissi
                 return [3 /*break*/, 3];
             case 1: return [4 /*yield*/, groupModel_1["default"].create_group(reqValues)];
             case 2:
-                queryData = _d.sent();
+                queryData = _c.sent();
                 return [3 /*break*/, 3];
             case 3:
                 ;
@@ -103,7 +104,7 @@ groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissi
                 ;
                 return [2 /*return*/, res.json({ group: [queryData] })];
             case 4:
-                error_1 = _d.sent();
+                error_1 = _c.sent();
                 next(error_1);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];

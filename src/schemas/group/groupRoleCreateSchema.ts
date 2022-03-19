@@ -17,6 +17,7 @@ const schema: JSONSchemaType<GroupRoleCreateProps> = {
         name: {
             $id:"#/properties/name",
             type: "string",
+            pattern: "^[A-z0-9]+$"
         }
     },
     required: [

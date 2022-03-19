@@ -61,6 +61,7 @@ groupIDRouter.use("/users", authorizationMW_1["default"].defineSitePermissions([
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 03/19/2022
 groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["read_group"],
@@ -180,7 +181,7 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 01/17/2022
+// Manual Test - Basic Functionality: 03/19/2022
 groupIDRouter["delete"]("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["read_group", "delete_group"],

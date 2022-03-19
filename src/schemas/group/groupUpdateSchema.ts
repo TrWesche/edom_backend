@@ -18,7 +18,8 @@ const schema: JSONSchemaType<GroupUpdateProps> = {
             $id:"#/properties/name",
             type: "string",
             default: "",
-            minLength: 1
+            minLength: 1,
+            pattern: "^[A-z0-9]+$"
         },
         headline: {
             $id:"#/properties/headline",

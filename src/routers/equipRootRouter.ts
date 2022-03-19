@@ -9,10 +9,80 @@ import EquipModel from "../models/equipModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
+import validateEquipCreateSchema, { EquipCreateProps } from "../schemas/equipment/equipCreateSchema";
+import UserModel from "../models/userModel";
+import GroupModel from "../models/groupModel";
 
 
 const equipRootRouter = express.Router();
 
+
+
+
+/* ____ ____  _____    _  _____ _____ 
+  / ___|  _ \| ____|  / \|_   _| ____|
+ | |   | |_) |  _|   / _ \ | | |  _|  
+ | |___|  _ <| |___ / ___ \| | | |___ 
+  \____|_| \_\_____/_/   \_\_| |_____|
+*/
+// Manual Test - Basic Functionality: 03/19/2022
+equipRootRouter.post(
+    "/create", 
+    authMW.defineRoutePermissions({
+        user: ["create_equip_self"],
+        group: ["create_equip"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+async (req, res, next) => {
+try {
+    // Preflight
+    if (!req.user?.id) {throw new ExpressError(`Must be logged in to create equip`, 401);};
+
+    const reqValues: EquipCreateProps = {
+        context: req.body.context ? req.body.context : "user",
+        ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
+        name: req.body.name,
+        category_id: req.body.category_id,
+        headline: req.body.headline,
+        description: req.body.description,
+        image_url: req.body.image_url,
+        public: req.body.public,
+        configuration: req.body.configuration
+    };
+
+    if(!validateEquipCreateSchema(reqValues)) {
+        throw new ExpressError(`Unable to Create Equip - Schema Validation Error: ${validateEquipCreateSchema.errors}`, 400);
+    };
+
+    // Processing
+    let queryData;
+    let idcheck;
+    switch (reqValues.context) {
+        case "user": 
+            idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
+            if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
+            queryData = await EquipModel.create_user_equip(reqValues);
+            break;
+        case "group":
+            idcheck = await GroupModel.retrieve_group_by_group_id(reqValues.ownerid, "elevated");
+            if (!idcheck)  {throw new ExpressError(`Value is not a valid groupid`, 401);};
+            queryData = await EquipModel.create_group_equip(reqValues);
+            break;
+        default:
+    };
+
+    
+    // const queryData = await GroupModel.create_group(req.user.id, reqValues);
+    if (!queryData) {
+        throw new ExpressError("Create Group Failed", 500);
+    };
+    
+    return res.json({equip: queryData})
+} catch (error) {
+    next(error)
+}
+});
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
