@@ -163,10 +163,6 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    // static async retrieve_room_by_room_id_v2(userID: string, roomID: string) {
-    //     const room = RoomRepo.fetch_room_by_room_id(userID, roomID);
-    //     return room;
-    // };
     RoomModel.retrieve_room_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms;
@@ -232,6 +228,33 @@ var RoomModel = /** @class */ (function () {
                     case 1:
                         rooms = _a.sent();
                         return [2 /*return*/, rooms];
+                }
+            });
+        });
+    };
+    ;
+    RoomModel.retrieve_user_rooms_list_by_user_id = function (userID, accessType, limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var rooms, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "public": return [3 /*break*/, 1];
+                            case "user": return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, room_repository_1["default"].fetch_public_room_list_by_user_id(userID, limit, offset)];
+                    case 2:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, room_repository_1["default"].fetch_unrestricted_room_list_by_user_id(userID, limit, offset)];
+                    case 4:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 6: return [2 /*return*/, rooms];
                 }
             });
         });

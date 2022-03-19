@@ -103,23 +103,45 @@ userDeviceMasterRouter.get("/:username/room",
     authMW.defineRoutePermissions({
         user: ["read_room_self"],
         group: [],
-        public: []
+        public: ["view_room_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
     try {
-        // Preflight
-        if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Rooms - All", 401);
-        };
+        if (!req.user?.id) {throw new ExpressError("User ID Not Defined", 401)};
 
-        // Processing
-        const queryData = await RoomModel.retrieve_user_rooms_by_user_id_all(req.user?.id);
-        if (!queryData) {
-            throw new ExpressError("Rooms Not Found: Get User Rooms - All", 404);
+        let queryData;
+
+        const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
+            return acc = acc || (val.permissions_name === "read_group_self")
+        }, false);
+        
+
+        if (userSelf) {
+            queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.user?.id, "user", 10, 0)
+        } else 
+        if (req.targetUID) {
+            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)
         };
         
-        return res.json({equip: queryData});
+        if (!queryData) {
+            throw new ExpressError("Rooms not found.", 404);
+        }
+        
+        return res.json({room: queryData});
+
+        // Preflight
+        // if (!req.user?.id) {
+        //     throw new ExpressError("Invalid Call: Get User Rooms - All", 401);
+        // };
+
+        // // Processing
+        // const queryData = await RoomModel.retrieve_user_rooms_by_user_id_all(req.user?.id);
+        // if (!queryData) {
+        //     throw new ExpressError("Rooms Not Found: Get User Rooms - All", 404);
+        // };
+        
+        // return res.json({equip: queryData});
     } catch (error) {
         next(error)
     }

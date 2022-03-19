@@ -205,6 +205,56 @@ class RoomRepo {
         }
     };
 
+    static async fetch_public_room_list_by_user_id(userID: string, limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT
+                    rooms.id AS id,
+                    rooms.name AS name,
+                    rooms.headline AS headline,
+                    rooms.description AS description,
+                    rooms.image_url AS image_url,
+                    rooms.location AS location
+                FROM rooms
+                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
+                WHERE user_groups.user_id = $1 AND rooms.public = TRUE
+                LIMIT $2
+                OFFSET $3`,
+                [userID, limit, offset]
+            );
+    
+            const rval: Array<RoomObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate rooms - ${error}`, 500);
+        }
+    };
+
+    static async fetch_unrestricted_room_list_by_user_id(userID: string, limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT
+                    rooms.id AS id,
+                    rooms.name AS name,
+                    rooms.headline AS headline,
+                    rooms.description AS description,
+                    rooms.image_url AS image_url,
+                    rooms.location AS location
+                FROM rooms
+                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
+                WHERE user_groups.user_id = $1
+                LIMIT $2
+                OFFSET $3`,
+                [userID, limit, offset]
+            );
+    
+            const rval: Array<RoomObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate rooms - ${error}`, 500);
+        }
+    };
+
     static async delete_room_by_user_id(userID: Array<IDList>) {
         try {
             let idx = 1;

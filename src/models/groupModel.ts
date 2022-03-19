@@ -175,23 +175,18 @@ class GroupModel {
     };
 
     static async retrieve_user_groups_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
-        console.log(userID, accessType);
         let groups;
         switch (accessType) {
             case "public":
-                console.log("Public!")
                 groups = await GroupRepo.fetch_public_group_list_by_user_id(userID, limit, offset);
                 break;
             case "user":
-                console.log("User!")
                 groups = await GroupRepo.fetch_unrestricted_group_list_by_user_id(userID, limit, offset);
                 break;
             default:
                 throw new ExpressError("Server Configuration Error", 500);
         }    
         
-        console.log(groups)
-        // const groups = await GroupRepo.fetch_public_group_list_by_user_id(userID, limit, offset);
         return groups;
     };
 

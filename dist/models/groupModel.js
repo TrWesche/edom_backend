@@ -297,30 +297,22 @@ var GroupModel = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        console.log(userID, accessType);
                         _a = accessType;
                         switch (_a) {
                             case "public": return [3 /*break*/, 1];
                             case "user": return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 5];
-                    case 1:
-                        console.log("Public!");
-                        return [4 /*yield*/, group_repository_1["default"].fetch_public_group_list_by_user_id(userID, limit, offset)];
+                    case 1: return [4 /*yield*/, group_repository_1["default"].fetch_public_group_list_by_user_id(userID, limit, offset)];
                     case 2:
                         groups = _b.sent();
                         return [3 /*break*/, 6];
-                    case 3:
-                        console.log("User!");
-                        return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_list_by_user_id(userID, limit, offset)];
+                    case 3: return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_list_by_user_id(userID, limit, offset)];
                     case 4:
                         groups = _b.sent();
                         return [3 /*break*/, 6];
                     case 5: throw new expresError_1["default"]("Server Configuration Error", 500);
-                    case 6:
-                        console.log(groups);
-                        // const groups = await GroupRepo.fetch_public_group_list_by_user_id(userID, limit, offset);
-                        return [2 /*return*/, groups];
+                    case 6: return [2 /*return*/, groups];
                 }
             });
         });

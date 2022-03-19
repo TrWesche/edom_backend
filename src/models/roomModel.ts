@@ -94,11 +94,6 @@ class RoomModel {
         return room;
     };
 
-    // static async retrieve_room_by_room_id_v2(userID: string, roomID: string) {
-    //     const room = RoomRepo.fetch_room_by_room_id(userID, roomID);
-    //     return room;
-    // };
-
     static async retrieve_room_list_paginated(limit: number, offset: number) {
         const rooms = await RoomRepo.fetch_room_list_paginated(limit, offset);
         return rooms;
@@ -121,6 +116,22 @@ class RoomModel {
 
     static async retrieve_group_rooms_by_group_id_all(groupID: string) {
         const rooms = await RoomRepo.fetch_rooms_by_group_id(groupID);
+        return rooms;
+    };
+
+    static async retrieve_user_rooms_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
+        let rooms;
+        switch (accessType) {
+            case "public":
+                rooms = await RoomRepo.fetch_public_room_list_by_user_id(userID, limit, offset);
+                break;
+            case "user":
+                rooms = await RoomRepo.fetch_unrestricted_room_list_by_user_id(userID, limit, offset);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+
         return rooms;
     };
 

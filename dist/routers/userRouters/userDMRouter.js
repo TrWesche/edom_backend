@@ -143,32 +143,44 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
 userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defineRoutePermissions({
     user: ["read_room_self"],
     group: [],
-    public: []
+    public: ["view_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var queryData, userSelf, error_3;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _c.trys.push([0, 2, , 3]);
-                // Preflight
+                _d.trys.push([0, 5, , 6]);
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                    throw new expresError_1["default"]("Invalid Call: Get User Rooms - All", 401);
+                    throw new expresError_1["default"]("User ID Not Defined", 401);
                 }
                 ;
-                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_by_user_id_all((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
+                queryData = void 0;
+                userSelf = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "read_group_self");
+                }, false);
+                if (!userSelf) return [3 /*break*/, 2];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "user", 10, 0)];
             case 1:
-                queryData = _c.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Rooms Not Found: Get User Rooms - All", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ equip: queryData })];
+                queryData = _d.sent();
+                return [3 /*break*/, 4];
             case 2:
-                error_3 = _c.sent();
+                if (!req.targetUID) return [3 /*break*/, 4];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)];
+            case 3:
+                queryData = _d.sent();
+                _d.label = 4;
+            case 4:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Rooms not found.", 404);
+                }
+                return [2 /*return*/, res.json({ room: queryData })];
+            case 5:
+                error_3 = _d.sent();
                 next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });
