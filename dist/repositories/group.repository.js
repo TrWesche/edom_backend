@@ -110,7 +110,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location\n                  FROM sitegroups\n                  WHERE id = $1 AND sitegroups.public = TRUE", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location, public\n                  FROM sitegroups\n                  WHERE id = $1 AND sitegroups.public = TRUE", [groupID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -133,7 +133,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location\n                  FROM sitegroups\n                  WHERE id = $1", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location, public\n                  FROM sitegroups\n                  WHERE id = $1", [groupID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];

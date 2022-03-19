@@ -214,20 +214,28 @@ class authMW {
         return next({ status: 500, message: "Route Configuration Error - Permissions Definition Missing" });
       };
   
-      let permissions;
+      let permissions: Array<any> = [];
 
       if (req.params.equipID) {
         // console.log("Checking Equip Permissions");
-        permissions = await PermissionsRepo.fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms);
-      } else 
+        const foundPermissions = await PermissionsRepo.fetch_user_equip_permissions(req.user.id, req.params.equipID, req.reqPerms);
+        permissions.push(...foundPermissions);
+      };
+
       if (req.params.roomID) {
         // console.log("Checking Room Permissions");
-        permissions = await PermissionsRepo.fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms);
-      } else 
+        const foundPermissions = await PermissionsRepo.fetch_user_room_permissions(req.user.id, req.params.roomID, req.reqPerms);
+        permissions.push(...foundPermissions);
+      };
+      
+      
       if (req.groupID) {
         // console.log("Checking Group Permissions");
-        permissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms);
-      } else 
+        const foundPermissions = await PermissionsRepo.fetch_user_group_permissions(req.user.id, req.groupID, req.reqPerms);
+        permissions.push(...foundPermissions);
+      };
+      
+      
       if (req.params.username) {
         // console.log("Checking Username Permissions");
         const comparisonUID = await PermissionsRepo.fetch_user_id_by_username(req.params.username);
@@ -236,31 +244,29 @@ class authMW {
 
           if (req.user.id === req.targetUID) {
             // console.log("Same User");
-            permissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
+            const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
+            permissions.push(...foundPermissions);
           } else {
-            permissions = await PermissionsRepo.fetch_user_account_permissions_public(req.targetUID ? req.targetUID : "", req.reqPerms);  
+            const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_public(req.targetUID ? req.targetUID : "", req.reqPerms);
+            permissions.push(...foundPermissions);
           }
         }
-      } else 
-      if (req.reqPerms.user && req.reqPerms.user.length > 0) {
-        // console.log("Checking User Acocunt Elevated Permissions");
-        permissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
-      } else
-      {
-        // console.log("Checking General Site Permissions");
-        permissions = await PermissionsRepo.fetch_user_site_permissions_public(req.user.id, req.reqPerms);
       };
 
-      // console.log(permissions);
+      if (req.reqPerms.user && req.reqPerms.user.length > 0 && permissions.length <= 0) {
+        const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
+        permissions.push(...foundPermissions);
+      } else
+      {
+        const foundPermissions = await PermissionsRepo.fetch_user_site_permissions_public(req.user.id, req.reqPerms);
+        permissions.push(...foundPermissions);
+      };
 
       if (permissions.length === 0) {
         return next({ status: 401, message: "Unauthorized" });
       };
-      
-      // const currentUser = await PermissionsRepo.fetch_username_by_user_id(req.user.id);
 
       req.resolvedPerms = permissions;
-      // req.currentuser = currentUser.username.toLowerCase();
 
       return next();
     } catch (error) {

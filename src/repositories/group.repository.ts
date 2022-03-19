@@ -71,7 +71,7 @@ class GroupRepo {
     static async fetch_public_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT id, name, headline, description, image_url, location
+                `SELECT id, name, headline, description, image_url, location, public
                   FROM sitegroups
                   WHERE id = $1 AND sitegroups.public = TRUE`,
                   [groupID]
@@ -87,7 +87,7 @@ class GroupRepo {
     static async fetch_unrestricted_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT id, name, headline, description, image_url, location
+                `SELECT id, name, headline, description, image_url, location, public
                   FROM sitegroups
                   WHERE id = $1`,
                   [groupID]

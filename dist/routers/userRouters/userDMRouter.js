@@ -115,7 +115,7 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
                     return acc = acc || (val.permissions_name === "read_group_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
-                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "user", 10, 0)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "elevated", 10, 0)];
             case 1:
                 queryData = _d.sent();
                 return [3 /*break*/, 4];

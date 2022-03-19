@@ -315,15 +315,15 @@ var GroupModel = /** @class */ (function () {
                     case 0:
                         _a = accessType;
                         switch (_a) {
-                            case "public": return [3 /*break*/, 1];
-                            case "user": return [3 /*break*/, 3];
+                            case "elevated": return [3 /*break*/, 1];
+                            case "public": return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 5];
-                    case 1: return [4 /*yield*/, group_repository_1["default"].fetch_public_group_list_by_user_id(userID, limit, offset)];
+                    case 1: return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_list_by_user_id(userID, limit, offset)];
                     case 2:
                         groups = _b.sent();
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_list_by_user_id(userID, limit, offset)];
+                    case 3: return [4 /*yield*/, group_repository_1["default"].fetch_public_group_list_by_user_id(userID, limit, offset)];
                     case 4:
                         groups = _b.sent();
                         return [3 /*break*/, 6];

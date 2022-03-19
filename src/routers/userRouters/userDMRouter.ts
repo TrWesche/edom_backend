@@ -76,7 +76,7 @@ userDeviceMasterRouter.get("/:username/group",
         
 
         if (userSelf) {
-            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, "user", 10, 0)
+            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, "elevated", 10, 0)
         } else 
         if (req.targetUID) {
             queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)

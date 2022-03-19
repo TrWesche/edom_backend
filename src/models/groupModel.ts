@@ -188,11 +188,11 @@ class GroupModel {
     static async retrieve_user_groups_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
         let groups;
         switch (accessType) {
+            case "elevated":
+                groups = await GroupRepo.fetch_unrestricted_group_list_by_user_id(userID, limit, offset);
+                break;
             case "public":
                 groups = await GroupRepo.fetch_public_group_list_by_user_id(userID, limit, offset);
-                break;
-            case "user":
-                groups = await GroupRepo.fetch_unrestricted_group_list_by_user_id(userID, limit, offset);
                 break;
             default:
                 throw new ExpressError("Server Configuration Error", 500);
