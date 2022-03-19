@@ -269,7 +269,7 @@ var RoomRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.location AS location\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE user_groups.user_id = $1 AND rooms.public = TRUE\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE user_rooms.user_id = $1 AND rooms.public = TRUE\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -290,7 +290,7 @@ var RoomRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.location AS location\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE user_groups.user_id = $1\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE user_rooms.user_id = $1\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;

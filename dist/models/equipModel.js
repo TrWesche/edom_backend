@@ -314,6 +314,33 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
+    EquipModel.retrieve_user_equip_list_by_user_id = function (userID, accessType, limit, offset) {
+        return __awaiter(this, void 0, void 0, function () {
+            var rooms, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "public": return [3 /*break*/, 1];
+                            case "user": return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_public_equip_list_by_user_id(userID, limit, offset)];
+                    case 2:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_unrestricted_equip_list_by_user_id(userID, limit, offset)];
+                    case 4:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 6: return [2 /*return*/, rooms];
+                }
+            });
+        });
+    };
+    ;
     /*   _   _ ____  ____    _  _____ _____
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|

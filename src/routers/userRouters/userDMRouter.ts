@@ -4,10 +4,6 @@ import * as express from "express";
 // Utility Functions Import
 import ExpressError from "../../utils/expresError";
 
-// Schema Imports
-import validateUserEquipCreateSchema, { UserEquipCreateProps } from "../../schemas/equipment/userEquipCreateSchema";
-import validateUserEquipUpdateSchema, { UserEquipUpdateProps } from "../../schemas/equipment/userEquipUpdateSchema";
-
 // Model Imports
 import EquipModel from "../../models/equipModel";
 import UserModel from "../../models/userModel";
@@ -17,9 +13,7 @@ import RoomModel from "../../models/roomModel";
 // Middleware Imports
 import authMW from "../../middleware/authorizationMW";
 
-
 const userDeviceMasterRouter = express.Router();
-
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
@@ -113,7 +107,7 @@ userDeviceMasterRouter.get("/:username/room",
         let queryData;
 
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
-            return acc = acc || (val.permissions_name === "read_group_self")
+            return acc = acc || (val.permissions_name === "read_room_self")
         }, false);
         
 
@@ -121,7 +115,7 @@ userDeviceMasterRouter.get("/:username/room",
             queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.user?.id, "user", 10, 0)
         } else 
         if (req.targetUID) {
-            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)
+            queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.targetUID, "public", 10, 0)
         };
         
         if (!queryData) {
@@ -129,19 +123,6 @@ userDeviceMasterRouter.get("/:username/room",
         }
         
         return res.json({room: queryData});
-
-        // Preflight
-        // if (!req.user?.id) {
-        //     throw new ExpressError("Invalid Call: Get User Rooms - All", 401);
-        // };
-
-        // // Processing
-        // const queryData = await RoomModel.retrieve_user_rooms_by_user_id_all(req.user?.id);
-        // if (!queryData) {
-        //     throw new ExpressError("Rooms Not Found: Get User Rooms - All", 404);
-        // };
-        
-        // return res.json({equip: queryData});
     } catch (error) {
         next(error)
     }
@@ -152,21 +133,30 @@ userDeviceMasterRouter.get("/:username/equip",
     authMW.defineRoutePermissions({
         user: ["read_equip_self"],
         group: [],
-        public: []
+        public: ["view_equip_public"]
     }),
     authMW.validateRoutePermissions,    
     async (req, res, next) => {
     try {
-        // Preflight
-        if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Equip - All", 401);
-        };
+        if (!req.user?.id) {throw new ExpressError("User ID Not Defined", 401)};
 
-        // Processing
-        const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.user?.id);
-        if (!queryData) {
-            throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+        let queryData;
+
+        const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
+            return acc = acc || (val.permissions_name === "read_equip_self")
+        }, false);
+        
+
+        if (userSelf) {
+            queryData = await EquipModel.retrieve_user_equip_list_by_user_id(req.user?.id, "user", 10, 0)
+        } else 
+        if (req.targetUID) {
+            queryData = await EquipModel.retrieve_user_equip_list_by_user_id(req.targetUID, "public", 10, 0)
         };
+        
+        if (!queryData) {
+            throw new ExpressError("Equip not found.", 404);
+        }
         
         return res.json({equip: queryData});
     } catch (error) {

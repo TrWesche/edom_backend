@@ -214,10 +214,10 @@ class RoomRepo {
                     rooms.headline AS headline,
                     rooms.description AS description,
                     rooms.image_url AS image_url,
-                    rooms.location AS location
+                    rooms.category_id AS category_id
                 FROM rooms
                 LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
-                WHERE user_groups.user_id = $1 AND rooms.public = TRUE
+                WHERE user_rooms.user_id = $1 AND rooms.public = TRUE
                 LIMIT $2
                 OFFSET $3`,
                 [userID, limit, offset]
@@ -239,10 +239,10 @@ class RoomRepo {
                     rooms.headline AS headline,
                     rooms.description AS description,
                     rooms.image_url AS image_url,
-                    rooms.location AS location
+                    rooms.category_id AS category_id
                 FROM rooms
                 LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
-                WHERE user_groups.user_id = $1
+                WHERE user_rooms.user_id = $1
                 LIMIT $2
                 OFFSET $3`,
                 [userID, limit, offset]

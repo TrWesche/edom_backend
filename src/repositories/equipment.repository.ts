@@ -203,6 +203,56 @@ class EquipmentRepo {
         }
     };
 
+    static async fetch_public_equip_list_by_user_id(userID: string, limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT
+                    equipment.id AS id,
+                    equipment.name AS name,
+                    equipment.headline AS headline,
+                    equipment.description AS description,
+                    equipment.image_url AS image_url,
+                    equipment.category_id AS category_id
+                FROM equipment
+                LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id
+                WHERE user_equipment.user_id = $1 AND equipment.public = TRUE
+                LIMIT $2
+                OFFSET $3`,
+                [userID, limit, offset]
+            );
+    
+            const rval: Array<EquipObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equip - ${error}`, 500);
+        }
+    };
+
+    static async fetch_unrestricted_equip_list_by_user_id(userID: string, limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT
+                    equipment.id AS id,
+                    equipment.name AS name,
+                    equipment.headline AS headline,
+                    equipment.description AS description,
+                    equipment.image_url AS image_url,
+                    equipment.category_id AS category_id
+                FROM equipment
+                LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id
+                WHERE user_equipment.user_id = $1
+                LIMIT $2
+                OFFSET $3`,
+                [userID, limit, offset]
+            );
+    
+            const rval: Array<EquipObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equip - ${error}`, 500);
+        }
+    };
+
     static async delete_equip_by_user_id(userID: Array<IDList>) {
         try {
             let idx = 1;
