@@ -310,15 +310,16 @@ var authMW = /** @class */ (function () {
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_id_by_username(req.params.username)];
                     case 7:
                         comparisonUID = _b.sent();
-                        if (!(comparisonUID !== undefined && req.user.id === comparisonUID.user_id)) return [3 /*break*/, 9];
+                        if (!(comparisonUID !== undefined)) return [3 /*break*/, 11];
+                        req.targetUID = comparisonUID.user_id;
+                        if (!(req.user.id === req.targetUID)) return [3 /*break*/, 9];
                         return [4 /*yield*/, permissions_repository_1["default"].fetch_user_account_permissions_all(req.user.id, req.reqPerms)];
                     case 8:
                         // console.log("Same User");
                         permissions = _b.sent();
                         return [3 /*break*/, 11];
-                    case 9: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_account_permissions_public(req.user.id, req.reqPerms)];
+                    case 9: return [4 /*yield*/, permissions_repository_1["default"].fetch_user_account_permissions_public(req.targetUID ? req.targetUID : "", req.reqPerms)];
                     case 10:
-                        // console.log("Other User");
                         permissions = _b.sent();
                         _b.label = 11;
                     case 11: return [3 /*break*/, 16];

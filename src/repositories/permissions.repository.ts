@@ -104,7 +104,7 @@ class PermissionsRepo {
     };
 
     static async fetch_user_site_permissions_public(userID: string, permissions: RoutePermissions) {
-        try {
+        try {            
             const permListPublic = permissions.public ? permissions.public : ["NotApplicable"];
 
             const result = await pgdb.query(

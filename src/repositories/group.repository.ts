@@ -38,7 +38,7 @@ class GroupRepo {
             };
 
             const query = `
-                INSERT INTO groups 
+                INSERT INTO sitegroups 
                     (${queryColumns.join(",")}) 
                 VALUES (${queryColIdxs.join(",")}) 
                 RETURNING id, name, headline, description, public`;
@@ -56,7 +56,7 @@ class GroupRepo {
         try {
             const result = await pgdb.query(
                 `SELECT id, name, headline, description, public
-                  FROM groups
+                  FROM sitegroups
                   WHERE id = $1`,
                   [groupID]
             );
@@ -72,8 +72,8 @@ class GroupRepo {
         try {
             const result = await pgdb.query(`
                 SELECT id, name, headline
-                FROM groups
-                WHERE groups.public = true
+                FROM sitegroups
+                WHERE sitegroups.public = true
                 LIMIT $1
                 OFFSET $2`,
                 [limit, offset]
@@ -86,16 +86,43 @@ class GroupRepo {
         }
     };
 
-    static async fetch_group_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_public_group_list_by_user_id(userID: string, limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
                 SELECT
-                    groups.id AS id,
-                    groups.name AS name,
-                    groups.headline AS headline,
-                    groups.description AS description
-                FROM groups
-                LEFT JOIN user_groups ON groups.id = user_groups.group_id
+                    sitegroups.id AS id,
+                    sitegroups.name AS name,
+                    sitegroups.headline AS headline,
+                    sitegroups.description AS description,
+                    sitegroups.image_url AS image_url,
+                    sitegroups.location AS location
+                FROM sitegroups
+                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
+                WHERE user_groups.user_id = $1 AND sitegroups.public = TRUE
+                LIMIT $2
+                OFFSET $3`,
+                [userID, limit, offset]
+            );
+    
+            const rval: Array<GroupObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate groups - ${error}`, 500);
+        }
+    };
+
+    static async fetch_unrestricted_group_list_by_user_id(userID: string, limit: number, offset: number) {
+        try {
+            const result = await pgdb.query(`
+                SELECT
+                    sitegroups.id AS id,
+                    sitegroups.name AS name,
+                    sitegroups.headline AS headline,
+                    sitegroups.description AS description,
+                    sitegroups.image_url AS image_url,
+                    sitegroups.location AS location
+                FROM sitegroups
+                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
                 WHERE user_groups.user_id = $1
                 LIMIT $2
                 OFFSET $3`,
@@ -113,7 +140,7 @@ class GroupRepo {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
-                "groups",
+                "sitegroups",
                 groupData,
                 "id",
                 groupID
@@ -323,18 +350,18 @@ class GroupRepo {
             if (groupPublic !== undefined) {
                 query = `
                     SELECT id, name, headline
-                    FROM groups
+                    FROM sitegroups
                     RIGHT JOIN user_groups
-                    ON groups.id = user_groups.group_id
-                    WHERE user_groups.user_id = $1 AND groups.public = $2`
+                    ON sitegroups.id = user_groups.group_id
+                    WHERE user_groups.user_id = $1 AND sitegroups.public = $2`
                 queryParams.push(userID, groupPublic);
             } else {
                 query = `
                     SELECT id, name, headline
-                    FROM groups
+                    FROM sitegroups
                     RIGHT JOIN user_groups
-                    ON groups.id = user_groups.equip_id
-                    WHERE groups.user_id = $1`
+                    ON sitegroups.id = user_groups.equip_id
+                    WHERE sitegroups.user_id = $1`
                 queryParams.push(userID);
             }
 

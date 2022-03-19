@@ -12,6 +12,7 @@ declare module 'express-serve-static-core' {
       requiredPermissions?: Object
       reqPerms?: RoutePermissions
       resolvedPerms?: Array<Object>
+      targetUID?: string
     }
     // interface Response {
     //   myField?: string

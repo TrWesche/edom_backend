@@ -72,19 +72,27 @@ userDeviceMasterRouter.get("/:username/group",
     authMW.validateRoutePermissions,
     async (req, res, next) => {
     try {
-        // Preflight
-        if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Groups - All", 401);
-        };
+        if (!req.user?.id) {throw new ExpressError("User ID Not Defined", 401)};
 
-        // Processing
-        // TODO - Needs to be based on username
-        const queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, 10, 0);
-        if (!queryData) {
-            throw new ExpressError("Group Not Found: Get User Groups - All", 404);
+        let queryData;
+
+        const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
+            return acc = acc || (val.permissions_name === "read_group_self")
+        }, false);
+        
+
+        if (userSelf) {
+            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, "user", 10, 0)
+        } else 
+        if (req.targetUID) {
+            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)
         };
         
-        return res.json({equip: queryData});
+        if (!queryData) {
+            throw new ExpressError("Groups not found.", 404);
+        }
+        
+        return res.json({group: queryData});
     } catch (error) {
         next(error)
     }

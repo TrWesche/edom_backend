@@ -231,12 +231,15 @@ class authMW {
       if (req.params.username) {
         // console.log("Checking Username Permissions");
         const comparisonUID = await PermissionsRepo.fetch_user_id_by_username(req.params.username);
-        if (comparisonUID !== undefined && req.user.id === comparisonUID.user_id) {
-          // console.log("Same User");
-          permissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
-        } else {
-          // console.log("Other User");
-          permissions = await PermissionsRepo.fetch_user_account_permissions_public(req.user.id, req.reqPerms);  
+        if (comparisonUID !== undefined) {
+          req.targetUID = comparisonUID.user_id;
+
+          if (req.user.id === req.targetUID) {
+            // console.log("Same User");
+            permissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
+          } else {
+            permissions = await PermissionsRepo.fetch_user_account_permissions_public(req.targetUID ? req.targetUID : "", req.reqPerms);  
+          }
         }
       } else 
       if (req.reqPerms.user && req.reqPerms.user.length > 0) {

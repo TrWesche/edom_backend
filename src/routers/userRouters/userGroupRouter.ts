@@ -30,24 +30,24 @@ const userGroupRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-userGroupRouter.get("/", authMW.defineSitePermissions(["read_group_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Groups - All", 401);
-        };
+// userGroupRouter.get("/", authMW.defineSitePermissions(["read_group_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         if (!req.user?.id) {
+//             throw new ExpressError("Invalid Call: Get User Groups - All", 401);
+//         };
 
-        // Processing
-        const queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, 10, 0);
-        if (!queryData) {
-            throw new ExpressError("Groups Not Found: Get User Groups - All", 404);
-        };
+//         // Processing
+//         const queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, 10, 0);
+//         if (!queryData) {
+//             throw new ExpressError("Groups Not Found: Get User Groups - All", 404);
+//         };
         
-        return res.json({group: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({group: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 
 export default userGroupRouter;
