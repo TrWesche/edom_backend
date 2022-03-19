@@ -189,6 +189,25 @@ class authMW {
     }
   };
 
+
+
+  /** Parse Context and Add Context Sensitive Information to Request */
+  static addContextToRequest (req, res, next) {
+    try {
+        if (req.body.context) {
+          switch (req.body.context){
+            case "group":
+              req.groupID = req.body.ownerid ? req.body.ownerid : "";
+              break;
+            default:
+          };
+        };
+        return next();
+      } catch (err) {
+        return next();
+      }
+  };
+
   /** Define Permissions Required to Access a Site Endpoint */
   static defineRoutePermissions (permissions: RoutePermissions) {
     return (req, res, next) => {

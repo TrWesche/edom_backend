@@ -28,6 +28,7 @@ const equipRootRouter = express.Router();
 // Manual Test - Basic Functionality: 03/19/2022
 equipRootRouter.post(
     "/create", 
+    authMW.addContextToRequest,
     authMW.defineRoutePermissions({
         user: ["create_equip_self"],
         group: ["create_equip"],
@@ -57,25 +58,34 @@ try {
 
     // Processing
     let queryData;
-    let idcheck;
+    let permCheck;
     switch (reqValues.context) {
         case "user": 
-            idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
-            if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
+            permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
+                return acc = acc || (val.permissions_name === "create_equip_self")
+            }, false);
+            // idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
+            // if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
             queryData = await EquipModel.create_user_equip(reqValues);
             break;
         case "group":
-            idcheck = await GroupModel.retrieve_group_by_group_id(reqValues.ownerid, "elevated");
-            if (!idcheck)  {throw new ExpressError(`Value is not a valid groupid`, 401);};
-            queryData = await EquipModel.create_group_equip(reqValues);
+            permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
+                return acc = acc || (val.permissions_name === "create_equip")
+            }, false);
+
+            if (permCheck) {
+                // idcheck = await GroupModel.retrieve_group_by_group_id(reqValues.ownerid, "elevated");
+                // if (!idcheck)  {throw new ExpressError(`Value is not a valid groupid`, 401);};
+                queryData = await EquipModel.create_group_equip(reqValues);
+            } else {
+                throw new ExpressError("Unauthorized", 401);
+            };
             break;
         default:
     };
 
-    
-    // const queryData = await GroupModel.create_group(req.user.id, reqValues);
     if (!queryData) {
-        throw new ExpressError("Create Group Failed", 500);
+        throw new ExpressError("Create Equip Failed", 500);
     };
     
     return res.json({equip: queryData})

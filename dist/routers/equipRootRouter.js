@@ -45,8 +45,6 @@ var equipModel_1 = require("../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
 var equipCreateSchema_1 = require("../schemas/equipment/equipCreateSchema");
-var userModel_1 = require("../models/userModel");
-var groupModel_1 = require("../models/groupModel");
 var equipRootRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -55,17 +53,17 @@ var equipRootRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 03/19/2022
-equipRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissions({
+equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest, authorizationMW_1["default"].defineRoutePermissions({
     user: ["create_equip_self"],
     group: ["create_equip"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, idcheck, _a, error_1;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var reqValues, queryData, permCheck, _a, error_1;
+    var _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0:
-                _c.trys.push([0, 8, , 9]);
+                _e.trys.push([0, 8, , 9]);
                 // Preflight
                 if (!((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)) {
                     throw new expresError_1["default"]("Must be logged in to create equip", 401);
@@ -87,45 +85,47 @@ equipRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissi
                 }
                 ;
                 queryData = void 0;
-                idcheck = void 0;
+                permCheck = void 0;
                 _a = reqValues.context;
                 switch (_a) {
                     case "user": return [3 /*break*/, 1];
-                    case "group": return [3 /*break*/, 4];
+                    case "group": return [3 /*break*/, 3];
                 }
                 return [3 /*break*/, 7];
-            case 1: return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id(reqValues.ownerid)];
-            case 2:
-                idcheck = _c.sent();
-                if (!idcheck) {
-                    throw new expresError_1["default"]("Value is not a valid userid", 401);
-                }
-                ;
+            case 1:
+                permCheck = (_c = req.resolvedPerms) === null || _c === void 0 ? void 0 : _c.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "create_equip_self");
+                }, false);
                 return [4 /*yield*/, equipModel_1["default"].create_user_equip(reqValues)];
-            case 3:
-                queryData = _c.sent();
+            case 2:
+                // idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
+                // if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
+                queryData = _e.sent();
                 return [3 /*break*/, 7];
-            case 4: return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(reqValues.ownerid, "elevated")];
-            case 5:
-                idcheck = _c.sent();
-                if (!idcheck) {
-                    throw new expresError_1["default"]("Value is not a valid groupid", 401);
-                }
-                ;
+            case 3:
+                permCheck = (_d = req.resolvedPerms) === null || _d === void 0 ? void 0 : _d.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "create_equip");
+                }, false);
+                if (!permCheck) return [3 /*break*/, 5];
                 return [4 /*yield*/, equipModel_1["default"].create_group_equip(reqValues)];
+            case 4:
+                // idcheck = await GroupModel.retrieve_group_by_group_id(reqValues.ownerid, "elevated");
+                // if (!idcheck)  {throw new ExpressError(`Value is not a valid groupid`, 401);};
+                queryData = _e.sent();
+                return [3 /*break*/, 6];
+            case 5: throw new expresError_1["default"]("Unauthorized", 401);
             case 6:
-                queryData = _c.sent();
+                ;
                 return [3 /*break*/, 7];
             case 7:
                 ;
-                // const queryData = await GroupModel.create_group(req.user.id, reqValues);
                 if (!queryData) {
-                    throw new expresError_1["default"]("Create Group Failed", 500);
+                    throw new expresError_1["default"]("Create Equip Failed", 500);
                 }
                 ;
                 return [2 /*return*/, res.json({ equip: queryData })];
             case 8:
-                error_1 = _c.sent();
+                error_1 = _e.sent();
                 next(error_1);
                 return [3 /*break*/, 9];
             case 9: return [2 /*return*/];

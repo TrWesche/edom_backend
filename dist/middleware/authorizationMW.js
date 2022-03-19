@@ -254,6 +254,26 @@ var authMW = /** @class */ (function () {
         };
     };
     ;
+    /** Parse Context and Add Context Sensitive Information to Request */
+    authMW.addContextToRequest = function (req, res, next) {
+        try {
+            if (req.body.context) {
+                switch (req.body.context) {
+                    case "group":
+                        req.groupID = req.body.ownerid ? req.body.ownerid : "";
+                        break;
+                    default:
+                }
+                ;
+            }
+            ;
+            return next();
+        }
+        catch (err) {
+            return next();
+        }
+    };
+    ;
     /** Define Permissions Required to Access a Site Endpoint */
     authMW.defineRoutePermissions = function (permissions) {
         return function (req, res, next) {
