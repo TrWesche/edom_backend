@@ -265,11 +265,15 @@ class GroupModel {
             const groupList = [{id: groupID}];
 
             await EquipmentRepo.delete_equip_by_group_id(groupList);
-
-            await RoomRepo.delete_room_by_group_id(groupList);
+            await EquipmentRepo.delete_group_equip_by_group_id(groupList);
     
+            await RoomRepo.delete_room_by_group_id(groupList);
+            await RoomRepo.delete_group_room_by_group_id(groupList);
+    
+            await GroupRepo.delete_group_user_roles_by_group_id(groupList);
             await GroupRepo.delete_group_users_by_group_id(groupList);
     
+            await GroupPermissionsRepo.delete_role_permissions_by_group_id(groupList);
             await GroupPermissionsRepo.delete_roles_by_group_id(groupList);
     
             await GroupRepo.delete_groups_by_group_id(groupList);

@@ -231,7 +231,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupPermissionsRepo.delete_roles_by_group_id = function (groupID) {
+    GroupPermissionsRepo.delete_role_permissions_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var idx_2, idxParams_1, query, queryParams_2, error_9;
             return __generator(this, function (_a) {
@@ -250,15 +250,48 @@ var GroupPermissionsRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM grouproles_grouppermissions\n                WHERE grouproles_grouppermissions.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_1.join(', '), ");\n                );\n                \n                DELETE FROM grouproles\n                WHERE grouproles.group_id IN (").concat(idxParams_1.join(', '), ");");
-                        console.log(query);
+                        query = "\n                DELETE FROM grouproles_grouppermissions\n                WHERE grouproles_grouppermissions.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_1.join(', '), ")\n                )");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
                         error_9 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_9), 500);
+                        throw new expresError_1["default"]("Server Error - delete_role_permissions_by_group_id - ".concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupPermissionsRepo.delete_roles_by_group_id = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_3, idxParams_2, query, queryParams_3, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_3 = 1;
+                        idxParams_2 = [];
+                        query = void 0;
+                        queryParams_3 = [];
+                        groupID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_3.push(val.id);
+                                idxParams_2.push("$".concat(idx_3));
+                                idx_3++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM grouproles\n                WHERE grouproles.group_id IN (".concat(idxParams_2.join(', '), ")");
+                        console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - delete_roles_by_group_id - ".concat(error_10), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -268,7 +301,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     // PERMISSIONS Management
     GroupPermissionsRepo.create_permission = function (groupPermData) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_10;
+            var result, rval, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -281,8 +314,8 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_10 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create new group permission - ".concat(error_10), 500);
+                        error_11 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create new group permission - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -291,7 +324,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.fetch_permission_by_permission_id = function (groupPermID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_11;
+            var result, rval, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -302,8 +335,8 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_11 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate group permission - ".concat(error_11), 500);
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate group permission - ".concat(error_12), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -314,7 +347,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.update_permission_by_permission_id = function (groupPermID, groupPermData) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, query, values, result, rval, error_12;
+            var _a, query, values, result, rval, error_13;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -326,8 +359,8 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_12 = _b.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update group permission - ".concat(error_12), 500);
+                        error_13 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to update group permission - ".concat(error_13), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -336,7 +369,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.delete_permission_by_permission_id = function (groupPermID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_13;
+            var result, rval, error_14;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -347,8 +380,8 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_13 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group permission - ".concat(error_13), 500);
+                        error_14 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group permission - ".concat(error_14), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -358,7 +391,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     // ROLE PERMISSIONS ASSOCIATIONS Management
     GroupPermissionsRepo.create_role_permissions = function (permissionList) {
         return __awaiter(this, void 0, void 0, function () {
-            var valueExpressions, queryValues, _i, permissionList_1, permission, valueExpressionRows, result, rval, error_14;
+            var valueExpressions, queryValues, _i, permissionList_1, permission, valueExpressionRows, result, rval, error_15;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -383,8 +416,8 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 3:
-                        error_14 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create new group role permission(s) - ".concat(error_14), 500);
+                        error_15 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create new group role permission(s) - ".concat(error_15), 500);
                     case 4:
                         ;
                         return [2 /*return*/];
@@ -395,7 +428,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.create_role_permissions_for_new_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var newGroupPermissions, queryColumns, queryColIdxs_2, queryParams_3, idx_3, _loop_1, key, query, result, rval, error_15;
+            var newGroupPermissions, queryColumns, queryColIdxs_2, queryParams_4, idx_4, _loop_1, key, query, result, rval, error_16;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -430,13 +463,13 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         };
                         queryColumns = ["grouprole_id", "grouppermission_id"];
                         queryColIdxs_2 = [];
-                        queryParams_3 = [];
-                        idx_3 = 1;
+                        queryParams_4 = [];
+                        idx_4 = 1;
                         _loop_1 = function (key) {
                             newGroupPermissions[key].forEach(function (element) {
-                                queryColIdxs_2.push("\n                    ( (SELECT get_group_role_uuid($".concat(idx_3, ", $").concat(idx_3 + 1, ")), (SELECT get_group_permission_uuid($").concat(idx_3 + 2, ")) )"));
-                                queryParams_3.push(key, groupID, element);
-                                idx_3 += 3;
+                                queryColIdxs_2.push("\n                    ( (SELECT get_group_role_uuid($".concat(idx_4, ", $").concat(idx_4 + 1, ")), (SELECT get_group_permission_uuid($").concat(idx_4 + 2, ")) )"));
+                                queryParams_4.push(key, groupID, element);
+                                idx_4 += 3;
                             });
                         };
                         // If this works its super inefficient and should be replaced at some point
@@ -445,14 +478,14 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         }
                         ;
                         query = "\n                INSERT INTO grouproles_grouppermissions\n                    (".concat(queryColumns.join(","), ") \n                VALUES ").concat(queryColIdxs_2.join(","), " \n                RETURNING grouprole_id, grouppermission_id");
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_4)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_15 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create role permissions for new group - ".concat(error_15), 500);
+                        error_16 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create role permissions for new group - ".concat(error_16), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -461,7 +494,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.fetch_role_permissions_by_role_id = function (groupID, roleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_16;
+            var result, rval, error_17;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -472,8 +505,8 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_16 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate group role permissions - ".concat(error_16), 500);
+                        error_17 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate group role permissions - ".concat(error_17), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -484,33 +517,12 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.delete_role_permission_by_role_permission_id = function (groupRoleID, groupPermID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_17;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id = $1 AND grouppermission_id = $2\n                RETURNING grouprole_id", [groupRoleID, groupPermID])];
-                    case 1:
-                        result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
-                    case 2:
-                        error_17 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group role permission - ".concat(error_17), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    GroupPermissionsRepo.delete_role_permissions_by_role_id = function (groupRoleID) {
-        return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_18;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id = $1\n                RETURNING grouprole_id", [groupRoleID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id = $1 AND grouppermission_id = $2\n                RETURNING grouprole_id", [groupRoleID, groupPermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -524,27 +536,45 @@ var GroupPermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupPermissionsRepo.delete_role_permissions_by_group_id = function (groupID) {
+    GroupPermissionsRepo.delete_role_permissions_by_role_id = function (groupRoleID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_19;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id IN \n                (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id = $1\n                )\n                RETURNING grouprole_id", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id = $1\n                RETURNING grouprole_id", [groupRoleID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
                         error_19 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group role permission - ".concat(error_19.message), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group role permission - ".concat(error_19), 500);
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     ;
+    // static async delete_role_permissions_by_group_id(groupID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM grouproles_grouppermissions
+    //             WHERE grouprole_id IN 
+    //             (
+    //                 SELECT grouproles.id FROM grouproles
+    //                 WHERE grouproles.group_id = $1
+    //             )
+    //             RETURNING grouprole_id`,
+    //             [groupID]
+    //         ); 
+    //         const rval: GroupRolePermsProps | undefined = result.rows[0];
+    //         return rval;    
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error.message}`, 500);
+    //     }   
+    // };
     // User Role Management
     GroupPermissionsRepo.create_user_group_role_by_role_id = function (userID, groupRoleID) {
         return __awaiter(this, void 0, void 0, function () {

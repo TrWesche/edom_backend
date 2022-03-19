@@ -181,15 +181,23 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter["delete"]("/", authorizationMW_1["default"].defineSitePermissions(["delete_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "delete_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupIDRouter["delete"]("/", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["read_group", "delete_group"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to delete groups || target group not specified", 400);
+                // Preflight
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Must be logged in to update group.", 400);
+                }
+                if (!req.groupID) {
+                    throw new expresError_1["default"]("Group ID must be provided.", 400);
                 }
                 return [4 /*yield*/, groupModel_1["default"].delete_group(req.groupID)];
             case 1:

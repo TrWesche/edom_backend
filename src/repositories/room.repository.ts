@@ -379,20 +379,49 @@ class RoomRepo {
                 WHERE rooms.id IN (
                     SELECT rooms.id FROM rooms
                     LEFT JOIN group_rooms ON group_rooms.room_id = rooms.id
-                    WHERE group_rooms.group_id IN (${idxParams.join(', ')});
-                );
-                
-                DELETE FROM group_rooms
-                WHERE group_rooms.group_id IN (${idxParams.join(', ')});`;
+                    WHERE group_rooms.group_id IN (${idxParams.join(', ')})
+                )`;
             
-            console.log(query);
+            // console.log(query);
             await pgdb.query(query, queryParams);
-            
+            // console.log("Delete Room");
+
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - delete_room_by_group_id - ${error}`, 500);
         }
     };
+
+    static async delete_group_room_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM group_rooms
+                WHERE group_rooms.group_id IN (${idxParams.join(', ')})`;
+            
+            // console.log(query);
+            await pgdb.query(query, queryParams);
+            // console.log("Delete User Room");
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - delete_group_room_by_group_id - ${error}`, 500);
+        }
+    };
+
+
 
     static async fetch_rooms_by_group_id(groupID: string, roomPublic?: boolean) {
         try {

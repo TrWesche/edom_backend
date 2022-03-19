@@ -311,7 +311,7 @@ class EquipmentRepo {
 
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - delete_user_equip_by_user_id - ${error}`, 500);
         }
     };
 
@@ -336,7 +336,7 @@ class EquipmentRepo {
             const rval = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to create equipment association group -> equipment - ${error}`, 500);
+            throw new ExpressError(`Server Error - associate_group_to_equip - ${error}`, 500);
         }
     };
 
@@ -354,7 +354,7 @@ class EquipmentRepo {
             const rval = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete equipment association group -> equipment - ${error}`, 500);
+            throw new ExpressError(`Server Error - disassociate_group_from_equip - ${error}`, 500);
         }
     };
 
@@ -386,7 +386,7 @@ class EquipmentRepo {
             const rval: Array<EquipObjectProps> | undefined = result.rows;
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment by group id - ${error}`, 500);
+            throw new ExpressError(`Server Error - fetch_equip_by_group_id - ${error}`, 500);
         }
     };
 
@@ -409,19 +409,46 @@ class EquipmentRepo {
                 DELETE FROM equipment
                 WHERE equipment.id IN (
                     SELECT equipment.id FROM equipment
-                    LEFT JOIN group_equipment ON group_equipment.equipment_id = equipment.id
-                    WHERE group_equipment.group_id IN (${idxParams.join(', ')});
-                );
-                
-                DELETE FROM group_equipment
-                WHERE group_equipment.group_id IN (${idxParams.join(', ')});`;
+                    LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
+                    WHERE group_equipment.group_id IN (${idxParams.join(', ')})
+                )`;
             
-            console.log(query);
+            // console.log("Delete Equip by UserID Called");
+            // console.log(query);
             await pgdb.query(query, queryParams);
 
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - delete_equip_by_group_id - ${error}`, 500);
+        }
+    };
+
+    static async delete_group_equip_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM group_equipment
+                WHERE group_equipment.group_id IN (${idxParams.join(', ')})`;
+            
+            // console.log("Delete User Equip by UserID Called");
+            // console.log(query);
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - delete_group_equip_by_group_id - ${error}`, 500);
         }
     };
 
@@ -446,7 +473,7 @@ class EquipmentRepo {
             const rval = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to create equipment association room -> equipment - ${error}`, 500);
+            throw new ExpressError(`Server Error - associate_room_to_equip - ${error}`, 500);
         }
     };
 
@@ -464,7 +491,7 @@ class EquipmentRepo {
             const rval = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete equipment association room -> equipment - ${error}`, 500);
+            throw new ExpressError(`Server Error - disassociate_room_from_equip_by_room_equip_id - ${error}`, 500);
         }
     };
 

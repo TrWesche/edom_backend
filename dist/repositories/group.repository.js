@@ -253,7 +253,7 @@ var GroupRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM sitegroups\n                WHERE sitegroups.id IN IN (".concat(idxParams_1.join(', '), ");");
+                        query = "\n                DELETE FROM sitegroups\n                WHERE sitegroups.id IN (".concat(idxParams_1.join(', '), ");");
                         console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_1)];
                     case 1:
@@ -261,14 +261,14 @@ var GroupRepo = /** @class */ (function () {
                         return [2 /*return*/, true];
                     case 2:
                         error_9 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_9), 500);
+                        throw new expresError_1["default"]("Server Error - delete_groups_by_group_id - ".concat(error_9), 500);
                     case 3: return [2 /*return*/];
                 }
             });
         });
     };
     ;
-    GroupRepo.delete_group_users_by_group_id = function (groupID) {
+    GroupRepo.delete_group_user_roles_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var idx_2, idxParams_2, query, queryParams_2, error_10;
             return __generator(this, function (_a) {
@@ -287,15 +287,47 @@ var GroupRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM user_grouproles\n                WHERE user_grouproles IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_2.join(', '), ");\n                );\n                \n                DELETE FROM user_groups\n                WHERE user_groups.group_id IN (").concat(idxParams_2.join(', '), ");");
-                        console.log(query);
+                        query = "\n                DELETE FROM user_grouproles\n                WHERE user_grouproles.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_2.join(', '), ")\n                )");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
                         error_10 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_10), 500);
+                        throw new expresError_1["default"]("Server Error - delete_group_user_roles_by_group_id - ".concat(error_10), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupRepo.delete_group_users_by_group_id = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_3, idxParams_3, query, queryParams_3, error_11;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_3 = 1;
+                        idxParams_3 = [];
+                        query = void 0;
+                        queryParams_3 = [];
+                        groupID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_3.push(val.id);
+                                idxParams_3.push("$".concat(idx_3));
+                                idx_3++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM user_groups\n                WHERE user_groups.group_id IN (".concat(idxParams_3.join(', '), ")");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_11 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - delete_group_users_by_group_id - ".concat(error_11), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -309,7 +341,7 @@ var GroupRepo = /** @class */ (function () {
     //  \___/|____/|_____|_| \_\
     GroupRepo.associate_user_to_group = function (userID, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_11;
+            var result, rval, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -323,8 +355,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_11 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create group association group -> user - ".concat(error_11), 500);
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to create group association group -> user - ".concat(error_12), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -333,7 +365,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.disassociate_user_from_group = function (userID, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_12;
+            var result, rval, error_13;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -347,8 +379,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_12 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> user - ".concat(error_12), 500);
+                        error_13 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> user - ".concat(error_13), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -356,44 +388,6 @@ var GroupRepo = /** @class */ (function () {
     };
     ;
     GroupRepo.delete_user_grouproles_by_user_id = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var idx_3, idxParams_3, query, queryParams_3, error_13;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        idx_3 = 1;
-                        idxParams_3 = [];
-                        query = void 0;
-                        queryParams_3 = [];
-                        userID.forEach(function (val) {
-                            if (val.id) {
-                                queryParams_3.push(val.id);
-                                idxParams_3.push("$".concat(idx_3));
-                                idx_3++;
-                            }
-                            ;
-                        });
-                        query = "\n                DELETE FROM user_grouproles\n                WHERE user_grouproles.user_id IN (".concat(idxParams_3.join(', '), ")");
-                        // console.log(query);
-                        // console.log(queryParams);
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
-                    case 1:
-                        // console.log(query);
-                        // console.log(queryParams);
-                        _a.sent();
-                        // console.log("Delete User Groups Success");
-                        return [2 /*return*/, true];
-                    case 2:
-                        error_13 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_13), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    GroupRepo.delete_user_groups_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
             var idx_4, idxParams_4, query, queryParams_4, error_14;
             return __generator(this, function (_a) {
@@ -412,7 +406,7 @@ var GroupRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM user_groups\n                WHERE user_groups.user_id IN (".concat(idxParams_4.join(', '), ")");
+                        query = "\n                DELETE FROM user_grouproles\n                WHERE user_grouproles.user_id IN (".concat(idxParams_4.join(', '), ")");
                         // console.log(query);
                         // console.log(queryParams);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_4)];
@@ -431,9 +425,47 @@ var GroupRepo = /** @class */ (function () {
         });
     };
     ;
+    GroupRepo.delete_user_groups_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_5, idxParams_5, query, queryParams_5, error_15;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_5 = 1;
+                        idxParams_5 = [];
+                        query = void 0;
+                        queryParams_5 = [];
+                        userID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_5.push(val.id);
+                                idxParams_5.push("$".concat(idx_5));
+                                idx_5++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM user_groups\n                WHERE user_groups.user_id IN (".concat(idxParams_5.join(', '), ")");
+                        // console.log(query);
+                        // console.log(queryParams);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_5)];
+                    case 1:
+                        // console.log(query);
+                        // console.log(queryParams);
+                        _a.sent();
+                        // console.log("Delete User Groups Success");
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_15 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_15), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     GroupRepo.disassociate_users_from_group_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, error_15;
+            var result, error_16;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -445,8 +477,8 @@ var GroupRepo = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, true];
                     case 2:
-                        error_15 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> users - ".concat(error_15), 500);
+                        error_16 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete group association group -> users - ".concat(error_16), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -455,7 +487,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.fetch_groups_by_user_id = function (userID, groupPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_16;
+            var query, queryParams, result, rval, error_17;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -476,8 +508,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_16 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate user groups by user id - ".concat(error_16), 500);
+                        error_17 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate user groups by user id - ".concat(error_17), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -486,7 +518,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.fetch_group_users_by_group_id = function (groupID, userPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_17;
+            var query, queryParams, result, rval, error_18;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -507,8 +539,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_17 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate group users by group id - ".concat(error_17), 500);
+                        error_18 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate group users by group id - ".concat(error_18), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -517,7 +549,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.fetch_group_ids_by_user_id = function (userID, userRole) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_18;
+            var query, queryParams, result, rval, error_19;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -539,8 +571,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_18 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_18), 500);
+                        error_19 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_19), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -549,7 +581,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.fetch_user_groups_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_19;
+            var query, queryParams, result, rval, error_20;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -564,8 +596,8 @@ var GroupRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_19 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_19), 500);
+                        error_20 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_20), 500);
                     case 3: return [2 /*return*/];
                 }
             });

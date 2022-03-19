@@ -424,7 +424,7 @@ var GroupModel = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 8, , 10]);
+                        _a.trys.push([0, 12, , 14]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
@@ -432,29 +432,41 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_group_id(groupList)];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_group_id(groupList)];
+                        return [4 /*yield*/, equipment_repository_1["default"].delete_group_equip_by_group_id(groupList)];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, group_repository_1["default"].delete_group_users_by_group_id(groupList)];
+                        return [4 /*yield*/, room_repository_1["default"].delete_room_by_group_id(groupList)];
                     case 4:
                         _a.sent();
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(groupList)];
+                        return [4 /*yield*/, room_repository_1["default"].delete_group_room_by_group_id(groupList)];
                     case 5:
                         _a.sent();
-                        return [4 /*yield*/, group_repository_1["default"].delete_groups_by_group_id(groupList)];
+                        return [4 /*yield*/, group_repository_1["default"].delete_group_user_roles_by_group_id(groupList)];
                     case 6:
                         _a.sent();
-                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                        return [4 /*yield*/, group_repository_1["default"].delete_group_users_by_group_id(groupList)];
                     case 7:
                         _a.sent();
-                        return [2 /*return*/, groupList];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permissions_by_group_id(groupList)];
                     case 8:
-                        error_4 = _a.sent();
-                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                        _a.sent();
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_roles_by_group_id(groupList)];
                     case 9:
                         _a.sent();
+                        return [4 /*yield*/, group_repository_1["default"].delete_groups_by_group_id(groupList)];
+                    case 10:
+                        _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 11:
+                        _a.sent();
+                        return [2 /*return*/, groupList];
+                    case 12:
+                        error_4 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 13:
+                        _a.sent();
                         throw new expresError_1["default"](error_4.message, error_4.status);
-                    case 10: return [2 /*return*/];
+                    case 14: return [2 /*return*/];
                 }
             });
         });

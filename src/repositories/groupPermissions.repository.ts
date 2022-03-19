@@ -182,7 +182,7 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async delete_roles_by_group_id(groupID: Array<IDList>) {
+    static async delete_role_permissions_by_group_id(groupID: Array<IDList>) {
         try {
             let idx = 1;
             const idxParams: Array<string> = [];
@@ -201,18 +201,42 @@ class GroupPermissionsRepo {
                 DELETE FROM grouproles_grouppermissions
                 WHERE grouproles_grouppermissions.grouprole_id IN (
                     SELECT grouproles.id FROM grouproles
-                    WHERE grouproles.group_id IN (${idxParams.join(', ')});
-                );
-                
+                    WHERE grouproles.group_id IN (${idxParams.join(', ')})
+                )`;
+            
+            await pgdb.query(query, queryParams);
+            
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - delete_role_permissions_by_group_id - ${error}`, 500);
+        }
+    };
+
+    static async delete_roles_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
                 DELETE FROM grouproles
-                WHERE grouproles.group_id IN (${idxParams.join(', ')});`;
+                WHERE grouproles.group_id IN (${idxParams.join(', ')})`;
             
             console.log(query);
             await pgdb.query(query, queryParams);
             
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - delete_roles_by_group_id - ${error}`, 500);
         }
     };
 
@@ -436,25 +460,25 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async delete_role_permissions_by_group_id(groupID: string) {
-        try {
-            const result = await pgdb.query(
-                `DELETE FROM grouproles_grouppermissions
-                WHERE grouprole_id IN 
-                (
-                    SELECT grouproles.id FROM grouproles
-                    WHERE grouproles.group_id = $1
-                )
-                RETURNING grouprole_id`,
-                [groupID]
-            ); 
+    // static async delete_role_permissions_by_group_id(groupID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM grouproles_grouppermissions
+    //             WHERE grouprole_id IN 
+    //             (
+    //                 SELECT grouproles.id FROM grouproles
+    //                 WHERE grouproles.group_id = $1
+    //             )
+    //             RETURNING grouprole_id`,
+    //             [groupID]
+    //         ); 
 
-            const rval: GroupRolePermsProps | undefined = result.rows[0];
-            return rval;    
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error.message}`, 500);
-        }   
-    };
+    //         const rval: GroupRolePermsProps | undefined = result.rows[0];
+    //         return rval;    
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error.message}`, 500);
+    //     }   
+    // };
 
 
     // User Role Management

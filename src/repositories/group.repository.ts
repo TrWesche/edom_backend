@@ -204,14 +204,44 @@ class GroupRepo {
 
             query = `
                 DELETE FROM sitegroups
-                WHERE sitegroups.id IN IN (${idxParams.join(', ')});`;
+                WHERE sitegroups.id IN (${idxParams.join(', ')});`;
             
             console.log(query);
             await pgdb.query(query, queryParams);
 
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - delete_groups_by_group_id - ${error}`, 500);
+        }
+    };
+
+    static async delete_group_user_roles_by_group_id(groupID: Array<IDList>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            groupID.forEach((val) => {
+                if (val.id) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_grouproles
+                WHERE user_grouproles.grouprole_id IN (
+                    SELECT grouproles.id FROM grouproles
+                    WHERE grouproles.group_id IN (${idxParams.join(', ')})
+                )`;
+            
+            await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - delete_group_user_roles_by_group_id - ${error}`, 500);
         }
     };
 
@@ -231,23 +261,19 @@ class GroupRepo {
             });
 
             query = `
-                DELETE FROM user_grouproles
-                WHERE user_grouproles IN (
-                    SELECT grouproles.id FROM grouproles
-                    WHERE grouproles.group_id IN (${idxParams.join(', ')});
-                );
-                
                 DELETE FROM user_groups
-                WHERE user_groups.group_id IN (${idxParams.join(', ')});`;
+                WHERE user_groups.group_id IN (${idxParams.join(', ')})`;
             
-            console.log(query);
             await pgdb.query(query, queryParams);
 
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - delete_group_users_by_group_id - ${error}`, 500);
         }
     };
+
+    
+
 
 
     //  _   _ ____  _____ ____  

@@ -34,7 +34,8 @@ groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), group
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-groupIDRouter.get("/",
+groupIDRouter.get(
+    "/",
     authMW.defineRoutePermissions({
         user: [],
         group: ["read_group"],
@@ -78,7 +79,8 @@ groupIDRouter.get("/",
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 03/19/2022
-groupIDRouter.patch("/",
+groupIDRouter.patch(
+    "/",
     authMW.defineRoutePermissions({
         user: [],
         group: ["read_group", "update_group"],
@@ -138,21 +140,29 @@ groupIDRouter.patch("/",
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/17/2022
-groupIDRouter.delete("/", authMW.defineSitePermissions(["delete_group_self"]), authMW.defineGroupPermissions(["read_group", "delete_group"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to delete groups || target group not specified`, 400);
-        }
+groupIDRouter.delete(
+    "/", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["read_group", "delete_group"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id) {throw new ExpressError(`Must be logged in to update group.`, 400);}
+            if (!req.groupID) {throw new ExpressError(`Group ID must be provided.`, 400);}
 
-        const queryData = await GroupModel.delete_group(req.groupID);
-        if(!queryData) {
-            throw new ExpressError("Unable to delete target group", 404);
-        }
+            const queryData = await GroupModel.delete_group(req.groupID);
+            if(!queryData) {
+                throw new ExpressError("Unable to delete target group", 404);
+            }
 
-        return res.json({message: "Group deleted."});
-    } catch (error) {
-        return next(error);
-    }
+            return res.json({message: "Group deleted."});
+        } catch (error) {
+            return next(error);
+        }
 });
 
 export default groupIDRouter;
