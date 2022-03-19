@@ -21,7 +21,7 @@ class GroupModel {
         | |___|  _ <| |___ / ___ \| | | |___ 
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    static async create_group(userID: string, data: GroupCreateProps) {
+    static async create_group(data: GroupCreateProps) {
         // Preflight
         if (!data.name) {
             throw new ExpressError("Invalid Create Equipment Call", 400);
@@ -31,8 +31,17 @@ class GroupModel {
         try {
             await TransactionRepo.begin_transaction();
 
+            const dbEntryProps = {
+                name: data.name,
+                headline: data.headline,
+                description: data.description,
+                image_url: data.image_url,
+                location: data.location,
+                public: data.public
+            };
+
             // Create Equipment in Database
-            const groupEntry = await GroupRepo.create_new_group(data);
+            const groupEntry = await GroupRepo.create_new_group(dbEntryProps);
             if (!groupEntry?.id) {
                 throw new ExpressError("Error while creating new group entry", 500);
             };
@@ -55,15 +64,15 @@ class GroupModel {
             };
 
             // Associate User to Group
-            const userGroup = await GroupRepo.associate_user_to_group(userID, groupEntry.id);
+            const userGroup = await GroupRepo.associate_user_to_group(data.ownerid, groupEntry.id);
             if (!userGroup) {
                 throw new ExpressError("Error while associating user to group", 500);
             };
 
             // Associate Equipment with Uploading User
-            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, ownerPermission.id);
+            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id(data.ownerid, ownerPermission.id);
             if (!userAssoc?.grouprole_id) {
-                throw new ExpressError("Error while associating user to group entry", 500);
+                throw new ExpressError("Error assigning user role to user", 500);
             };
 
             // Commit to Database
@@ -85,17 +94,6 @@ class GroupModel {
         const role = GroupPermissionsRepo.create_role(roleData);
         return role;
     };
-
-    // Creating Permissions Should Be Reserved for Site Admins.  This may be something that will come later, but might not even be necessary at all.
-    // static async create_permission(groupID: string, name: string) {
-    //     const permissionData: GroupPermProps = {
-    //         id: groupID,
-    //         name: name
-    //     }
-
-    //     const permission = GroupPermissionsRepo.create_permission(permissionData);
-    //     return permission;
-    // };
 
     static async create_role_permissions(permissionList: Array<GroupRolePermsProps>) {
         // if (!roleID || !name) {

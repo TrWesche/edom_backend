@@ -31,5 +31,5 @@ var userGroupRouter = express.Router();
 //         next(error)
 //     }
 // });
-exports["default"] = userGroupRouter;
+// export default userGroupRouter;
 //# sourceMappingURL=userGroupRouter.js.map

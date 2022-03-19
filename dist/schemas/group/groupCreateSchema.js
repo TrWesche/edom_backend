@@ -6,6 +6,16 @@ var ajv = new ajv_1["default"]();
 var schema = {
     type: "object",
     properties: {
+        context: {
+            $id: "$/properties/context",
+            type: "string",
+            "default": "user"
+        },
+        ownerid: {
+            $id: "$/properties/ownerid",
+            type: "string",
+            nullable: true
+        },
         name: {
             $id: "#/properties/name",
             type: "string",
@@ -19,6 +29,14 @@ var schema = {
         },
         description: {
             $id: "#/properties/description",
+            type: "string"
+        },
+        image_url: {
+            $id: "#/properties/image_url",
+            type: "string"
+        },
+        location: {
+            $id: "#/properties/location",
             type: "string"
         },
         public: {

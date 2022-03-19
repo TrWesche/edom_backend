@@ -54,44 +54,58 @@ var groupRootRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/17/2022
-// TODO:
-//   - Retest w/ user_groups connection update
-//   - Retest - Default User Permissions Creation has been updated
-groupRootRouter.post("/create", authorizationMW_1["default"].defineSitePermissions(["create_group_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["create_group_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var reqValues, queryData, _a, error_1;
+    var _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _d.trys.push([0, 4, , 5]);
                 reqValues = {
+                    context: req.body.context ? req.body.console : "user",
+                    ownerid: ((_b = req.user) === null || _b === void 0 ? void 0 : _b.id) ? req.user.id : "",
                     name: req.body.name,
                     headline: req.body.headline,
                     description: req.body.description,
+                    image_url: req.body.image_url,
+                    location: req.body.location,
                     public: req.body.public
                 };
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                if (!((_c = req.user) === null || _c === void 0 ? void 0 : _c.id)) {
                     throw new expresError_1["default"]("Must be logged in to create group", 401);
                 }
                 ;
                 if (!(0, groupCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to Create Group: ".concat(groupCreateSchema_1["default"].errors), 400);
+                    throw new expresError_1["default"]("Unable to Create Group - Schema Validation Error: ".concat(groupCreateSchema_1["default"].errors), 400);
                 }
                 ;
-                return [4 /*yield*/, groupModel_1["default"].create_group(req.user.id, reqValues)];
-            case 1:
-                queryData = _b.sent();
+                queryData = void 0;
+                _a = reqValues.context;
+                switch (_a) {
+                    case "user": return [3 /*break*/, 1];
+                }
+                return [3 /*break*/, 3];
+            case 1: return [4 /*yield*/, groupModel_1["default"].create_group(reqValues)];
+            case 2:
+                queryData = _d.sent();
+                return [3 /*break*/, 3];
+            case 3:
+                ;
+                // const queryData = await GroupModel.create_group(req.user.id, reqValues);
                 if (!queryData) {
                     throw new expresError_1["default"]("Create Group Failed", 500);
                 }
                 ;
                 return [2 /*return*/, res.json({ group: [queryData] })];
-            case 2:
-                error_1 = _b.sent();
+            case 4:
+                error_1 = _d.sent();
                 next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

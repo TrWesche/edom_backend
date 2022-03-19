@@ -252,4 +252,4 @@ userEquipRouter.delete("/:equipID/rooms", authMW.defineSitePermissions(["read_eq
     }
 });
 
-export default userEquipRouter;
+// export default userEquipRouter;

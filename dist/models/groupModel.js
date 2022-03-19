@@ -55,10 +55,10 @@ var GroupModel = /** @class */ (function () {
         | |___|  _ <| |___ / ___ \| | | |___
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    GroupModel.create_group = function (userID, data) {
+    GroupModel.create_group = function (data) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            var groupEntry, groupRoles, groupPermissions, ownerPermission, userGroup, userAssoc, error_1;
+            var dbEntryProps, groupEntry, groupRoles, groupPermissions, ownerPermission, userGroup, userAssoc, error_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -73,7 +73,15 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
                         _c.sent();
-                        return [4 /*yield*/, group_repository_1["default"].create_new_group(data)];
+                        dbEntryProps = {
+                            name: data.name,
+                            headline: data.headline,
+                            description: data.description,
+                            image_url: data.image_url,
+                            location: data.location,
+                            public: data.public
+                        };
+                        return [4 /*yield*/, group_repository_1["default"].create_new_group(dbEntryProps)];
                     case 3:
                         groupEntry = _c.sent();
                         if (!(groupEntry === null || groupEntry === void 0 ? void 0 : groupEntry.id)) {
@@ -101,18 +109,18 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while fetching group owner permission entry for new group", 500);
                         }
                         ;
-                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group(userID, groupEntry.id)];
+                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group(data.ownerid, groupEntry.id)];
                     case 7:
                         userGroup = _c.sent();
                         if (!userGroup) {
                             throw new expresError_1["default"]("Error while associating user to group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userID, ownerPermission.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(data.ownerid, ownerPermission.id)];
                     case 8:
                         userAssoc = _c.sent();
                         if (!(userAssoc === null || userAssoc === void 0 ? void 0 : userAssoc.grouprole_id)) {
-                            throw new expresError_1["default"]("Error while associating user to group entry", 500);
+                            throw new expresError_1["default"]("Error assigning user role to user", 500);
                         }
                         ;
                         // Commit to Database
@@ -149,15 +157,6 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    // Creating Permissions Should Be Reserved for Site Admins.  This may be something that will come later, but might not even be necessary at all.
-    // static async create_permission(groupID: string, name: string) {
-    //     const permissionData: GroupPermProps = {
-    //         id: groupID,
-    //         name: name
-    //     }
-    //     const permission = GroupPermissionsRepo.create_permission(permissionData);
-    //     return permission;
-    // };
     GroupModel.create_role_permissions = function (permissionList) {
         return __awaiter(this, void 0, void 0, function () {
             var rolePermissions, error_2;

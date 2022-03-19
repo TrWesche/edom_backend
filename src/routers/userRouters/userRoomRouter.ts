@@ -189,4 +189,4 @@ userRoomRouter.delete("/:roomID", authMW.defineSitePermissions(["read_room_self"
     }
 });
 
-export default userRoomRouter;
+// export default userRoomRouter;

@@ -334,5 +334,5 @@ userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].define
         }
     });
 }); });
-exports["default"] = userEquipRouter;
+// export default userEquipRouter;
 //# sourceMappingURL=userEquipRouter.js.map

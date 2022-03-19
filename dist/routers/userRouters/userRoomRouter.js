@@ -257,5 +257,5 @@ userRoomRouter["delete"]("/:roomID", authorizationMW_1["default"].defineSitePerm
         return [2 /*return*/];
     });
 }); });
-exports["default"] = userRoomRouter;
+// export default userRoomRouter;
 //# sourceMappingURL=userRoomRouter.js.map
