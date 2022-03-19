@@ -162,9 +162,22 @@ class GroupModel {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/ 
     */
-    static async retrieve_group_by_group_id(groupID: string) {
-        const group = GroupRepo.fetch_group_by_group_id(groupID);
+    static async retrieve_group_by_group_id(groupID: string, accessType: string) {
+        let group;
+        switch (accessType) {
+            case "public":
+                group = await GroupRepo.fetch_public_group_by_group_id(groupID);
+                break;
+            case "elevated":
+                group = await GroupRepo.fetch_unrestricted_group_by_group_id(groupID);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+        
         return group;
+        // const group = GroupRepo.fetch_group_by_group_id(groupID);
+        // return group;
     };
 
     static async retrieve_group_list_paginated(limit: number, offset: number) {

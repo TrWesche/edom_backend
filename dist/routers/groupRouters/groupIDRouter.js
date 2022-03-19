@@ -62,32 +62,48 @@ groupIDRouter.use("/users", authorizationMW_1["default"].defineSitePermissions([
   |_| \_\_____/_/   \_\____/
 */
 groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
     group: ["read_group"],
     public: ["view_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var queryData, elevatedAccess, error_1;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _c.trys.push([0, 5, , 6]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to view groups || group not found", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Must be logged in to update group.", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID)];
+                if (!req.groupID) {
+                    throw new expresError_1["default"]("Group ID must be provided.", 400);
+                }
+                queryData = void 0;
+                elevatedAccess = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "read_group");
+                }, false);
+                if (!elevatedAccess) return [3 /*break*/, 2];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID, "elevated")];
             case 1:
-                queryData = _b.sent();
+                queryData = _c.sent();
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID, "public")];
+            case 3:
+                queryData = _c.sent();
+                _c.label = 4;
+            case 4:
+                ;
                 if (!queryData) {
                     throw new expresError_1["default"]("Unable to find group.", 404);
                 }
                 ;
                 return [2 /*return*/, res.json({ group: queryData })];
-            case 2:
-                error_1 = _b.sent();
+            case 5:
+                error_1 = _c.sent();
                 next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });
@@ -97,8 +113,12 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/16/2022
-groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["update_group_self"]), authorizationMW_1["default"].defineGroupPermissions(["read_group", "update_group"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manual Test - Basic Functionality: 03/19/2022
+groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["read_group", "update_group"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -106,10 +126,13 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["up
             case 0:
                 _b.trys.push([0, 3, , 4]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to update group || group not found", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Must be logged in to update group.", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID)];
+                if (!req.groupID) {
+                    throw new expresError_1["default"]("Group ID must be provided.", 400);
+                }
+                return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID, "elevated")];
             case 1:
                 prevValues_1 = _b.sent();
                 if (!prevValues_1) {
@@ -120,14 +143,16 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineSitePermissions(["up
                     name: req.body.name,
                     headline: req.body.headline,
                     description: req.body.description,
+                    image_url: req.body.image_url,
+                    location: req.body.location,
                     public: req.body.public
                 };
                 if (!(0, groupUpdateSchema_1["default"])(updateValues_1)) {
-                    throw new expresError_1["default"]("Update Error: ".concat(groupUpdateSchema_1["default"].errors), 400);
+                    throw new expresError_1["default"]("Schema Validation Failed - Update Group: ".concat(groupUpdateSchema_1["default"].errors), 400);
                 }
                 ;
                 itemsList_1 = {};
-                newKeys = Object.keys(req.body);
+                newKeys = Object.keys(updateValues_1);
                 newKeys.map(function (key) {
                     if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
                         itemsList_1[key] = req.body[key];

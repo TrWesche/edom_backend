@@ -266,12 +266,29 @@ var GroupModel = /** @class */ (function () {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/
     */
-    GroupModel.retrieve_group_by_group_id = function (groupID) {
+    GroupModel.retrieve_group_by_group_id = function (groupID, accessType) {
         return __awaiter(this, void 0, void 0, function () {
-            var group;
-            return __generator(this, function (_a) {
-                group = group_repository_1["default"].fetch_group_by_group_id(groupID);
-                return [2 /*return*/, group];
+            var group, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "public": return [3 /*break*/, 1];
+                            case "elevated": return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, group_repository_1["default"].fetch_public_group_by_group_id(groupID)];
+                    case 2:
+                        group = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_by_group_id(groupID)];
+                    case 4:
+                        group = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 6: return [2 /*return*/, group];
+                }
             });
         });
     };

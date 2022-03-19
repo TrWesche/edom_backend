@@ -55,7 +55,39 @@ class GroupRepo {
     static async fetch_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT id, name, headline, description, public
+                `SELECT id, name, headline, description, image_url, location
+                  FROM sitegroups
+                  WHERE id = $1`,
+                  [groupID]
+            );
+    
+            const rval: GroupObjectProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate group - ${error}`, 500);
+        };
+    };
+
+    static async fetch_public_group_by_group_id(groupID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT id, name, headline, description, image_url, location
+                  FROM sitegroups
+                  WHERE id = $1 AND sitegroups.public = TRUE`,
+                  [groupID]
+            );
+    
+            const rval: GroupObjectProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate group - ${error}`, 500);
+        };
+    };
+
+    static async fetch_unrestricted_group_by_group_id(groupID: string) {
+        try {
+            const result = await pgdb.query(
+                `SELECT id, name, headline, description, image_url, location
                   FROM sitegroups
                   WHERE id = $1`,
                   [groupID]
@@ -71,7 +103,7 @@ class GroupRepo {
     static async fetch_group_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
-                SELECT id, name, headline
+                SELECT id, name, headline, image_url, location
                 FROM sitegroups
                 WHERE sitegroups.public = true
                 LIMIT $1

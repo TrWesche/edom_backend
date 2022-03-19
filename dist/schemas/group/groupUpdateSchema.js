@@ -21,6 +21,14 @@ var schema = {
             $id: "#/properties/description",
             type: "string"
         },
+        image_url: {
+            $id: "#/properties/image_url",
+            type: "string"
+        },
+        location: {
+            $id: "#/properties/location",
+            type: "string"
+        },
         public: {
             $id: "#/properties/public",
             type: "boolean",

@@ -6,6 +6,8 @@ export interface GroupUpdateProps {
     name: string
     headline: string
     description: string
+    image_url: string
+    location: string
     public: boolean
 };
 
@@ -25,6 +27,14 @@ const schema: JSONSchemaType<GroupUpdateProps> = {
         },
         description: {
             $id: "#/properties/description",
+            type: "string"
+        },
+        image_url: {
+            $id: "#/properties/image_url",
+            type: "string"
+        },
+        location: {
+            $id: "#/properties/location",
             type: "string"
         },
         public: {

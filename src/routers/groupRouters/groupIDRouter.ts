@@ -36,6 +36,7 @@ groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), group
 */
 groupIDRouter.get("/",
     authMW.defineRoutePermissions({
+        user: [],
         group: ["read_group"],
         public: ["view_group_public"]
     }),
@@ -43,16 +44,24 @@ groupIDRouter.get("/",
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.groupID) {
-                throw new ExpressError(`Must be logged in to view groups || group not found`, 400);
-            }
+            if (!req.user?.id) {throw new ExpressError(`Must be logged in to update group.`, 400);}
+            if (!req.groupID) {throw new ExpressError(`Group ID must be provided.`, 400);}
 
-            // TODO: User needs a public / private selection & additional details
-            const queryData = await GroupModel.retrieve_group_by_group_id(req.groupID);
+            let queryData;
+
+            const elevatedAccess = req.resolvedPerms?.reduce((acc: any, val: any) => {
+                return acc = acc || (val.permissions_name === "read_group")
+            }, false);
+    
+            if (elevatedAccess) {
+                queryData = await GroupModel.retrieve_group_by_group_id(req.groupID, "elevated");
+            } else {
+                queryData = await GroupModel.retrieve_group_by_group_id(req.groupID, "public");
+            };
+            
             if (!queryData) {
                 throw new ExpressError("Unable to find group.", 404);
             };
-            
 
             return res.json({group: queryData});
         } catch (error) {
@@ -68,33 +77,39 @@ groupIDRouter.get("/",
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/16/2022
-groupIDRouter.patch("/",  authMW.defineSitePermissions(["update_group_self"]), authMW.defineGroupPermissions(["read_group", "update_group"]), authMW.validatePermissions, async (req, res, next) => {
+// Manual Test - Basic Functionality: 03/19/2022
+groupIDRouter.patch("/",
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["read_group", "update_group"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
     try {
         // Preflight
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to update group || group not found`, 400);
-        }
+        if (!req.user?.id) {throw new ExpressError(`Must be logged in to update group.`, 400);}
+        if (!req.groupID) {throw new ExpressError(`Group ID must be provided.`, 400);}
 
-        const prevValues = await GroupModel.retrieve_group_by_group_id(req.groupID);
-        if (!prevValues) {
-            throw new ExpressError(`Update Failed: Group Not Found`, 404);
-        };
+        const prevValues = await GroupModel.retrieve_group_by_group_id(req.groupID, "elevated");
+        if (!prevValues) {throw new ExpressError(`Update Failed: Group Not Found`, 404);};
 
         const updateValues: GroupUpdateProps = {
             name: req.body.name,
             headline: req.body.headline,
             description: req.body.description,
+            image_url: req.body.image_url,
+            location: req.body.location,
             public: req.body.public
         };
 
         if(!validateUpdateGroupSchema(updateValues)) {
-            throw new ExpressError(`Update Error: ${validateUpdateGroupSchema.errors}`, 400);
+            throw new ExpressError(`Schema Validation Failed - Update Group: ${validateUpdateGroupSchema.errors}`, 400);
         };
 
         // Build update list for patch query 
         const itemsList = {};
-        const newKeys = Object.keys(req.body);
+        const newKeys = Object.keys(updateValues);
         newKeys.map(key => {
             if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
                 itemsList[key] = req.body[key];
