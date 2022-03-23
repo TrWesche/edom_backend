@@ -57,6 +57,7 @@ userRootRouter.use("/dm", userDMRouter_1["default"]);
    / ___ \ |_| | | | |  _  |
   /_/   \_\___/  |_| |_| |_|
 */
+// Manually Tested 2022-03-22
 userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var authValues, queryData, error_1;
     return __generator(this, function (_a) {
@@ -93,7 +94,7 @@ userRootRouter.post("/auth", function (req, res, next) { return __awaiter(void 0
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 userRootRouter.post("/register", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var regValues, queryData, error_2;
     return __generator(this, function (_a) {
@@ -146,9 +147,9 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_user_self"],
+    user: ["site_read_user_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -173,11 +174,11 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissio
         }
     });
 }); });
-// Manual Test Success - 2022/03/13
+// Manually Tested 2022-03-22
 userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: [],
-    public: ["view_user_public"]
+    public: ["site_read_user_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
@@ -205,9 +206,9 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["update_user_self"],
+    user: ["site_update_user_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -288,6 +289,7 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
   | |__| |_| | |_| | |_| | |_| | | |
   |_____\___/ \____|\___/ \___/  |_|
 */
+// Manually Tested 2022-03-22
 userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         console.log("Logging Out");
@@ -307,8 +309,9 @@ userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
+// Manually Tested 2022-03-22
 userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["delete_user_self"],
+    user: ["site_delete_user_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {

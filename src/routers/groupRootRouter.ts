@@ -26,11 +26,11 @@ const groupRootRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___ 
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupRootRouter.post(
         "/create", 
         authMW.defineRoutePermissions({
-            user: ["create_group_self"],
+            user: ["site_create_group_self"],
             group: [],
             public: []
         }),
@@ -82,13 +82,13 @@ groupRootRouter.post(
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupRootRouter.get(
     "/list",
     authMW.defineRoutePermissions({
         user: [],
         group: [],
-        public: ["view_group_public"]
+        public: ["site_read_group_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {

@@ -80,45 +80,45 @@ VALUES
 
 	--- Group Roles
 INSERT INTO public.permissiontypes
-	(id, name, category, module)
+	(name, category, module)
 VALUES
-	('group_read_group', 'group', 'user', 'group'),
-    ('group_update_group', 'group', 'user', 'group'),
-    ('group_delete_group', 'group', 'user', 'group'),
+	('group_read_group', 'group_user', 'group'),
+    ('group_update_group', 'group_user', 'group'),
+    ('group_delete_group', 'group_user', 'group'),
 
-    ('group_create_role', 'group', 'elevated', 'role'),
-    ('group_read_role', 'group', 'elevated', 'role'),
-    ('group_update_role', 'group', 'elevated', 'role'),
-    ('group_delete_role', 'group', 'elevated', 'role'),
+    ('group_create_role', 'group_elevated', 'role'),
+    ('group_read_role', 'group_elevated', 'role'),
+    ('group_update_role', 'group_elevated', 'role'),
+    ('group_delete_role', 'group_elevated', 'role'),
 
-    ('group_create_role_permissions', 'group', 'elevated', 'permissions'),
-    ('group_read_role_permissions', 'group', 'elevated', 'permissions'),
-    ('group_delete_role_permissions', 'group', 'elevated', 'permissions'),
+    ('group_create_role_permissions', 'group_elevated', 'permissions'),
+    ('group_read_role_permissions', 'group_elevated', 'permissions'),
+    ('group_delete_role_permissions', 'group_elevated', 'permissions'),
 
-	('group_read_group_permissions', 'group', 'elevated', 'permissions'),
+	('group_read_group_permissions', 'group_elevated', 'permissions'),
 
-    ('group_create_user_role', 'group', 'elevated', 'role'),
-    ('group_read_user_role', 'group', 'elevated', 'role'),
-    ('group_delete_user_role', 'group', 'elevated', 'role'),
+    ('group_create_user_role', 'group_elevated', 'role'),
+    ('group_read_user_role', 'group_elevated', 'role'),
+    ('group_delete_user_role', 'group_elevated', 'role'),
     
-    ('group_create_group_user', 'group', 'elevated', 'user'),
-    ('group_read_group_user', 'group', 'user', 'user'),
-    ('group_delete_group_user', 'group', 'elevated', 'user'),
+    ('group_create_group_user', 'group_elevated', 'user'),
+    ('group_read_group_user', 'group_user', 'user'),
+    ('group_delete_group_user', 'group_elevated', 'user'),
     
-    ('group_create_equip', 'group', 'elevated', 'equip'),
-    ('group_read_equip', 'group', 'user', 'equip'),
-    ('group_update_equip', 'group', 'elevated', 'equip'),
-    ('group_delete_equip', 'group', 'elevated', 'equip'),
+    ('group_create_equip', 'group_elevated', 'equip'),
+    ('group_read_equip', 'group_user', 'equip'),
+    ('group_update_equip', 'group_elevated', 'equip'),
+    ('group_delete_equip', 'group_elevated', 'equip'),
 
-    ('group_create_room', 'group', 'elevated', 'room'),
-    ('group_read_room', 'group', 'user', 'room'),
-    ('group_update_room', 'group', 'elevated', 'room'),
-    ('group_delete_room', 'group', 'elevated', 'room');
+    ('group_create_room', 'group_elevated', 'room'),
+    ('group_read_room', 'group_user', 'room'),
+    ('group_update_room', 'group_elevated', 'room'),
+    ('group_delete_room', 'group_elevated', 'room');
 
 
 -- Create Site Role / Site Permission Associations
-INSERT INTO public.siterole_sitepermissions
-    (siterole_id, sitepermission_id)
+INSERT INTO public.siterole_permissiontypes
+    (siterole_id, permission_id)
 VALUES
 -- user role id, permission_id
     ('853724f0-ef31-467d-a739-58bcc081a540', '1077c00a-4d3a-458a-be88-56d1d3cfdf56'),
@@ -143,10 +143,6 @@ VALUES
 	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '72eef18a-90bb-40ea-aac4-75883ef51a64'),
 	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '61fc32b7-d165-4c42-a3ea-67e70ffc2652'),
 	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '87813dbe-496b-4b10-8ac7-5f790a87c07d'),
-	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '9f379465-0adb-4daa-a7b8-1c42949dba4f'),
-	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '6bf76d45-d706-434b-8ae5-8b87cf3b4fc6'),
-	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '9823bc6b-104e-4fd2-b03b-b63faf102f90'),
-	('a8a2407f-e152-4647-a0f1-ebaade1fa8c9', '6259f8e4-6412-4e88-a961-77965300f0d5'),
 
 -- administrator role id, permission_id
     ('3acdd306-7225-4ffc-ad11-97c09c9ed32b', '516b9952-d3fb-42d7-b187-2c49255bdb69'),

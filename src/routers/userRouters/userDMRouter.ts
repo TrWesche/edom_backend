@@ -22,13 +22,13 @@ const userDeviceMasterRouter = express.Router();
   |_| \_\_____/_/   \_\____/ 
 */
 
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 /** Get User Profile Route - Based on Username */
 userDeviceMasterRouter.get("/:username", 
     authMW.defineRoutePermissions({
-        user: ["read_user_self"],
+        user: ["site_read_user_self"],
         group: [],
-        public: ["view_user_public"]
+        public: ["site_read_user_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
@@ -36,7 +36,7 @@ userDeviceMasterRouter.get("/:username",
         let queryData;
 
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
-            return acc = acc || (val.permissions_name === "read_user_self")
+            return acc = acc || (val.permissions_name === "site_read_user_self")
         }, false);
         
 
@@ -56,12 +56,13 @@ userDeviceMasterRouter.get("/:username",
     }
 });
 
+// Manually Tested 2022-03-22
 /** Get User Groups Route - Based on Username */
 userDeviceMasterRouter.get("/:username/group", 
     authMW.defineRoutePermissions({
-        user: ["read_group_self"],
+        user: ["site_read_group_self"],
         group: [],
-        public: ["view_group_public"]
+        public: ["site_read_group_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
@@ -71,7 +72,7 @@ userDeviceMasterRouter.get("/:username/group",
         let queryData;
 
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
-            return acc = acc || (val.permissions_name === "read_group_self")
+            return acc = acc || (val.permissions_name === "site_read_group_self")
         }, false);
         
 
@@ -92,12 +93,13 @@ userDeviceMasterRouter.get("/:username/group",
     }
 });
 
+// Manually Tested 2022-03-22
 /** Get User Rooms Route - Based on Username */
 userDeviceMasterRouter.get("/:username/room", 
     authMW.defineRoutePermissions({
-        user: ["read_room_self"],
+        user: ["site_read_room_self"],
         group: [],
-        public: ["view_room_public"]
+        public: ["site_read_room_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
@@ -107,7 +109,7 @@ userDeviceMasterRouter.get("/:username/room",
         let queryData;
 
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
-            return acc = acc || (val.permissions_name === "read_room_self")
+            return acc = acc || (val.permissions_name === "site_read_room_self")
         }, false);
         
 
@@ -128,12 +130,13 @@ userDeviceMasterRouter.get("/:username/room",
     }
 });
 
+// Manually Tested 2022-03-22
 /** Get User Equip Route */
 userDeviceMasterRouter.get("/:username/equip", 
     authMW.defineRoutePermissions({
-        user: ["read_equip_self"],
+        user: ["site_read_equip_self"],
         group: [],
-        public: ["view_equip_public"]
+        public: ["site_read_equip_public"]
     }),
     authMW.validateRoutePermissions,    
     async (req, res, next) => {
@@ -143,7 +146,7 @@ userDeviceMasterRouter.get("/:username/equip",
         let queryData;
 
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
-            return acc = acc || (val.permissions_name === "read_equip_self")
+            return acc = acc || (val.permissions_name === "site_read_equip_self")
         }, false);
         
 

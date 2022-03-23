@@ -30,8 +30,8 @@ equipRootRouter.post(
     "/create", 
     authMW.addContextToRequest,
     authMW.defineRoutePermissions({
-        user: ["create_equip_self"],
-        group: ["create_equip"],
+        user: ["site_create_equip_self"],
+        group: ["group_create_equip"],
         public: []
     }),
     authMW.validateRoutePermissions,
@@ -62,7 +62,7 @@ try {
     switch (reqValues.context) {
         case "user": 
             permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
-                return acc = acc || (val.permissions_name === "create_equip_self")
+                return acc = acc || (val.permissions_name === "site_create_equip_self")
             }, false);
             // idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
             // if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
@@ -70,7 +70,7 @@ try {
             break;
         case "group":
             permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
-                return acc = acc || (val.permissions_name === "create_equip")
+                return acc = acc || (val.permissions_name === "group_create_equip")
             }, false);
 
             if (permCheck) {
@@ -101,7 +101,7 @@ try {
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/list", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/list", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // TODO: Add free text search, category type filters, user filters, group filters
         
@@ -132,7 +132,7 @@ equipRootRouter.get("/list", authMW.defineSitePermissions(["view_equip_public"])
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.params.userID, true);
@@ -147,7 +147,7 @@ equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_equip_
 });
 
 // Manual Test - Basic Functionality: 01/18/2022
-equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_group_equip_by_group_id(req.params.groupID, true);
@@ -162,7 +162,7 @@ equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_equi
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["view_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Processing
         const queryData = await EquipModel.retrieve_room_equip_by_room_id(req.params.roomID, true);
@@ -181,9 +181,9 @@ equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["view_equip_
 equipRootRouter.get(
     "/:equipID", 
     authMW.defineRoutePermissions({
-        user: ["read_equip_self"],
-        group: ["read_equip"],
-        public: ["view_equip_public"]
+        user: ["site_read_equip_self"],
+        group: ["group_read_equip"],
+        public: ["site_read_equip_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {

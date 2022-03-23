@@ -34,13 +34,13 @@ groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), group
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupIDRouter.get(
     "/",
     authMW.defineRoutePermissions({
         user: [],
-        group: ["read_group"],
-        public: ["view_group_public"]
+        group: ["group_read_group"],
+        public: ["site_read_group_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
@@ -52,7 +52,7 @@ groupIDRouter.get(
             let queryData;
 
             const elevatedAccess = req.resolvedPerms?.reduce((acc: any, val: any) => {
-                return acc = acc || (val.permissions_name === "read_group")
+                return acc = acc || (val.permissions_name === "group_read_group")
             }, false);
     
             if (elevatedAccess) {
@@ -79,12 +79,12 @@ groupIDRouter.get(
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupIDRouter.patch(
     "/",
     authMW.defineRoutePermissions({
         user: [],
-        group: ["read_group", "update_group"],
+        group: ["group_read_group", "group_update_group"],
         public: []
     }),
     authMW.validateRoutePermissions,
@@ -140,12 +140,12 @@ groupIDRouter.patch(
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupIDRouter.delete(
     "/", 
     authMW.defineRoutePermissions({
         user: [],
-        group: ["read_group", "delete_group"],
+        group: ["group_read_group", "group_delete_group"],
         public: []
     }),
     authMW.validateRoutePermissions,

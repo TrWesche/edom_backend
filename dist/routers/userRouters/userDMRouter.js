@@ -54,12 +54,12 @@ var userDeviceMasterRouter = express.Router();
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 /** Get User Profile Route - Based on Username */
 userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_user_self"],
+    user: ["site_read_user_self"],
     group: [],
-    public: ["view_user_public"]
+    public: ["site_read_user_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, userSelf, error_1;
     var _a, _b;
@@ -69,7 +69,7 @@ userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRout
                 _c.trys.push([0, 5, , 6]);
                 queryData = void 0;
                 userSelf = (_a = req.resolvedPerms) === null || _a === void 0 ? void 0 : _a.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "read_user_self");
+                    return acc = acc || (val.permissions_name === "site_read_user_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
                 return [4 /*yield*/, userModel_1["default"].retrieve_user_by_user_id((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
@@ -94,11 +94,12 @@ userDeviceMasterRouter.get("/:username", authorizationMW_1["default"].defineRout
         }
     });
 }); });
+// Manually Tested 2022-03-22
 /** Get User Groups Route - Based on Username */
 userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_group_self"],
+    user: ["site_read_group_self"],
     group: [],
-    public: ["view_group_public"]
+    public: ["site_read_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, userSelf, error_2;
     var _a, _b, _c;
@@ -112,7 +113,7 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
                 ;
                 queryData = void 0;
                 userSelf = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "read_group_self");
+                    return acc = acc || (val.permissions_name === "site_read_group_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
                 return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "elevated", 10, 0)];
@@ -139,11 +140,12 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
         }
     });
 }); });
+// Manually Tested 2022-03-22
 /** Get User Rooms Route - Based on Username */
 userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_room_self"],
+    user: ["site_read_room_self"],
     group: [],
-    public: ["view_room_public"]
+    public: ["site_read_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, userSelf, error_3;
     var _a, _b, _c;
@@ -157,7 +159,7 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
                 ;
                 queryData = void 0;
                 userSelf = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "read_room_self");
+                    return acc = acc || (val.permissions_name === "site_read_room_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
                 return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "user", 10, 0)];
@@ -184,11 +186,12 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
         }
     });
 }); });
+// Manually Tested 2022-03-22
 /** Get User Equip Route */
 userDeviceMasterRouter.get("/:username/equip", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_equip_self"],
+    user: ["site_read_equip_self"],
     group: [],
-    public: ["view_equip_public"]
+    public: ["site_read_equip_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, userSelf, error_4;
     var _a, _b, _c;
@@ -202,7 +205,7 @@ userDeviceMasterRouter.get("/:username/equip", authorizationMW_1["default"].defi
                 ;
                 queryData = void 0;
                 userSelf = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "read_equip_self");
+                    return acc = acc || (val.permissions_name === "site_read_equip_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
                 return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "user", 10, 0)];

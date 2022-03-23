@@ -28,7 +28,7 @@ userRootRouter.use("/dm", userDeviceMasterRouter);
   /_/   \_\___/  |_| |_| |_|
 */
 
-
+// Manually Tested 2022-03-22
 userRootRouter.post("/auth", async (req, res, next) => {
     try {
         // console.log("Start Authentication");
@@ -63,7 +63,7 @@ userRootRouter.post("/auth", async (req, res, next) => {
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 userRootRouter.post("/register", async (req, res, next) => {
     try {
         const regValues: UserRegisterProps = {
@@ -110,11 +110,11 @@ userRootRouter.post("/register", async (req, res, next) => {
   |_| \_\_____/_/   \_\____/ 
 */
 
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 userRootRouter.get(
     "/profile", 
     authMW.defineRoutePermissions({
-        user: ["read_user_self"],
+        user: ["site_read_user_self"],
         group: [],
         public: []
     }),
@@ -132,13 +132,13 @@ userRootRouter.get(
         }
 });
 
-// Manual Test Success - 2022/03/13
+// Manually Tested 2022-03-22
 userRootRouter.get(
     "/list", 
     authMW.defineRoutePermissions({
         user: [],
         group: [],
-        public: ["view_user_public"]
+        public: ["site_read_user_public"]
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
@@ -162,10 +162,10 @@ userRootRouter.get(
   | |_| |  __/| |_| / ___ \| | | |___ 
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test Success - 2022/03/12
+// Manually Tested 2022-03-22
 userRootRouter.patch("/update", 
     authMW.defineRoutePermissions({
-        user: ["update_user_self"],
+        user: ["site_update_user_self"],
         group: [],
         public: []
     }),
@@ -241,7 +241,7 @@ userRootRouter.patch("/update",
   | |__| |_| | |_| | |_| | |_| | | |  
   |_____\___/ \____|\___/ \___/  |_|  
 */
-
+// Manually Tested 2022-03-22
 userRootRouter.post("/logout", async (req, res, next) => {
     console.log("Logging Out");
     try {
@@ -259,10 +259,10 @@ userRootRouter.post("/logout", async (req, res, next) => {
   | |_| | |___| |___| |___  | | | |___ 
   |____/|_____|_____|_____| |_| |_____|
 */
-
+// Manually Tested 2022-03-22
 userRootRouter.delete("/delete", 
     authMW.defineRoutePermissions({
-        user: ["delete_user_self"],
+        user: ["site_delete_user_self"],
         group: [],
         public: []
     }),

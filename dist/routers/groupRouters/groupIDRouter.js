@@ -61,11 +61,11 @@ groupIDRouter.use("/users", authorizationMW_1["default"].defineSitePermissions([
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
-    group: ["read_group"],
-    public: ["view_group_public"]
+    group: ["group_read_group"],
+    public: ["site_read_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, elevatedAccess, error_1;
     var _a, _b;
@@ -82,7 +82,7 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
                 }
                 queryData = void 0;
                 elevatedAccess = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "read_group");
+                    return acc = acc || (val.permissions_name === "group_read_group");
                 }, false);
                 if (!elevatedAccess) return [3 /*break*/, 2];
                 return [4 /*yield*/, groupModel_1["default"].retrieve_group_by_group_id(req.groupID, "elevated")];
@@ -114,10 +114,10 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
   | |_| |  __/| |_| / ___ \| | | |___
    \___/|_|   |____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
-    group: ["read_group", "update_group"],
+    group: ["group_read_group", "group_update_group"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_2;
@@ -181,10 +181,10 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupIDRouter["delete"]("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
-    group: ["read_group", "delete_group"],
+    group: ["group_read_group", "group_delete_group"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;

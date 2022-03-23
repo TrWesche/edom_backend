@@ -466,7 +466,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         idx_4 = 1;
                         _loop_1 = function (key) {
                             newGroupPermissions[key].forEach(function (element) {
-                                queryColIdxs_2.push("\n                    ( (SELECT get_group_role_uuid($".concat(idx_4, ", $").concat(idx_4 + 1, ")), (SELECT get_group_permission_uuid($").concat(idx_4 + 2, ")) )"));
+                                queryColIdxs_2.push("\n                    ( (SELECT get_group_role_uuid($".concat(idx_4, ", $").concat(idx_4 + 1, ")), (SELECT get_permission_uuid($").concat(idx_4 + 2, ")) )"));
                                 queryParams_4.push(key, groupID, element);
                                 idx_4 += 3;
                             });

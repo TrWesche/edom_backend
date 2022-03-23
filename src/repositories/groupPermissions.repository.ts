@@ -383,7 +383,7 @@ class GroupPermissionsRepo {
             for (const key in newGroupPermissions) {
                 newGroupPermissions[key].forEach(element => {
                     queryColIdxs.push(`
-                    ( (SELECT get_group_role_uuid($${idx}, $${idx+1})), (SELECT get_group_permission_uuid($${idx+2})) )`);
+                    ( (SELECT get_group_role_uuid($${idx}, $${idx+1})), (SELECT get_permission_uuid($${idx+2})) )`);
                     queryParams.push(key, groupID, element);
                     idx += 3;
                 });

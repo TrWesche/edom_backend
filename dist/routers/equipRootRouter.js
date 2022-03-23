@@ -54,8 +54,8 @@ var equipRootRouter = express.Router();
 */
 // Manual Test - Basic Functionality: 03/19/2022
 equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest, authorizationMW_1["default"].defineRoutePermissions({
-    user: ["create_equip_self"],
-    group: ["create_equip"],
+    user: ["site_create_equip_self"],
+    group: ["group_create_equip"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, permCheck, _a, error_1;
@@ -94,7 +94,7 @@ equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest
                 return [3 /*break*/, 7];
             case 1:
                 permCheck = (_c = req.resolvedPerms) === null || _c === void 0 ? void 0 : _c.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "create_equip_self");
+                    return acc = acc || (val.permissions_name === "site_create_equip_self");
                 }, false);
                 return [4 /*yield*/, equipModel_1["default"].create_user_equip(reqValues)];
             case 2:
@@ -104,7 +104,7 @@ equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest
                 return [3 /*break*/, 7];
             case 3:
                 permCheck = (_d = req.resolvedPerms) === null || _d === void 0 ? void 0 : _d.reduce(function (acc, val) {
-                    return acc = acc || (val.permissions_name === "create_equip");
+                    return acc = acc || (val.permissions_name === "group_create_equip");
                 }, false);
                 if (!permCheck) return [3 /*break*/, 5];
                 return [4 /*yield*/, equipModel_1["default"].create_group_equip(reqValues)];
@@ -139,7 +139,7 @@ equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -171,7 +171,7 @@ equipRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -194,7 +194,7 @@ equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePer
     });
 }); });
 // Manual Test - Basic Functionality: 01/18/2022
-equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -217,7 +217,7 @@ equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSiteP
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/rooms/:roomID", authorizationMW_1["default"].defineSitePermissions(["view_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+equipRootRouter.get("/rooms/:roomID", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -241,9 +241,9 @@ equipRootRouter.get("/rooms/:roomID", authorizationMW_1["default"].defineSitePer
 }); });
 // Check for elevated permissions through user id
 equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_equip_self"],
-    group: ["read_equip"],
-    public: ["view_equip_public"]
+    user: ["site_read_equip_self"],
+    group: ["group_read_equip"],
+    public: ["site_read_equip_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_6;
     return __generator(this, function (_a) {

@@ -54,9 +54,9 @@ var groupRootRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["create_group_self"],
+    user: ["site_create_group_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
@@ -117,11 +117,11 @@ groupRootRouter.post("/create", authorizationMW_1["default"].defineRoutePermissi
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 03/19/2022
+// Manually Tested 2022-03-22
 groupRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: [],
-    public: ["view_group_public"]
+    public: ["site_read_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
