@@ -128,7 +128,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM grouppermissions", [])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                  FROM permissiontypes", [])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -250,7 +250,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM grouproles_grouppermissions\n                WHERE grouproles_grouppermissions.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_1.join(', '), ")\n                )");
+                        query = "\n                DELETE FROM grouproles_permissiontypes\n                WHERE grouproles_permissiontypes.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_1.join(', '), ")\n                )");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
                     case 1:
                         _a.sent();
@@ -306,7 +306,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO grouppermissions\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
+                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO permissiontypes\n                    (name) \n                VALUES ($1) \n                RETURNING id, name", [
                                 groupPermData.name,
                             ])];
                     case 1:
@@ -329,7 +329,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                FROM grouppermissions\n                WHERE id = $1", [groupPermID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name\n                FROM permissiontypes\n                WHERE id = $1", [groupPermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -352,7 +352,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        _a = (0, createUpdateQueryPGSQL_1["default"])("grouppermissions", groupPermData, "id", groupPermID), query = _a.query, values = _a.values;
+                        _a = (0, createUpdateQueryPGSQL_1["default"])("permissiontypes", groupPermData, "id", groupPermID), query = _a.query, values = _a.values;
                         return [4 /*yield*/, pgdb_1["default"].query(query, values)];
                     case 1:
                         result = _b.sent();
@@ -374,7 +374,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouppermissions\n                WHERE id = $1\n                RETURNING id", [groupPermID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM permissiontypes\n                WHERE id = $1\n                RETURNING id", [groupPermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -395,7 +395,6 @@ var GroupPermissionsRepo = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(permissionList);
                         valueExpressions = [];
                         queryValues = [permissionList[0].grouprole_id];
                         for (_i = 0, permissionList_1 = permissionList; _i < permissionList_1.length; _i++) {
@@ -410,7 +409,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                INSERT INTO grouproles_grouppermissions\n                    (grouprole_id, grouppermission_id)\n                VALUES\n                    ".concat(valueExpressionRows, "\n                RETURNING grouprole_id, grouppermission_id"), queryValues)];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                INSERT INTO grouproles_permissiontypes\n                    (grouprole_id, permission_id)\n                VALUES\n                    ".concat(valueExpressionRows, "\n                RETURNING grouprole_id, permission_id"), queryValues)];
                     case 2:
                         result = _a.sent();
                         rval = result.rows;
@@ -435,33 +434,33 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         newGroupPermissions = {
                             owner: [
-                                'read_group', 'update_group', 'delete_group',
-                                'create_role', 'read_role', 'update_role', 'delete_role',
-                                'read_group_permissions',
-                                'create_role_permissions', 'read_role_permissions', 'delete_role_permissions',
-                                'create_user_role', 'read_user_role', 'delete_user_role',
-                                'create_group_user', 'read_group_user', 'delete_group_user',
-                                'create_equip', 'read_equip', 'update_equip', 'delete_equip',
-                                'create_room', 'read_room', 'update_room', 'delete_room'
+                                'group_read_group', 'group_update_group', 'group_delete_group',
+                                'group_create_role', 'group_read_role', 'group_update_role', 'group_delete_role',
+                                'group_read_group_permissions',
+                                'group_create_role_permissions', 'group_read_role_permissions', 'group_delete_role_permissions',
+                                'group_create_user_role', 'group_read_user_role', 'group_delete_user_role',
+                                'group_create_group_user', 'group_read_group_user', 'group_delete_group_user',
+                                'group_create_equip', 'group_read_equip', 'group_update_equip', 'group_delete_equip',
+                                'group_create_room', 'group_read_room', 'group_update_room', 'group_delete_room'
                             ],
                             admin: [
-                                'read_role',
-                                'create_user_role', 'read_user_role', 'delete_user_role',
-                                'create_group_user', 'read_group_user', 'delete_group_user',
-                                'create_equip', 'read_equip', 'update_equip', 'delete_equip',
-                                'create_room', 'read_room', 'update_room', 'delete_room'
+                                'group_read_role',
+                                'group_create_user_role', 'group_read_user_role', 'group_delete_user_role',
+                                'group_create_group_user', 'group_read_group_user', 'group_delete_group_user',
+                                'group_create_equip', 'group_read_equip', 'group_update_equip', 'group_delete_equip',
+                                'group_create_room', 'group_read_room', 'group_update_room', 'group_delete_room'
                             ],
                             manage_room: [
-                                'create_room', 'read_room', 'update_room', 'delete_room'
+                                'group_create_room', 'group_read_room', 'group_update_room', 'group_delete_room'
                             ],
                             manage_equip: [
-                                'create_equip', 'read_equip', 'update_equip', 'delete_equip'
+                                'group_create_equip', 'group_read_equip', 'group_update_equip', 'group_delete_equip'
                             ],
                             user: [
-                                'read_group', 'read_group_user', 'read_equip', 'read_room'
+                                'group_read_group', 'group_read_group_user', 'group_read_equip', 'group_read_room'
                             ]
                         };
-                        queryColumns = ["grouprole_id", "grouppermission_id"];
+                        queryColumns = ["grouprole_id", "permission_id"];
                         queryColIdxs_2 = [];
                         queryParams_4 = [];
                         idx_4 = 1;
@@ -477,7 +476,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                             _loop_1(key);
                         }
                         ;
-                        query = "\n                INSERT INTO grouproles_grouppermissions\n                    (".concat(queryColumns.join(","), ") \n                VALUES ").concat(queryColIdxs_2.join(","), " \n                RETURNING grouprole_id, grouppermission_id");
+                        query = "\n                INSERT INTO grouproles_permissiontypes\n                    (".concat(queryColumns.join(","), ") \n                VALUES ").concat(queryColIdxs_2.join(","), " \n                RETURNING grouprole_id, permission_id");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_4)];
                     case 1:
                         result = _a.sent();
@@ -499,7 +498,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT grouproles.id AS role_id,\n                        grouproles.name AS role_name,\n                        grouppermissions.id AS permission_id,\n                        grouppermissions.name AS permission_name\n                FROM grouproles\n                LEFT JOIN grouproles_grouppermissions\n                ON grouproles.id = grouproles_grouppermissions.grouprole_id\n                LEFT JOIN grouppermissions\n                ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id\n                WHERE grouproles.group_id = $1 AND grouprole_id = $2", [groupID, roleID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT grouproles.id AS role_id,\n                        grouproles.name AS role_name,\n                        permissiontypes.id AS permission_id,\n                        permissiontypes.name AS permission_name\n                FROM grouproles\n                LEFT JOIN grouproles_permissiontypes\n                ON grouproles.id = grouproles_permissiontypes.grouprole_id\n                LEFT JOIN permissiontypes\n                ON grouproles_permissiontypes.permission_id = permissiontypes.id\n                WHERE grouproles.group_id = $1 AND grouprole_id = $2", [groupID, roleID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -522,7 +521,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id = $1 AND grouppermission_id = $2\n                RETURNING grouprole_id", [groupRoleID, groupPermID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_permissiontypes\n                WHERE grouprole_id = $1 AND grouppermission_id = $2\n                RETURNING grouprole_id", [groupRoleID, groupPermID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -543,7 +542,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_grouppermissions\n                WHERE grouprole_id = $1\n                RETURNING grouprole_id", [groupRoleID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM grouproles_permissiontypes\n                WHERE grouprole_id = $1\n                RETURNING grouprole_id", [groupRoleID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -709,7 +708,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        grouppermissions.id AS permission_id,\n                        grouppermissions.name AS permission_name\n                    FROM grouppermissions\n                    LEFT JOIN grouproles_grouppermissions\n                        ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id\n                    LEFT JOIN grouproles\n                        ON grouproles.id = grouproles_grouppermissions.grouprole_id\n                    LEFT JOIN user_grouproles\n                        ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id\n                    WHERE user_grouproles.user_id = $1 AND grouproles.group_id = $2", [userID, groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT DISTINCT\n                        permissiontypes.id AS permission_id,\n                        permissiontypes.name AS permission_name\n                    FROM permissiontypes\n                    LEFT JOIN grouproles_permissiontypes\n                        ON grouproles_permissiontypes.permission_id = permissiontypes.id\n                    LEFT JOIN grouproles\n                        ON grouproles.id = grouproles_permissiontypes.grouprole_id\n                    LEFT JOIN user_grouproles\n                        ON user_grouproles.grouprole_id = grouproles_permissiontypes.grouprole_id\n                    WHERE user_grouproles.user_id = $1 AND grouproles.group_id = $2", [userID, groupID])];
                     case 1:
                         result = _a.sent();
                         // const rval: Array<siteRoleProps> | undefined = result.rows;

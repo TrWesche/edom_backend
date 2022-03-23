@@ -90,9 +90,11 @@ CREATE TABLE "siteroles" (
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE TABLE "sitepermissions" (
+CREATE TABLE "permissiontypes" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text UNIQUE NOT NULL,
+  "category" text NOT NULL,
+  "module" text NOT NULL,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
@@ -105,12 +107,12 @@ CREATE TABLE "grouproles" (
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
-CREATE TABLE "grouppermissions" (
-  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "name" text UNIQUE NOT NULL,
-  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
-  "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
-);
+-- CREATE TABLE "grouppermissions" (
+--   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+--   "name" text UNIQUE NOT NULL,
+--   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
+--   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+-- );
 
 CREATE TABLE "equipment_categories" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
@@ -147,14 +149,14 @@ CREATE TABLE "user_siteroles" (
   "siterole_id" uuid
 );
 
-CREATE TABLE "siterole_sitepermissions" (
+CREATE TABLE "siterole_permissiontypes" (
   "siterole_id" uuid,
-  "sitepermission_id" uuid
+  "permission_id" uuid
 );
 
-CREATE TABLE "grouproles_grouppermissions" (
+CREATE TABLE "grouproles_permissiontypes" (
   "grouprole_id" uuid,
-  "grouppermission_id" uuid
+  "permission_id" uuid
 );
 
 CREATE TABLE "user_grouproles" (
@@ -233,13 +235,13 @@ ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount
 
 ALTER TABLE "user_siteroles" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id") ON DELETE NO ACTION;
+ALTER TABLE "siterole_permissiontypes" ADD FOREIGN KEY ("siterole_id") REFERENCES "siteroles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "siterole_sitepermissions" ADD FOREIGN KEY ("sitepermission_id") REFERENCES "sitepermissions" ("id") ON DELETE NO ACTION;
+ALTER TABLE "siterole_permissiontypes" ADD FOREIGN KEY ("permission_id") REFERENCES "permissiontypes" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id") ON DELETE NO ACTION;
+ALTER TABLE "grouproles_permissiontypes" ADD FOREIGN KEY ("grouprole_id") REFERENCES "grouproles" ("id") ON DELETE NO ACTION;
 
-ALTER TABLE "grouproles_grouppermissions" ADD FOREIGN KEY ("grouppermission_id") REFERENCES "grouppermissions" ("id") ON DELETE NO ACTION;
+ALTER TABLE "grouproles_permissiontypes" ADD FOREIGN KEY ("permission_id") REFERENCES "permissiontypes" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "user_grouproles" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 

@@ -101,7 +101,7 @@ class GroupPermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                  FROM grouppermissions`,
+                  FROM permissiontypes`,
                   []
             );
 
@@ -198,8 +198,8 @@ class GroupPermissionsRepo {
             });
 
             query = `
-                DELETE FROM grouproles_grouppermissions
-                WHERE grouproles_grouppermissions.grouprole_id IN (
+                DELETE FROM grouproles_permissiontypes
+                WHERE grouproles_permissiontypes.grouprole_id IN (
                     SELECT grouproles.id FROM grouproles
                     WHERE grouproles.group_id IN (${idxParams.join(', ')})
                 )`;
@@ -244,7 +244,7 @@ class GroupPermissionsRepo {
     static async create_permission(groupPermData: GroupPermProps) {
         try {
             const result = await pgdb.query(
-                `INSERT INTO grouppermissions
+                `INSERT INTO permissiontypes
                     (name) 
                 VALUES ($1) 
                 RETURNING id, name`,
@@ -264,7 +264,7 @@ class GroupPermissionsRepo {
             const result = await pgdb.query(
                 `SELECT id, 
                         name
-                FROM grouppermissions
+                FROM permissiontypes
                 WHERE id = $1`,
                 [groupPermID]
             );
@@ -280,7 +280,7 @@ class GroupPermissionsRepo {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
             let {query, values} = createUpdateQueryPGSQL(
-                "grouppermissions",
+                "permissiontypes",
                 groupPermData,
                 "id",
                 groupPermID
@@ -298,7 +298,7 @@ class GroupPermissionsRepo {
     static async delete_permission_by_permission_id(groupPermID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM grouppermissions
+                `DELETE FROM permissiontypes
                 WHERE id = $1
                 RETURNING id`,
             [groupPermID]);
@@ -313,7 +313,7 @@ class GroupPermissionsRepo {
 
     // ROLE PERMISSIONS ASSOCIATIONS Management
     static async create_role_permissions(permissionList: Array<GroupRolePermsProps>) {
-        console.log(permissionList);
+        // console.log(permissionList);
         const valueExpressions: Array<string> = [];
         let queryValues = [permissionList[0].grouprole_id];
 
@@ -329,11 +329,11 @@ class GroupPermissionsRepo {
 
         try {
             const result = await pgdb.query(`
-                INSERT INTO grouproles_grouppermissions
-                    (grouprole_id, grouppermission_id)
+                INSERT INTO grouproles_permissiontypes
+                    (grouprole_id, permission_id)
                 VALUES
                     ${valueExpressionRows}
-                RETURNING grouprole_id, grouppermission_id`,
+                RETURNING grouprole_id, permission_id`,
             queryValues);
             
             const rval: Array<GroupRolePermsProps> | undefined = result.rows;
@@ -347,34 +347,34 @@ class GroupPermissionsRepo {
         try {
             const newGroupPermissions = {
                 owner: [
-                    'read_group', 'update_group', 'delete_group',
-                    'create_role', 'read_role', 'update_role', 'delete_role',
-                    'read_group_permissions',
-                    'create_role_permissions', 'read_role_permissions', 'delete_role_permissions',
-                    'create_user_role', 'read_user_role', 'delete_user_role',
-                    'create_group_user', 'read_group_user', 'delete_group_user',
-                    'create_equip', 'read_equip', 'update_equip', 'delete_equip',
-                    'create_room', 'read_room', 'update_room', 'delete_room'
+                    'group_read_group', 'group_update_group', 'group_delete_group',
+                    'group_create_role', 'group_read_role', 'group_update_role', 'group_delete_role',
+                    'group_read_group_permissions',
+                    'group_create_role_permissions', 'group_read_role_permissions', 'group_delete_role_permissions',
+                    'group_create_user_role', 'group_read_user_role', 'group_delete_user_role',
+                    'group_create_group_user', 'group_read_group_user', 'group_delete_group_user',
+                    'group_create_equip', 'group_read_equip', 'group_update_equip', 'group_delete_equip',
+                    'group_create_room', 'group_read_room', 'group_update_room', 'group_delete_room'
                 ],
                 admin: [
-                    'read_role',
-                    'create_user_role', 'read_user_role', 'delete_user_role',
-                    'create_group_user', 'read_group_user', 'delete_group_user',
-                    'create_equip', 'read_equip', 'update_equip', 'delete_equip',
-                    'create_room', 'read_room', 'update_room', 'delete_room'
+                    'group_read_role',
+                    'group_create_user_role', 'group_read_user_role', 'group_delete_user_role',
+                    'group_create_group_user', 'group_read_group_user', 'group_delete_group_user',
+                    'group_create_equip', 'group_read_equip', 'group_update_equip', 'group_delete_equip',
+                    'group_create_room', 'group_read_room', 'group_update_room', 'group_delete_room'
                 ],
                 manage_room: [
-                    'create_room', 'read_room', 'update_room', 'delete_room'
+                    'group_create_room', 'group_read_room', 'group_update_room', 'group_delete_room'
                 ],
                 manage_equip: [
-                    'create_equip', 'read_equip', 'update_equip', 'delete_equip'
+                    'group_create_equip', 'group_read_equip', 'group_update_equip', 'group_delete_equip'
                 ],
                 user: [
-                    'read_group', 'read_group_user', 'read_equip', 'read_room'
+                    'group_read_group', 'group_read_group_user', 'group_read_equip', 'group_read_room'
                 ]
             };
 
-            const queryColumns: Array<string> = ["grouprole_id", "grouppermission_id"];
+            const queryColumns: Array<string> = ["grouprole_id", "permission_id"];
             const queryColIdxs: Array<string> = [];
             const queryParams: Array<any> = [];
             
@@ -390,10 +390,10 @@ class GroupPermissionsRepo {
             };
 
             const query = `
-                INSERT INTO grouproles_grouppermissions
+                INSERT INTO grouproles_permissiontypes
                     (${queryColumns.join(",")}) 
                 VALUES ${queryColIdxs.join(",")} 
-                RETURNING grouprole_id, grouppermission_id`;
+                RETURNING grouprole_id, permission_id`;
 
             // console.log(query);
 
@@ -412,13 +412,13 @@ class GroupPermissionsRepo {
             const result = await pgdb.query(
                 `SELECT grouproles.id AS role_id,
                         grouproles.name AS role_name,
-                        grouppermissions.id AS permission_id,
-                        grouppermissions.name AS permission_name
+                        permissiontypes.id AS permission_id,
+                        permissiontypes.name AS permission_name
                 FROM grouproles
-                LEFT JOIN grouproles_grouppermissions
-                ON grouproles.id = grouproles_grouppermissions.grouprole_id
-                LEFT JOIN grouppermissions
-                ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id
+                LEFT JOIN grouproles_permissiontypes
+                ON grouproles.id = grouproles_permissiontypes.grouprole_id
+                LEFT JOIN permissiontypes
+                ON grouproles_permissiontypes.permission_id = permissiontypes.id
                 WHERE grouproles.group_id = $1 AND grouprole_id = $2`,
                 [groupID, roleID]
             );
@@ -433,7 +433,7 @@ class GroupPermissionsRepo {
     static async delete_role_permission_by_role_permission_id(groupRoleID: string, groupPermID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM grouproles_grouppermissions
+                `DELETE FROM grouproles_permissiontypes
                 WHERE grouprole_id = $1 AND grouppermission_id = $2
                 RETURNING grouprole_id`,
             [groupRoleID, groupPermID]);
@@ -448,7 +448,7 @@ class GroupPermissionsRepo {
     static async delete_role_permissions_by_role_id(groupRoleID: string) {
         try {
             const result = await pgdb.query(
-                `DELETE FROM grouproles_grouppermissions
+                `DELETE FROM grouproles_permissiontypes
                 WHERE grouprole_id = $1
                 RETURNING grouprole_id`,
             [groupRoleID]);
@@ -589,15 +589,15 @@ class GroupPermissionsRepo {
         try {
             const result = await pgdb.query(
                 `SELECT DISTINCT
-                        grouppermissions.id AS permission_id,
-                        grouppermissions.name AS permission_name
-                    FROM grouppermissions
-                    LEFT JOIN grouproles_grouppermissions
-                        ON grouproles_grouppermissions.grouppermission_id = grouppermissions.id
+                        permissiontypes.id AS permission_id,
+                        permissiontypes.name AS permission_name
+                    FROM permissiontypes
+                    LEFT JOIN grouproles_permissiontypes
+                        ON grouproles_permissiontypes.permission_id = permissiontypes.id
                     LEFT JOIN grouproles
-                        ON grouproles.id = grouproles_grouppermissions.grouprole_id
+                        ON grouproles.id = grouproles_permissiontypes.grouprole_id
                     LEFT JOIN user_grouproles
-                        ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id
+                        ON user_grouproles.grouprole_id = grouproles_permissiontypes.grouprole_id
                     WHERE user_grouproles.user_id = $1 AND grouproles.group_id = $2`,
                     [userID, groupID]
             );

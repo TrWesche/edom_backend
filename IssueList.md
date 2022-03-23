@@ -1,1 +1,0 @@
-1. Duplicate entries are being created in the user_siteroles table, this should not be happening.  Need to diagnose where these inserts are occuring as well as what needs to be done to the SQL Table to have the combo of the two ids recognized as a compound key.

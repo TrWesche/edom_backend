@@ -22,15 +22,15 @@ $grouprole_id$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION get_group_permission_uuid (permission_name text) 
-RETURNS uuid AS $grouppermission_id$
+CREATE OR REPLACE FUNCTION get_permission_uuid (permission_name text) 
+RETURNS uuid AS $permission_id$
 DECLARE
-	grouppermission_id uuid;
+	permission_id uuid;
 BEGIN
-	SELECT grouppermissions.id INTO grouppermission_id FROM grouppermissions WHERE grouppermissions.name = permission_name;
-	RETURN grouppermission_id;
+	SELECT permissiontypes.id INTO permission_id FROM permissiontypes WHERE permissiontypes.name = permission_name;
+	RETURN permission_id;
 END;
-$grouppermission_id$ LANGUAGE plpgsql;
+$permission_id$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION get_user_permissions (search_uid uuid) 
@@ -38,21 +38,21 @@ RETURNS TABLE (permission_name text, context uuid) AS $BODY$
 BEGIN
 	RETURN QUERY 
 		SELECT DISTINCT 
-			sitepermissions.name AS permission_name,
+			permissiontypes.name AS permission_name,
 			uuid_nil() AS context
-		FROM sitepermissions 
-		LEFT JOIN siterole_sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id
-		LEFT JOIN user_siteroles ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id
+		FROM permissiontypes 
+		LEFT JOIN siterole_permissiontypes ON permissiontypes.id = siterole_permissiontypes.permission_id
+		LEFT JOIN user_siteroles ON siterole_permissiontypes.siterole_id = user_siteroles.siterole_id
 		WHERE user_siteroles.user_id = search_uid
 		UNION
 		SELECT DISTINCT
-			grouppermissions.name AS permission_name,
+			permissiontypes.name AS permission_name,
 			sitegroups.id AS context
-		FROM grouppermissions
-		LEFT JOIN grouproles_grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-		LEFT JOIN grouproles ON grouproles.id = grouproles_grouppermissions.grouprole_id
+		FROM permissiontypes
+		LEFT JOIN grouproles_permissiontypes ON permissiontypes.id = grouproles_permissiontypes.permission_id
+		LEFT JOIN grouproles ON grouproles.id = grouproles_permissiontypes.grouprole_id
 		LEFT JOIN sitegroups ON sitegroups.id = grouproles.group_id
-		LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles_grouppermissions.grouprole_id
+		LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles_permissiontypes.grouprole_id
 		WHERE user_grouproles.user_id = search_uid;
 END;
 $BODY$ LANGUAGE plpgsql;
@@ -76,13 +76,13 @@ AS $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
-		sitepermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM useraccount
 	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
-	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
-	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = UserID AND siteroles.name = 'public' AND sitepermissions.name IN (SELECT unnest(PermList));
+	LEFT JOIN siterole_permissiontypes ON siterole_permissiontypes.siterole_id = user_siteroles.siterole_id 
+	LEFT JOIN permissiontypes ON permissiontypes.id = siterole_permissiontypes.permission_id 
+	WHERE useraccount.id = UserID AND siteroles.name = 'public' AND permissiontypes.name IN (SELECT unnest(PermList));
 END;
 $BODY$;
 
@@ -125,27 +125,27 @@ AS $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
-		grouppermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM equipment
 	LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
 	LEFT JOIN sitegroups ON sitegroups.id = group_equipment.group_id
 	LEFT JOIN grouproles ON grouproles.group_id = sitegroups.id
 	LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
 	LEFT JOIN useraccount ON useraccount.id = user_grouproles.user_id
-	LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
-	LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
+	LEFT JOIN grouproles_permissiontypes ON grouproles_permissiontypes.grouprole_id = user_grouproles.grouprole_id
+	LEFT JOIN permissiontypes ON permissiontypes.id = grouproles_permissiontypes.permission_id
+	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND permissiontypes.name IN (SELECT unnest(GroupPermList))
 	UNION
 	SELECT DISTINCT
-		sitepermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM equipment
 	LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id 
 	LEFT JOIN useraccount ON useraccount.id = user_equipment.user_id
 	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
-	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
-	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND siteroles.name = 'user' AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	LEFT JOIN siterole_permissiontypes ON siterole_permissiontypes.siterole_id = user_siteroles.siterole_id 
+	LEFT JOIN permissiontypes ON permissiontypes.id = siterole_permissiontypes.permission_id 
+	WHERE useraccount.id = UserID AND equipment.id = EquipmentID AND siteroles.name = 'user' AND permissiontypes.name IN (SELECT unnest(UserPermList))
    	UNION
 	SELECT * FROM retrieve_user_auth_for_public_equipment(UserID, EquipmentID, PublicPermList);
 END;
@@ -179,27 +179,27 @@ $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
-		grouppermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM rooms
 	LEFT JOIN group_rooms ON group_rooms.room_id = rooms.id
 	LEFT JOIN sitegroups ON sitegroups.id = group_rooms.group_id
 	LEFT JOIN grouproles ON grouproles.group_id = sitegroups.id
 	LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
 	LEFT JOIN useraccount ON useraccount.id = user_grouproles.user_id
-	LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
-	LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-	WHERE useraccount.id = UserID AND rooms.id = RoomID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
+	LEFT JOIN grouproles_permissiontypes ON grouproles_permissiontypes.grouprole_id = user_grouproles.grouprole_id
+	LEFT JOIN permissiontypes ON permissiontypes.id = grouproles_permissiontypes.permission_id
+	WHERE useraccount.id = UserID AND rooms.id = RoomID AND permissiontypes.name IN (SELECT unnest(GroupPermList))
 	UNION
 	SELECT DISTINCT
-		sitepermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM rooms
 	LEFT JOIN user_rooms ON user_rooms.room_id = rooms.id 
 	LEFT JOIN useraccount ON useraccount.id = user_rooms.user_id
 	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
-	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
-	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = UserID AND rooms.id = RoomID AND sitepermissions.name IN (SELECT unnest(UserPermList))
+	LEFT JOIN siterole_permissiontypes ON siterole_permissiontypes.siterole_id = user_siteroles.siterole_id 
+	LEFT JOIN permissiontypes ON permissiontypes.id = siterole_permissiontypes.permission_id 
+	WHERE useraccount.id = UserID AND rooms.id = RoomID AND permissiontypes.name IN (SELECT unnest(UserPermList))
    	UNION
 	SELECT * FROM retrieve_user_auth_for_public_room(UserID, RoomID, PublicPermList);
 END;
@@ -235,14 +235,14 @@ $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
-		grouppermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM sitegroups
 	LEFT JOIN grouproles ON grouproles.group_id = sitegroups.id
 	LEFT JOIN user_grouproles ON user_grouproles.grouprole_id = grouproles.id
 	LEFT JOIN useraccount ON useraccount.id = user_grouproles.user_id
-	LEFT JOIN grouproles_grouppermissions ON grouproles_grouppermissions.grouprole_id = user_grouproles.grouprole_id
-	LEFT JOIN grouppermissions ON grouppermissions.id = grouproles_grouppermissions.grouppermission_id
-	WHERE useraccount.id = UserID AND sitegroups.id = GroupID AND grouppermissions.name IN (SELECT unnest(GroupPermList))
+	LEFT JOIN grouproles_permissiontypes ON grouproles_permissiontypes.grouprole_id = user_grouproles.grouprole_id
+	LEFT JOIN permissiontypes ON permissiontypes.id = grouproles_permissiontypes.permission_id
+	WHERE useraccount.id = UserID AND sitegroups.id = GroupID AND permissiontypes.name IN (SELECT unnest(GroupPermList))
 	UNION
 	SELECT * FROM retrieve_user_auth_for_public_group(UserID, GroupID, PublicPermList);
 END;
@@ -293,14 +293,14 @@ AS $BODY$
 DECLARE
 BEGIN
 	RETURN QUERY SELECT DISTINCT
-		sitepermissions.name AS permissions_name
+		permissiontypes.name AS permissions_name
 	FROM userprofile
 	LEFT JOIN useraccount ON useraccount.id = userprofile.user_id
 	LEFT JOIN user_siteroles ON user_siteroles.user_id = useraccount.id 
 	LEFT JOIN siteroles ON siteroles.id = user_siteroles.siterole_id
-	LEFT JOIN siterole_sitepermissions ON siterole_sitepermissions.siterole_id = user_siteroles.siterole_id 
-	LEFT JOIN sitepermissions ON sitepermissions.id = siterole_sitepermissions.sitepermission_id 
-	WHERE useraccount.id = _userid AND siteroles.name = 'user' AND sitepermissions.name IN (SELECT unnest(_userpermlist))
+	LEFT JOIN siterole_permissiontypes ON siterole_permissiontypes.siterole_id = user_siteroles.siterole_id 
+	LEFT JOIN permissiontypes ON permissiontypes.id = siterole_permissiontypes.permission_id 
+	WHERE useraccount.id = _userid AND siteroles.name = 'user' AND permissiontypes.name IN (SELECT unnest(_userpermlist))
 	UNION
 	SELECT * FROM retrieve_user_auth_for_public_user(_userid, _publicpermlist);
 END;
