@@ -135,8 +135,19 @@ class EquipModel {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/ 
     */
-    static async retrieve_equip_by_equip_id(equipID: string, equipPublic?: boolean) {
-        const equip = await EquipRepo.fetch_equip_by_equip_id(equipID, equipPublic);
+    static async retrieve_equip_by_equip_id(equipID: string, accessType: string) {
+        let equip;
+        switch (accessType) {
+            case "public":
+                equip = await EquipRepo.fetch_public_equip_by_equip_id(equipID);
+                break;
+            case "elevated":
+                equip = await EquipRepo.fetch_unrestricted_equip_by_equip_id(equipID);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+
         return equip;
     };
 

@@ -135,18 +135,18 @@ userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_
 });
 
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
-        if (!queryData) {
-            throw new ExpressError("Equipment Not Found.", 404);
-        }
+// userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found.", 404);
+//         }
         
-        return res.json({equip: [queryData]});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({equip: [queryData]});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 
 /* _   _ ____  ____    _  _____ _____ 
@@ -156,49 +156,49 @@ userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.patch("/:equipID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        const prevValues = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
-        if (!prevValues) {
-            throw new ExpressError(`Update Failed: Equipment Not Found`, 404);
-        };
+// userEquipRouter.patch("/:equipID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         const prevValues = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
+//         if (!prevValues) {
+//             throw new ExpressError(`Update Failed: Equipment Not Found`, 404);
+//         };
 
-        const updateValues: UserEquipUpdateProps = {
-            name: req.body.name,
-            category_id: req.body.category_id,
-            headline: req.body.headline,
-            description: req.body.description,
-            public: req.body.public,
-            configuration: req.body.configuration
-        };
+//         const updateValues: UserEquipUpdateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public,
+//             configuration: req.body.configuration
+//         };
 
-        if(!validateUserEquipUpdateSchema(updateValues)) {
-            throw new ExpressError(`Update Error: ${validateUserEquipUpdateSchema.errors}`, 400);
-        };
+//         if(!validateUserEquipUpdateSchema(updateValues)) {
+//             throw new ExpressError(`Update Error: ${validateUserEquipUpdateSchema.errors}`, 400);
+//         };
 
-        // Build update list for patch query 
-        const itemsList = {};
-        const newKeys = Object.keys(req.body);
-        newKeys.map(key => {
-            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
-                itemsList[key] = req.body[key];
-            }
-        })
+//         // Build update list for patch query 
+//         const itemsList = {};
+//         const newKeys = Object.keys(req.body);
+//         newKeys.map(key => {
+//             if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
+//                 itemsList[key] = req.body[key];
+//             }
+//         })
 
 
-        // If no changes return original data
-        if(Object.keys(itemsList).length === 0) {
-            return res.json({equip: [prevValues]});
-        }
+//         // If no changes return original data
+//         if(Object.keys(itemsList).length === 0) {
+//             return res.json({equip: [prevValues]});
+//         }
 
-        // Update the user data with the itemsList information
-        const newData = await EquipModel.modify_group_equip(req.params.equipID, itemsList);
-        return res.json({equip: [newData]})
-    } catch (error) {
-        next(error)
-    }
-});
+//         // Update the user data with the itemsList information
+//         const newData = await EquipModel.modify_group_equip(req.params.equipID, itemsList);
+//         return res.json({equip: [newData]})
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 
 /* ____  _____ _     _____ _____ _____ 

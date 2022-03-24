@@ -40,7 +40,6 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../utils/expresError");
-var userEquipUpdateSchema_1 = require("../../schemas/equipment/userEquipUpdateSchema");
 // Model Imports
 var equipModel_1 = require("../../models/equipModel");
 // Middleware Imports
@@ -182,27 +181,17 @@ userEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineSitePe
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/:equipID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found.", 404);
-                }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
-            case 2:
-                error_4 = _a.sent();
-                next(error_4);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         const queryData = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found.", 404);
+//         }
+//         return res.json({equip: [queryData]});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 /* _   _ ____  ____    _  _____ _____
   | | | |  _ \|  _ \  / \|_   _| ____|
   | | | | |_) | | | |/ _ \ | | |  _|
@@ -210,54 +199,43 @@ userEquipRouter.get("/:equipID", authorizationMW_1["default"].defineSitePermissi
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.patch("/:equipID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID)];
-            case 1:
-                prevValues_1 = _a.sent();
-                if (!prevValues_1) {
-                    throw new expresError_1["default"]("Update Failed: Equipment Not Found", 404);
-                }
-                ;
-                updateValues_1 = {
-                    name: req.body.name,
-                    category_id: req.body.category_id,
-                    headline: req.body.headline,
-                    description: req.body.description,
-                    public: req.body.public,
-                    configuration: req.body.configuration
-                };
-                if (!(0, userEquipUpdateSchema_1["default"])(updateValues_1)) {
-                    throw new expresError_1["default"]("Update Error: ".concat(userEquipUpdateSchema_1["default"].errors), 400);
-                }
-                ;
-                itemsList_1 = {};
-                newKeys = Object.keys(req.body);
-                newKeys.map(function (key) {
-                    if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
-                        itemsList_1[key] = req.body[key];
-                    }
-                });
-                // If no changes return original data
-                if (Object.keys(itemsList_1).length === 0) {
-                    return [2 /*return*/, res.json({ equip: [prevValues_1] })];
-                }
-                return [4 /*yield*/, equipModel_1["default"].modify_group_equip(req.params.equipID, itemsList_1)];
-            case 2:
-                newData = _a.sent();
-                return [2 /*return*/, res.json({ equip: [newData] })];
-            case 3:
-                error_5 = _a.sent();
-                next(error_5);
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); });
+// userEquipRouter.patch("/:equipID", authMW.defineSitePermissions(["read_equip_self", "update_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         const prevValues = await EquipModel.retrieve_equip_by_equip_id(req.params.equipID);
+//         if (!prevValues) {
+//             throw new ExpressError(`Update Failed: Equipment Not Found`, 404);
+//         };
+//         const updateValues: UserEquipUpdateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public,
+//             configuration: req.body.configuration
+//         };
+//         if(!validateUserEquipUpdateSchema(updateValues)) {
+//             throw new ExpressError(`Update Error: ${validateUserEquipUpdateSchema.errors}`, 400);
+//         };
+//         // Build update list for patch query 
+//         const itemsList = {};
+//         const newKeys = Object.keys(req.body);
+//         newKeys.map(key => {
+//             if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
+//                 itemsList[key] = req.body[key];
+//             }
+//         })
+//         // If no changes return original data
+//         if(Object.keys(itemsList).length === 0) {
+//             return res.json({equip: [prevValues]});
+//         }
+//         // Update the user data with the itemsList information
+//         const newData = await EquipModel.modify_group_equip(req.params.equipID, itemsList);
+//         return res.json({equip: [newData]})
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 /* ____  _____ _     _____ _____ _____
   |  _ \| ____| |   | ____|_   _| ____|
   | | | |  _| | |   |  _|   | | |  _|
@@ -287,7 +265,7 @@ userEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineSitePe
 }); });
 // Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, queryData, error_6;
+    var equipCheck, queryData, error_4;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -314,8 +292,8 @@ userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].define
                 ;
                 return [2 /*return*/, res.json({ roomEquip: [queryData] })];
             case 3:
-                error_6 = _b.sent();
-                next(error_6);
+                error_4 = _b.sent();
+                next(error_4);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

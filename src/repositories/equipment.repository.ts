@@ -49,24 +49,18 @@ class EquipmentRepo {
         }
     };
 
-    static async fetch_equip_by_equip_id(equipID: string, equipPublic?: boolean) {
+
+    static async fetch_public_equip_by_equip_id(equipID: string) {
         try {
             let query: string;
             let queryParams: Array<any> = [];
 
-            if (equipPublic !== undefined) {
-                query = `
-                    SELECT id, name, category_id, headline, description, public, configuration
-                    FROM equipment
-                    WHERE id = $1 AND public = $2`;
-                queryParams.push(equipID, equipPublic);
-            } else {
-                query = `
-                    SELECT id, name, category_id, headline, description, public, configuration
-                    FROM equipment
-                    WHERE id = $1`;
-                queryParams.push(equipID);
-            }
+            query = `
+                SELECT id, name, category_id, headline, description, image_url
+                FROM equipment
+                WHERE id = $1 AND public = TRUE`;
+            queryParams.push(equipID);
+
 
             const result = await pgdb.query(query, queryParams);
     
@@ -76,6 +70,55 @@ class EquipmentRepo {
             throw new ExpressError(`An Error Occured: Unable to locate equipment by equipment id - ${error}`, 500);
         }
     };
+
+
+    static async fetch_unrestricted_equip_by_equip_id(equipID: string) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            query = `
+                SELECT id, name, category_id, headline, description, image_url, public, configuration
+                FROM equipment
+                WHERE id = $1`;
+            queryParams.push(equipID);
+
+            const result = await pgdb.query(query, queryParams);
+
+            const rval: EquipObjectProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment by equipment id - ${error}`, 500);
+        }
+    };
+
+    // static async fetch_equip_by_equip_id(equipID: string, equipPublic?: boolean) {
+    //     try {
+    //         let query: string;
+    //         let queryParams: Array<any> = [];
+
+    //         if (equipPublic !== undefined) {
+    //             query = `
+    //                 SELECT id, name, category_id, headline, description, public, configuration
+    //                 FROM equipment
+    //                 WHERE id = $1 AND public = $2`;
+    //             queryParams.push(equipID, equipPublic);
+    //         } else {
+    //             query = `
+    //                 SELECT id, name, category_id, headline, description, public, configuration
+    //                 FROM equipment
+    //                 WHERE id = $1`;
+    //             queryParams.push(equipID);
+    //         }
+
+    //         const result = await pgdb.query(query, queryParams);
+    
+    //         const rval: EquipObjectProps | undefined = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to locate equipment by equipment id - ${error}`, 500);
+    //     }
+    // };
 
     static async fetch_equip_list_paginated(limit: number, offset: number) {
         try {

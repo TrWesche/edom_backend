@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -138,8 +149,12 @@ equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manual Test - Basic Functionality: 03/19/2022
+equipRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: [],
+    public: ["site_read_equip_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -171,97 +186,110 @@ equipRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(
     });
 }); });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id(req.params.userID, true)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - Public", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ equip: queryData })];
-            case 2:
-                error_3 = _a.sent();
-                next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Processing
+//         const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.params.userID, true);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get User Equipment - Public", 404);
+//         };
+//         return res.json({equip: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 // Manual Test - Basic Functionality: 01/18/2022
-equipRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_group_equip_by_group_id(req.params.groupID, true)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get Group Equipment - Public", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ equip: queryData })];
-            case 2:
-                error_4 = _a.sent();
-                next(error_4);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Processing
+//         const queryData = await EquipModel.retrieve_group_equip_by_group_id(req.params.groupID, true);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
+//         };
+//         return res.json({equip: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 // Manual Test - Basic Functionality: 01/15/2022
-equipRootRouter.get("/rooms/:roomID", authorizationMW_1["default"].defineSitePermissions(["site_read_equip_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_5;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID, true)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get Group Equipment - Public", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ equip: queryData })];
-            case 2:
-                error_5 = _a.sent();
-                next(error_5);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Processing
+//         const queryData = await EquipModel.retrieve_room_equip_by_room_id(req.params.roomID, true);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
+//         };
+//         return res.json({equip: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
+// Manual Test - Basic Functionality: 03/19/2022
 // Check for elevated permissions through user id
 equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["site_read_equip_self"],
-    group: ["group_read_equip"],
+    user: ["site_read_equip_self", "site_update_equip_self", "site_delete_equip_self"],
+    group: ["group_read_equip", "group_update_equip", "group_delete_equip"],
     public: ["site_read_equip_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_6;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var queryData, readPermitted_1, updatePermitted_1, deletePermitted_1, output, error_3;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found.", 404);
+                _c.trys.push([0, 5, , 6]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("User ID Not Defined", 401);
                 }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
+                ;
+                queryData = void 0;
+                readPermitted_1 = 0;
+                updatePermitted_1 = 0;
+                deletePermitted_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Read Pemission Level
+                    if (((val.permissions_name === "site_read_equip_self") || (val.permissions_name === "group_read_equip"))) {
+                        readPermitted_1 = 2;
+                    }
+                    ;
+                    if (val.permissions_name === "site_read_equip_public" && readPermitted_1 !== 2) {
+                        readPermitted_1 = 1;
+                    }
+                    ;
+                    // Set Update Permission Level
+                    if (((val.permissions_name === "site_update_equip_self") || (val.permissions_name === "group_update_equip"))) {
+                        updatePermitted_1 = 1;
+                    }
+                    ;
+                    // Set Delete Permission Level
+                    if (((val.permissions_name === "site_delete_equip_self") || (val.permissions_name === "group_delete_equip"))) {
+                        deletePermitted_1 = 1;
+                    }
+                    ;
+                });
+                console.log(readPermitted_1, updatePermitted_1, deletePermitted_1);
+                if (!(readPermitted_1 === 2)) return [3 /*break*/, 2];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID, "elevated")];
+            case 1:
+                queryData = _c.sent();
+                return [3 /*break*/, 4];
             case 2:
-                error_6 = _a.sent();
-                next(error_6);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                if (!(readPermitted_1 === 1)) return [3 /*break*/, 4];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID, "public")];
+            case 3:
+                queryData = _c.sent();
+                _c.label = 4;
+            case 4:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equip not found.", 404);
+                }
+                output = __assign(__assign({}, queryData), { canUpdate: updatePermitted_1, canDelete: deletePermitted_1 });
+                return [2 /*return*/, res.json({ equip: output })];
+            case 5:
+                error_3 = _c.sent();
+                next(error_3);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

@@ -220,15 +220,28 @@ var EquipModel = /** @class */ (function () {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/
     */
-    EquipModel.retrieve_equip_by_equip_id = function (equipID, equipPublic) {
+    EquipModel.retrieve_equip_by_equip_id = function (equipID, accessType) {
         return __awaiter(this, void 0, void 0, function () {
-            var equip;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_equip_id(equipID, equipPublic)];
-                    case 1:
-                        equip = _a.sent();
-                        return [2 /*return*/, equip];
+            var equip, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "public": return [3 /*break*/, 1];
+                            case "elevated": return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_public_equip_by_equip_id(equipID)];
+                    case 2:
+                        equip = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_unrestricted_equip_by_equip_id(equipID)];
+                    case 4:
+                        equip = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 6: return [2 /*return*/, equip];
                 }
             });
         });
