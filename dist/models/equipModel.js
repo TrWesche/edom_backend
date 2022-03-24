@@ -378,24 +378,15 @@ var EquipModel = /** @class */ (function () {
         | |_| |  __/| |_| / ___ \| | | |___
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    EquipModel.modify_user_equip = function (equipID, data) {
-        return __awaiter(this, void 0, void 0, function () {
-            var equip;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].update_equip_by_equip_id(equipID, data)];
-                    case 1:
-                        equip = _a.sent();
-                        if (!equip) {
-                            throw new expresError_1["default"]("Unable to update target user equipment", 400);
-                        }
-                        return [2 /*return*/, equip];
-                }
-            });
-        });
-    };
-    ;
-    EquipModel.modify_group_equip = function (equipID, data) {
+    // static async modify_user_equip(equipID: string, data: EquipObjectProps) {
+    //     // Perform Equipment Update
+    //     const equip = await EquipRepo.update_equip_by_equip_id(equipID, data);
+    //     if (!equip) {
+    //         throw new ExpressError("Unable to update target user equipment", 400);
+    //     }
+    //     return equip;
+    // };
+    EquipModel.modify_equip = function (equipID, data) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
@@ -418,9 +409,9 @@ var EquipModel = /** @class */ (function () {
         | |_| | |___| |___| |___  | | | |___
         |____/|_____|_____|_____| |_| |_____|
     */
-    EquipModel.delete_user_equip = function (userID, equipID) {
+    EquipModel.delete_user_equip = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var roomAssoc, userAssoc, equipEntry, error_4;
+            var userAssoc, equipEntry, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -428,14 +419,12 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
+                        // Delete Room -> Equpiment Association Entry(s)
                         return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_equip_id(equipID)];
                     case 2:
-                        roomAssoc = _a.sent();
-                        if (!roomAssoc) {
-                            throw new expresError_1["default"]("Error while deleting equipment -> room association", 500);
-                        }
-                        ;
-                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(userID, equipID)];
+                        // Delete Room -> Equpiment Association Entry(s)
+                        _a.sent();
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(equipID)];
                     case 3:
                         userAssoc = _a.sent();
                         if (!(userAssoc === null || userAssoc === void 0 ? void 0 : userAssoc.equip_id)) {
@@ -469,25 +458,30 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.delete_group_equip = function (groupID, equipID) {
+    EquipModel.delete_group_equip = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var equipAssoc, equipEntry, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 7]);
+                        _a.trys.push([0, 6, , 8]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_group_from_equip(groupID, equipID)];
+                        // Delete Room -> Equpiment Association Entry(s)
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_room_from_equip_by_equip_id(equipID)];
                     case 2:
+                        // Delete Room -> Equpiment Association Entry(s)
+                        _a.sent();
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_group_from_equip(equipID)];
+                    case 3:
                         equipAssoc = _a.sent();
                         if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equip_id)) {
                             throw new expresError_1["default"]("Error while disassociating group from equipment entry", 500);
                         }
                         ;
                         return [4 /*yield*/, equipment_repository_1["default"].delete_equip_by_equip_id(equipAssoc.equip_id)];
-                    case 3:
+                    case 4:
                         equipEntry = _a.sent();
                         if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.id)) {
                             throw new expresError_1["default"]("Error while deleting equipment entry", 500);
@@ -495,17 +489,17 @@ var EquipModel = /** @class */ (function () {
                         ;
                         // Commit to Database
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 4:
+                    case 5:
                         // Commit to Database
                         _a.sent();
                         return [2 /*return*/, equipEntry];
-                    case 5:
+                    case 6:
                         error_5 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 6:
+                    case 7:
                         _a.sent();
                         throw new expresError_1["default"](error_5.message, error_5.status);
-                    case 7:
+                    case 8:
                         ;
                         return [2 /*return*/];
                 }

@@ -40,9 +40,7 @@ var schema = {
             type: "object"
         }
     },
-    required: [
-        "name", "category_id", "configuration"
-    ],
+    required: [],
     additionalProperties: true
 };
 var validateEquipUpdateSchema = ajv.compile(schema);

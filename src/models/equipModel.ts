@@ -209,17 +209,17 @@ class EquipModel {
         | |_| |  __/| |_| / ___ \| | | |___ 
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    static async modify_user_equip(equipID: string, data: EquipObjectProps) {
-        // Perform Equipment Update
-        const equip = await EquipRepo.update_equip_by_equip_id(equipID, data);
-        if (!equip) {
-            throw new ExpressError("Unable to update target user equipment", 400);
-        }
+    // static async modify_user_equip(equipID: string, data: EquipObjectProps) {
+    //     // Perform Equipment Update
+    //     const equip = await EquipRepo.update_equip_by_equip_id(equipID, data);
+    //     if (!equip) {
+    //         throw new ExpressError("Unable to update target user equipment", 400);
+    //     }
 
-        return equip;
-    };
+    //     return equip;
+    // };
 
-    static async modify_group_equip(equipID: string, data: EquipObjectProps) {
+    static async modify_equip(equipID: string, data: EquipObjectProps) {
         // Perform Equipment Update
         const equip = await EquipRepo.update_equip_by_equip_id(equipID, data);
         if (!equip) {
@@ -236,22 +236,18 @@ class EquipModel {
         | |_| | |___| |___| |___  | | | |___ 
         |____/|_____|_____|_____| |_| |_____|
     */
-    static async delete_user_equip(userID: string, equipID: string) {
+    static async delete_user_equip(equipID: string) {
         // Processing
         try {
             await TransactionRepo.begin_transaction();
 
             // Delete Room -> Equpiment Association Entry(s)
-            const roomAssoc = await EquipRepo.disassociate_room_from_equip_by_equip_id(equipID);
-            if (!roomAssoc) {
-                throw new ExpressError("Error while deleting equipment -> room association", 500);
-            };
+            await EquipRepo.disassociate_room_from_equip_by_equip_id(equipID);
 
             // Delete User -> Equipment Association Entry
-            const userAssoc = await EquipRepo.disassociate_user_from_equip(userID, equipID);
+            const userAssoc = await EquipRepo.disassociate_user_from_equip(equipID);
             if (!userAssoc?.equip_id) {
                 throw new ExpressError("Error while disassociating user from equipment entry", 500);
-                
             };
 
             // Delete Equipment Entry
@@ -270,16 +266,18 @@ class EquipModel {
         };
     };
     
-    static async delete_group_equip(groupID: string, equipID: string) {
+    static async delete_group_equip(equipID: string) {
         // Processing
         try {
             await TransactionRepo.begin_transaction();
 
+            // Delete Room -> Equpiment Association Entry(s)
+            await EquipRepo.disassociate_room_from_equip_by_equip_id(equipID);
+
             // Delete Group -> Equipment Association Entry
-            const equipAssoc = await EquipRepo.disassociate_group_from_equip(groupID, equipID);
+            const equipAssoc = await EquipRepo.disassociate_group_from_equip(equipID);
             if (!equipAssoc?.equip_id) {
                 throw new ExpressError("Error while disassociating group from equipment entry", 500);
-                
             };
 
             // Delete Equipment Entry

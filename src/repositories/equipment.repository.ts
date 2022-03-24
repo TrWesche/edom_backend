@@ -196,14 +196,31 @@ class EquipmentRepo {
         }
     };
 
-    static async disassociate_user_from_equip(userID: string, equipID: string) {
+    // static async disassociate_user_from_equip(userID: string, equipID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM user_equipment
+    //             WHERE user_id = $1 AND equip_id = $2
+    //             RETURNING user_id, equip_id`,
+    //         [
+    //             userID,
+    //             equipID
+    //         ]);
+            
+    //         const rval = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to delete equipment association user -> equipment - ${error}`, 500);
+    //     }
+    // };
+
+    static async disassociate_user_from_equip(equipID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM user_equipment
-                WHERE user_id = $1 AND equip_id = $2
+                WHERE equip_id = $1
                 RETURNING user_id, equip_id`,
             [
-                userID,
                 equipID
             ]);
             
@@ -383,14 +400,31 @@ class EquipmentRepo {
         }
     };
 
-    static async disassociate_group_from_equip(groupID: string, equipID: string) {
+    // static async disassociate_group_from_equip(groupID: string, equipID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM group_equipment
+    //             WHERE group_id = $1 AND equip_id = $2
+    //             RETURNING group_id, equip_id`,
+    //         [
+    //             groupID,
+    //             equipID
+    //         ]);
+            
+    //         const rval = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`Server Error - disassociate_group_from_equip - ${error}`, 500);
+    //     }
+    // };
+
+    static async disassociate_group_from_equip(equipID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM group_equipment
-                WHERE group_id = $1 AND equip_id = $2
+                WHERE equip_id = $1
                 RETURNING group_id, equip_id`,
             [
-                groupID,
                 equipID
             ]);
             
@@ -564,7 +598,7 @@ class EquipmentRepo {
             [
                 equipID
             ]);
-            
+
             const rval = result.rows[0];
             return rval;
         } catch (error) {

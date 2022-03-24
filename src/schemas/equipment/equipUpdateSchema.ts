@@ -50,7 +50,6 @@ const schema: JSONSchemaType<EquipUpdateProps> = {
         }
     },
     required: [
-        "name", "category_id", "configuration"
     ],
     additionalProperties: true
 };

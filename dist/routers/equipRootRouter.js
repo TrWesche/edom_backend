@@ -56,6 +56,7 @@ var equipModel_1 = require("../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
 var equipCreateSchema_1 = require("../schemas/equipment/equipCreateSchema");
+var equipUpdateSchema_1 = require("../schemas/equipment/equipUpdateSchema");
 var equipRootRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -266,7 +267,6 @@ equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineRoutePermiss
                     }
                     ;
                 });
-                console.log(readPermitted_1, updatePermitted_1, deletePermitted_1);
                 if (!(readPermitted_1 === 2)) return [3 /*break*/, 2];
                 return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID, "elevated")];
             case 1:
@@ -289,6 +289,128 @@ equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineRoutePermiss
                 error_3 = _c.sent();
                 next(error_3);
                 return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); });
+/* _   _ ____  ____    _  _____ _____
+  | | | |  _ \|  _ \  / \|_   _| ____|
+  | | | | |_) | | | |/ _ \ | | |  _|
+  | |_| |  __/| |_| / ___ \| | | |___
+   \___/|_|   |____/_/   \_\_| |_____|
+*/
+// Manual Test - Basic Functionality: 03/24/2022
+equipRootRouter.patch("/:equipID", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_update_equip_self"],
+    group: ["group_update_equip"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_equip_id(req.params.equipID, "elevated")];
+            case 1:
+                prevValues_1 = _a.sent();
+                if (!prevValues_1) {
+                    throw new expresError_1["default"]("Update Failed: Equipment Not Found", 404);
+                }
+                ;
+                updateValues_1 = {
+                    name: req.body.name,
+                    category_id: req.body.category_id,
+                    headline: req.body.headline,
+                    description: req.body.description,
+                    image_url: req.body.image_url,
+                    public: req.body.public,
+                    configuration: req.body.configuration
+                };
+                if (!(0, equipUpdateSchema_1["default"])(updateValues_1)) {
+                    throw new expresError_1["default"]("Update Error: ".concat(equipUpdateSchema_1["default"].errors), 400);
+                }
+                ;
+                itemsList_1 = {};
+                newKeys = Object.keys(req.body);
+                newKeys.map(function (key) {
+                    if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
+                        itemsList_1[key] = req.body[key];
+                    }
+                });
+                // If no changes return original data
+                if (Object.keys(itemsList_1).length === 0) {
+                    return [2 /*return*/, res.json({ equip: [prevValues_1] })];
+                }
+                return [4 /*yield*/, equipModel_1["default"].modify_equip(req.params.equipID, itemsList_1)];
+            case 2:
+                newData = _a.sent();
+                return [2 /*return*/, res.json({ equip: [newData] })];
+            case 3:
+                error_4 = _a.sent();
+                next(error_4);
+                return [3 /*break*/, 4];
+            case 4:
+                ;
+                return [2 /*return*/];
+        }
+    });
+}); });
+/* ____  _____ _     _____ _____ _____
+  |  _ \| ____| |   | ____|_   _| ____|
+  | | | |  _| | |   |  _|   | | |  _|
+  | |_| | |___| |___| |___  | | | |___
+  |____/|_____|_____|_____| |_| |_____|
+*/
+// Manual Test - Basic Functionality: 03/24/2022
+equipRootRouter["delete"]("/:equipID", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_delete_equip_self"],
+    group: ["group_delete_equip"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, error_5;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 5, , 6]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Must be logged in to delete equipment", 400);
+                }
+                console.log(req.resolvedPerms);
+                queryData = void 0;
+                groupDeletePermitted_1 = 0;
+                siteDeletePermitted_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Delete Permission Level
+                    if (val.permissions_name === "site_delete_equip_self") {
+                        siteDeletePermitted_1 = 1;
+                    }
+                    ;
+                    if (val.permissions_name === "group_delete_equip") {
+                        groupDeletePermitted_1 = 1;
+                    }
+                    ;
+                });
+                if (!siteDeletePermitted_1) return [3 /*break*/, 2];
+                return [4 /*yield*/, equipModel_1["default"].delete_user_equip(req.params.equipID)];
+            case 1:
+                queryData = _c.sent();
+                return [3 /*break*/, 4];
+            case 2:
+                if (!groupDeletePermitted_1) return [3 /*break*/, 4];
+                return [4 /*yield*/, equipModel_1["default"].delete_group_equip(req.params.equipID)];
+            case 3:
+                queryData = _c.sent();
+                _c.label = 4;
+            case 4:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Unable to delete target equipment", 404);
+                }
+                return [2 /*return*/, res.json({ message: "Equipment deleted." })];
+            case 5:
+                error_5 = _c.sent();
+                return [2 /*return*/, next(error_5)];
             case 6: return [2 /*return*/];
         }
     });

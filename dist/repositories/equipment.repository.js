@@ -244,15 +244,30 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.disassociate_user_from_equip = function (userID, equipID) {
+    // static async disassociate_user_from_equip(userID: string, equipID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM user_equipment
+    //             WHERE user_id = $1 AND equip_id = $2
+    //             RETURNING user_id, equip_id`,
+    //         [
+    //             userID,
+    //             equipID
+    //         ]);
+    //         const rval = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to delete equipment association user -> equipment - ${error}`, 500);
+    //     }
+    // };
+    EquipmentRepo.disassociate_user_from_equip = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM user_equipment\n                WHERE user_id = $1 AND equip_id = $2\n                RETURNING user_id, equip_id", [
-                                userID,
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM user_equipment\n                WHERE equip_id = $1\n                RETURNING user_id, equip_id", [
                                 equipID
                             ])];
                     case 1:
@@ -444,15 +459,30 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.disassociate_group_from_equip = function (groupID, equipID) {
+    // static async disassociate_group_from_equip(groupID: string, equipID: string) {
+    //     try {
+    //         const result = await pgdb.query(
+    //             `DELETE FROM group_equipment
+    //             WHERE group_id = $1 AND equip_id = $2
+    //             RETURNING group_id, equip_id`,
+    //         [
+    //             groupID,
+    //             equipID
+    //         ]);
+    //         const rval = result.rows[0];
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`Server Error - disassociate_group_from_equip - ${error}`, 500);
+    //     }
+    // };
+    EquipmentRepo.disassociate_group_from_equip = function (equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_15;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM group_equipment\n                WHERE group_id = $1 AND equip_id = $2\n                RETURNING group_id, equip_id", [
-                                groupID,
+                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM group_equipment\n                WHERE equip_id = $1\n                RETURNING group_id, equip_id", [
                                 equipID
                             ])];
                     case 1:

@@ -214,22 +214,22 @@ groupEquipRouter.get("/:equipID/rooms", authMW.defineGroupPermissions(["read_roo
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/18/2022
-groupEquipRouter.delete("/:equipID", authMW.defineGroupPermissions(["read_equip", "delete_equip"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);
-        }
+// groupEquipRouter.delete("/:equipID", authMW.defineGroupPermissions(["read_equip", "delete_equip"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         if (!req.user?.id || !req.groupID) {
+//             throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);
+//         }
         
-        const queryData = EquipModel.delete_group_equip(req.groupID, req.params.equipID);
-        if(!queryData) {
-            throw new ExpressError("Unable to delete target equipment", 404);
-        }
+//         const queryData = EquipModel.delete_group_equip(req.groupID, req.params.equipID);
+//         if(!queryData) {
+//             throw new ExpressError("Unable to delete target equipment", 404);
+//         }
 
-        return res.json({message: "Equipment deleted."});
-    } catch (error) {
-        return next(error);
-    }
-});
+//         return res.json({message: "Equipment deleted."});
+//     } catch (error) {
+//         return next(error);
+//     }
+// });
 
 // Manual Test - Basic Functionality: 01/19/2022
 groupEquipRouter.delete("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authMW.validatePermissions, async (req, res, next) => {

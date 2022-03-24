@@ -243,26 +243,21 @@ userEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineSitePe
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "delete_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData;
-    var _a;
-    return __generator(this, function (_b) {
-        try {
-            if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                throw new expresError_1["default"]("Must be logged in to delete equipment", 400);
-            }
-            queryData = equipModel_1["default"].delete_user_equip(req.user.id, req.params.equipID);
-            if (!queryData) {
-                throw new expresError_1["default"]("Unable to delete target equipment", 404);
-            }
-            return [2 /*return*/, res.json({ message: "Equipment deleted." })];
-        }
-        catch (error) {
-            return [2 /*return*/, next(error)];
-        }
-        return [2 /*return*/];
-    });
-}); });
+// userEquipRouter.delete("/:equipID", authMW.defineSitePermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         if (!req.user?.id) {
+//             throw new ExpressError(`Must be logged in to delete equipment`, 400);
+//         }
+//         // Processing
+//         const queryData = EquipModel.delete_user_equip(req.user.id, req.params.equipID);
+//         if(!queryData) {
+//             throw new ExpressError("Unable to delete target equipment", 404);
+//         }
+//         return res.json({message: "Equipment deleted."});
+//     } catch (error) {
+//         return next(error);
+//     }
+// });
 // Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var equipCheck, queryData, error_4;

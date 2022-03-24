@@ -250,26 +250,20 @@ groupEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineGroup
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/18/2022
-groupEquipRouter["delete"]("/:equipID", authorizationMW_1["default"].defineGroupPermissions(["read_equip", "delete_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData;
-    var _a;
-    return __generator(this, function (_b) {
-        try {
-            if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                throw new expresError_1["default"]("Must be logged in to create equipment || group not found", 400);
-            }
-            queryData = equipModel_1["default"].delete_group_equip(req.groupID, req.params.equipID);
-            if (!queryData) {
-                throw new expresError_1["default"]("Unable to delete target equipment", 404);
-            }
-            return [2 /*return*/, res.json({ message: "Equipment deleted." })];
-        }
-        catch (error) {
-            return [2 /*return*/, next(error)];
-        }
-        return [2 /*return*/];
-    });
-}); });
+// groupEquipRouter.delete("/:equipID", authMW.defineGroupPermissions(["read_equip", "delete_equip"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         if (!req.user?.id || !req.groupID) {
+//             throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);
+//         }
+//         const queryData = EquipModel.delete_group_equip(req.groupID, req.params.equipID);
+//         if(!queryData) {
+//             throw new ExpressError("Unable to delete target equipment", 404);
+//         }
+//         return res.json({message: "Equipment deleted."});
+//     } catch (error) {
+//         return next(error);
+//     }
+// });
 // Manual Test - Basic Functionality: 01/19/2022
 groupEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var equipCheck, queryData, error_4;

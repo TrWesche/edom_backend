@@ -208,23 +208,23 @@ userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.delete("/:equipID", authMW.defineSitePermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        if (!req.user?.id) {
-            throw new ExpressError(`Must be logged in to delete equipment`, 400);
-        }
+// userEquipRouter.delete("/:equipID", authMW.defineSitePermissions(["read_equip_self", "delete_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         if (!req.user?.id) {
+//             throw new ExpressError(`Must be logged in to delete equipment`, 400);
+//         }
 
-        // Processing
-        const queryData = EquipModel.delete_user_equip(req.user.id, req.params.equipID);
-        if(!queryData) {
-            throw new ExpressError("Unable to delete target equipment", 404);
-        }
+//         // Processing
+//         const queryData = EquipModel.delete_user_equip(req.user.id, req.params.equipID);
+//         if(!queryData) {
+//             throw new ExpressError("Unable to delete target equipment", 404);
+//         }
 
-        return res.json({message: "Equipment deleted."});
-    } catch (error) {
-        return next(error);
-    }
-});
+//         return res.json({message: "Equipment deleted."});
+//     } catch (error) {
+//         return next(error);
+//     }
+// });
 
 // Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter.delete("/:equipID/rooms", authMW.defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
