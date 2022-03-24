@@ -77,10 +77,10 @@ groupEquipRouter.post("/:equipID/rooms", authMW.defineGroupPermissions(["read_ro
         };
 
         // Check that Equip has not already been associated with another room.
-        const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
-        if (asscRooms.length > 0) {
-            throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
-        };
+        // const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+        // if (asscRooms.length > 0) {
+        //     throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
+        // };
 
         // Processing
         const queryData = await EquipModel.create_equip_room_association(req.body.roomID, req.params.equipID);
@@ -121,20 +121,20 @@ groupEquipRouter.get("/list", authMW.defineGroupPermissions(["read_equip"]), aut
     }
 });
 
-// Manual Test - Basic Functionality: 01/19/2022
-groupEquipRouter.get("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "read_equip"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // TODO: This will need to be changed to ensure data privacy
-        const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
-        if (!queryData) {
-            throw new ExpressError("Equipment Not Found.", 404);
-        }
+// // Manual Test - Basic Functionality: 01/19/2022
+// groupEquipRouter.get("/:equipID/rooms", authMW.defineGroupPermissions(["read_room", "read_equip"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // TODO: This will need to be changed to ensure data privacy
+//         const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found.", 404);
+//         }
         
-        return res.json({rooms: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({rooms: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 // Manual Test - Basic Functionality: 01/18/2022
 // groupEquipRouter.get("/:equipID", authMW.defineGroupPermissions(["read_equip"]), authMW.validatePermissions, async (req, res, next) => {

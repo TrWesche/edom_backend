@@ -733,14 +733,39 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_rooms_by_equip_id = function (equipID) {
+    // static async fetch_equip_rooms_by_equip_id(equipID: string) {
+    //     try {
+    //             const query = `
+    //                 SELECT id, name
+    //                 FROM rooms
+    //                 RIGHT JOIN room_equipment
+    //                 ON rooms.id = room_equipment.room_id
+    //                 WHERE room_equipment.equip_id = $1`;
+    //             const queryParams = [equipID];
+    //         const result = await pgdb.query(query, queryParams);
+    //         const rval = result.rows;
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to locate equipment rooms by equip id - ${error}`, 500);
+    //     }
+    // };
+    EquipmentRepo.fetch_equip_rooms_by_equip_id = function (equipID, filterRoomsPublic, filterEquipPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_24;
+            var filterBuilder, query, queryParams, result, rval, error_24;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        query = "\n                    SELECT id, name\n                    FROM rooms\n                    RIGHT JOIN room_equipment\n                    ON rooms.id = room_equipment.room_id\n                    WHERE room_equipment.equip_id = $1";
+                        filterBuilder = ['room_equipment.equip_id = $1'];
+                        if (filterRoomsPublic === true) {
+                            filterBuilder.push('rooms.public = TRUE');
+                        }
+                        ;
+                        if (filterEquipPublic === true) {
+                            filterBuilder.push('equipment.public = TRUE');
+                        }
+                        ;
+                        query = "\n                SELECT \n                    rooms.id AS id, \n                    rooms.name AS name\n                FROM rooms\n                RIGHT JOIN room_equipment\n                ON rooms.id = room_equipment.room_id\n                LEFT JOIN equipment\n                ON equipment.id = room_equipment.equip_id   \n                WHERE ".concat(filterBuilder.join(' AND '));
                         queryParams = [equipID];
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:

@@ -638,16 +638,52 @@ class EquipmentRepo {
         }
     };
 
-    static async fetch_equip_rooms_by_equip_id(equipID: string) {
-        try {
-                const query = `
-                    SELECT id, name
-                    FROM rooms
-                    RIGHT JOIN room_equipment
-                    ON rooms.id = room_equipment.room_id
-                    WHERE room_equipment.equip_id = $1`;
+    // static async fetch_equip_rooms_by_equip_id(equipID: string) {
+    //     try {
+    //             const query = `
+    //                 SELECT id, name
+    //                 FROM rooms
+    //                 RIGHT JOIN room_equipment
+    //                 ON rooms.id = room_equipment.room_id
+    //                 WHERE room_equipment.equip_id = $1`;
 
-                const queryParams = [equipID];
+    //             const queryParams = [equipID];
+
+    //         const result = await pgdb.query(query, queryParams);
+    
+    //         const rval = result.rows;
+    //         return rval;
+    //     } catch (error) {
+    //         throw new ExpressError(`An Error Occured: Unable to locate equipment rooms by equip id - ${error}`, 500);
+    //     }
+    // };
+
+    static async fetch_equip_rooms_by_equip_id(equipID: string, filterRoomsPublic: boolean, filterEquipPublic: boolean) {
+        try {
+            const filterBuilder = ['room_equipment.equip_id = $1']
+
+            if (filterRoomsPublic === true) {
+                filterBuilder.push('rooms.public = TRUE');
+            };
+
+            if (filterEquipPublic === true) {
+                filterBuilder.push('equipment.public = TRUE')
+            };
+
+            const query = `
+                SELECT 
+                    rooms.id AS id, 
+                    rooms.name AS name
+                FROM rooms
+                RIGHT JOIN room_equipment
+                ON rooms.id = room_equipment.room_id
+                LEFT JOIN equipment
+                ON equipment.id = room_equipment.equip_id   
+                WHERE ${filterBuilder.join(' AND ')}`;
+
+            const queryParams = [equipID];
+
+            // console.log(query);
 
             const result = await pgdb.query(query, queryParams);
     
@@ -657,6 +693,8 @@ class EquipmentRepo {
             throw new ExpressError(`An Error Occured: Unable to locate equipment rooms by equip id - ${error}`, 500);
         }
     };
+
+
 
     static async fetch_equip_by_group_and_equip_id(groupID: string, equipID: string) {
         try {

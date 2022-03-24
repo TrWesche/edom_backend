@@ -186,6 +186,82 @@ equipRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions
         }
     });
 }); });
+// Manual Test - Basic Functionality: 03/24/2022
+equipRootRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_read_equip_self", "site_read_room_self"],
+    group: ["group_read_equip", "group_read_room"],
+    public: ["site_read_equip_public", "site_read_room_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, roomPermissions_1, equipPermissions_1, error_3;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 9, , 10]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("User ID Not Defined", 401);
+                }
+                ;
+                queryData = void 0;
+                roomPermissions_1 = 0;
+                equipPermissions_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Read Pemission Level - Equip
+                    if (((val.permissions_name === "site_read_equip_self") || (val.permissions_name === "group_read_equip"))) {
+                        equipPermissions_1 = 2;
+                    }
+                    ;
+                    if (val.permissions_name === "site_read_equip_public" && equipPermissions_1 !== 2) {
+                        equipPermissions_1 = 1;
+                    }
+                    ;
+                    // Set Read Pemission Level - Room
+                    if (((val.permissions_name === "site_read_room_self") || (val.permissions_name === "group_read_room"))) {
+                        roomPermissions_1 = 2;
+                    }
+                    ;
+                    if (val.permissions_name === "site_read_room_public" && equipPermissions_1 !== 2) {
+                        roomPermissions_1 = 1;
+                    }
+                    ;
+                });
+                if (!(roomPermissions_1 === 2 && equipPermissions_1 === 2)) return [3 /*break*/, 2];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "full")];
+            case 1:
+                queryData = _c.sent();
+                return [3 /*break*/, 8];
+            case 2:
+                if (!(roomPermissions_1 === 1 && equipPermissions_1 === 2)) return [3 /*break*/, 4];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "elevatedEquip")];
+            case 3:
+                queryData = _c.sent();
+                return [3 /*break*/, 8];
+            case 4:
+                if (!(roomPermissions_1 === 2 && equipPermissions_1 === 1)) return [3 /*break*/, 6];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "elevatedRoom")];
+            case 5:
+                queryData = _c.sent();
+                return [3 /*break*/, 8];
+            case 6:
+                if (!(roomPermissions_1 === 1 && equipPermissions_1 === 1)) return [3 /*break*/, 8];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "public")];
+            case 7:
+                queryData = _c.sent();
+                _c.label = 8;
+            case 8:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Rooms not found.", 404);
+                }
+                return [2 /*return*/, res.json({ rooms: queryData })];
+            case 9:
+                error_3 = _c.sent();
+                next(error_3);
+                return [3 /*break*/, 10];
+            case 10: return [2 /*return*/];
+        }
+    });
+}); });
 // Manual Test - Basic Functionality: 01/15/2022
 // equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
 //     try {
@@ -232,7 +308,7 @@ equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineRoutePermiss
     group: ["group_read_equip", "group_update_equip", "group_delete_equip"],
     public: ["site_read_equip_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, readPermitted_1, updatePermitted_1, deletePermitted_1, output, error_3;
+    var queryData, readPermitted_1, updatePermitted_1, deletePermitted_1, output, error_4;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -286,8 +362,8 @@ equipRootRouter.get("/:equipID", authorizationMW_1["default"].defineRoutePermiss
                 output = __assign(__assign({}, queryData), { canUpdate: updatePermitted_1, canDelete: deletePermitted_1 });
                 return [2 /*return*/, res.json({ equip: output })];
             case 5:
-                error_3 = _c.sent();
-                next(error_3);
+                error_4 = _c.sent();
+                next(error_4);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
@@ -305,7 +381,7 @@ equipRootRouter.patch("/:equipID", authorizationMW_1["default"].defineRoutePermi
     group: ["group_update_equip"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -346,8 +422,8 @@ equipRootRouter.patch("/:equipID", authorizationMW_1["default"].defineRoutePermi
                 newData = _a.sent();
                 return [2 /*return*/, res.json({ equip: [newData] })];
             case 3:
-                error_4 = _a.sent();
-                next(error_4);
+                error_5 = _a.sent();
+                next(error_5);
                 return [3 /*break*/, 4];
             case 4:
                 ;
@@ -367,7 +443,7 @@ equipRootRouter["delete"]("/:equipID", authorizationMW_1["default"].defineRouteP
     group: ["group_delete_equip"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, error_5;
+    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, error_6;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -409,8 +485,8 @@ equipRootRouter["delete"]("/:equipID", authorizationMW_1["default"].defineRouteP
                 }
                 return [2 /*return*/, res.json({ message: "Equipment deleted." })];
             case 5:
-                error_5 = _c.sent();
-                return [2 /*return*/, next(error_5)];
+                error_6 = _c.sent();
+                return [2 /*return*/, next(error_6)];
             case 6: return [2 /*return*/];
         }
     });

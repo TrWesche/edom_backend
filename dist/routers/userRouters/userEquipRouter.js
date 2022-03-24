@@ -82,12 +82,12 @@ var userEquipRouter = express.Router();
 // });
 // Manual Test - Basic Functionality: 01/20/2022
 userEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, asscRooms, queryData, error_1;
+    var equipCheck, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 4, , 5]);
+                _b.trys.push([0, 3, , 4]);
                 // Preflight
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.roomID) {
                     throw new expresError_1["default"]("Must be logged in to create rooms / Target Room ID not provided", 400);
@@ -100,26 +100,19 @@ userEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineSiteP
                     throw new expresError_1["default"]("This piece of equipment is not associated with the target user", 401);
                 }
                 ;
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID)];
-            case 2:
-                asscRooms = _b.sent();
-                if (asscRooms.length > 0) {
-                    throw new expresError_1["default"]("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
-                }
-                ;
                 return [4 /*yield*/, equipModel_1["default"].create_equip_room_association(req.body.roomID, req.params.equipID)];
-            case 3:
+            case 2:
                 queryData = _b.sent();
                 if (!queryData) {
                     throw new expresError_1["default"]("Assoicate Equipment to Room Failed", 500);
                 }
                 ;
                 return [2 /*return*/, res.json({ roomEquip: [queryData] })];
-            case 4:
+            case 3:
                 error_1 = _b.sent();
                 next(error_1);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); });
@@ -130,56 +123,35 @@ userEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineSiteP
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_2;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _c.trys.push([0, 2, , 3]);
-                // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                    throw new expresError_1["default"]("Invalid Call: Get User Equipment - All", 401);
-                }
-                ;
-                return [4 /*yield*/, equipModel_1["default"].retrieve_user_equip_by_user_id((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
-            case 1:
-                queryData = _c.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get User Equipment - All", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ equip: queryData })];
-            case 2:
-                error_2 = _c.sent();
-                next(error_2);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         if (!req.user?.id) {
+//             throw new ExpressError("Invalid Call: Get User Equipment - All", 401);
+//         };
+//         // Processing
+//         const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.user?.id);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+//         };
+//         return res.json({equip: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 // Manual Test - Basic Functionality: 01/19/2022
-userEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "read_equip_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found.", 404);
-                }
-                return [2 /*return*/, res.json({ rooms: queryData })];
-            case 2:
-                error_3 = _a.sent();
-                next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // TODO: This will need to be changed to ensure data privacy
+//         const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found.", 404);
+//         }
+//         return res.json({rooms: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 // Manual Test - Basic Functionality: 01/15/2022
 // userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
 //     try {
@@ -260,7 +232,7 @@ userEquipRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineSitePe
 // });
 // Manual Test - Basic Functionality: 01/19/2022
 userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].defineSitePermissions(["read_equip_self", "update_equip_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var equipCheck, queryData, error_4;
+    var equipCheck, queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -287,8 +259,8 @@ userEquipRouter["delete"]("/:equipID/rooms", authorizationMW_1["default"].define
                 ;
                 return [2 /*return*/, res.json({ roomEquip: [queryData] })];
             case 3:
-                error_4 = _b.sent();
-                next(error_4);
+                error_2 = _b.sent();
+                next(error_2);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

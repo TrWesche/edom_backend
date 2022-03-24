@@ -74,10 +74,10 @@ userEquipRouter.post("/:equipID/rooms", authMW.defineSitePermissions(["read_equi
         };
 
         // Check that Equip has not already been associated with another room.
-        const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
-        if (asscRooms.length > 0) {
-            throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
-        };
+        // const asscRooms = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+        // if (asscRooms.length > 0) {
+        //     throw new ExpressError("This piece of equipment is already associated with a room, a piece of equipment can only be associated with one room.", 400);
+        // };
 
         // Processing
         const queryData = await EquipModel.create_equip_room_association(req.body.roomID, req.params.equipID);
@@ -100,39 +100,39 @@ userEquipRouter.post("/:equipID/rooms", authMW.defineSitePermissions(["read_equi
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/15/2022
-userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id) {
-            throw new ExpressError("Invalid Call: Get User Equipment - All", 401);
-        };
+// userEquipRouter.get("/list", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         if (!req.user?.id) {
+//             throw new ExpressError("Invalid Call: Get User Equipment - All", 401);
+//         };
 
-        // Processing
-        const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.user?.id);
-        if (!queryData) {
-            throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
-        };
+//         // Processing
+//         const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.user?.id);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get User Equipment - All", 404);
+//         };
         
-        return res.json({equip: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({equip: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 // Manual Test - Basic Functionality: 01/19/2022
-userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // TODO: This will need to be changed to ensure data privacy
-        const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
-        if (!queryData) {
-            throw new ExpressError("Equipment Not Found.", 404);
-        }
+// userEquipRouter.get("/:equipID/rooms", authMW.defineSitePermissions(["read_room_self", "read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // TODO: This will need to be changed to ensure data privacy
+//         const queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found.", 404);
+//         }
         
-        return res.json({rooms: queryData});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({rooms: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 // Manual Test - Basic Functionality: 01/15/2022
 // userEquipRouter.get("/:equipID", authMW.defineSitePermissions(["read_equip_self"]), authMW.validatePermissions, async (req, res, next) => {

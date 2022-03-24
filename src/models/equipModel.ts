@@ -107,7 +107,7 @@ class EquipModel {
             await TransactionRepo.begin_transaction();
 
             // Check for existing room -> equipment associations.
-            const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID);
+            const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
             if (equipRooms.length > 0) {
                 throw new ExpressError("Equipment is already assigned to a room.", 400);
             };
@@ -172,9 +172,27 @@ class EquipModel {
         return equip;
     };
 
-    static async retrieve_equip_rooms_by_equip_id(equipID: string) {
-        const equip = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID);
-        return equip;
+    static async retrieve_equip_rooms_by_equip_id(equipID: string, accessType: string) {
+        let rooms;
+
+        switch (accessType) {
+            case "full":
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
+                break;
+            case "elevatedEquip":
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, true, false);
+                break;
+            case "elevatedRoom":
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, true);
+                break;
+            case "public":
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, true, true);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+
+        return rooms;
     };
 
     static async retrieve_equip_by_group_and_equip_id(groupID: string, equipID: string) {

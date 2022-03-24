@@ -180,7 +180,7 @@ var EquipModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID)];
+                        return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, false, false)];
                     case 2:
                         equipRooms = _a.sent();
                         if (equipRooms.length > 0) {
@@ -303,15 +303,38 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_equip_rooms_by_equip_id = function (equipID) {
+    EquipModel.retrieve_equip_rooms_by_equip_id = function (equipID, accessType) {
         return __awaiter(this, void 0, void 0, function () {
-            var equip;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID)];
-                    case 1:
-                        equip = _a.sent();
-                        return [2 /*return*/, equip];
+            var rooms, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "full": return [3 /*break*/, 1];
+                            case "elevatedEquip": return [3 /*break*/, 3];
+                            case "elevatedRoom": return [3 /*break*/, 5];
+                            case "public": return [3 /*break*/, 7];
+                        }
+                        return [3 /*break*/, 9];
+                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, false, false)];
+                    case 2:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, true, false)];
+                    case 4:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 5: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, false, true)];
+                    case 6:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 7: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, true, true)];
+                    case 8:
+                        rooms = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 9: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 10: return [2 /*return*/, rooms];
                 }
             });
         });
