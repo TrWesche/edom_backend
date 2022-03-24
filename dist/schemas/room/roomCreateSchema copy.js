@@ -6,6 +6,16 @@ var ajv = new ajv_1["default"]();
 var schema = {
     type: "object",
     properties: {
+        context: {
+            $id: "$/properties/context",
+            type: "string",
+            "default": "user"
+        },
+        ownerid: {
+            $id: "$/properties/ownerid",
+            type: "string",
+            nullable: true
+        },
         name: {
             $id: "#/properties/name",
             type: "string",
@@ -37,9 +47,11 @@ var schema = {
             "default": false
         }
     },
-    required: [],
+    required: [
+        "name", "category_id"
+    ],
     additionalProperties: true
 };
-var validateRoomUpdateSchema = ajv.compile(schema);
-exports["default"] = validateRoomUpdateSchema;
-//# sourceMappingURL=roomUpdateSchema.js.map
+var validateGroupRoomCreateSchema = ajv.compile(schema);
+exports["default"] = validateGroupRoomCreateSchema;
+//# sourceMappingURL=roomCreateSchema%20copy.js.map

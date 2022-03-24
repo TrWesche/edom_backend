@@ -10,8 +10,90 @@ import RoomModel from "../models/roomModel";
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
 
+// Schema Imports
+import validateRoomCreateSchema, { RoomCreateProps } from "../schemas/room/roomCreateSchema";
+import validtteRoomUpdateSchema, { RoomUpdateProps } from "../schemas/room/roomUpdateSchema";
+
 
 const roomRootRouter = express.Router();
+
+
+
+
+/* ____ ____  _____    _  _____ _____ 
+  / ___|  _ \| ____|  / \|_   _| ____|
+ | |   | |_) |  _|   / _ \ | | |  _|  
+ | |___|  _ <| |___ / ___ \| | | |___ 
+  \____|_| \_\_____/_/   \_\_| |_____|
+*/
+// Manual Test - Basic Functionality: 01/13/2022
+roomRootRouter.post("/create", 
+    authMW.addContextToRequest,
+    authMW.defineRoutePermissions({
+        user: ["site_create_room_self"],
+        group: ["group_create_room"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id) {throw new ExpressError(`Must be logged in to create room`, 401);};
+
+            const reqValues: RoomCreateProps = {
+                context: req.body.context ? req.body.context : "user",
+                ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
+                name: req.body.name,
+                category_id: req.body.category_id,
+                headline: req.body.headline,
+                description: req.body.description,
+                image_url: req.body.image_url,
+                public: req.body.public
+            };
+
+            if(!validateRoomCreateSchema(reqValues)) {
+                throw new ExpressError(`Unable to Create Room - Schema Validation Error: ${validateRoomCreateSchema.errors}`, 400);
+            };
+
+            // Processing
+            let queryData;
+            let permCheck;
+            switch (reqValues.context) {
+                case "user": 
+                    permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
+                        return acc = acc || (val.permissions_name === "site_create_room_self")
+                    }, false);
+
+                    if (permCheck) {
+                        queryData = await RoomModel.create_user_room(reqValues);
+                    } else {
+                        throw new ExpressError("Unauthorized", 401);
+                    };
+                    break;
+                case "group":
+                    permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
+                        return acc = acc || (val.permissions_name === "group_create_room")
+                    }, false);
+
+                    if (permCheck) {
+                        queryData = await RoomModel.create_group_room(reqValues);
+                    } else {
+                        throw new ExpressError("Unauthorized", 401);
+                    };
+                    break;
+                default:
+            };
+
+            if (!queryData) {
+                throw new ExpressError("Create Room Failed", 500);
+            };
+
+            return res.json({rooms: [queryData]});
+        } catch (error) {
+            next(error);
+        };
+    }
+);
 
 
 /* ____  _____    _    ____  

@@ -25,36 +25,36 @@ const userRoomRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.post("/create", authMW.defineSitePermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        const reqValues: UserRoomCreateProps = {
-            name: req.body.name,
-            category_id: req.body.category_id,
-            headline: req.body.headline,
-            description: req.body.description,
-            public: req.body.public
-        };
+// userRoomRouter.post("/create", authMW.defineSitePermissions(["read_room_self", "create_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         const reqValues: UserRoomCreateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public
+//         };
 
-        if (!req.user?.id) {
-            throw new ExpressError(`Must be logged in to create rooms`, 400);
-        };
+//         if (!req.user?.id) {
+//             throw new ExpressError(`Must be logged in to create rooms`, 400);
+//         };
 
-        if(!validateUserRoomCreateSchema(reqValues)) {
-            throw new ExpressError(`Unable to Create User Room: ${validateUserRoomCreateSchema.errors}`, 400);
-        };
+//         if(!validateUserRoomCreateSchema(reqValues)) {
+//             throw new ExpressError(`Unable to Create User Room: ${validateUserRoomCreateSchema.errors}`, 400);
+//         };
 
-        // Processing
-        const queryData = await RoomModel.create_user_room(req.user.id, reqValues);
-        if (!queryData) {
-            throw new ExpressError("Create Room Failed", 500);
-        };
+//         // Processing
+//         const queryData = await RoomModel.create_user_room(req.user.id, reqValues);
+//         if (!queryData) {
+//             throw new ExpressError("Create Room Failed", 500);
+//         };
 
-        return res.json({rooms: [queryData]});
-    } catch (error) {
-        next(error);
-    };
-});
+//         return res.json({rooms: [queryData]});
+//     } catch (error) {
+//         next(error);
+//     };
+// });
 
 
 /* ____  _____    _    ____  

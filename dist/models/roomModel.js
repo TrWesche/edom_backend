@@ -51,9 +51,9 @@ var RoomModel = /** @class */ (function () {
         | |___|  _ <| |___ / ___ \| | | |___
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    RoomModel.create_user_room = function (userID, data) {
+    RoomModel.create_user_room = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var room, roomAssoc, error_1;
+            var dbEntryProps, roomEntry, roomAssoc, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -67,13 +67,21 @@ var RoomModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, room_repository_1["default"].create_new_room(data)];
+                        dbEntryProps = {
+                            name: data.name,
+                            category_id: data.category_id,
+                            headline: data.headline,
+                            description: data.description,
+                            image_url: data.image_url,
+                            public: data.public
+                        };
+                        return [4 /*yield*/, room_repository_1["default"].create_new_room(dbEntryProps)];
                     case 3:
-                        room = _a.sent();
-                        if (!(room === null || room === void 0 ? void 0 : room.id)) {
+                        roomEntry = _a.sent();
+                        if (!(roomEntry === null || roomEntry === void 0 ? void 0 : roomEntry.id)) {
                             throw new expresError_1["default"]("Error while creating new room entry", 500);
                         }
-                        return [4 /*yield*/, room_repository_1["default"].associate_user_to_room(userID, room.id)];
+                        return [4 /*yield*/, room_repository_1["default"].associate_user_to_room(data.ownerid, roomEntry.id)];
                     case 4:
                         roomAssoc = _a.sent();
                         if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.user_id)) {
@@ -84,7 +92,7 @@ var RoomModel = /** @class */ (function () {
                     case 5:
                         // Commit to Database
                         _a.sent();
-                        return [2 /*return*/, room];
+                        return [2 /*return*/, roomEntry];
                     case 6:
                         error_1 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
@@ -99,9 +107,9 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    RoomModel.create_group_room = function (groupID, data) {
+    RoomModel.create_group_room = function (data) {
         return __awaiter(this, void 0, void 0, function () {
-            var room, roomAssoc, error_2;
+            var dbEntryProps, roomEntry, roomAssoc, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -115,13 +123,21 @@ var RoomModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
                         _a.sent();
-                        return [4 /*yield*/, room_repository_1["default"].create_new_room(data)];
+                        dbEntryProps = {
+                            name: data.name,
+                            category_id: data.category_id,
+                            headline: data.headline,
+                            description: data.description,
+                            image_url: data.image_url,
+                            public: data.public
+                        };
+                        return [4 /*yield*/, room_repository_1["default"].create_new_room(dbEntryProps)];
                     case 3:
-                        room = _a.sent();
-                        if (!(room === null || room === void 0 ? void 0 : room.id)) {
+                        roomEntry = _a.sent();
+                        if (!(roomEntry === null || roomEntry === void 0 ? void 0 : roomEntry.id)) {
                             throw new expresError_1["default"]("Error while creating new room entry", 500);
                         }
-                        return [4 /*yield*/, room_repository_1["default"].associate_group_to_room(groupID, room.id)];
+                        return [4 /*yield*/, room_repository_1["default"].associate_group_to_room(data.ownerid, roomEntry.id)];
                     case 4:
                         roomAssoc = _a.sent();
                         if (!(roomAssoc === null || roomAssoc === void 0 ? void 0 : roomAssoc.room_id)) {
@@ -132,7 +148,7 @@ var RoomModel = /** @class */ (function () {
                     case 5:
                         // Commit to Database
                         _a.sent();
-                        return [2 /*return*/, room];
+                        return [2 /*return*/, roomEntry];
                     case 6:
                         error_2 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];

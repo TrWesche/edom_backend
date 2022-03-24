@@ -9,6 +9,7 @@ import { GroupRoomCreateProps } from "../schemas/room/groupRoomCreateSchema";
 // Utility Functions
 import ExpressError from "../utils/expresError";
 import EquipmentRepo from "../repositories/equipment.repository";
+import { RoomCreateProps } from "../schemas/room/roomCreateSchema";
 
 
 class RoomModel {
@@ -18,7 +19,7 @@ class RoomModel {
         | |___|  _ <| |___ / ___ \| | | |___ 
          \____|_| \_\_____/_/   \_\_| |_____|
     */
-    static async create_user_room(userID: string, data: UserRoomCreateProps) {
+    static async create_user_room(data: RoomCreateProps) {
         // Preflight
         if (!data.name || !data.category_id) {
             throw new ExpressError("Invalid Create Room Call", 400);
@@ -28,14 +29,23 @@ class RoomModel {
         try {
             await TransactionRepo.begin_transaction();
 
+            const dbEntryProps = {
+                name: data.name,
+                category_id: data.category_id,
+                headline: data.headline,
+                description: data.description,
+                image_url: data.image_url,
+                public: data.public
+            };
+
             // Create Room in Database
-            const room = await RoomRepo.create_new_room(data);
-            if (!room?.id) {
+            const roomEntry = await RoomRepo.create_new_room(dbEntryProps);
+            if (!roomEntry?.id) {
                 throw new ExpressError("Error while creating new room entry", 500);
             }
 
             // Associate Room with User
-            const roomAssoc = await RoomRepo.associate_user_to_room(userID, room.id);
+            const roomAssoc = await RoomRepo.associate_user_to_room(data.ownerid, roomEntry.id);
             if (!roomAssoc?.user_id) {
                 throw new ExpressError("Error while associating user to room entry", 500);
             }
@@ -43,14 +53,14 @@ class RoomModel {
             // Commit to Database
             await TransactionRepo.commit_transaction();
 
-            return room;
+            return roomEntry;
         } catch (error) {
             await TransactionRepo.rollback_transaction();
             throw new ExpressError(error.message, error.status);
         };
     };
 
-    static async create_group_room(groupID: string, data: GroupRoomCreateProps) {
+    static async create_group_room(data: RoomCreateProps) {
         // Preflight
         if (!data.name || !data.category_id) {
             throw new ExpressError("Invalid Create Room Call", 400);
@@ -60,14 +70,23 @@ class RoomModel {
         try {
             await TransactionRepo.begin_transaction();
 
+            const dbEntryProps = {
+                name: data.name,
+                category_id: data.category_id,
+                headline: data.headline,
+                description: data.description,
+                image_url: data.image_url,
+                public: data.public
+            };
+
             // Create Room in Database
-            const room = await RoomRepo.create_new_room(data);
-            if (!room?.id) {
+            const roomEntry = await RoomRepo.create_new_room(dbEntryProps);
+            if (!roomEntry?.id) {
                 throw new ExpressError("Error while creating new room entry", 500);
             }
 
             // Associate Room with User
-            const roomAssoc = await RoomRepo.associate_group_to_room(groupID, room.id);
+            const roomAssoc = await RoomRepo.associate_group_to_room(data.ownerid, roomEntry.id);
             if (!roomAssoc?.room_id) {
                 throw new ExpressError("Error while associating group to room entry", 500);
             }
@@ -75,7 +94,7 @@ class RoomModel {
             // Commit to Database
             await TransactionRepo.commit_transaction();
 
-            return room;
+            return roomEntry;
         } catch (error) {
             await TransactionRepo.rollback_transaction();
             throw new ExpressError(error.message, error.status);

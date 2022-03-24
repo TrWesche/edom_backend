@@ -75,7 +75,7 @@ equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest
     return __generator(this, function (_e) {
         switch (_e.label) {
             case 0:
-                _e.trys.push([0, 8, , 9]);
+                _e.trys.push([0, 10, , 11]);
                 // Preflight
                 if (!((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)) {
                     throw new expresError_1["default"]("Must be logged in to create equip", 401);
@@ -101,46 +101,45 @@ equipRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest
                 _a = reqValues.context;
                 switch (_a) {
                     case "user": return [3 /*break*/, 1];
-                    case "group": return [3 /*break*/, 3];
+                    case "group": return [3 /*break*/, 5];
                 }
-                return [3 /*break*/, 7];
+                return [3 /*break*/, 9];
             case 1:
                 permCheck = (_c = req.resolvedPerms) === null || _c === void 0 ? void 0 : _c.reduce(function (acc, val) {
                     return acc = acc || (val.permissions_name === "site_create_equip_self");
                 }, false);
+                if (!permCheck) return [3 /*break*/, 3];
                 return [4 /*yield*/, equipModel_1["default"].create_user_equip(reqValues)];
             case 2:
-                // idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
-                // if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
                 queryData = _e.sent();
-                return [3 /*break*/, 7];
-            case 3:
+                return [3 /*break*/, 4];
+            case 3: throw new expresError_1["default"]("Unauthorized", 401);
+            case 4: return [3 /*break*/, 9];
+            case 5:
                 permCheck = (_d = req.resolvedPerms) === null || _d === void 0 ? void 0 : _d.reduce(function (acc, val) {
                     return acc = acc || (val.permissions_name === "group_create_equip");
                 }, false);
-                if (!permCheck) return [3 /*break*/, 5];
+                if (!permCheck) return [3 /*break*/, 7];
                 return [4 /*yield*/, equipModel_1["default"].create_group_equip(reqValues)];
-            case 4:
-                // idcheck = await GroupModel.retrieve_group_by_group_id(reqValues.ownerid, "elevated");
-                // if (!idcheck)  {throw new ExpressError(`Value is not a valid groupid`, 401);};
-                queryData = _e.sent();
-                return [3 /*break*/, 6];
-            case 5: throw new expresError_1["default"]("Unauthorized", 401);
             case 6:
+                queryData = _e.sent();
+                return [3 /*break*/, 8];
+            case 7: throw new expresError_1["default"]("Unauthorized", 401);
+            case 8:
                 ;
-                return [3 /*break*/, 7];
-            case 7:
+                return [3 /*break*/, 9];
+            case 9:
                 ;
                 if (!queryData) {
                     throw new expresError_1["default"]("Create Equip Failed", 500);
                 }
                 ;
                 return [2 /*return*/, res.json({ equip: queryData })];
-            case 8:
+            case 10:
                 error_1 = _e.sent();
                 next(error_1);
-                return [3 /*break*/, 9];
-            case 9: return [2 /*return*/];
+                return [3 /*break*/, 11];
+            case 11: return [2 /*return*/];
         }
     });
 }); });

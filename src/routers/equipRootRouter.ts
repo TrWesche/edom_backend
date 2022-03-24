@@ -60,9 +60,12 @@ equipRootRouter.post("/create",
                     permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
                         return acc = acc || (val.permissions_name === "site_create_equip_self")
                     }, false);
-                    // idcheck = await UserModel.retrieve_user_by_user_id(reqValues.ownerid);
-                    // if (!idcheck)  {throw new ExpressError(`Value is not a valid userid`, 401);};
-                    queryData = await EquipModel.create_user_equip(reqValues);
+
+                    if (permCheck) {
+                        queryData = await EquipModel.create_user_equip(reqValues);
+                    } else {
+                        throw new ExpressError("Unauthorized", 401);
+                    }
                     break;
                 case "group":
                     permCheck = req.resolvedPerms?.reduce((acc: any, val: any) => {
@@ -70,8 +73,6 @@ equipRootRouter.post("/create",
                     }, false);
 
                     if (permCheck) {
-                        // idcheck = await GroupModel.retrieve_group_by_group_id(reqValues.ownerid, "elevated");
-                        // if (!idcheck)  {throw new ExpressError(`Value is not a valid groupid`, 401);};
                         queryData = await EquipModel.create_group_equip(reqValues);
                     } else {
                         throw new ExpressError("Unauthorized", 401);

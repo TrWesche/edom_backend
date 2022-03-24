@@ -26,37 +26,37 @@ const groupRoomRouter = express.Router();
 */
 // Manual Test - Basic Functionality: 01/19/2022
 // Create Room
-groupRoomRouter.post("/", authMW.defineGroupPermissions(["read_room", "create_room"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        console.log("Start Create Group Room");
-        // Preflight
-        const reqValues: GroupRoomCreateProps = {
-            name: req.body.name,
-            category_id: req.body.category_id,
-            headline: req.body.headline,
-            description: req.body.description,
-            public: req.body.public
-        };
+// groupRoomRouter.post("/", authMW.defineGroupPermissions(["read_room", "create_room"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         console.log("Start Create Group Room");
+//         // Preflight
+//         const reqValues: GroupRoomCreateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public
+//         };
 
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition`, 400);
-        };
+//         if (!req.user?.id || !req.groupID) {
+//             throw new ExpressError(`Must be logged in to create rooms / Missing Group Definition`, 400);
+//         };
 
-        if(!validateGroupRoomCreateSchema(reqValues)) {
-            throw new ExpressError(`Unable to Create Group Room: ${validateGroupRoomCreateSchema.errors}`, 400);
-        };
+//         if(!validateGroupRoomCreateSchema(reqValues)) {
+//             throw new ExpressError(`Unable to Create Group Room: ${validateGroupRoomCreateSchema.errors}`, 400);
+//         };
 
-        // Processing
-        const queryData = await RoomModel.create_group_room(req.groupID, reqValues);
-        if (!queryData) {
-            throw new ExpressError("Create Room Failed", 500);
-        };
+//         // Processing
+//         const queryData = await RoomModel.create_group_room(req.groupID, reqValues);
+//         if (!queryData) {
+//             throw new ExpressError("Create Room Failed", 500);
+//         };
 
-        return res.json({rooms: [queryData]});
-    } catch (error) {
-        next(error);
-    };
-});
+//         return res.json({rooms: [queryData]});
+//     } catch (error) {
+//         next(error);
+//     };
+// });
 
 
 /* ____  _____    _    ____  

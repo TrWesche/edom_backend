@@ -44,7 +44,97 @@ var expresError_1 = require("../utils/expresError");
 var roomModel_1 = require("../models/roomModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
+// Schema Imports
+var roomCreateSchema_1 = require("../schemas/room/roomCreateSchema");
 var roomRootRouter = express.Router();
+/* ____ ____  _____    _  _____ _____
+  / ___|  _ \| ____|  / \|_   _| ____|
+ | |   | |_) |  _|   / _ \ | | |  _|
+ | |___|  _ <| |___ / ___ \| | | |___
+  \____|_| \_\_____/_/   \_\_| |_____|
+*/
+// Manual Test - Basic Functionality: 01/13/2022
+roomRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest, authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_create_room_self"],
+    group: ["group_create_room"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var reqValues, queryData, permCheck, _a, error_1;
+    var _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                _e.trys.push([0, 10, , 11]);
+                // Preflight
+                if (!((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)) {
+                    throw new expresError_1["default"]("Must be logged in to create room", 401);
+                }
+                ;
+                reqValues = {
+                    context: req.body.context ? req.body.context : "user",
+                    ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
+                    name: req.body.name,
+                    category_id: req.body.category_id,
+                    headline: req.body.headline,
+                    description: req.body.description,
+                    image_url: req.body.image_url,
+                    public: req.body.public
+                };
+                if (!(0, roomCreateSchema_1["default"])(reqValues)) {
+                    throw new expresError_1["default"]("Unable to Create Room - Schema Validation Error: ".concat(roomCreateSchema_1["default"].errors), 400);
+                }
+                ;
+                queryData = void 0;
+                permCheck = void 0;
+                _a = reqValues.context;
+                switch (_a) {
+                    case "user": return [3 /*break*/, 1];
+                    case "group": return [3 /*break*/, 5];
+                }
+                return [3 /*break*/, 9];
+            case 1:
+                permCheck = (_c = req.resolvedPerms) === null || _c === void 0 ? void 0 : _c.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "site_create_room_self");
+                }, false);
+                if (!permCheck) return [3 /*break*/, 3];
+                return [4 /*yield*/, roomModel_1["default"].create_user_room(reqValues)];
+            case 2:
+                queryData = _e.sent();
+                return [3 /*break*/, 4];
+            case 3: throw new expresError_1["default"]("Unauthorized", 401);
+            case 4:
+                ;
+                return [3 /*break*/, 9];
+            case 5:
+                permCheck = (_d = req.resolvedPerms) === null || _d === void 0 ? void 0 : _d.reduce(function (acc, val) {
+                    return acc = acc || (val.permissions_name === "group_create_room");
+                }, false);
+                if (!permCheck) return [3 /*break*/, 7];
+                return [4 /*yield*/, roomModel_1["default"].create_group_room(reqValues)];
+            case 6:
+                queryData = _e.sent();
+                return [3 /*break*/, 8];
+            case 7: throw new expresError_1["default"]("Unauthorized", 401);
+            case 8:
+                ;
+                return [3 /*break*/, 9];
+            case 9:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Create Room Failed", 500);
+                }
+                ;
+                return [2 /*return*/, res.json({ rooms: [queryData] })];
+            case 10:
+                error_1 = _e.sent();
+                next(error_1);
+                return [3 /*break*/, 11];
+            case 11:
+                ;
+                return [2 /*return*/];
+        }
+    });
+}); });
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |
@@ -53,7 +143,7 @@ var roomRootRouter = express.Router();
 */
 // Manual Test - Basic Functionality: 01/19/2022
 roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var limit, offset, queryData, error_1;
+    var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -76,8 +166,8 @@ roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
                 }
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
-                error_1 = _a.sent();
-                next(error_1);
+                error_2 = _a.sent();
+                next(error_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -85,7 +175,7 @@ roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
 }); });
 // Manual Test - Basic Functionality: 01/22/2022
 roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_2;
+    var queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -99,8 +189,8 @@ roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePerm
                 ;
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
-                error_2 = _a.sent();
-                next(error_2);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -108,7 +198,7 @@ roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePerm
 }); });
 // Manual Test - Basic Functionality: 01/19/2022
 roomRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+    var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -122,8 +212,8 @@ roomRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePe
                 ;
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
-                error_3 = _a.sent();
-                next(error_3);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -134,7 +224,7 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissio
     group: ["read_room"],
     public: ["view_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
+    var queryData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -147,8 +237,8 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissio
                 }
                 return [2 /*return*/, res.json({ room: queryData })];
             case 2:
-                error_4 = _a.sent();
-                next(error_4);
+                error_5 = _a.sent();
+                next(error_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
