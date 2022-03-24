@@ -1,10 +1,6 @@
 // Utility Imports
 import ExpressError from "../utils/expresError";
 
-// Schema Imports
-import { UserEquipCreateProps } from "../schemas/equipment/userEquipCreateSchema";
-import { GroupEquipCreateProps } from "../schemas/equipment/groupEquipCreateSchema";
-
 // Repository Imports
 import TransactionRepo from "../repositories/transactionRepository";
 import EquipRepo, { EquipObjectProps } from "../repositories/equipment.repository";

@@ -4,10 +4,6 @@ import * as express from "express";
 // Utility Functions Import
 import ExpressError from "../../../utils/expresError";
 
-// Schema Imports
-import validateGroupEquipCreateSchema, { GroupEquipCreateProps } from "../../../schemas/equipment/groupEquipCreateSchema";
-import validateGroupEquipUpdateSchema, { GroupEquipUpdateProps } from "../../../schemas/equipment/groupEquipUpdateSchema";
-
 // Model Imports
 import EquipModel from "../../../models/equipModel";
 

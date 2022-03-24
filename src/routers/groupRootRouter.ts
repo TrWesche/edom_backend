@@ -27,8 +27,7 @@ const groupRootRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Manually Tested 2022-03-22
-groupRootRouter.post(
-        "/create", 
+groupRootRouter.post("/create", 
         authMW.defineRoutePermissions({
             user: ["site_create_group_self"],
             group: [],
@@ -83,8 +82,7 @@ groupRootRouter.post(
   |_| \_\_____/_/   \_\____/ 
 */
 // Manually Tested 2022-03-22
-groupRootRouter.get(
-    "/list",
+groupRootRouter.get("/list",
     authMW.defineRoutePermissions({
         user: [],
         group: [],

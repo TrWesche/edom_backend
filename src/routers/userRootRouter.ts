@@ -29,31 +29,33 @@ userRootRouter.use("/dm", userDeviceMasterRouter);
 */
 
 // Manually Tested 2022-03-22
-userRootRouter.post("/auth", async (req, res, next) => {
-    try {
-        // console.log("Start Authentication");
-        const authValues: UserAuthProps = {
-            username: req.body.username,
-            password: req.body.password
-        }
+userRootRouter.post("/auth", 
+    async (req, res, next) => {
+        try {
+            // console.log("Start Authentication");
+            const authValues: UserAuthProps = {
+                username: req.body.username,
+                password: req.body.password
+            }
 
-        if(!validateUserAuthSchema(authValues)) {
-            throw new ExpressError(`Username & Password Required: ${validateUserAuthSchema.errors}`, 400);
-        }
+            if(!validateUserAuthSchema(authValues)) {
+                throw new ExpressError(`Username & Password Required: ${validateUserAuthSchema.errors}`, 400);
+            }
 
-        // Validate username & password combination
-        const queryData = await UserModel.authenticate(authValues);
-        if (!queryData) {
-            throw new ExpressError("Invalid Email/Password", 400);
+            // Validate username & password combination
+            const queryData = await UserModel.authenticate(authValues);
+            if (!queryData) {
+                throw new ExpressError("Invalid Email/Password", 400);
+            }
+            
+            // AuthHandling.generateToken(res, queryData);
+            AuthHandling.generateSessionCookies(res, queryData);
+            return res.json({ "message": "Login successful." })
+        } catch (error) {
+            next(error)
         }
-        
-        // AuthHandling.generateToken(res, queryData);
-        AuthHandling.generateSessionCookies(res, queryData);
-        return res.json({ "message": "Login successful." })
-    } catch (error) {
-        next(error)
     }
-});
+);
 
 
 /* ____ ____  _____    _  _____ _____ 
@@ -64,44 +66,46 @@ userRootRouter.post("/auth", async (req, res, next) => {
 */
 
 // Manually Tested 2022-03-22
-userRootRouter.post("/register", async (req, res, next) => {
-    try {
-        const regValues: UserRegisterProps = {
-            password: req.body.password,
-            username: req.body.username,
-            email: req.body.email,
-            first_name: req.body.first_name,
-            last_name: req.body.last_name
-        };
+userRootRouter.post("/register", 
+    async (req, res, next) => {
+        try {
+            const regValues: UserRegisterProps = {
+                password: req.body.password,
+                username: req.body.username,
+                email: req.body.email,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name
+            };
 
-        if(!validateUserRegisterSchema(regValues)) {
-            console.log(validateUserRegisterSchema.errors);
-            // TODO: Create Error Message Based on Schema Output
-            // [
-            //     [1]   {
-            //     [1]     instancePath: '',
-            //     [1]     schemaPath: '#/required',
-            //     [1]     keyword: 'required',
-            //     [1]     params: { missingProperty: 'username' },
-            //     [1]     message: "must have required property 'username'"
-            //     [1]   }
-            //     [1] ]
-            throw new ExpressError(`Username & Password Required: ${validateUserRegisterSchema.errors}`, 400);
-        };
+            if(!validateUserRegisterSchema(regValues)) {
+                console.log(validateUserRegisterSchema.errors);
+                // TODO: Create Error Message Based on Schema Output
+                // [
+                //     [1]   {
+                //     [1]     instancePath: '',
+                //     [1]     schemaPath: '#/required',
+                //     [1]     keyword: 'required',
+                //     [1]     params: { missingProperty: 'username' },
+                //     [1]     message: "must have required property 'username'"
+                //     [1]   }
+                //     [1] ]
+                throw new ExpressError(`Username & Password Required: ${validateUserRegisterSchema.errors}`, 400);
+            };
 
-        // Validate username & password combination
-        const queryData = await UserModel.register(regValues);
-        if (!queryData) {
-            throw new ExpressError("Registration Failed", 400);
-        };
-        
-        // AuthHandling.generateToken(res, queryData);
-        AuthHandling.generateSessionCookies(res, queryData);
-        return res.json({ "message": "Registration Success!" })
-    } catch (error) {
-        next(error)
+            // Validate username & password combination
+            const queryData = await UserModel.register(regValues);
+            if (!queryData) {
+                throw new ExpressError("Registration Failed", 400);
+            };
+            
+            // AuthHandling.generateToken(res, queryData);
+            AuthHandling.generateSessionCookies(res, queryData);
+            return res.json({ "message": "Registration Success!" })
+        } catch (error) {
+            next(error)
+        }
     }
-});
+);
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
@@ -111,8 +115,7 @@ userRootRouter.post("/register", async (req, res, next) => {
 */
 
 // Manually Tested 2022-03-22
-userRootRouter.get(
-    "/profile", 
+userRootRouter.get("/profile", 
     authMW.defineRoutePermissions({
         user: ["site_read_user_self"],
         group: [],
@@ -133,8 +136,7 @@ userRootRouter.get(
 });
 
 // Manually Tested 2022-03-22
-userRootRouter.get(
-    "/list", 
+userRootRouter.get("/list", 
     authMW.defineRoutePermissions({
         user: [],
         group: [],

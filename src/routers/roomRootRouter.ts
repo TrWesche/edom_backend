@@ -21,35 +21,38 @@ const roomRootRouter = express.Router();
   |_| \_\_____/_/   \_\____/ 
 */
 // Manual Test - Basic Functionality: 01/19/2022
-roomRootRouter.get("/list", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // TODO: Add free text search, category type filters, user filters, group filters
-        
-        // const {limit, offset} = req.query as unknown as equipRouterQuery;
-        // Preflight
-        const limit = req.query.limit ? req.query.limit : 25;
-        const offset = req.query.offset ? req.query.offset : 0;
-        // const ftserach = req.query.ftsearch;
-        // const catid = req.query.catid;
-        // const uid = req.query.uid;
-        // const gid = req.query.gid;
+roomRootRouter.get("/list", 
+    authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, 
+    async (req, res, next) => {
+        try {
+            // TODO: Add free text search, category type filters, user filters, group filters
+            
+            // const {limit, offset} = req.query as unknown as equipRouterQuery;
+            // Preflight
+            const limit = req.query.limit ? req.query.limit : 25;
+            const offset = req.query.offset ? req.query.offset : 0;
+            // const ftserach = req.query.ftsearch;
+            // const catid = req.query.catid;
+            // const uid = req.query.uid;
+            // const gid = req.query.gid;
 
-        if (typeof limit !== "number" || typeof offset !== "number") {
-            throw new ExpressError("One or more query parameters is of an invalid type", 404);
-        };
+            if (typeof limit !== "number" || typeof offset !== "number") {
+                throw new ExpressError("One or more query parameters is of an invalid type", 404);
+            };
 
 
-        // Processing
-        const queryData = await RoomModel.retrieve_room_list_paginated(limit, offset);
-        if (!queryData) {
-            throw new ExpressError("Rooms Not Found.", 404);
+            // Processing
+            const queryData = await RoomModel.retrieve_room_list_paginated(limit, offset);
+            if (!queryData) {
+                throw new ExpressError("Rooms Not Found.", 404);
+            }
+            
+            return res.json({rooms: queryData});
+        } catch (error) {
+            next(error)
         }
-        
-        return res.json({rooms: queryData});
-    } catch (error) {
-        next(error)
     }
-});
+);
 
 // Manual Test - Basic Functionality: 01/22/2022
 roomRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
