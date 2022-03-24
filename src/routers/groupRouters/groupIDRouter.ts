@@ -35,8 +35,7 @@ groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), group
   |_| \_\_____/_/   \_\____/ 
 */
 // Manually Tested 2022-03-22
-groupIDRouter.get(
-    "/",
+groupIDRouter.get("/",
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_group"],
@@ -80,8 +79,7 @@ groupIDRouter.get(
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manually Tested 2022-03-22
-groupIDRouter.patch(
-    "/",
+groupIDRouter.patch("/",
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_group", "group_update_group"],
@@ -141,8 +139,7 @@ groupIDRouter.patch(
   |____/|_____|_____|_____| |_| |_____|
 */
 // Manually Tested 2022-03-22
-groupIDRouter.delete(
-    "/", 
+groupIDRouter.delete("/", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_group", "group_delete_group"],

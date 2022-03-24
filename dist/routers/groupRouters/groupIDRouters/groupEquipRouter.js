@@ -45,42 +45,6 @@ var equipModel_1 = require("../../../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
 var groupEquipRouter = express.Router();
-/* ____ ____  _____    _  _____ _____
-  / ___|  _ \| ____|  / \|_   _| ____|
- | |   | |_) |  _|   / _ \ | | |  _|
- | |___|  _ <| |___ / ___ \| | | |___
-  \____|_| \_\_____/_/   \_\_| |_____|
-*/
-// Manual Test - Basic Functionality: 01/18/2022
-// groupEquipRouter.post("/", authMW.defineGroupPermissions(["read_equip", "create_equip"]), authMW.validatePermissions, async (req, res, next) => {
-//     try {
-//         console.log("Start Create Group Equip");
-//         // Preflight
-//         const reqValues: GroupEquipCreateProps = {
-//             name: req.body.name,
-//             category_id: req.body.category_id,
-//             headline: req.body.headline,
-//             description: req.body.description,
-//             public: req.body.public,
-//             configuration: req.body.configuration
-//         }
-//         if (!req.user?.id || !req.groupID) {
-//             throw new ExpressError(`Must be logged in to create equipment || group not found`, 400);
-//         }
-//         if(!validateGroupEquipCreateSchema(reqValues)) {
-//             console.log(validateGroupEquipCreateSchema.errors);
-//             throw new ExpressError(`Unable to Create Group Equipment: ${validateGroupEquipCreateSchema.errors}`, 400);
-//         }
-//         // Process
-//         const queryData = await EquipModel.create_group_equip(req.groupID, reqValues);
-//         if (!queryData) {
-//             throw new ExpressError("Create Equipment Failed", 400);
-//         }
-//         return res.json({equip: [queryData]})
-//     } catch (error) {
-//         next(error)
-//     }
-// });
 // Manual Test - Basic Functionality: 01/19/2022
 // Create Room - Equipment Association
 groupEquipRouter.post("/:equipID/rooms", authorizationMW_1["default"].defineGroupPermissions(["read_room", "update_room", "read_equip", "update_equip"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {

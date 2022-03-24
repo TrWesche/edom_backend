@@ -10,14 +10,10 @@ import EquipModel from "../models/equipModel";
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
 import validateEquipCreateSchema, { EquipCreateProps } from "../schemas/equipment/equipCreateSchema";
-import UserModel from "../models/userModel";
-import GroupModel from "../models/groupModel";
 import validateEquipUpdateSchema, { EquipUpdateProps } from "../schemas/equipment/equipUpdateSchema";
 
 
 const equipRootRouter = express.Router();
-
-
 
 
 /* ____ ____  _____    _  _____ _____ 
@@ -199,54 +195,8 @@ equipRootRouter.get("/:equipID/rooms",
         next(error)
     }
 });
-// Manual Test - Basic Functionality: 01/15/2022
-// equipRootRouter.get("/users/:userID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
-//     try {
-//         // Processing
-//         const queryData = await EquipModel.retrieve_user_equip_by_user_id(req.params.userID, true);
-//         if (!queryData) {
-//             throw new ExpressError("Equipment Not Found: Get User Equipment - Public", 404);
-//         };
-        
-//         return res.json({equip: queryData});
-//     } catch (error) {
-//         next(error)
-//     }
-// });
-
-// Manual Test - Basic Functionality: 01/18/2022
-// equipRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
-//     try {
-//         // Processing
-//         const queryData = await EquipModel.retrieve_group_equip_by_group_id(req.params.groupID, true);
-//         if (!queryData) {
-//             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
-//         };
-        
-//         return res.json({equip: queryData});
-//     } catch (error) {
-//         next(error)
-//     }
-// });
-
-// Manual Test - Basic Functionality: 01/15/2022
-// equipRootRouter.get("/rooms/:roomID", authMW.defineSitePermissions(["site_read_equip_public"]), authMW.validatePermissions, async (req, res, next) => {
-//     try {
-//         // Processing
-//         const queryData = await EquipModel.retrieve_room_equip_by_room_id(req.params.roomID, true);
-//         if (!queryData) {
-//             throw new ExpressError("Equipment Not Found: Get Group Equipment - Public", 404);
-//         };
-        
-//         return res.json({equip: queryData});
-//     } catch (error) {
-//         next(error)
-//     }
-// });
-
 
 // Manual Test - Basic Functionality: 03/19/2022
-// Check for elevated permissions through user id
 equipRootRouter.get("/:equipID", 
     authMW.defineRoutePermissions({
         user: ["site_read_equip_self", "site_update_equip_self", "site_delete_equip_self"],
