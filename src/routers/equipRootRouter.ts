@@ -9,6 +9,8 @@ import EquipModel from "../models/equipModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
+
+// Schema Imports
 import validateEquipCreateSchema, { EquipCreateProps } from "../schemas/equipment/equipCreateSchema";
 import validateEquipUpdateSchema, { EquipUpdateProps } from "../schemas/equipment/equipUpdateSchema";
 

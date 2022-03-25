@@ -55,6 +55,7 @@ var expresError_1 = require("../utils/expresError");
 var equipModel_1 = require("../models/equipModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
+// Schema Imports
 var equipCreateSchema_1 = require("../schemas/equipment/equipCreateSchema");
 var equipUpdateSchema_1 = require("../schemas/equipment/equipUpdateSchema");
 var equipRootRouter = express.Router();

@@ -637,8 +637,6 @@ class EquipmentRepo {
         }
     };
 
-
-
     static async fetch_equip_by_group_and_equip_id(groupID: string, equipID: string) {
         try {
             const query = `

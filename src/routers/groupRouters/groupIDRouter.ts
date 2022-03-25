@@ -15,8 +15,7 @@ import authMW from "../../middleware/authorizationMW";
 
 
 import groupMgmtRouter from "./groupIDRouters/groupMgmtRouter";
-import groupRoomRouter from "./groupIDRouters/groupRoomRouter";
-import groupEquipRouter from "./groupIDRouters/groupEquipRouter";
+// import groupEquipRouter from "./groupIDRouters/groupEquipRouter";
 import groupUserRouter from "./groupIDRouters/groupUserRouter";
 
 
@@ -24,8 +23,7 @@ const groupIDRouter = express.Router();
 
 
 groupIDRouter.use("/mgmt", authMW.defineSitePermissions(["site_access"]), groupMgmtRouter);
-groupIDRouter.use("/rooms", authMW.defineSitePermissions(["site_access"]),  groupRoomRouter);
-groupIDRouter.use("/equips", authMW.defineSitePermissions(["site_access"]),  groupEquipRouter);
+// groupIDRouter.use("/equips", authMW.defineSitePermissions(["site_access"]),  groupEquipRouter);
 groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), groupUserRouter);
 
 /* ____  _____    _    ____  

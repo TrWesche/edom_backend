@@ -18,8 +18,6 @@ import validtteRoomUpdateSchema, { RoomUpdateProps } from "../schemas/room/roomU
 const roomRootRouter = express.Router();
 
 
-
-
 /* ____ ____  _____    _  _____ _____ 
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|  
@@ -141,6 +139,7 @@ roomRootRouter.get("/list",
     }
 );
 
+// Manual Test - Basic Functionality: 03/24/2022
 roomRootRouter.get("/:roomID/equip",
     authMW.defineRoutePermissions({
         user: ["site_read_equip_self", "site_read_room_self"],
@@ -200,37 +199,7 @@ roomRootRouter.get("/:roomID/equip",
     }
 });
 
-// Manual Test - Basic Functionality: 01/22/2022
-// roomRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
-//     try {
-//         // Processing
-//         const queryData = await RoomModel.retrieve_user_rooms_by_user_id_public(req.params.userID);
-//         if (!queryData) {
-//             throw new ExpressError("Equipment Not Found: Get User Rooms - Public", 404);
-//         };
-        
-//         return res.json({rooms: queryData});
-//     } catch (error) {
-//         next(error)
-//     }
-// });
-
-// Manual Test - Basic Functionality: 01/19/2022
-// roomRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
-//     try {
-//         // Processing
-//         const queryData = await RoomModel.retrieve_group_rooms_by_group_id_public(req.params.groupID);
-//         if (!queryData) {
-//             throw new ExpressError("Equipment Not Found: Get Group Rooms - Public", 404);
-//         };
-        
-//         return res.json({rooms: queryData});
-//     } catch (error) {
-//         next(error)
-//     }
-// });
-
-
+// Manual Test - Basic Functionality: 03/24/2022
 roomRootRouter.get("/:roomID", 
     authMW.defineRoutePermissions({
         user: ["site_read_room_self", "site_update_room_self", "site_delete_room_self"],
