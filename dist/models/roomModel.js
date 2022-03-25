@@ -276,6 +276,43 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
+    RoomModel.retrieve_room_equip_by_room_id = function (roomID, accessType) {
+        return __awaiter(this, void 0, void 0, function () {
+            var equip, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "full": return [3 /*break*/, 1];
+                            case "elevatedEquip": return [3 /*break*/, 3];
+                            case "elevatedRoom": return [3 /*break*/, 5];
+                            case "public": return [3 /*break*/, 7];
+                        }
+                        return [3 /*break*/, 9];
+                    case 1: return [4 /*yield*/, room_repository_1["default"].fetch_room_equip_by_room_id(roomID, false, false)];
+                    case 2:
+                        equip = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 3: return [4 /*yield*/, room_repository_1["default"].fetch_room_equip_by_room_id(roomID, true, false)];
+                    case 4:
+                        equip = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 5: return [4 /*yield*/, room_repository_1["default"].fetch_room_equip_by_room_id(roomID, false, true)];
+                    case 6:
+                        equip = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 7: return [4 /*yield*/, room_repository_1["default"].fetch_room_equip_by_room_id(roomID, true, true)];
+                    case 8:
+                        equip = _b.sent();
+                        return [3 /*break*/, 10];
+                    case 9: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 10: return [2 /*return*/, equip];
+                }
+            });
+        });
+    };
+    ;
     /*   _   _ ____  ____    _  _____ _____
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|

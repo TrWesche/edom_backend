@@ -2,10 +2,6 @@
 import RoomRepo, { RoomObjectProps } from "../repositories/room.repository";
 import TransactionRepo from "../repositories/transactionRepository";
 
-// Schemas
-import { UserRoomCreateProps } from "../schemas/room/userRoomCreateSchema";
-import { GroupRoomCreateProps } from "../schemas/room/groupRoomCreateSchema";
-
 // Utility Functions
 import ExpressError from "../utils/expresError";
 import EquipmentRepo from "../repositories/equipment.repository";
@@ -152,6 +148,29 @@ class RoomModel {
         }    
 
         return rooms;
+    };
+
+    static async retrieve_room_equip_by_room_id(roomID: string, accessType: string) {
+        let equip;
+
+        switch (accessType) {
+            case "full":
+                equip = await RoomRepo.fetch_room_equip_by_room_id(roomID, false, false);
+                break;
+            case "elevatedEquip":
+                equip = await RoomRepo.fetch_room_equip_by_room_id(roomID, true, false);
+                break;
+            case "elevatedRoom":
+                equip = await RoomRepo.fetch_room_equip_by_room_id(roomID, false, true);
+                break;
+            case "public":
+                equip = await RoomRepo.fetch_room_equip_by_room_id(roomID, true, true);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+
+        return equip;
     };
 
 

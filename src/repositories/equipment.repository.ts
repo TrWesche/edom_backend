@@ -587,12 +587,16 @@ class EquipmentRepo {
             const query = `
                 SELECT 
                     rooms.id AS id, 
-                    rooms.name AS name
+                    rooms.name AS name,
+                    rooms.image_url AS image_url,
+                    room_categories.name AS category_name
                 FROM rooms
                 RIGHT JOIN room_equipment
                 ON rooms.id = room_equipment.room_id
                 LEFT JOIN equipment
-                ON equipment.id = room_equipment.equip_id   
+                ON equipment.id = room_equipment.equip_id
+                LEFT JOIN room_categories
+                ON room_categories.id = rooms.category_id
                 WHERE ${filterBuilder.join(' AND ')}`;
 
             const queryParams = [equipID];

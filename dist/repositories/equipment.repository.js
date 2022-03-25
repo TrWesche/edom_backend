@@ -693,7 +693,7 @@ var EquipmentRepo = /** @class */ (function () {
                             filterBuilder.push('equipment.public = TRUE');
                         }
                         ;
-                        query = "\n                SELECT \n                    rooms.id AS id, \n                    rooms.name AS name\n                FROM rooms\n                RIGHT JOIN room_equipment\n                ON rooms.id = room_equipment.room_id\n                LEFT JOIN equipment\n                ON equipment.id = room_equipment.equip_id   \n                WHERE ".concat(filterBuilder.join(' AND '));
+                        query = "\n                SELECT \n                    rooms.id AS id, \n                    rooms.name AS name,\n                    rooms.image_url AS image_url,\n                    room_categories.name AS category_name\n                FROM rooms\n                RIGHT JOIN room_equipment\n                ON rooms.id = room_equipment.room_id\n                LEFT JOIN equipment\n                ON equipment.id = room_equipment.equip_id\n                LEFT JOIN room_categories\n                ON room_categories.id = rooms.category_id\n                WHERE ".concat(filterBuilder.join(' AND '));
                         queryParams = [equipID];
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:

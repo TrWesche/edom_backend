@@ -138,7 +138,7 @@ equipRootRouter.get("/list",
 );
 
 // Manual Test - Basic Functionality: 03/24/2022
-equipRootRouter.get("/:equipID/rooms",
+equipRootRouter.get("/:equipID/room",
     authMW.defineRoutePermissions({
         user: ["site_read_equip_self", "site_read_room_self"],
         group: ["group_read_equip", "group_read_room"],
@@ -188,7 +188,7 @@ equipRootRouter.get("/:equipID/rooms",
         };
         
         if (!queryData) {
-            throw new ExpressError("Rooms not found.", 404);
+            throw new ExpressError("Room not found.", 404);
         }
         
         return res.json({rooms: queryData});

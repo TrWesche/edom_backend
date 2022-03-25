@@ -186,7 +186,7 @@ equipRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions
     });
 }); });
 // Manual Test - Basic Functionality: 03/24/2022
-equipRootRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineRoutePermissions({
+equipRootRouter.get("/:equipID/room", authorizationMW_1["default"].defineRoutePermissions({
     user: ["site_read_equip_self", "site_read_room_self"],
     group: ["group_read_equip", "group_read_room"],
     public: ["site_read_equip_public", "site_read_room_public"]
@@ -250,7 +250,7 @@ equipRootRouter.get("/:equipID/rooms", authorizationMW_1["default"].defineRouteP
             case 8:
                 ;
                 if (!queryData) {
-                    throw new expresError_1["default"]("Rooms not found.", 404);
+                    throw new expresError_1["default"]("Room not found.", 404);
                 }
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 9:

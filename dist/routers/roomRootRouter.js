@@ -53,7 +53,7 @@ var roomRootRouter = express.Router();
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Basic Functionality: 01/13/2022
+// Manual Test - Basic Functionality: 03/24/2022
 roomRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest, authorizationMW_1["default"].defineRoutePermissions({
     user: ["site_create_room_self"],
     group: ["group_create_room"],
@@ -141,8 +141,12 @@ roomRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest,
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 01/19/2022
-roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manual Test - Basic Functionality: 03/24/2022
+roomRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: [],
+    public: ["site_read_equip_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var limit, offset, queryData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -173,58 +177,113 @@ roomRootRouter.get("/list", authorizationMW_1["default"].defineSitePermissions([
         }
     });
 }); });
-// Manual Test - Basic Functionality: 01/22/2022
-roomRootRouter.get("/users/:userID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+roomRootRouter.get("/:roomID/equip", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_read_equip_self", "site_read_room_self"],
+    group: ["group_read_equip", "group_read_room"],
+    public: ["site_read_equip_public", "site_read_room_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, roomPermissions_1, equipPermissions_1, error_3;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_by_user_id_public(req.params.userID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get User Rooms - Public", 404);
+                _c.trys.push([0, 9, , 10]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("User ID Not Defined", 401);
                 }
                 ;
-                return [2 /*return*/, res.json({ rooms: queryData })];
+                queryData = void 0;
+                roomPermissions_1 = 0;
+                equipPermissions_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Read Pemission Level - Equip
+                    if (((val.permissions_name === "site_read_equip_self") || (val.permissions_name === "group_read_equip"))) {
+                        equipPermissions_1 = 2;
+                    }
+                    ;
+                    if (val.permissions_name === "site_read_equip_public" && equipPermissions_1 !== 2) {
+                        equipPermissions_1 = 1;
+                    }
+                    ;
+                    // Set Read Pemission Level - Room
+                    if (((val.permissions_name === "site_read_room_self") || (val.permissions_name === "group_read_room"))) {
+                        roomPermissions_1 = 2;
+                    }
+                    ;
+                    if (val.permissions_name === "site_read_room_public" && equipPermissions_1 !== 2) {
+                        roomPermissions_1 = 1;
+                    }
+                    ;
+                });
+                if (!(roomPermissions_1 === 2 && equipPermissions_1 === 2)) return [3 /*break*/, 2];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID, "full")];
+            case 1:
+                queryData = _c.sent();
+                return [3 /*break*/, 8];
             case 2:
-                error_3 = _a.sent();
+                if (!(roomPermissions_1 === 1 && equipPermissions_1 === 2)) return [3 /*break*/, 4];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID, "elevatedEquip")];
+            case 3:
+                queryData = _c.sent();
+                return [3 /*break*/, 8];
+            case 4:
+                if (!(roomPermissions_1 === 2 && equipPermissions_1 === 1)) return [3 /*break*/, 6];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID, "elevatedRoom")];
+            case 5:
+                queryData = _c.sent();
+                return [3 /*break*/, 8];
+            case 6:
+                if (!(roomPermissions_1 === 1 && equipPermissions_1 === 1)) return [3 /*break*/, 8];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_equip_by_room_id(req.params.roomID, "public")];
+            case 7:
+                queryData = _c.sent();
+                _c.label = 8;
+            case 8:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Equip not found.", 404);
+                }
+                return [2 /*return*/, res.json({ equip: queryData })];
+            case 9:
+                error_3 = _c.sent();
                 next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 10];
+            case 10: return [2 /*return*/];
         }
     });
 }); });
+// Manual Test - Basic Functionality: 01/22/2022
+// roomRootRouter.get("/users/:userID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Processing
+//         const queryData = await RoomModel.retrieve_user_rooms_by_user_id_public(req.params.userID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get User Rooms - Public", 404);
+//         };
+//         return res.json({rooms: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 // Manual Test - Basic Functionality: 01/19/2022
-roomRootRouter.get("/groups/:groupID", authorizationMW_1["default"].defineSitePermissions(["view_room_public"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, roomModel_1["default"].retrieve_group_rooms_by_group_id_public(req.params.groupID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Equipment Not Found: Get Group Rooms - Public", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ rooms: queryData })];
-            case 2:
-                error_4 = _a.sent();
-                next(error_4);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// roomRootRouter.get("/groups/:groupID", authMW.defineSitePermissions(["view_room_public"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Processing
+//         const queryData = await RoomModel.retrieve_group_rooms_by_group_id_public(req.params.groupID);
+//         if (!queryData) {
+//             throw new ExpressError("Equipment Not Found: Get Group Rooms - Public", 404);
+//         };
+//         return res.json({rooms: queryData});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissions({
     user: ["read_room_self"],
     group: ["read_room"],
     public: ["view_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_5;
+    var queryData, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -237,8 +296,8 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissio
                 }
                 return [2 /*return*/, res.json({ room: queryData })];
             case 2:
-                error_5 = _a.sent();
-                next(error_5);
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

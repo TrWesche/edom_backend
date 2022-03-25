@@ -94,6 +94,46 @@ class RoomRepo {
         }
     };
 
+    static async fetch_room_equip_by_room_id(roomID: string, filterRoomsPublic: boolean, filterEquipPublic: boolean) {
+        try {
+            const filterBuilder = ['room_equipment.room_id = $1']
+
+            if (filterRoomsPublic === true) {
+                filterBuilder.push('rooms.public = TRUE');
+            };
+
+            if (filterEquipPublic === true) {
+                filterBuilder.push('equipment.public = TRUE')
+            };
+
+            const query = `
+                SELECT 
+                    equipment.id AS id, 
+                    equipment.name AS name,
+                    equipment.image_url AS image_url,
+                    equipment_categories.name AS category_name
+                FROM rooms
+                RIGHT JOIN room_equipment
+                ON rooms.id = room_equipment.room_id
+                LEFT JOIN equipment
+                ON equipment.id = room_equipment.equip_id
+                LEFT JOIN equipment_categories
+                ON equipment_categories.id = equipment.category_id
+                WHERE ${filterBuilder.join(' AND ')}`;
+
+            const queryParams = [roomID];
+
+            // console.log(query);
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate room equipment by room id - ${error}`, 500);
+        }
+    };
+
     static async update_room_by_room_id(roomID: string, roomData: RoomObjectProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
