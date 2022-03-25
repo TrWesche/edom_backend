@@ -196,6 +196,20 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
+    RoomModel.retrieve_room_group_by_room_id = function (roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var room;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_group_by_room_id(roomID)];
+                    case 1:
+                        room = _a.sent();
+                        return [2 /*return*/, room];
+                }
+            });
+        });
+    };
+    ;
     RoomModel.retrieve_room_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms;

@@ -402,16 +402,16 @@ equipRootRouter["delete"]("/:equipID", authorizationMW_1["default"].defineRouteP
     group: ["group_delete_equip"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, error_6;
+    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, groupData, error_6;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _c.trys.push([0, 5, , 6]);
+                _c.trys.push([0, 7, , 8]);
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                     throw new expresError_1["default"]("Must be logged in to delete equipment", 400);
                 }
-                console.log(req.resolvedPerms);
+                ;
                 queryData = void 0;
                 groupDeletePermitted_1 = 0;
                 siteDeletePermitted_1 = 0;
@@ -427,26 +427,33 @@ equipRootRouter["delete"]("/:equipID", authorizationMW_1["default"].defineRouteP
                     ;
                 });
                 if (!siteDeletePermitted_1) return [3 /*break*/, 2];
-                return [4 /*yield*/, equipModel_1["default"].delete_user_equip(req.params.equipID)];
+                return [4 /*yield*/, equipModel_1["default"].delete_user_equip(req.user.id, req.params.equipID)];
             case 1:
                 queryData = _c.sent();
-                return [3 /*break*/, 4];
+                return [3 /*break*/, 6];
             case 2:
-                if (!groupDeletePermitted_1) return [3 /*break*/, 4];
-                return [4 /*yield*/, equipModel_1["default"].delete_group_equip(req.params.equipID)];
+                if (!groupDeletePermitted_1) return [3 /*break*/, 6];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_group_by_equip_id(req.params.equipID)];
             case 3:
-                queryData = _c.sent();
-                _c.label = 4;
+                groupData = _c.sent();
+                if (!(groupData === null || groupData === void 0 ? void 0 : groupData.id)) return [3 /*break*/, 5];
+                return [4 /*yield*/, equipModel_1["default"].delete_group_equip(groupData.id, req.params.equipID)];
             case 4:
+                queryData = _c.sent();
+                _c.label = 5;
+            case 5:
+                ;
+                _c.label = 6;
+            case 6:
                 ;
                 if (!queryData) {
                     throw new expresError_1["default"]("Unable to delete target equipment", 404);
                 }
                 return [2 /*return*/, res.json({ message: "Equipment deleted." })];
-            case 5:
+            case 7:
                 error_6 = _c.sent();
                 return [2 /*return*/, next(error_6)];
-            case 6: return [2 /*return*/];
+            case 8: return [2 /*return*/];
         }
     });
 }); });

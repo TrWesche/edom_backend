@@ -217,6 +217,12 @@ class EquipModel {
         return rooms;
     };
 
+    static async retrieve_equip_group_by_equip_id(equipID: string) {
+        const equip = await EquipRepo.fetch_group_by_equip_id(equipID);
+        return equip;
+    };
+
+
     /*   _   _ ____  ____    _  _____ _____ 
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|  
@@ -250,7 +256,7 @@ class EquipModel {
         | |_| | |___| |___| |___  | | | |___ 
         |____/|_____|_____|_____| |_| |_____|
     */
-    static async delete_user_equip(equipID: string) {
+    static async delete_user_equip(userID: string, equipID: string) {
         // Processing
         try {
             await TransactionRepo.begin_transaction();
@@ -259,7 +265,7 @@ class EquipModel {
             await EquipRepo.disassociate_room_from_equip_by_equip_id(equipID);
 
             // Delete User -> Equipment Association Entry
-            const userAssoc = await EquipRepo.disassociate_user_from_equip(equipID);
+            const userAssoc = await EquipRepo.disassociate_user_from_equip(userID, equipID);
             if (!userAssoc?.equip_id) {
                 throw new ExpressError("Error while disassociating user from equipment entry", 500);
             };
@@ -280,7 +286,7 @@ class EquipModel {
         };
     };
     
-    static async delete_group_equip(equipID: string) {
+    static async delete_group_equip(groupID: string, equipID: string) {
         // Processing
         try {
             await TransactionRepo.begin_transaction();
@@ -289,7 +295,7 @@ class EquipModel {
             await EquipRepo.disassociate_room_from_equip_by_equip_id(equipID);
 
             // Delete Group -> Equipment Association Entry
-            const equipAssoc = await EquipRepo.disassociate_group_from_equip(equipID);
+            const equipAssoc = await EquipRepo.disassociate_group_from_equip(groupID, equipID);
             if (!equipAssoc?.equip_id) {
                 throw new ExpressError("Error while disassociating group from equipment entry", 500);
             };

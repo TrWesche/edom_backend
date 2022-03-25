@@ -417,5 +417,72 @@ roomRootRouter.patch("/:roomID", authorizationMW_1["default"].defineRoutePermiss
         }
     });
 }); });
+/* ____  _____ _     _____ _____ _____
+  |  _ \| ____| |   | ____|_   _| ____|
+  | | | |  _| | |   |  _|   | | |  _|
+  | |_| | |___| |___| |___  | | | |___
+  |____/|_____|_____|_____| |_| |_____|
+*/
+// Manual Test - Basic Functionality: 03/24/2022
+roomRootRouter["delete"]("/:roomID", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_delete_room_self"],
+    group: ["group_delete_room"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, groupData, error_6;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 7, , 8]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Must be logged in to delete room", 400);
+                }
+                ;
+                queryData = void 0;
+                groupDeletePermitted_1 = 0;
+                siteDeletePermitted_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Delete Permission Level
+                    if (val.permissions_name === "site_delete_room_self") {
+                        siteDeletePermitted_1 = 1;
+                    }
+                    ;
+                    if (val.permissions_name === "group_delete_room") {
+                        groupDeletePermitted_1 = 1;
+                    }
+                    ;
+                });
+                if (!siteDeletePermitted_1) return [3 /*break*/, 2];
+                return [4 /*yield*/, roomModel_1["default"].delete_user_room(req.user.id, req.params.roomID)];
+            case 1:
+                queryData = _c.sent();
+                return [3 /*break*/, 6];
+            case 2:
+                if (!groupDeletePermitted_1) return [3 /*break*/, 6];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_group_by_room_id(req.params.roomID)];
+            case 3:
+                groupData = _c.sent();
+                if (!(groupData === null || groupData === void 0 ? void 0 : groupData.id)) return [3 /*break*/, 5];
+                return [4 /*yield*/, roomModel_1["default"].delete_group_room(groupData.id, req.params.roomID)];
+            case 4:
+                queryData = _c.sent();
+                _c.label = 5;
+            case 5:
+                ;
+                _c.label = 6;
+            case 6:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Unable to delete target room", 404);
+                }
+                return [2 /*return*/, res.json({ message: "Room deleted." })];
+            case 7:
+                error_6 = _c.sent();
+                return [2 /*return*/, next(error_6)];
+            case 8: return [2 /*return*/];
+        }
+    });
+}); });
 exports["default"] = roomRootRouter;
 //# sourceMappingURL=roomRootRouter.js.map

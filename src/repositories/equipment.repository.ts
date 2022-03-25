@@ -166,14 +166,14 @@ class EquipmentRepo {
         }
     };
 
-    static async disassociate_user_from_equip(equipID: string) {
+    static async disassociate_user_from_equip(userID: string, equipID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM user_equipment
-                WHERE equip_id = $1
+                WHERE user_id = $1 AND equip_id = $2
                 RETURNING user_id, equip_id`,
             [
-                equipID
+                userID, equipID
             ]);
             
             const rval = result.rows[0];
@@ -352,14 +352,14 @@ class EquipmentRepo {
         }
     };
 
-    static async disassociate_group_from_equip(equipID: string) {
+    static async disassociate_group_from_equip(groupID: string, equipID: string) {
         try {
             const result = await pgdb.query(
                 `DELETE FROM group_equipment
-                WHERE equip_id = $1
+                WHERE group_id = $1 AND equip_id = $2
                 RETURNING group_id, equip_id`,
             [
-                equipID
+                groupID, equipID
             ]);
             
             const rval = result.rows[0];
@@ -398,6 +398,31 @@ class EquipmentRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`Server Error - fetch_equip_by_group_id - ${error}`, 500);
+        }
+    };
+
+    static async fetch_group_by_equip_id(equipID: string) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            query = `
+                SELECT 
+                    sitegroups.id AS id, 
+                    sitegroups.name AS name, 
+                    sitegroups.image_url AS image_url
+                FROM sitegroups
+                LEFT JOIN group_equipment
+                ON group_equipment.group_id = sitegroups.id
+                WHERE group_equipment.equip_id = $1`
+            queryParams.push(equipID);
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval: EquipObjectProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`Server Error - fetch_group_by_equip_id - ${error}`, 500);
         }
     };
 

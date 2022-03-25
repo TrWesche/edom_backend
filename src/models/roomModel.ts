@@ -120,6 +120,11 @@ class RoomModel {
         return room;
     };
 
+    static async retrieve_room_group_by_room_id(roomID: string) {
+        const room = await RoomRepo.fetch_group_by_room_id(roomID);
+        return room;
+    };
+
     static async retrieve_room_list_paginated(limit: number, offset: number) {
         const rooms = await RoomRepo.fetch_room_list_paginated(limit, offset);
         return rooms;

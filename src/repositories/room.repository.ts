@@ -1,6 +1,7 @@
 import ExpressError from "../utils/expresError";
 import createUpdateQueryPGSQL from "../utils/createUpdateQueryPGSQL";
 import pgdb from "../databases/postgreSQL/pgdb";
+import { GroupObjectProps } from "./group.repository";
 
 
 export interface RoomObjectProps {
@@ -419,6 +420,31 @@ class RoomRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create room association group -> room - ${error}`, 500);
+        }
+    };
+
+    static async fetch_group_by_room_id(roomID: string) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+                query = `
+                    SELECT 
+                        sitegroups.id AS id,
+                        sitegroups.name AS name,
+                        sitegroups.image_url AS image_url
+                    FROM sitegroups
+                    LEFT JOIN group_rooms
+                    ON group_rooms.group_id = sitegroups.id
+                    WHERE group_rooms.room_id = $1`
+                queryParams.push(roomID);
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval: GroupObjectProps | undefined = result.rows[0];
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate group id by room id - ${error}`, 500);
         }
     };
 

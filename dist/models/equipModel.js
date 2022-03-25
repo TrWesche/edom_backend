@@ -395,6 +395,20 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
+    EquipModel.retrieve_equip_group_by_equip_id = function (equipID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var equip;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_group_by_equip_id(equipID)];
+                    case 1:
+                        equip = _a.sent();
+                        return [2 /*return*/, equip];
+                }
+            });
+        });
+    };
+    ;
     /*   _   _ ____  ____    _  _____ _____
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|
@@ -432,7 +446,7 @@ var EquipModel = /** @class */ (function () {
         | |_| | |___| |___| |___  | | | |___
         |____/|_____|_____|_____| |_| |_____|
     */
-    EquipModel.delete_user_equip = function (equipID) {
+    EquipModel.delete_user_equip = function (userID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var userAssoc, equipEntry, error_4;
             return __generator(this, function (_a) {
@@ -447,7 +461,7 @@ var EquipModel = /** @class */ (function () {
                     case 2:
                         // Delete Room -> Equpiment Association Entry(s)
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(equipID)];
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_user_from_equip(userID, equipID)];
                     case 3:
                         userAssoc = _a.sent();
                         if (!(userAssoc === null || userAssoc === void 0 ? void 0 : userAssoc.equip_id)) {
@@ -481,7 +495,7 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.delete_group_equip = function (equipID) {
+    EquipModel.delete_group_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
             var equipAssoc, equipEntry, error_5;
             return __generator(this, function (_a) {
@@ -496,7 +510,7 @@ var EquipModel = /** @class */ (function () {
                     case 2:
                         // Delete Room -> Equpiment Association Entry(s)
                         _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_group_from_equip(equipID)];
+                        return [4 /*yield*/, equipment_repository_1["default"].disassociate_group_from_equip(groupID, equipID)];
                     case 3:
                         equipAssoc = _a.sent();
                         if (!(equipAssoc === null || equipAssoc === void 0 ? void 0 : equipAssoc.equip_id)) {

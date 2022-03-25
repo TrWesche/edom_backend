@@ -333,11 +333,7 @@ equipRootRouter.delete("/:equipID",
     authMW.validateRoutePermissions,
     async (req, res, next) => {
     try {
-        if (!req.user?.id) {
-            throw new ExpressError(`Must be logged in to delete equipment`, 400);
-        }
-
-        console.log(req.resolvedPerms);
+        if (!req.user?.id) {throw new ExpressError(`Must be logged in to delete equipment`, 400);};
 
         let queryData;
 
@@ -356,9 +352,12 @@ equipRootRouter.delete("/:equipID",
         })
 
         if (siteDeletePermitted) {
-            queryData = await EquipModel.delete_user_equip(req.params.equipID);
+            queryData = await EquipModel.delete_user_equip(req.user.id, req.params.equipID);
         } else if (groupDeletePermitted) {
-            queryData = await EquipModel.delete_group_equip(req.params.equipID);
+            const groupData = await EquipModel.retrieve_equip_group_by_equip_id(req.params.equipID);
+            if (groupData?.id) {
+                queryData = await EquipModel.delete_group_equip(groupData.id, req.params.equipID);
+            };
         };
         
         if(!queryData) {
