@@ -104,8 +104,19 @@ class RoomModel {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/ 
     */
-    static async retrieve_room_by_room_id(roomID: string, roomPublic?: boolean) {
-        const room = RoomRepo.fetch_room_by_room_id(roomID, roomPublic);
+    static async retrieve_room_by_room_id(roomID: string, accessType: string) {
+        let room;
+        switch (accessType) {
+            case "public":
+                room = await RoomRepo.fetch_public_room_by_room_id(roomID);
+                break;
+            case "elevated":
+                room = await RoomRepo.fetch_unrestricted_room_by_room_id(roomID);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+
         return room;
     };
 

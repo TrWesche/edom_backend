@@ -169,12 +169,29 @@ var RoomModel = /** @class */ (function () {
         |  _ <| |___ / ___ \| |_| |
         |_| \_\_____/_/   \_\____/
     */
-    RoomModel.retrieve_room_by_room_id = function (roomID, roomPublic) {
+    RoomModel.retrieve_room_by_room_id = function (roomID, accessType) {
         return __awaiter(this, void 0, void 0, function () {
-            var room;
-            return __generator(this, function (_a) {
-                room = room_repository_1["default"].fetch_room_by_room_id(roomID, roomPublic);
-                return [2 /*return*/, room];
+            var room, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = accessType;
+                        switch (_a) {
+                            case "public": return [3 /*break*/, 1];
+                            case "elevated": return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, room_repository_1["default"].fetch_public_room_by_room_id(roomID)];
+                    case 2:
+                        room = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 3: return [4 /*yield*/, room_repository_1["default"].fetch_unrestricted_room_by_room_id(roomID)];
+                    case 4:
+                        room = _b.sent();
+                        return [3 /*break*/, 6];
+                    case 5: throw new expresError_1["default"]("Server Configuration Error", 500);
+                    case 6: return [2 /*return*/, room];
+                }
             });
         });
     };

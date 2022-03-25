@@ -233,19 +233,56 @@ roomRootRouter.get("/:roomID/equip",
 
 roomRootRouter.get("/:roomID", 
     authMW.defineRoutePermissions({
-        user: ["read_room_self"],
-        group: ["read_room"],
-        public: ["view_room_public"]
+        user: ["site_read_room_self", "site_update_room_self", "site_delete_room_self"],
+        group: ["group_read_room", "group_update_room", "group_delete_room"],
+        public: ["site_read_room_public"]
     }),
-    authMW.validateRoutePermissions, 
+    authMW.validateRoutePermissions,
     async (req, res, next) => {
     try {
-        const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
-        if (!queryData) {
-            throw new ExpressError("Room Not Found.", 404);
-        }
+        if (!req.user?.id) {throw new ExpressError("User ID Not Defined", 401)};
+
+        let queryData;
+
+        let readPermitted = 0; // 1 = Public View, 2 = Private View
+        let updatePermitted = 0; // 1 = Permitted
+        let deletePermitted = 0; // 1 = Permitted
+
+        req.resolvedPerms?.forEach((val: any) => {
+            // Set Read Pemission Level
+            if ( ((val.permissions_name === "site_read_room_self") || (val.permissions_name === "group_read_room"))) {
+                readPermitted = 2;
+            };
+
+            if ( val.permissions_name === "site_read_room_public" && readPermitted !== 2) {
+                readPermitted = 1;
+            };
+
+            // Set Update Permission Level
+            if ( ((val.permissions_name === "site_update_room_self") || (val.permissions_name === "group_update_room"))) {
+                updatePermitted = 1;
+            };
+
+            // Set Delete Permission Level
+            if ( ((val.permissions_name === "site_delete_room_self") || (val.permissions_name === "group_delete_room"))) {
+                deletePermitted = 1;
+            };
+        })
+
+        if (readPermitted === 2) {
+            queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID, "elevated");
+        } else 
+        if (readPermitted === 1) {
+            queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID, "public");
+        };
         
-        return res.json({room: queryData});
+        if (!queryData) {
+            throw new ExpressError("Room not found.", 404);
+        }
+
+        const output = {...queryData, canUpdate: updatePermitted, canDelete: deletePermitted};
+
+        return res.json({equip: output});
     } catch (error) {
         next(error)
     }

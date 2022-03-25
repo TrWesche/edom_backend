@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -279,27 +290,68 @@ roomRootRouter.get("/:roomID/equip", authorizationMW_1["default"].defineRoutePer
 //     }
 // });
 roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissions({
-    user: ["read_room_self"],
-    group: ["read_room"],
-    public: ["view_room_public"]
+    user: ["site_read_room_self", "site_update_room_self", "site_delete_room_self"],
+    group: ["group_read_room", "group_update_room", "group_delete_room"],
+    public: ["site_read_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var queryData, readPermitted_1, updatePermitted_1, deletePermitted_1, output, error_4;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Room Not Found.", 404);
+                _c.trys.push([0, 5, , 6]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("User ID Not Defined", 401);
                 }
-                return [2 /*return*/, res.json({ room: queryData })];
+                ;
+                queryData = void 0;
+                readPermitted_1 = 0;
+                updatePermitted_1 = 0;
+                deletePermitted_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Read Pemission Level
+                    if (((val.permissions_name === "site_read_room_self") || (val.permissions_name === "group_read_room"))) {
+                        readPermitted_1 = 2;
+                    }
+                    ;
+                    if (val.permissions_name === "site_read_room_public" && readPermitted_1 !== 2) {
+                        readPermitted_1 = 1;
+                    }
+                    ;
+                    // Set Update Permission Level
+                    if (((val.permissions_name === "site_update_room_self") || (val.permissions_name === "group_update_room"))) {
+                        updatePermitted_1 = 1;
+                    }
+                    ;
+                    // Set Delete Permission Level
+                    if (((val.permissions_name === "site_delete_room_self") || (val.permissions_name === "group_delete_room"))) {
+                        deletePermitted_1 = 1;
+                    }
+                    ;
+                });
+                if (!(readPermitted_1 === 2)) return [3 /*break*/, 2];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID, "elevated")];
+            case 1:
+                queryData = _c.sent();
+                return [3 /*break*/, 4];
             case 2:
-                error_4 = _a.sent();
+                if (!(readPermitted_1 === 1)) return [3 /*break*/, 4];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID, "public")];
+            case 3:
+                queryData = _c.sent();
+                _c.label = 4;
+            case 4:
+                ;
+                if (!queryData) {
+                    throw new expresError_1["default"]("Room not found.", 404);
+                }
+                output = __assign(__assign({}, queryData), { canUpdate: updatePermitted_1, canDelete: deletePermitted_1 });
+                return [2 /*return*/, res.json({ equip: output })];
+            case 5:
+                error_4 = _c.sent();
                 next(error_4);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

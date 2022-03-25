@@ -99,19 +99,19 @@ userRoomRouter.get("/:roomID/equips", authMW.defineSitePermissions(["read_room_s
     }
 });
 
-// Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.get("/:roomID", authMW.defineSitePermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
-        if (!queryData) {
-            throw new ExpressError("Room Not Found.", 404);
-        }
+// // Manual Test - Basic Functionality: 01/13/2022
+// userRoomRouter.get("/:roomID", authMW.defineSitePermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
+//         if (!queryData) {
+//             throw new ExpressError("Room Not Found.", 404);
+//         }
         
-        return res.json({equip: [queryData]});
-    } catch (error) {
-        next(error)
-    }
-});
+//         return res.json({equip: [queryData]});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 
 /* _   _ ____  ____    _  _____ _____ 
@@ -124,7 +124,7 @@ userRoomRouter.get("/:roomID", authMW.defineSitePermissions(["read_room_self"]),
 userRoomRouter.patch("/:roomID", authMW.defineSitePermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
     try {
         // Preflight
-        const prevValues = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
+        const prevValues = await RoomModel.retrieve_room_by_room_id(req.params.roomID, 'elevated');
         if (!prevValues) {
             throw new ExpressError(`Update Failed: Room Not Found`, 404);
         };

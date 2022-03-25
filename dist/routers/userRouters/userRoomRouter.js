@@ -138,28 +138,18 @@ userRoomRouter.get("/:roomID/equips", authorizationMW_1["default"].defineSitePer
         }
     });
 }); });
-// Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID)];
-            case 1:
-                queryData = _a.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Room Not Found.", 404);
-                }
-                return [2 /*return*/, res.json({ equip: [queryData] })];
-            case 2:
-                error_3 = _a.sent();
-                next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
+// // Manual Test - Basic Functionality: 01/13/2022
+// userRoomRouter.get("/:roomID", authMW.defineSitePermissions(["read_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         const queryData = await RoomModel.retrieve_room_by_room_id(req.params.roomID);
+//         if (!queryData) {
+//             throw new ExpressError("Room Not Found.", 404);
+//         }
+//         return res.json({equip: [queryData]});
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 /* _   _ ____  ____    _  _____ _____
   | | | |  _ \|  _ \  / \|_   _| ____|
   | | | | |_) | | | |/ _ \ | | |  _|
@@ -168,12 +158,12 @@ userRoomRouter.get("/:roomID", authorizationMW_1["default"].defineSitePermission
 */
 // Manual Test - Basic Functionality: 01/13/2022
 userRoomRouter.patch("/:roomID", authorizationMW_1["default"].defineSitePermissions(["read_room_self", "update_room_self"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_4;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID)];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID, 'elevated')];
             case 1:
                 prevValues_1 = _a.sent();
                 if (!prevValues_1) {
@@ -207,8 +197,8 @@ userRoomRouter.patch("/:roomID", authorizationMW_1["default"].defineSitePermissi
                 newData = _a.sent();
                 return [2 /*return*/, res.json({ rooms: [newData] })];
             case 3:
-                error_4 = _a.sent();
-                next(error_4);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
