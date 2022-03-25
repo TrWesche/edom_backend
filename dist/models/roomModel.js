@@ -336,7 +336,7 @@ var RoomModel = /** @class */ (function () {
         | |_| |  __/| |_| / ___ \| | | |___
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    RoomModel.modify_user_room = function (roomID, data) {
+    RoomModel.modify_room = function (roomID, data) {
         return __awaiter(this, void 0, void 0, function () {
             var room;
             return __generator(this, function (_a) {
@@ -354,24 +354,14 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    RoomModel.modify_group_room = function (roomID, data) {
-        return __awaiter(this, void 0, void 0, function () {
-            var room;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].update_room_by_room_id(roomID, data)];
-                    case 1:
-                        room = _a.sent();
-                        if (!room) {
-                            throw new expresError_1["default"]("Unable to update target group room", 400);
-                        }
-                        ;
-                        return [2 /*return*/, room];
-                }
-            });
-        });
-    };
-    ;
+    // static async modify_group_room(roomID: string, data: RoomObjectProps) {
+    //     // Perform Room Update
+    //     const room = await RoomRepo.update_room_by_room_id(roomID, data);
+    //     if (!room) {
+    //         throw new ExpressError("Unable to update target group room", 400);
+    //     };
+    //     return room;
+    // };
     /*   ____  _____ _     _____ _____ _____
         |  _ \| ____| |   | ____|_   _| ____|
         | | | |  _| | |   |  _|   | | |  _|

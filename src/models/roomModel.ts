@@ -191,7 +191,7 @@ class RoomModel {
         | |_| |  __/| |_| / ___ \| | | |___ 
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    static async modify_user_room(roomID: string, data: RoomObjectProps) {
+    static async modify_room(roomID: string, data: RoomObjectProps) {
         // Perform Room Update
         const room = await RoomRepo.update_room_by_room_id(roomID, data);
         if (!room) {
@@ -201,15 +201,15 @@ class RoomModel {
         return room;
     };
 
-    static async modify_group_room(roomID: string, data: RoomObjectProps) {
-        // Perform Room Update
-        const room = await RoomRepo.update_room_by_room_id(roomID, data);
-        if (!room) {
-            throw new ExpressError("Unable to update target group room", 400);
-        };
+    // static async modify_group_room(roomID: string, data: RoomObjectProps) {
+    //     // Perform Room Update
+    //     const room = await RoomRepo.update_room_by_room_id(roomID, data);
+    //     if (!room) {
+    //         throw new ExpressError("Unable to update target group room", 400);
+    //     };
 
-        return room;
-    };
+    //     return room;
+    // };
 
 
     /*   ____  _____ _     _____ _____ _____ 

@@ -121,48 +121,48 @@ userRoomRouter.get("/:roomID/equips", authMW.defineSitePermissions(["read_room_s
    \___/|_|   |____/_/   \_\_| |_____|
 */
 // Manual Test - Basic Functionality: 01/13/2022
-userRoomRouter.patch("/:roomID", authMW.defineSitePermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        const prevValues = await RoomModel.retrieve_room_by_room_id(req.params.roomID, 'elevated');
-        if (!prevValues) {
-            throw new ExpressError(`Update Failed: Room Not Found`, 404);
-        };
+// userRoomRouter.patch("/:roomID", authMW.defineSitePermissions(["read_room_self", "update_room_self"]), authMW.validatePermissions, async (req, res, next) => {
+//     try {
+//         // Preflight
+//         const prevValues = await RoomModel.retrieve_room_by_room_id(req.params.roomID, 'elevated');
+//         if (!prevValues) {
+//             throw new ExpressError(`Update Failed: Room Not Found`, 404);
+//         };
 
-        const updateValues: UserRoomUpdateProps = {
-            name: req.body.name,
-            category_id: req.body.category_id,
-            headline: req.body.headline,
-            description: req.body.description,
-            public: req.body.public
-        };
+//         const updateValues: UserRoomUpdateProps = {
+//             name: req.body.name,
+//             category_id: req.body.category_id,
+//             headline: req.body.headline,
+//             description: req.body.description,
+//             public: req.body.public
+//         };
 
-        if(!validateUserRoomUpdateSchema(updateValues)) {
-            throw new ExpressError(`Update Error: ${validateUserRoomUpdateSchema.errors}`, 400);
-        };
+//         if(!validateUserRoomUpdateSchema(updateValues)) {
+//             throw new ExpressError(`Update Error: ${validateUserRoomUpdateSchema.errors}`, 400);
+//         };
 
-        // Build update list for patch query 
-        const itemsList = {};
-        const newKeys = Object.keys(req.body);
-        newKeys.map(key => {
-            if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
-                itemsList[key] = req.body[key];
-            }
-        })
+//         // Build update list for patch query 
+//         const itemsList = {};
+//         const newKeys = Object.keys(req.body);
+//         newKeys.map(key => {
+//             if(updateValues[key] !== undefined && (updateValues[key] != prevValues[key]) ) {
+//                 itemsList[key] = req.body[key];
+//             }
+//         })
 
 
-        // If no changes return original data
-        if(Object.keys(itemsList).length === 0) {
-            return res.json({equip: [prevValues]});
-        }
+//         // If no changes return original data
+//         if(Object.keys(itemsList).length === 0) {
+//             return res.json({equip: [prevValues]});
+//         }
 
-        // Update the user data with the itemsList information
-        const newData = await RoomModel.modify_user_room(req.params.roomID, itemsList);
-        return res.json({rooms: [newData]})
-    } catch (error) {
-        next(error)
-    }
-});
+//         // Update the user data with the itemsList information
+//         const newData = await RoomModel.modify_user_room(req.params.roomID, itemsList);
+//         return res.json({rooms: [newData]})
+//     } catch (error) {
+//         next(error)
+//     }
+// });
 
 
 /* ____  _____ _     _____ _____ _____ 

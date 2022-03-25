@@ -57,6 +57,7 @@ var roomModel_1 = require("../models/roomModel");
 var authorizationMW_1 = require("../middleware/authorizationMW");
 // Schema Imports
 var roomCreateSchema_1 = require("../schemas/room/roomCreateSchema");
+var roomUpdateSchema_1 = require("../schemas/room/roomUpdateSchema");
 var roomRootRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -352,6 +353,67 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissio
                 next(error_4);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
+        }
+    });
+}); });
+/* _   _ ____  ____    _  _____ _____
+  | | | |  _ \|  _ \  / \|_   _| ____|
+  | | | | |_) | | | |/ _ \ | | |  _|
+  | |_| |  __/| |_| / ___ \| | | |___
+   \___/|_|   |____/_/   \_\_| |_____|
+*/
+// Manual Test - Basic Functionality: 03/24/2022
+roomRootRouter.patch("/:roomID", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_update_room_self"],
+    group: ["group_update_room"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, roomModel_1["default"].retrieve_room_by_room_id(req.params.roomID, "elevated")];
+            case 1:
+                prevValues_1 = _a.sent();
+                if (!prevValues_1) {
+                    throw new expresError_1["default"]("Update Failed: Room Not Found", 404);
+                }
+                ;
+                updateValues_1 = {
+                    name: req.body.name,
+                    category_id: req.body.category_id,
+                    headline: req.body.headline,
+                    description: req.body.description,
+                    image_url: req.body.image_url,
+                    public: req.body.public
+                };
+                if (!(0, roomUpdateSchema_1["default"])(updateValues_1)) {
+                    throw new expresError_1["default"]("Update Error: ".concat(roomUpdateSchema_1["default"].errors), 400);
+                }
+                ;
+                itemsList_1 = {};
+                newKeys = Object.keys(req.body);
+                newKeys.map(function (key) {
+                    if (updateValues_1[key] !== undefined && (updateValues_1[key] != prevValues_1[key])) {
+                        itemsList_1[key] = req.body[key];
+                    }
+                });
+                // If no changes return original data
+                if (Object.keys(itemsList_1).length === 0) {
+                    return [2 /*return*/, res.json({ equip: [prevValues_1] })];
+                }
+                return [4 /*yield*/, roomModel_1["default"].modify_room(req.params.roomID, itemsList_1)];
+            case 2:
+                newData = _a.sent();
+                return [2 /*return*/, res.json({ room: newData })];
+            case 3:
+                error_5 = _a.sent();
+                next(error_5);
+                return [3 /*break*/, 4];
+            case 4:
+                ;
+                return [2 /*return*/];
         }
     });
 }); });

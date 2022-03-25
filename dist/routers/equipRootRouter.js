@@ -379,7 +379,7 @@ equipRootRouter.patch("/:equipID", authorizationMW_1["default"].defineRoutePermi
                 return [4 /*yield*/, equipModel_1["default"].modify_equip(req.params.equipID, itemsList_1)];
             case 2:
                 newData = _a.sent();
-                return [2 /*return*/, res.json({ equip: [newData] })];
+                return [2 /*return*/, res.json({ equip: newData })];
             case 3:
                 error_5 = _a.sent();
                 next(error_5);

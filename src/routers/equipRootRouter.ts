@@ -309,7 +309,7 @@ equipRootRouter.patch("/:equipID",
 
             // Update the user data with the itemsList information
             const newData = await EquipModel.modify_equip(req.params.equipID, itemsList);
-            return res.json({equip: [newData]})
+            return res.json({equip: newData})
         } catch (error) {
             next(error)
         };
