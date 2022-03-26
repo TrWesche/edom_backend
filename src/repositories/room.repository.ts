@@ -419,6 +419,38 @@ class RoomRepo {
         }
     };
 
+    static async fetch_rooms_by_group_id(groupID: string, roomPublic?: boolean) {
+        try {
+            let query: string;
+            let queryParams: Array<any> = [];
+
+            if (roomPublic !== undefined) {
+                query = `
+                    SELECT id, name, category_id, headline
+                    FROM rooms
+                    RIGHT JOIN group_rooms
+                    ON rooms.id = group_rooms.room_id
+                    WHERE group_rooms.group_id = $1 AND rooms.public = $2`
+                queryParams.push(groupID, roomPublic);
+            } else {
+                query = `
+                    SELECT id, name, category_id, headline
+                    FROM rooms
+                    RIGHT JOIN group_rooms
+                    ON rooms.id = group_rooms.room_id
+                    WHERE group_rooms.group_id = $1`
+                queryParams.push(groupID);
+            }
+
+            const result = await pgdb.query(query, queryParams);
+    
+            const rval: Array<RoomObjectProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate rooms by group id - ${error}`, 500);
+        }
+    };
+
     static async disassociate_group_from_room(groupId: string, roomID: string) {
         try {
             const result = await pgdb.query(
@@ -501,35 +533,23 @@ class RoomRepo {
 
 
 
-    static async fetch_rooms_by_group_id(groupID: string, roomPublic?: boolean) {
+
+    static async associate_equip_to_room(equipID: string, roomID: string) {
         try {
-            let query: string;
-            let queryParams: Array<any> = [];
-
-            if (roomPublic !== undefined) {
-                query = `
-                    SELECT id, name, category_id, headline
-                    FROM rooms
-                    RIGHT JOIN group_rooms
-                    ON rooms.id = group_rooms.room_id
-                    WHERE group_rooms.group_id = $1 AND rooms.public = $2`
-                queryParams.push(groupID, roomPublic);
-            } else {
-                query = `
-                    SELECT id, name, category_id, headline
-                    FROM rooms
-                    RIGHT JOIN group_rooms
-                    ON rooms.id = group_rooms.room_id
-                    WHERE group_rooms.group_id = $1`
-                queryParams.push(groupID);
-            }
-
-            const result = await pgdb.query(query, queryParams);
-    
-            const rval: Array<RoomObjectProps> | undefined = result.rows;
+            const result = await pgdb.query(
+                `INSERT INTO room_equipment 
+                    (room_id, equip_id) 
+                VALUES ($1, $2) 
+                RETURNING room_id, equip_id`,
+            [
+                roomID,
+                equipID
+            ]);
+            
+            const rval = result.rows[0];
             return rval;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate rooms by group id - ${error}`, 500);
+            throw new ExpressError(`Server Error - associate_room_to_equip - ${error}`, 500);
         }
     };
 }

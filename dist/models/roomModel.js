@@ -480,6 +480,33 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
+    // Equip
+    RoomModel.create_equip_room_assignment = function (equipID, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var data, error_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, room_repository_1["default"].associate_equip_to_room(equipID, roomID)];
+                    case 1:
+                        data = _a.sent();
+                        if (!data) {
+                            throw new expresError_1["default"]("Unable to create association between equipment and room", 400);
+                        }
+                        ;
+                        return [2 /*return*/, data];
+                    case 2:
+                        error_5 = _a.sent();
+                        throw new expresError_1["default"](error_5.message, error_5.status);
+                    case 3:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     return RoomModel;
 }());
 exports["default"] = RoomModel;

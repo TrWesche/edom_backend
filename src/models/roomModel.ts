@@ -287,6 +287,22 @@ class RoomModel {
             throw new ExpressError(error.message, error.status);
         };
     };
+
+
+
+
+    // Equip
+    static async create_equip_room_assignment(equipID: string, roomID: string) {
+        try {
+            const data = await RoomRepo.associate_equip_to_room(equipID, roomID)
+            if (!data) {
+                throw new ExpressError("Unable to create association between equipment and room", 400);
+            };
+            return data;    
+        } catch (error) {
+            throw new ExpressError(error.message, error.status);
+        };
+    };
 }
 
 export default RoomModel;

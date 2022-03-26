@@ -58,6 +58,7 @@ var authorizationMW_1 = require("../middleware/authorizationMW");
 // Schema Imports
 var roomCreateSchema_1 = require("../schemas/room/roomCreateSchema");
 var roomUpdateSchema_1 = require("../schemas/room/roomUpdateSchema");
+var equipModel_1 = require("../models/equipModel");
 var roomRootRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -147,6 +148,88 @@ roomRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest,
         }
     });
 }); });
+roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_update_equip_self", "site_update_room_self"],
+    group: ["group_update_equip", "group_update_room"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, reqValues_1, permitted_1, equipData, equipData, equipRoom, error_2;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 7, , 8]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Must be logged in to create room", 401);
+                }
+                ;
+                queryData = void 0;
+                reqValues_1 = {
+                    action: req.body.action,
+                    context: req.body.context ? req.body.context : "user",
+                    ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
+                    equipid: req.body.equipID
+                };
+                permitted_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    if (reqValues_1.context === "user" && (val.permissions_name === "site_update_equip_self" || val.permissions_name === "site_update_room_self")) {
+                        permitted_1++;
+                    }
+                    ;
+                    if (reqValues_1.context === "group" && (val.permissions_name === "group_update_equip" || val.permissions_name === "group_update_room")) {
+                        permitted_1++;
+                    }
+                    ;
+                });
+                if (permitted_1 !== 2) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
+                }
+                ;
+                if (!(reqValues_1.context === "user")) return [3 /*break*/, 2];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_user_and_equip_id(reqValues_1.ownerid, reqValues_1.equipid)];
+            case 1:
+                equipData = _c.sent();
+                if (!equipData.id) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
+                }
+                ;
+                return [3 /*break*/, 4];
+            case 2:
+                if (!(reqValues_1.context === "group")) return [3 /*break*/, 4];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_group_and_equip_id(reqValues_1.ownerid, reqValues_1.equipid)];
+            case 3:
+                equipData = _c.sent();
+                if (!equipData.id) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
+                }
+                ;
+                _c.label = 4;
+            case 4:
+                ;
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(reqValues_1.equipid, "full")];
+            case 5:
+                equipRoom = _c.sent();
+                if (equipRoom.length !== 0) {
+                    throw new expresError_1["default"]("This equip is already assigned to a room.", 400);
+                }
+                ;
+                return [4 /*yield*/, roomModel_1["default"].create_equip_room_assignment(reqValues_1.equipid, req.params.roomID)];
+            case 6:
+                // Assign equip to the target room
+                queryData = _c.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Assoicate Equipment to Room Failed", 500);
+                }
+                ;
+                return [2 /*return*/, res.json({ equip_add: queryData })];
+            case 7:
+                error_2 = _c.sent();
+                next(error_2);
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
+        }
+    });
+}); });
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |
@@ -159,7 +242,7 @@ roomRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
     group: [],
     public: ["site_read_equip_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var limit, offset, queryData, error_2;
+    var limit, offset, queryData, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -182,8 +265,8 @@ roomRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
                 }
                 return [2 /*return*/, res.json({ rooms: queryData })];
             case 2:
-                error_2 = _a.sent();
-                next(error_2);
+                error_3 = _a.sent();
+                next(error_3);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -195,7 +278,7 @@ roomRootRouter.get("/:roomID/equip", authorizationMW_1["default"].defineRoutePer
     group: ["group_read_equip", "group_read_room"],
     public: ["site_read_equip_public", "site_read_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, roomPermissions_1, equipPermissions_1, error_3;
+    var queryData, roomPermissions_1, equipPermissions_1, error_4;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -258,8 +341,8 @@ roomRootRouter.get("/:roomID/equip", authorizationMW_1["default"].defineRoutePer
                 }
                 return [2 /*return*/, res.json({ equip: queryData })];
             case 9:
-                error_3 = _c.sent();
-                next(error_3);
+                error_4 = _c.sent();
+                next(error_4);
                 return [3 /*break*/, 10];
             case 10: return [2 /*return*/];
         }
@@ -271,7 +354,7 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissio
     group: ["group_read_room", "group_update_room", "group_delete_room"],
     public: ["site_read_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, readPermitted_1, updatePermitted_1, deletePermitted_1, output, error_4;
+    var queryData, readPermitted_1, updatePermitted_1, deletePermitted_1, output, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -325,8 +408,8 @@ roomRootRouter.get("/:roomID", authorizationMW_1["default"].defineRoutePermissio
                 output = __assign(__assign({}, queryData), { canUpdate: updatePermitted_1, canDelete: deletePermitted_1 });
                 return [2 /*return*/, res.json({ equip: output })];
             case 5:
-                error_4 = _c.sent();
-                next(error_4);
+                error_5 = _c.sent();
+                next(error_5);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
@@ -344,7 +427,7 @@ roomRootRouter.patch("/:roomID", authorizationMW_1["default"].defineRoutePermiss
     group: ["group_update_room"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_5;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -384,8 +467,8 @@ roomRootRouter.patch("/:roomID", authorizationMW_1["default"].defineRoutePermiss
                 newData = _a.sent();
                 return [2 /*return*/, res.json({ room: newData })];
             case 3:
-                error_5 = _a.sent();
-                next(error_5);
+                error_6 = _a.sent();
+                next(error_6);
                 return [3 /*break*/, 4];
             case 4:
                 ;
@@ -405,7 +488,7 @@ roomRootRouter["delete"]("/:roomID", authorizationMW_1["default"].defineRoutePer
     group: ["group_delete_room"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, groupData, error_6;
+    var queryData, groupDeletePermitted_1, siteDeletePermitted_1, groupData, error_7;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -454,8 +537,8 @@ roomRootRouter["delete"]("/:roomID", authorizationMW_1["default"].defineRoutePer
                 }
                 return [2 /*return*/, res.json({ message: "Room deleted." })];
             case 7:
-                error_6 = _c.sent();
-                return [2 /*return*/, next(error_6)];
+                error_7 = _c.sent();
+                return [2 /*return*/, next(error_7)];
             case 8: return [2 /*return*/];
         }
     });

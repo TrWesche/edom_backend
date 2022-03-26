@@ -13,6 +13,7 @@ import authMW from "../middleware/authorizationMW";
 // Schema Imports
 import validateRoomCreateSchema, { RoomCreateProps } from "../schemas/room/roomCreateSchema";
 import validtteRoomUpdateSchema, { RoomUpdateProps } from "../schemas/room/roomUpdateSchema";
+import EquipModel from "../models/equipModel";
 
 
 const roomRootRouter = express.Router();
@@ -93,7 +94,67 @@ roomRootRouter.post("/create",
     }
 );
 
+roomRootRouter.post("/:roomID/equip",
+    authMW.defineRoutePermissions({
+        user: ["site_update_equip_self", "site_update_room_self"],
+        group: ["group_update_equip", "group_update_room"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            if (!req.user?.id) {throw new ExpressError(`Must be logged in to create room`, 401);};
 
+            let queryData;
+
+            const reqValues = {
+                action: req.body.action,
+                context: req.body.context ? req.body.context : "user",
+                ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
+                equipid: req.body.equipID
+            };
+
+            // Validate Permissions
+            let permitted = 0;
+            req.resolvedPerms?.forEach((val: any) => {
+                if (reqValues.context === "user" && (val.permissions_name === "site_update_equip_self" || val.permissions_name === "site_update_room_self") ) {
+                    permitted++;
+                };
+
+                if (reqValues.context === "group" && (val.permissions_name === "group_update_equip" || val.permissions_name === "group_update_room") ) {
+                    permitted++;
+                };
+            });
+            if (permitted !== 2) {throw new ExpressError("Unauthorized", 401);};
+
+
+            if (reqValues.context === "user") {
+                const equipData = await EquipModel.retrieve_equip_by_user_and_equip_id(reqValues.ownerid, reqValues.equipid);
+                if (!equipData.id) {throw new ExpressError("Unauthorized", 401);};
+            } else 
+            if (reqValues.context === "group") {
+                const equipData = await EquipModel.retrieve_equip_by_group_and_equip_id(reqValues.ownerid, reqValues.equipid);
+                if (!equipData.id) {throw new ExpressError("Unauthorized", 401);};
+            };
+
+
+            // Verify equip not already assigned to a room
+            const equipRoom = await EquipModel.retrieve_equip_rooms_by_equip_id(reqValues.equipid, "full");
+            if (equipRoom.length !== 0) {throw new ExpressError("This equip is already assigned to a room.", 400);};
+
+
+            // Assign equip to the target room
+            queryData = await RoomModel.create_equip_room_assignment(reqValues.equipid, req.params.roomID);
+
+            
+            if (!queryData) {throw new ExpressError("Assoicate Equipment to Room Failed", 500);};
+            
+            return res.json({equip_add: queryData});
+        } catch (error) {
+            next(error)
+        }
+    }
+);
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
   | |_) |  _|   / _ \ | | | |
