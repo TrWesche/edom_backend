@@ -224,62 +224,6 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    RoomModel.retrieve_user_rooms_by_user_id_public = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var rooms;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID, true)];
-                    case 1:
-                        rooms = _a.sent();
-                        return [2 /*return*/, rooms];
-                }
-            });
-        });
-    };
-    ;
-    RoomModel.retrieve_user_rooms_by_user_id_all = function (userID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var rooms;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_user_id(userID)];
-                    case 1:
-                        rooms = _a.sent();
-                        return [2 /*return*/, rooms];
-                }
-            });
-        });
-    };
-    ;
-    RoomModel.retrieve_group_rooms_by_group_id_public = function (groupID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var rooms;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_group_id(groupID, true)];
-                    case 1:
-                        rooms = _a.sent();
-                        return [2 /*return*/, rooms];
-                }
-            });
-        });
-    };
-    ;
-    RoomModel.retrieve_group_rooms_by_group_id_all = function (groupID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var rooms;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, room_repository_1["default"].fetch_rooms_by_group_id(groupID)];
-                    case 1:
-                        rooms = _a.sent();
-                        return [2 /*return*/, rooms];
-                }
-            });
-        });
-    };
-    ;
     RoomModel.retrieve_user_rooms_list_by_user_id = function (userID, accessType, limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms, _a;
@@ -368,14 +312,6 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    // static async modify_group_room(roomID: string, data: RoomObjectProps) {
-    //     // Perform Room Update
-    //     const room = await RoomRepo.update_room_by_room_id(roomID, data);
-    //     if (!room) {
-    //         throw new ExpressError("Unable to update target group room", 400);
-    //     };
-    //     return room;
-    // };
     /*   ____  _____ _     _____ _____ _____
         |  _ \| ____| |   | ____|_   _| ____|
         | | | |  _| | |   |  _|   | | |  _|

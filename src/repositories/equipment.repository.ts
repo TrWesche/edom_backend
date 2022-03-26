@@ -183,6 +183,34 @@ class EquipmentRepo {
         }
     };
 
+    static async fetch_equip_by_user_and_equip_id(userID: string, equipIDs: Array<string>) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [userID];
+            
+            equipIDs.forEach((equipID) => {
+                queryParams.push(equipID);
+                idxParams.push(`$${idx}`);
+                idx++;
+            });
+
+            query = `
+                SELECT id, name
+                FROM equipment
+                RIGHT JOIN user_equipment
+                ON equipment.id = user_equipment.equip_id
+                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id IN (${idxParams.join(', ')})`;
+            
+            const result = await pgdb.query(query, queryParams);
+
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment with target user & equip id combination - ${error}`, 500);
+        }
+    };
+
     static async fetch_equip_by_user_id(userID: string, equipPublic?: boolean) {
         try {
             let query: string;
@@ -369,6 +397,34 @@ class EquipmentRepo {
         }
     };
 
+    static async fetch_equip_by_group_and_equip_id(groupID: string, equipIDs: Array<string>) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID];
+            
+            equipIDs.forEach((equipID) => {
+                queryParams.push(equipID);
+                idxParams.push(`$${idx}`);
+                idx++;
+            });
+
+            query = `
+                SELECT id, name
+                FROM equipment
+                RIGHT JOIN group_equipment
+                ON equipment.id = group_equipment.equip_id
+                WHERE group_equipment.group_id = $1 AND group_equipment.equip_id IN (${idxParams.join(', ')})`;
+            
+            const result = await pgdb.query(query, queryParams);
+
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate equipment with target group & equip id combination - ${error}`, 500);
+        }
+    };
+
     static async fetch_equip_by_group_id(groupID: string, equipPublic?: boolean) {
         try {
             let query: string;
@@ -494,62 +550,6 @@ class EquipmentRepo {
     // | |_) | | | | | | | |\/| |
     // |  _ <| |_| | |_| | |  | |
     // |_| \_\\___/ \___/|_|  |_|
-    static async associate_room_to_equip(roomID: string, equipID: Array<string>) {
-        try {
-            let idx = 1;
-            const idxParams: Array<string> = [];
-            let query: string;
-            const queryParams: Array<any> = [];
-            
-            equipID.forEach((val) => {
-                queryParams.push(roomID, val);
-                idxParams.push(`($${idx}, $${idx+1})`);
-                idx+=2;
-            });
-
-            query = `
-                INSERT INTO room_equipment 
-                    (room_id, equip_id) 
-                VALUES ${idxParams.join(', ')} 
-                RETURNING room_id, equip_id`;
-            
-            const result = await pgdb.query(query, queryParams);
-
-            // const result = await pgdb.query(
-            //     `INSERT INTO room_equipment 
-            //         (room_id, equip_id) 
-            //     VALUES ($1, $2) 
-            //     RETURNING room_id, equip_id`,
-            // [
-            //     roomID,
-            //     equipID
-            // ]);
-            
-            const rval = result.rows;
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`Server Error - associate_room_to_equip - ${error}`, 500);
-        }
-    };
-
-    static async disassociate_room_from_equip_by_room_equip_id(roomID: string, equipID: string) {
-        try {
-            const result = await pgdb.query(
-                `DELETE FROM room_equipment
-                WHERE room_id = $1 AND equip_id = $2
-                RETURNING room_id, equip_id`,
-            [
-                roomID,
-                equipID
-            ]);
-            
-            const rval = result.rows[0];
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`Server Error - disassociate_room_from_equip_by_room_equip_id - ${error}`, 500);
-        }
-    };
-
     static async disassociate_room_from_equip_by_room_id(roomID: string) {
         try {
             const result = await pgdb.query(
@@ -581,38 +581,6 @@ class EquipmentRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete equipment associations room -> equipment, all equipment instances - ${error}`, 500);
-        }
-    };
-
-    static async fetch_equip_by_room_id(roomID: string, roomPublic?: boolean) {
-        try {
-            let query: string;
-            let queryParams: Array<any> = [];
-
-            if (roomPublic !== undefined) {
-                query = `
-                    SELECT id, name, category_id, headline
-                    FROM equipment
-                    RIGHT JOIN room_equipment
-                    ON equipment.id = room_equipment.equip_id
-                    WHERE room_equipment.room_id = $1 AND equipment.public = $2`
-                queryParams.push(roomID, roomPublic);
-            } else {
-                query = `
-                    SELECT id, name, category_id, headline
-                    FROM equipment
-                    RIGHT JOIN room_equipment
-                    ON equipment.id = room_equipment.equip_id
-                    WHERE room_equipment.room_id = $1`
-                queryParams.push(roomID);
-            }
-
-            const result = await pgdb.query(query, queryParams);
-    
-            const rval: Array<EquipObjectProps> | undefined = result.rows;
-            return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment by room id - ${error}`, 500);
         }
     };
 
@@ -663,93 +631,6 @@ class EquipmentRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate equipment rooms by equip id - ${error}`, 500);
-        }
-    };
-
-    static async fetch_equip_by_group_and_equip_id(groupID: string, equipIDs: Array<string>) {
-        try {
-            let idx = 2;
-            const idxParams: Array<string> = [];
-            let query: string;
-            const queryParams: Array<any> = [groupID];
-            
-            equipIDs.forEach((equipID) => {
-                queryParams.push(equipID);
-                idxParams.push(`$${idx}`);
-                idx++;
-            });
-
-            query = `
-                SELECT id, name
-                FROM equipment
-                RIGHT JOIN group_equipment
-                ON equipment.id = group_equipment.equip_id
-                WHERE group_equipment.group_id = $1 AND group_equipment.equip_id IN (${idxParams.join(', ')})`;
-            
-            const result = await pgdb.query(query, queryParams);
-
-            return result.rows;
-
-
-            // const query = `
-            //     SELECT id, name
-            //     FROM equipment
-            //     RIGHT JOIN group_equipment
-            //     ON equipment.id = group_equipment.equip_id
-            //     WHERE group_equipment.group_id = $1 AND group_equipment.equip_id = $2`;
-            
-            // const queryParams = [groupID, equipID];
-
-            // const result = await pgdb.query(query, queryParams);
-
-            // const rval = result.rows[0];
-            // return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment with target group & equip id combination - ${error}`, 500);
-        }
-    };
-
-    static async fetch_equip_by_user_and_equip_id(userID: string, equipIDs: Array<string>) {
-        try {
-            let idx = 2;
-            const idxParams: Array<string> = [];
-            let query: string;
-            const queryParams: Array<any> = [userID];
-            
-            equipIDs.forEach((equipID) => {
-                queryParams.push(equipID);
-                idxParams.push(`$${idx}`);
-                idx++;
-            });
-
-            query = `
-                SELECT id, name
-                FROM equipment
-                RIGHT JOIN user_equipment
-                ON equipment.id = user_equipment.equip_id
-                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id IN (${idxParams.join(', ')})`;
-            
-            const result = await pgdb.query(query, queryParams);
-
-            return result.rows;
-
-
-
-            // const query = `
-            //     SELECT id, name
-            //     FROM equipment
-            //     RIGHT JOIN user_equipment
-            //     ON equipment.id = user_equipment.equip_id
-            //     WHERE user_equipment.user_id = $1 AND user_equipment.equip_id = $2`;
-            
-            // const queryParams = [userID, equipID];
-
-            // const result = await pgdb.query(query, queryParams);
-
-            // const rval = result.rows[0];
-            // return rval;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to locate equipment with target user & equip id combination - ${error}`, 500);
         }
     };
 }

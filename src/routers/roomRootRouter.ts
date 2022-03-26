@@ -94,6 +94,7 @@ roomRootRouter.post("/create",
     }
 );
 
+// Manual Test - Basic Functionality
 roomRootRouter.post("/:roomID/equip",
     authMW.defineRoutePermissions({
         user: ["site_update_equip_self", "site_update_room_self"],
@@ -113,6 +114,8 @@ roomRootRouter.post("/:roomID/equip",
                 ownerID: req.body.ownerID ? req.body.ownerID : req.user.id,
                 equipIDs: req.body.equipIDs
             };
+
+            console.log(req.resolvedPerms);
 
             // Validate Permissions
             let permitted = 0;

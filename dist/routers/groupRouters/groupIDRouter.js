@@ -40,14 +40,12 @@ var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../utils/expresError");
 // Schema Imports
-// import validateCreateGroupSchema, { GroupCreateProps } from "../../schemas/group/groupCreateSchema";
 var groupUpdateSchema_1 = require("../../schemas/group/groupUpdateSchema");
 // Model Imports
 var groupModel_1 = require("../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../middleware/authorizationMW");
 var groupMgmtRouter_1 = require("./groupIDRouters/groupMgmtRouter");
-// import groupEquipRouter from "./groupIDRouters/groupEquipRouter";
 var groupUserRouter_1 = require("./groupIDRouters/groupUserRouter");
 var groupIDRouter = express.Router();
 groupIDRouter.use("/mgmt", authorizationMW_1["default"].defineSitePermissions(["site_access"]), groupMgmtRouter_1["default"]);

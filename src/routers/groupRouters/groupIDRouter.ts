@@ -4,7 +4,6 @@ import * as express from "express";
 import ExpressError from "../../utils/expresError";
 
 // Schema Imports
-// import validateCreateGroupSchema, { GroupCreateProps } from "../../schemas/group/groupCreateSchema";
 import validateUpdateGroupSchema, { GroupUpdateProps } from "../../schemas/group/groupUpdateSchema";
 
 // Model Imports
@@ -15,7 +14,6 @@ import authMW from "../../middleware/authorizationMW";
 
 
 import groupMgmtRouter from "./groupIDRouters/groupMgmtRouter";
-// import groupEquipRouter from "./groupIDRouters/groupEquipRouter";
 import groupUserRouter from "./groupIDRouters/groupUserRouter";
 
 

@@ -532,8 +532,6 @@ class RoomRepo {
     };
 
 
-
-
     static async associate_equip_to_room(equipIDs: Array<string>, roomID: string) {
         try {
             let idx = 1;
@@ -556,18 +554,6 @@ class RoomRepo {
             const result = await pgdb.query(query, queryParams);
 
             return result.rows;
-            // const result = await pgdb.query(
-            //     `INSERT INTO room_equipment 
-            //         (room_id, equip_id) 
-            //     VALUES ($1, $2) 
-            //     RETURNING room_id, equip_id`,
-            // [
-            //     roomID,
-            //     equipID
-            // ]);
-            
-            // const rval = result.rows[0];
-            // return rval;
         } catch (error) {
             throw new ExpressError(`Server Error - associate_room_to_equip - ${error}`, 500);
         }
@@ -594,19 +580,6 @@ class RoomRepo {
             const result = await pgdb.query(query, queryParams);
 
             return result.rows;
-
-
-            // const result = await pgdb.query(
-            //     `DELETE FROM room_equipment 
-            //     WHERE room_id = $1 AND equip_id = $2 
-            //     RETURNING room_id, equip_id`,
-            // [
-            //     roomID,
-            //     equipID
-            // ]);
-            
-            // const rval = result.rows[0];
-            // return rval;
         } catch (error) {
             throw new ExpressError(`Server Error - disassociate_room_from_equip - ${error}`, 500);
         }

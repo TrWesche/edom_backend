@@ -148,6 +148,7 @@ roomRootRouter.post("/create", authorizationMW_1["default"].addContextToRequest,
         }
     });
 }); });
+// Manual Test - Basic Functionality
 roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePermissions({
     user: ["site_update_equip_self", "site_update_room_self"],
     group: ["group_update_equip", "group_update_room"],
@@ -170,6 +171,7 @@ roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePe
                     ownerID: req.body.ownerID ? req.body.ownerID : req.user.id,
                     equipIDs: req.body.equipIDs
                 };
+                console.log(req.resolvedPerms);
                 permitted_1 = 0;
                 (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
                     if (reqValues_1.context === "user" && (val.permissions_name === "site_update_equip_self" || val.permissions_name === "site_update_room_self")) {

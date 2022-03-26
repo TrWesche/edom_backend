@@ -130,26 +130,6 @@ class RoomModel {
         return rooms;
     };
 
-    static async retrieve_user_rooms_by_user_id_public(userID: string) {
-        const rooms = await RoomRepo.fetch_rooms_by_user_id(userID, true);
-        return rooms;
-    };
-
-    static async retrieve_user_rooms_by_user_id_all(userID: string) {
-        const rooms = await RoomRepo.fetch_rooms_by_user_id(userID);
-        return rooms;
-    };
-
-    static async retrieve_group_rooms_by_group_id_public(groupID: string) {
-        const rooms = await RoomRepo.fetch_rooms_by_group_id(groupID, true);
-        return rooms;
-    };
-
-    static async retrieve_group_rooms_by_group_id_all(groupID: string) {
-        const rooms = await RoomRepo.fetch_rooms_by_group_id(groupID);
-        return rooms;
-    };
-
     static async retrieve_user_rooms_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
         let rooms;
         switch (accessType) {
@@ -206,17 +186,7 @@ class RoomModel {
         return room;
     };
 
-    // static async modify_group_room(roomID: string, data: RoomObjectProps) {
-    //     // Perform Room Update
-    //     const room = await RoomRepo.update_room_by_room_id(roomID, data);
-    //     if (!room) {
-    //         throw new ExpressError("Unable to update target group room", 400);
-    //     };
-
-    //     return room;
-    // };
-
-
+    
     /*   ____  _____ _     _____ _____ _____ 
         |  _ \| ____| |   | ____|_   _| ____|
         | | | |  _| | |   |  _|   | | |  _|  

@@ -97,34 +97,6 @@ class EquipModel {
         };
     };
 
-    // static async create_equip_room_association(roomID: string, equipID: string) {
-    //     // Processing
-    //     try {
-    //         await TransactionRepo.begin_transaction();
-
-    //         // Check for existing room -> equipment associations.
-    //         const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
-    //         if (equipRooms.length > 0) {
-    //             throw new ExpressError("Equipment is already assigned to a room.", 400);
-    //         };
-
-    //         // Create Equipment Room Association in Database
-    //         const equipEntry = await EquipRepo.associate_room_to_equip(roomID, equipID);
-    //         if (!equipEntry?.room_id) {
-    //             throw new ExpressError("Error while creating new equipment -> room association", 500);
-    //         };
-
-    //         // Commit to Database
-    //         await TransactionRepo.commit_transaction();
-
-    //         return equipEntry;
-    //     } catch (error) {
-    //         await TransactionRepo.rollback_transaction();
-    //         throw new ExpressError(error.message, error.status);
-    //     };
-    // };
-
-
     /*   ____  _____    _    ____  
         |  _ \| ____|  / \  |  _ \ 
         | |_) |  _|   / _ \ | | | |
@@ -149,22 +121,6 @@ class EquipModel {
 
     static async retrieve_equip_list_paginated(limit: number, offset: number) {
         const equip = await EquipRepo.fetch_equip_list_paginated(limit, offset);
-        return equip;
-    };
-
-
-    static async retrieve_user_equip_by_user_id(userID: string, userPublic?: boolean) {
-        const equip = await EquipRepo.fetch_equip_by_user_id(userID, userPublic);
-        return equip;
-    };
-
-    static async retrieve_group_equip_by_group_id(groupID: string, groupPublic?: boolean) {
-        const equip = await EquipRepo.fetch_equip_by_group_id(groupID, groupPublic);
-        return equip;
-    };
-
-    static async retrieve_room_equip_by_room_id(roomID: string, roomPublic?: boolean) {
-        const equip = await EquipRepo.fetch_equip_by_room_id(roomID, roomPublic);
         return equip;
     };
 
@@ -229,16 +185,6 @@ class EquipModel {
         | |_| |  __/| |_| / ___ \| | | |___ 
          \___/|_|   |____/_/   \_\_| |_____|
     */
-    // static async modify_user_equip(equipID: string, data: EquipObjectProps) {
-    //     // Perform Equipment Update
-    //     const equip = await EquipRepo.update_equip_by_equip_id(equipID, data);
-    //     if (!equip) {
-    //         throw new ExpressError("Unable to update target user equipment", 400);
-    //     }
-
-    //     return equip;
-    // };
-
     static async modify_equip(equipID: string, data: EquipObjectProps) {
         // Perform Equipment Update
         const equip = await EquipRepo.update_equip_by_equip_id(equipID, data);
@@ -314,16 +260,6 @@ class EquipModel {
             await TransactionRepo.rollback_transaction();
             throw new ExpressError(error.message, error.status);
         };
-    };
-
-    static async delete_equip_room_assc_by_room_equip_id(roomID: string, equipID: string) {
-        // Processing
-        // Delete Equipment Room Association from Database
-        const equipEntry = await EquipRepo.disassociate_room_from_equip_by_room_equip_id(roomID, equipID);
-        if (!equipEntry?.room_id) {
-            throw new ExpressError("Error while deleting equipment -> room association", 500);
-        };
-        return equipEntry;
     };
 }
 
