@@ -170,50 +170,28 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.create_equip_room_association = function (roomID, equipID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var equipRooms, equipEntry, error_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 5, , 7]);
-                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
-                    case 1:
-                        _a.sent();
-                        return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, false, false)];
-                    case 2:
-                        equipRooms = _a.sent();
-                        if (equipRooms.length > 0) {
-                            throw new expresError_1["default"]("Equipment is already assigned to a room.", 400);
-                        }
-                        ;
-                        return [4 /*yield*/, equipment_repository_1["default"].associate_room_to_equip(roomID, equipID)];
-                    case 3:
-                        equipEntry = _a.sent();
-                        if (!(equipEntry === null || equipEntry === void 0 ? void 0 : equipEntry.room_id)) {
-                            throw new expresError_1["default"]("Error while creating new equipment -> room association", 500);
-                        }
-                        ;
-                        // Commit to Database
-                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 4:
-                        // Commit to Database
-                        _a.sent();
-                        return [2 /*return*/, equipEntry];
-                    case 5:
-                        error_3 = _a.sent();
-                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 6:
-                        _a.sent();
-                        throw new expresError_1["default"](error_3.message, error_3.status);
-                    case 7:
-                        ;
-                        return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
+    // static async create_equip_room_association(roomID: string, equipID: string) {
+    //     // Processing
+    //     try {
+    //         await TransactionRepo.begin_transaction();
+    //         // Check for existing room -> equipment associations.
+    //         const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
+    //         if (equipRooms.length > 0) {
+    //             throw new ExpressError("Equipment is already assigned to a room.", 400);
+    //         };
+    //         // Create Equipment Room Association in Database
+    //         const equipEntry = await EquipRepo.associate_room_to_equip(roomID, equipID);
+    //         if (!equipEntry?.room_id) {
+    //             throw new ExpressError("Error while creating new equipment -> room association", 500);
+    //         };
+    //         // Commit to Database
+    //         await TransactionRepo.commit_transaction();
+    //         return equipEntry;
+    //     } catch (error) {
+    //         await TransactionRepo.rollback_transaction();
+    //         throw new ExpressError(error.message, error.status);
+    //     };
+    // };
     /*   ____  _____    _    ____
         |  _ \| ____|  / \  |  _ \
         | |_) |  _|   / _ \ | | | |
@@ -303,7 +281,7 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_equip_rooms_by_equip_id = function (equipID, accessType) {
+    EquipModel.retrieve_equip_rooms_by_equip_id = function (equipIDs, accessType) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms, _a;
             return __generator(this, function (_b) {
@@ -317,19 +295,19 @@ var EquipModel = /** @class */ (function () {
                             case "public": return [3 /*break*/, 7];
                         }
                         return [3 /*break*/, 9];
-                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, false, false)];
+                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipIDs, false, false)];
                     case 2:
                         rooms = _b.sent();
                         return [3 /*break*/, 10];
-                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, true, false)];
+                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipIDs, true, false)];
                     case 4:
                         rooms = _b.sent();
                         return [3 /*break*/, 10];
-                    case 5: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, false, true)];
+                    case 5: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipIDs, false, true)];
                     case 6:
                         rooms = _b.sent();
                         return [3 /*break*/, 10];
-                    case 7: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipID, true, true)];
+                    case 7: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_rooms_by_equip_id(equipIDs, true, true)];
                     case 8:
                         rooms = _b.sent();
                         return [3 /*break*/, 10];
@@ -340,12 +318,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_equip_by_group_and_equip_id = function (groupID, equipID) {
+    EquipModel.retrieve_equip_by_group_and_equip_id = function (groupID, equipIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_and_equip_id(groupID, equipID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_group_and_equip_id(groupID, equipIDs)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -354,12 +332,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_equip_by_user_and_equip_id = function (userID, equipID) {
+    EquipModel.retrieve_equip_by_user_and_equip_id = function (userID, equipIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_and_equip_id(userID, equipID)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_by_user_and_equip_id(userID, equipIDs)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];
@@ -448,7 +426,7 @@ var EquipModel = /** @class */ (function () {
     */
     EquipModel.delete_user_equip = function (userID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var userAssoc, equipEntry, error_4;
+            var userAssoc, equipEntry, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -482,11 +460,11 @@ var EquipModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, equipEntry];
                     case 6:
-                        error_4 = _a.sent();
+                        error_3 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 7:
                         _a.sent();
-                        throw new expresError_1["default"](error_4.message, error_4.status);
+                        throw new expresError_1["default"](error_3.message, error_3.status);
                     case 8:
                         ;
                         return [2 /*return*/];
@@ -497,7 +475,7 @@ var EquipModel = /** @class */ (function () {
     ;
     EquipModel.delete_group_equip = function (groupID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var equipAssoc, equipEntry, error_5;
+            var equipAssoc, equipEntry, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -531,11 +509,11 @@ var EquipModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, equipEntry];
                     case 6:
-                        error_5 = _a.sent();
+                        error_4 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 7:
                         _a.sent();
-                        throw new expresError_1["default"](error_5.message, error_5.status);
+                        throw new expresError_1["default"](error_4.message, error_4.status);
                     case 8:
                         ;
                         return [2 /*return*/];

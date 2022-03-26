@@ -289,12 +289,10 @@ class RoomModel {
     };
 
 
-
-
     // Equip
-    static async create_equip_room_assignment(equipID: string, roomID: string) {
+    static async create_equip_room_assignment(equipIDs: Array<string>, roomID: string) {
         try {
-            const data = await RoomRepo.associate_equip_to_room(equipID, roomID)
+            const data = await RoomRepo.associate_equip_to_room(equipIDs, roomID);
             if (!data) {
                 throw new ExpressError("Unable to create association between equipment and room", 400);
             };
@@ -302,6 +300,15 @@ class RoomModel {
         } catch (error) {
             throw new ExpressError(error.message, error.status);
         };
+    };
+
+    static async delete_equip_room_assignment(equipIDs: Array<string>, roomID: string) {
+        try {
+            const data = await RoomRepo.disassociate_equip_from_room(equipIDs, roomID);
+            return data;
+        } catch (error) {
+            throw new ExpressError(error.message, error.status);
+        }
     };
 }
 

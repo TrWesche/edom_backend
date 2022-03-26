@@ -579,18 +579,25 @@ var EquipmentRepo = /** @class */ (function () {
     // |_| \_\\___/ \___/|_|  |_|
     EquipmentRepo.associate_room_to_equip = function (roomID, equipID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_20;
+            var idx_5, idxParams_5, query, queryParams_5, result, rval, error_20;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO room_equipment \n                    (room_id, equip_id) \n                VALUES ($1, $2) \n                RETURNING room_id, equip_id", [
-                                roomID,
-                                equipID
-                            ])];
+                        idx_5 = 1;
+                        idxParams_5 = [];
+                        query = void 0;
+                        queryParams_5 = [];
+                        equipID.forEach(function (val) {
+                            queryParams_5.push(roomID, val);
+                            idxParams_5.push("($".concat(idx_5, ", $").concat(idx_5 + 1, ")"));
+                            idx_5 += 2;
+                        });
+                        query = "\n                INSERT INTO room_equipment \n                    (room_id, equip_id) \n                VALUES ".concat(idxParams_5.join(', '), " \n                RETURNING room_id, equip_id");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_5)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
+                        rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
                         error_20 = _a.sent();
@@ -702,14 +709,22 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_rooms_by_equip_id = function (equipID, filterRoomsPublic, filterEquipPublic) {
+    EquipmentRepo.fetch_equip_rooms_by_equip_id = function (equipIDs, filterRoomsPublic, filterEquipPublic) {
         return __awaiter(this, void 0, void 0, function () {
-            var filterBuilder, query, queryParams, result, rval, error_25;
+            var idx_6, idxParams_6, queryParams_6, filterBuilder, query, result, rval, error_25;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        filterBuilder = ['room_equipment.equip_id = $1'];
+                        idx_6 = 1;
+                        idxParams_6 = [];
+                        queryParams_6 = [];
+                        equipIDs.forEach(function (equipID) {
+                            queryParams_6.push(equipID);
+                            idxParams_6.push("$".concat(idx_6));
+                            idx_6++;
+                        });
+                        filterBuilder = ["room_equipment.equip_id IN (".concat(idxParams_6.join(', '), ")")];
                         if (filterRoomsPublic === true) {
                             filterBuilder.push('rooms.public = TRUE');
                         }
@@ -719,8 +734,7 @@ var EquipmentRepo = /** @class */ (function () {
                         }
                         ;
                         query = "\n                SELECT \n                    rooms.id AS id, \n                    rooms.name AS name,\n                    rooms.image_url AS image_url,\n                    room_categories.name AS category_name\n                FROM rooms\n                RIGHT JOIN room_equipment\n                ON rooms.id = room_equipment.room_id\n                LEFT JOIN equipment\n                ON equipment.id = room_equipment.equip_id\n                LEFT JOIN room_categories\n                ON room_categories.id = rooms.category_id\n                WHERE ".concat(filterBuilder.join(' AND '));
-                        queryParams = [equipID];
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_6)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -734,20 +748,27 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_by_group_and_equip_id = function (groupID, equipID) {
+    EquipmentRepo.fetch_equip_by_group_and_equip_id = function (groupID, equipIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_26;
+            var idx_7, idxParams_7, query, queryParams_7, result, error_26;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN group_equipment\n                ON equipment.id = group_equipment.equip_id\n                WHERE group_equipment.group_id = $1 AND group_equipment.equip_id = $2";
-                        queryParams = [groupID, equipID];
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                        idx_7 = 2;
+                        idxParams_7 = [];
+                        query = void 0;
+                        queryParams_7 = [groupID];
+                        equipIDs.forEach(function (equipID) {
+                            queryParams_7.push(equipID);
+                            idxParams_7.push("$".concat(idx_7));
+                            idx_7++;
+                        });
+                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN group_equipment\n                ON equipment.id = group_equipment.equip_id\n                WHERE group_equipment.group_id = $1 AND group_equipment.equip_id IN (".concat(idxParams_7.join(', '), ")");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_7)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
+                        return [2 /*return*/, result.rows];
                     case 2:
                         error_26 = _a.sent();
                         throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target group & equip id combination - ".concat(error_26), 500);
@@ -757,20 +778,27 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_by_user_and_equip_id = function (userID, equipID) {
+    EquipmentRepo.fetch_equip_by_user_and_equip_id = function (userID, equipIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rval, error_27;
+            var idx_8, idxParams_8, query, queryParams_8, result, error_27;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id = $2";
-                        queryParams = [userID, equipID];
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
+                        idx_8 = 2;
+                        idxParams_8 = [];
+                        query = void 0;
+                        queryParams_8 = [userID];
+                        equipIDs.forEach(function (equipID) {
+                            queryParams_8.push(equipID);
+                            idxParams_8.push("$".concat(idx_8));
+                            idx_8++;
+                        });
+                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id IN (".concat(idxParams_8.join(', '), ")");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_8)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
+                        return [2 /*return*/, result.rows];
                     case 2:
                         error_27 = _a.sent();
                         throw new expresError_1["default"]("An Error Occured: Unable to locate equipment with target user & equip id combination - ".concat(error_27), 500);

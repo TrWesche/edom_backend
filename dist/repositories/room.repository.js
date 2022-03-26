@@ -609,24 +609,60 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
-    RoomRepo.associate_equip_to_room = function (equipID, roomID) {
+    RoomRepo.associate_equip_to_room = function (equipIDs, roomID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_21;
+            var idx_5, idxParams_5, query, queryParams_5, result, error_21;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO room_equipment \n                    (room_id, equip_id) \n                VALUES ($1, $2) \n                RETURNING room_id, equip_id", [
-                                roomID,
-                                equipID
-                            ])];
+                        idx_5 = 1;
+                        idxParams_5 = [];
+                        query = void 0;
+                        queryParams_5 = [];
+                        equipIDs.forEach(function (equipID) {
+                            queryParams_5.push(roomID, equipID);
+                            idxParams_5.push("($".concat(idx_5, ", $").concat(idx_5 + 1, ")"));
+                            idx_5 += 2;
+                        });
+                        query = "\n                INSERT INTO room_equipment \n                    (room_id, equip_id) \n                VALUES ".concat(idxParams_5.join(', '), " \n                RETURNING room_id, equip_id");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_5)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
+                        return [2 /*return*/, result.rows];
                     case 2:
                         error_21 = _a.sent();
                         throw new expresError_1["default"]("Server Error - associate_room_to_equip - ".concat(error_21), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomRepo.disassociate_equip_from_room = function (equipIDs, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_6, idxParams_6, query, queryParams_6, result, error_22;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_6 = 2;
+                        idxParams_6 = [];
+                        query = void 0;
+                        queryParams_6 = [roomID];
+                        equipIDs.forEach(function (equipID) {
+                            queryParams_6.push(equipID);
+                            idxParams_6.push("$".concat(idx_6));
+                            idx_6++;
+                        });
+                        query = "\n                DELETE FROM room_equipment \n                WHERE room_id = $1 AND equip_id IN (".concat(idxParams_6.join(', '), ")\n                RETURNING room_id, equip_id");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_6)];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.rows];
+                    case 2:
+                        error_22 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - disassociate_room_from_equip - ".concat(error_22), 500);
                     case 3: return [2 /*return*/];
                 }
             });

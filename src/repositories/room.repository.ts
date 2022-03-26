@@ -534,24 +534,85 @@ class RoomRepo {
 
 
 
-    static async associate_equip_to_room(equipID: string, roomID: string) {
+    static async associate_equip_to_room(equipIDs: Array<string>, roomID: string) {
         try {
-            const result = await pgdb.query(
-                `INSERT INTO room_equipment 
-                    (room_id, equip_id) 
-                VALUES ($1, $2) 
-                RETURNING room_id, equip_id`,
-            [
-                roomID,
-                equipID
-            ]);
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
             
-            const rval = result.rows[0];
-            return rval;
+            equipIDs.forEach((equipID) => {
+                queryParams.push(roomID, equipID);
+                idxParams.push(`($${idx}, $${idx+1})`);
+                idx+=2;
+            });
+
+            query = `
+                INSERT INTO room_equipment 
+                    (room_id, equip_id) 
+                VALUES ${idxParams.join(', ')} 
+                RETURNING room_id, equip_id`;
+            
+            const result = await pgdb.query(query, queryParams);
+
+            return result.rows;
+            // const result = await pgdb.query(
+            //     `INSERT INTO room_equipment 
+            //         (room_id, equip_id) 
+            //     VALUES ($1, $2) 
+            //     RETURNING room_id, equip_id`,
+            // [
+            //     roomID,
+            //     equipID
+            // ]);
+            
+            // const rval = result.rows[0];
+            // return rval;
         } catch (error) {
             throw new ExpressError(`Server Error - associate_room_to_equip - ${error}`, 500);
         }
     };
+
+    static async disassociate_equip_from_room(equipIDs: Array<string>, roomID: string) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [roomID];
+            
+            equipIDs.forEach((equipID) => {
+                queryParams.push(equipID);
+                idxParams.push(`$${idx}`);
+                idx++;
+            });
+
+            query = `
+                DELETE FROM room_equipment 
+                WHERE room_id = $1 AND equip_id IN (${idxParams.join(', ')})
+                RETURNING room_id, equip_id`;
+            
+            const result = await pgdb.query(query, queryParams);
+
+            return result.rows;
+
+
+            // const result = await pgdb.query(
+            //     `DELETE FROM room_equipment 
+            //     WHERE room_id = $1 AND equip_id = $2 
+            //     RETURNING room_id, equip_id`,
+            // [
+            //     roomID,
+            //     equipID
+            // ]);
+            
+            // const rval = result.rows[0];
+            // return rval;
+        } catch (error) {
+            throw new ExpressError(`Server Error - disassociate_room_from_equip - ${error}`, 500);
+        }
+    };
+
+
 }
 
 

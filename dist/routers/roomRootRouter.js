@@ -158,7 +158,7 @@ roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePe
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _c.trys.push([0, 7, , 8]);
+                _c.trys.push([0, 10, , 11]);
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                     throw new expresError_1["default"]("Must be logged in to create room", 401);
                 }
@@ -167,8 +167,8 @@ roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePe
                 reqValues_1 = {
                     action: req.body.action,
                     context: req.body.context ? req.body.context : "user",
-                    ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
-                    equipid: req.body.equipID
+                    ownerID: req.body.ownerID ? req.body.ownerID : req.user.id,
+                    equipIDs: req.body.equipIDs
                 };
                 permitted_1 = 0;
                 (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
@@ -186,34 +186,35 @@ roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePe
                 }
                 ;
                 if (!(reqValues_1.context === "user")) return [3 /*break*/, 2];
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_user_and_equip_id(reqValues_1.ownerid, reqValues_1.equipid)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_user_and_equip_id(reqValues_1.ownerID, reqValues_1.equipIDs)];
             case 1:
                 equipData = _c.sent();
-                if (!equipData.id) {
-                    throw new expresError_1["default"]("Unauthorized", 401);
+                if (equipData.length !== reqValues_1.equipIDs.length) {
+                    throw new expresError_1["default"]("Unauthorized to update one or more of the target equipment to room associations.", 401);
                 }
                 ;
                 return [3 /*break*/, 4];
             case 2:
                 if (!(reqValues_1.context === "group")) return [3 /*break*/, 4];
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_group_and_equip_id(reqValues_1.ownerid, reqValues_1.equipid)];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_by_group_and_equip_id(reqValues_1.ownerID, reqValues_1.equipIDs)];
             case 3:
                 equipData = _c.sent();
-                if (!equipData.id) {
-                    throw new expresError_1["default"]("Unauthorized", 401);
+                if (equipData.length !== reqValues_1.equipIDs.length) {
+                    throw new expresError_1["default"]("Unauthorized to update one or more of the target equipment to room associations.", 401);
                 }
                 ;
                 _c.label = 4;
             case 4:
                 ;
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(reqValues_1.equipid, "full")];
+                if (!(reqValues_1.action === "create")) return [3 /*break*/, 7];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(reqValues_1.equipIDs, "full")];
             case 5:
                 equipRoom = _c.sent();
                 if (equipRoom.length !== 0) {
-                    throw new expresError_1["default"]("This equip is already assigned to a room.", 400);
+                    throw new expresError_1["default"]("One or more pieces of equipment is already assigned to a room.", 400);
                 }
                 ;
-                return [4 /*yield*/, roomModel_1["default"].create_equip_room_assignment(reqValues_1.equipid, req.params.roomID)];
+                return [4 /*yield*/, roomModel_1["default"].create_equip_room_assignment(reqValues_1.equipIDs, req.params.roomID)];
             case 6:
                 // Assign equip to the target room
                 queryData = _c.sent();
@@ -221,12 +222,21 @@ roomRootRouter.post("/:roomID/equip", authorizationMW_1["default"].defineRoutePe
                     throw new expresError_1["default"]("Assoicate Equipment to Room Failed", 500);
                 }
                 ;
-                return [2 /*return*/, res.json({ equip_add: queryData })];
+                return [3 /*break*/, 9];
             case 7:
+                if (!(reqValues_1.action === "delete")) return [3 /*break*/, 9];
+                return [4 /*yield*/, roomModel_1["default"].delete_equip_room_assignment(reqValues_1.equipIDs, req.params.roomID)];
+            case 8:
+                queryData = _c.sent();
+                _c.label = 9;
+            case 9:
+                ;
+                return [2 /*return*/, res.json({ equip_change: queryData, change_type: reqValues_1.action })];
+            case 10:
                 error_2 = _c.sent();
                 next(error_2);
-                return [3 /*break*/, 8];
-            case 8: return [2 /*return*/];
+                return [3 /*break*/, 11];
+            case 11: return [2 /*return*/];
         }
     });
 }); });

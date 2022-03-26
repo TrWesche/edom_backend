@@ -177,16 +177,16 @@ equipRootRouter.get("/:equipID/room",
         })
 
         if (roomPermissions === 2 && equipPermissions === 2) {
-            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID, "full");
+            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id([req.params.equipID], "full");
         } else 
         if (roomPermissions === 1 && equipPermissions === 2) {
-            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID, "elevatedEquip");
+            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id([req.params.equipID], "elevatedEquip");
         } else 
         if (roomPermissions === 2 && equipPermissions === 1) {
-            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID, "elevatedRoom");
+            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id([req.params.equipID], "elevatedRoom");
         } else 
         if (roomPermissions === 1 && equipPermissions === 1) {
-            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id(req.params.equipID, "public");
+            queryData = await EquipModel.retrieve_equip_rooms_by_equip_id([req.params.equipID], "public");
         };
         
         if (!queryData) {

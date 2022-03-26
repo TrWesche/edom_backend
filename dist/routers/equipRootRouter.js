@@ -226,25 +226,25 @@ equipRootRouter.get("/:equipID/room", authorizationMW_1["default"].defineRoutePe
                     ;
                 });
                 if (!(roomPermissions_1 === 2 && equipPermissions_1 === 2)) return [3 /*break*/, 2];
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "full")];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id([req.params.equipID], "full")];
             case 1:
                 queryData = _c.sent();
                 return [3 /*break*/, 8];
             case 2:
                 if (!(roomPermissions_1 === 1 && equipPermissions_1 === 2)) return [3 /*break*/, 4];
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "elevatedEquip")];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id([req.params.equipID], "elevatedEquip")];
             case 3:
                 queryData = _c.sent();
                 return [3 /*break*/, 8];
             case 4:
                 if (!(roomPermissions_1 === 2 && equipPermissions_1 === 1)) return [3 /*break*/, 6];
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "elevatedRoom")];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id([req.params.equipID], "elevatedRoom")];
             case 5:
                 queryData = _c.sent();
                 return [3 /*break*/, 8];
             case 6:
                 if (!(roomPermissions_1 === 1 && equipPermissions_1 === 1)) return [3 /*break*/, 8];
-                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id(req.params.equipID, "public")];
+                return [4 /*yield*/, equipModel_1["default"].retrieve_equip_rooms_by_equip_id([req.params.equipID], "public")];
             case 7:
                 queryData = _c.sent();
                 _c.label = 8;

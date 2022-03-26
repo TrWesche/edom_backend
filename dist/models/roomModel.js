@@ -481,14 +481,14 @@ var RoomModel = /** @class */ (function () {
     };
     ;
     // Equip
-    RoomModel.create_equip_room_assignment = function (equipID, roomID) {
+    RoomModel.create_equip_room_assignment = function (equipIDs, roomID) {
         return __awaiter(this, void 0, void 0, function () {
             var data, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, room_repository_1["default"].associate_equip_to_room(equipID, roomID)];
+                        return [4 /*yield*/, room_repository_1["default"].associate_equip_to_room(equipIDs, roomID)];
                     case 1:
                         data = _a.sent();
                         if (!data) {
@@ -502,6 +502,26 @@ var RoomModel = /** @class */ (function () {
                     case 3:
                         ;
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    RoomModel.delete_equip_room_assignment = function (equipIDs, roomID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var data, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, room_repository_1["default"].disassociate_equip_from_room(equipIDs, roomID)];
+                    case 1:
+                        data = _a.sent();
+                        return [2 /*return*/, data];
+                    case 2:
+                        error_6 = _a.sent();
+                        throw new expresError_1["default"](error_6.message, error_6.status);
+                    case 3: return [2 /*return*/];
                 }
             });
         });

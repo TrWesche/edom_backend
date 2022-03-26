@@ -110,8 +110,8 @@ roomRootRouter.post("/:roomID/equip",
             const reqValues = {
                 action: req.body.action,
                 context: req.body.context ? req.body.context : "user",
-                ownerid: req.body.ownerid ? req.body.ownerid : req.user.id,
-                equipid: req.body.equipID
+                ownerID: req.body.ownerID ? req.body.ownerID : req.user.id,
+                equipIDs: req.body.equipIDs
             };
 
             // Validate Permissions
@@ -129,29 +129,33 @@ roomRootRouter.post("/:roomID/equip",
 
 
             if (reqValues.context === "user") {
-                const equipData = await EquipModel.retrieve_equip_by_user_and_equip_id(reqValues.ownerid, reqValues.equipid);
-                if (!equipData.id) {throw new ExpressError("Unauthorized", 401);};
+                const equipData = await EquipModel.retrieve_equip_by_user_and_equip_id(reqValues.ownerID, reqValues.equipIDs);
+                if (equipData.length !== reqValues.equipIDs.length) {throw new ExpressError("Unauthorized to update one or more of the target equipment to room associations.", 401);};
             } else 
             if (reqValues.context === "group") {
-                const equipData = await EquipModel.retrieve_equip_by_group_and_equip_id(reqValues.ownerid, reqValues.equipid);
-                if (!equipData.id) {throw new ExpressError("Unauthorized", 401);};
+                const equipData = await EquipModel.retrieve_equip_by_group_and_equip_id(reqValues.ownerID, reqValues.equipIDs);
+                if (equipData.length !== reqValues.equipIDs.length) {throw new ExpressError("Unauthorized to update one or more of the target equipment to room associations.", 401);};
             };
 
 
-            // Verify equip not already assigned to a room
-            const equipRoom = await EquipModel.retrieve_equip_rooms_by_equip_id(reqValues.equipid, "full");
-            if (equipRoom.length !== 0) {throw new ExpressError("This equip is already assigned to a room.", 400);};
+            if (reqValues.action === "create") {
+                // Verify equip not already assigned to a room
+                const equipRoom = await EquipModel.retrieve_equip_rooms_by_equip_id(reqValues.equipIDs, "full");
+                if (equipRoom.length !== 0) {throw new ExpressError("One or more pieces of equipment is already assigned to a room.", 400);};
 
 
-            // Assign equip to the target room
-            queryData = await RoomModel.create_equip_room_assignment(reqValues.equipid, req.params.roomID);
+                // Assign equip to the target room
+                queryData = await RoomModel.create_equip_room_assignment(reqValues.equipIDs, req.params.roomID);
 
+                if (!queryData) {throw new ExpressError("Assoicate Equipment to Room Failed", 500);};
+            } else 
+            if (reqValues.action === "delete") {
+                queryData = await RoomModel.delete_equip_room_assignment(reqValues.equipIDs, req.params.roomID);
+            };
             
-            if (!queryData) {throw new ExpressError("Assoicate Equipment to Room Failed", 500);};
-            
-            return res.json({equip_add: queryData});
+            return res.json({equip_change: queryData, change_type: reqValues.action});
         } catch (error) {
-            next(error)
+            next(error);
         }
     }
 );

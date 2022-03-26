@@ -97,32 +97,32 @@ class EquipModel {
         };
     };
 
-    static async create_equip_room_association(roomID: string, equipID: string) {
-        // Processing
-        try {
-            await TransactionRepo.begin_transaction();
+    // static async create_equip_room_association(roomID: string, equipID: string) {
+    //     // Processing
+    //     try {
+    //         await TransactionRepo.begin_transaction();
 
-            // Check for existing room -> equipment associations.
-            const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
-            if (equipRooms.length > 0) {
-                throw new ExpressError("Equipment is already assigned to a room.", 400);
-            };
+    //         // Check for existing room -> equipment associations.
+    //         const equipRooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
+    //         if (equipRooms.length > 0) {
+    //             throw new ExpressError("Equipment is already assigned to a room.", 400);
+    //         };
 
-            // Create Equipment Room Association in Database
-            const equipEntry = await EquipRepo.associate_room_to_equip(roomID, equipID);
-            if (!equipEntry?.room_id) {
-                throw new ExpressError("Error while creating new equipment -> room association", 500);
-            };
+    //         // Create Equipment Room Association in Database
+    //         const equipEntry = await EquipRepo.associate_room_to_equip(roomID, equipID);
+    //         if (!equipEntry?.room_id) {
+    //             throw new ExpressError("Error while creating new equipment -> room association", 500);
+    //         };
 
-            // Commit to Database
-            await TransactionRepo.commit_transaction();
+    //         // Commit to Database
+    //         await TransactionRepo.commit_transaction();
 
-            return equipEntry;
-        } catch (error) {
-            await TransactionRepo.rollback_transaction();
-            throw new ExpressError(error.message, error.status);
-        };
-    };
+    //         return equipEntry;
+    //     } catch (error) {
+    //         await TransactionRepo.rollback_transaction();
+    //         throw new ExpressError(error.message, error.status);
+    //     };
+    // };
 
 
     /*   ____  _____    _    ____  
@@ -168,21 +168,21 @@ class EquipModel {
         return equip;
     };
 
-    static async retrieve_equip_rooms_by_equip_id(equipID: string, accessType: string) {
+    static async retrieve_equip_rooms_by_equip_id(equipIDs: Array<string>, accessType: string) {
         let rooms;
 
         switch (accessType) {
             case "full":
-                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, false);
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipIDs, false, false);
                 break;
             case "elevatedEquip":
-                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, true, false);
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipIDs, true, false);
                 break;
             case "elevatedRoom":
-                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, false, true);
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipIDs, false, true);
                 break;
             case "public":
-                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipID, true, true);
+                rooms = await EquipRepo.fetch_equip_rooms_by_equip_id(equipIDs, true, true);
                 break;
             default:
                 throw new ExpressError("Server Configuration Error", 500);
@@ -191,13 +191,13 @@ class EquipModel {
         return rooms;
     };
 
-    static async retrieve_equip_by_group_and_equip_id(groupID: string, equipID: string) {
-        const equip = await EquipRepo.fetch_equip_by_group_and_equip_id(groupID, equipID);
+    static async retrieve_equip_by_group_and_equip_id(groupID: string, equipIDs: Array<string>) {
+        const equip = await EquipRepo.fetch_equip_by_group_and_equip_id(groupID, equipIDs);
         return equip;
     };
 
-    static async retrieve_equip_by_user_and_equip_id(userID: string, equipID: string) {
-        const equip = await EquipRepo.fetch_equip_by_user_and_equip_id(userID, equipID);
+    static async retrieve_equip_by_user_and_equip_id(userID: string, equipIDs: Array<string>) {
+        const equip = await EquipRepo.fetch_equip_by_user_and_equip_id(userID, equipIDs);
         return equip;
     };
 
