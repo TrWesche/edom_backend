@@ -244,16 +244,17 @@ userRootRouter.patch("/update",
   |_____\___/ \____|\___/ \___/  |_|  
 */
 // Manually Tested 2022-03-22
-userRootRouter.post("/logout", async (req, res, next) => {
-    console.log("Logging Out");
-    try {
-        res.header("auth-token", "");
-        
-        return res.json({"message": "Logout successful."})
-    } catch (error) {
-        next(error)
+userRootRouter.post("/logout", 
+    async (req, res, next) => {
+        try {
+            res.header("auth-token", "");
+            
+            return res.json({"message": "Logout successful."})
+        } catch (error) {
+            next(error)
+        }
     }
-});
+);
 
 /* ___  _____ _     _____ _____ _____ 
   |  _ \| ____| |   | ____|_   _| ____|

@@ -155,7 +155,7 @@ groupMgmtRouter.get("/users", authorizationMW_1["default"].defineGroupPermission
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
                     throw new expresError_1["default"]("Must be logged in to view group users || target group missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID, "full")];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {

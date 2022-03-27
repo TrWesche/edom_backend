@@ -525,12 +525,12 @@ var GroupRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         query = void 0;
                         queryParams = [];
-                        if (userPublic !== undefined) {
-                            query = "\n                    SELECT id, username\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON users.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1 AND users.public = $2";
+                        if (userPublic) {
+                            query = "\n                    SELECT \n                        userprofile.user_id AS id, \n                        userprofile.username AS username\n                    FROM userprofile\n                    RIGHT JOIN user_groups\n                    ON userprofile.user_id = user_groups.user_id\n                    WHERE user_groups.group_id = $1 AND userprofile.public = $2";
                             queryParams.push(groupID, userPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, username\n                    FROM users\n                    RIGHT JOIN user_groups\n                    ON users.id = user_groups.user_id\n                    WHERE user_groups.group_id = $1";
+                            query = "\n                    SELECT \n                        userprofile.user_id AS id, \n                        userprofile.username AS username\n                    FROM userprofile\n                    RIGHT JOIN user_groups\n                    ON userprofile.user_id = user_groups.user_id\n                    WHERE user_groups.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

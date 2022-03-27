@@ -53,33 +53,54 @@ var groupUserRouter = express.Router();
   |_| \_\_____/_/   \_\____/
 */
 // Manual Test - Basic Functionality: 01/19/2022
-// TODO: This will need to filter who shows in the group based on the viewing user's permissions (i.e. hide users who do not have public profiles)
 // Get Room List
-groupUserRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["read_room"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_read_room"],
+    public: ["site_read_group_public"]
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, groupReadPermitted_1, error_1;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _c.trys.push([0, 5, , 6]);
                 // Preflight
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Invalid Call: Get Group Users - All", 401);
+                    throw new expresError_1["default"]("Unauthorized", 401);
                 }
                 ;
-                return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID)];
+                queryData = void 0;
+                groupReadPermitted_1 = 0;
+                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
+                    // Set Delete Permission Level
+                    if (val.permissions_name === "group_read_room") {
+                        groupReadPermitted_1 = 1;
+                    }
+                    ;
+                });
+                if (!(groupReadPermitted_1 === 1)) return [3 /*break*/, 2];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID, "full")];
             case 1:
-                queryData = _b.sent();
+                queryData = _c.sent();
+                return [3 /*break*/, 4];
+            case 2: return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID, "public")];
+            case 3:
+                queryData = _c.sent();
+                _c.label = 4;
+            case 4:
+                ;
+                // Processing
                 if (!queryData) {
                     throw new expresError_1["default"]("Users Not Found: Get Group Users - All", 404);
                 }
                 ;
                 return [2 /*return*/, res.json({ users: queryData })];
-            case 2:
-                error_1 = _b.sent();
+            case 5:
+                error_1 = _c.sent();
                 next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

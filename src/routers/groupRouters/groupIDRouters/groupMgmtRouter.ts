@@ -102,7 +102,7 @@ groupMgmtRouter.get("/users", authMW.defineGroupPermissions(["read_group_user"])
         }
         
         // Process
-        const queryData = await GroupModel.retrieve_users_by_group_id(req.groupID);
+        const queryData = await GroupModel.retrieve_users_by_group_id(req.groupID, "full");
         if (!queryData) {
             throw new ExpressError("Retrieving Group Users Failed", 400);
         }

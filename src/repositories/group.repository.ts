@@ -378,7 +378,6 @@ class GroupRepo {
         }
     };
 
-
     static async disassociate_users_from_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
@@ -437,20 +436,24 @@ class GroupRepo {
             let query: string;
             let queryParams: Array<any> = [];
 
-            if (userPublic !== undefined) {
+            if (userPublic) {
                 query = `
-                    SELECT id, username
-                    FROM users
+                    SELECT 
+                        userprofile.user_id AS id, 
+                        userprofile.username AS username
+                    FROM userprofile
                     RIGHT JOIN user_groups
-                    ON users.id = user_groups.user_id
-                    WHERE user_groups.group_id = $1 AND users.public = $2`
+                    ON userprofile.user_id = user_groups.user_id
+                    WHERE user_groups.group_id = $1 AND userprofile.public = $2`
                 queryParams.push(groupID, userPublic);
             } else {
                 query = `
-                    SELECT id, username
-                    FROM users
+                    SELECT 
+                        userprofile.user_id AS id, 
+                        userprofile.username AS username
+                    FROM userprofile
                     RIGHT JOIN user_groups
-                    ON users.id = user_groups.user_id
+                    ON userprofile.user_id = user_groups.user_id
                     WHERE user_groups.group_id = $1`
                 queryParams.push(groupID);
             }

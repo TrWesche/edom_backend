@@ -26,26 +26,45 @@ const groupUserRouter = express.Router();
 
 
 // Manual Test - Basic Functionality: 01/19/2022
-// TODO: This will need to filter who shows in the group based on the viewing user's permissions (i.e. hide users who do not have public profiles)
 // Get Room List
-groupUserRouter.get("/", authMW.defineGroupPermissions(["read_room"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError("Invalid Call: Get Group Users - All", 401);
-        };
+groupUserRouter.get("/", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["group_read_room"],
+        public: ["site_read_group_public"]
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id || !req.groupID) {throw new ExpressError("Unauthorized", 401);};
 
-        // Processing
-        const queryData = await GroupModel.retrieve_users_by_group_id(req.groupID);
-        if (!queryData) {
-            throw new ExpressError("Users Not Found: Get Group Users - All", 404);
-        };
-        
-        return res.json({users: queryData});
-    } catch (error) {
-        next(error)
+            let queryData;
+    
+            let groupReadPermitted = 0;
+    
+            req.resolvedPerms?.forEach((val: any) => {
+                // Set Delete Permission Level
+                if (val.permissions_name === "group_read_room") {
+                    groupReadPermitted = 1;
+                };
+            });
+    
+            if (groupReadPermitted === 1) {
+                queryData = await GroupModel.retrieve_users_by_group_id(req.groupID, "full");
+            } else {
+                queryData = await GroupModel.retrieve_users_by_group_id(req.groupID, "public");
+            };
+
+            // Processing
+            if (!queryData) {throw new ExpressError("Users Not Found: Get Group Users - All", 404);};
+            
+            return res.json({users: queryData});
+        } catch (error) {
+            next(error)
+        }
     }
-});
+);
 
 
 

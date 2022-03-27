@@ -292,7 +292,6 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
 // Manually Tested 2022-03-22
 userRootRouter.post("/logout", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        console.log("Logging Out");
         try {
             res.header("auth-token", "");
             return [2 /*return*/, res.json({ "message": "Logout successful." })];

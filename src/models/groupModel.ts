@@ -211,8 +211,19 @@ class GroupModel {
         return permissions;
     };
 
-    static async retrieve_users_by_group_id(groupID: string) {
-        const users = GroupRepo.fetch_group_users_by_group_id(groupID);
+    static async retrieve_users_by_group_id(groupID: string, accessType: string) {
+        let users;
+        switch (accessType) {
+            case "full":
+                users = await GroupRepo.fetch_group_users_by_group_id(groupID, false);
+                break;
+            case "public":
+                users = await GroupRepo.fetch_group_users_by_group_id(groupID, true);
+                break;
+            default:
+                throw new ExpressError("Server Configuration Error", 500);
+        }    
+        
         return users;
     };
 
