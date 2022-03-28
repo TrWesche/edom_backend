@@ -12,17 +12,15 @@ import GroupModel from "../../models/groupModel";
 // Middleware Imports
 import authMW from "../../middleware/authorizationMW";
 
-
-import groupMgmtRouter from "./groupIDRouters/groupMgmtRouter";
+// Router Imports
 import groupUserRouter from "./groupIDRouters/groupUserRouter";
+import groupRoleMgmtRouter from "./groupIDRouters/groupRoleMgmtRouter";
 
 
 const groupIDRouter = express.Router();
 
-
-groupIDRouter.use("/mgmt", authMW.defineSitePermissions(["site_access"]), groupMgmtRouter);
-// groupIDRouter.use("/equips", authMW.defineSitePermissions(["site_access"]),  groupEquipRouter);
-groupIDRouter.use("/users", authMW.defineSitePermissions(["site_access"]), groupUserRouter);
+groupIDRouter.use("/role", groupRoleMgmtRouter);
+groupIDRouter.use("/user", groupUserRouter);
 
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
@@ -67,6 +65,27 @@ groupIDRouter.get("/",
     }
 );
 
+
+// Get Group Permissions
+
+groupIDRouter.get("/permissions", authMW.defineGroupPermissions(["read_group_permissions"]), authMW.validatePermissions, async (req, res, next) => {
+    try {
+        // Preflight
+        if (!req.user?.id || !req.groupID) {
+            throw new ExpressError(`Must be logged in to view group permissions || target group missing`, 400);
+        }
+        
+        // Process
+        const queryData = await GroupModel.retrieve_permissions();
+        if (!queryData) {
+            throw new ExpressError("Retrieving Group Permissions Failed", 400);
+        }
+        
+        return res.json({GroupUser: [queryData]})
+    } catch (error) {
+        next(error)
+    }
+});
 
 /* _   _ ____  ____    _  _____ _____ 
   | | | |  _ \|  _ \  / \|_   _| ____|

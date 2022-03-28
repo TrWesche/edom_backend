@@ -234,6 +234,22 @@ var authMW = /** @class */ (function () {
         }
     };
     ;
+    /** Move the RoleID from the Router Parameters into the Request Object */
+    authMW.addRoleIDToRequest = function (req, res, next) {
+        try {
+            if (req.params.roleID) {
+                req.roleID = req.params.roleID;
+            }
+            else {
+                req.roleID = undefined;
+            }
+            return next();
+        }
+        catch (err) {
+            return next();
+        }
+    };
+    ;
     /** Define Permissions Required to Access a Group Endpoint */
     authMW.defineGroupPermissions = function (permList) {
         return function (req, res, next) {

@@ -45,12 +45,12 @@ var groupUpdateSchema_1 = require("../../schemas/group/groupUpdateSchema");
 var groupModel_1 = require("../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../middleware/authorizationMW");
-var groupMgmtRouter_1 = require("./groupIDRouters/groupMgmtRouter");
+// Router Imports
 var groupUserRouter_1 = require("./groupIDRouters/groupUserRouter");
+var groupRoleMgmtRouter_1 = require("./groupIDRouters/groupRoleMgmtRouter");
 var groupIDRouter = express.Router();
-groupIDRouter.use("/mgmt", authorizationMW_1["default"].defineSitePermissions(["site_access"]), groupMgmtRouter_1["default"]);
-// groupIDRouter.use("/equips", authMW.defineSitePermissions(["site_access"]),  groupEquipRouter);
-groupIDRouter.use("/users", authorizationMW_1["default"].defineSitePermissions(["site_access"]), groupUserRouter_1["default"]);
+groupIDRouter.use("/role", groupRoleMgmtRouter_1["default"]);
+groupIDRouter.use("/user", groupUserRouter_1["default"]);
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |
@@ -104,6 +104,33 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
         }
     });
 }); });
+// Get Group Permissions
+groupIDRouter.get("/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_group_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_2;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                // Preflight
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Must be logged in to view group permissions || target group missing", 400);
+                }
+                return [4 /*yield*/, groupModel_1["default"].retrieve_permissions()];
+            case 1:
+                queryData = _b.sent();
+                if (!queryData) {
+                    throw new expresError_1["default"]("Retrieving Group Permissions Failed", 400);
+                }
+                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
+            case 2:
+                error_2 = _b.sent();
+                next(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 /* _   _ ____  ____    _  _____ _____
   | | | |  _ \|  _ \  / \|_   _| ____|
   | | | | |_) | | | |/ _ \ | | |  _|
@@ -116,7 +143,7 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
     group: ["group_read_group", "group_update_group"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_2;
+    var prevValues_1, updateValues_1, itemsList_1, newKeys, newData, error_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -164,8 +191,8 @@ groupIDRouter.patch("/", authorizationMW_1["default"].defineRoutePermissions({
                 newData = _b.sent();
                 return [2 /*return*/, res.json({ group: [newData] })];
             case 3:
-                error_2 = _b.sent();
-                next(error_2);
+                error_3 = _b.sent();
+                next(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -183,7 +210,7 @@ groupIDRouter["delete"]("/", authorizationMW_1["default"].defineRoutePermissions
     group: ["group_read_group", "group_delete_group"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+    var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -204,8 +231,8 @@ groupIDRouter["delete"]("/", authorizationMW_1["default"].defineRoutePermissions
                 }
                 return [2 /*return*/, res.json({ message: "Group deleted." })];
             case 2:
-                error_3 = _b.sent();
-                return [2 /*return*/, next(error_3)];
+                error_4 = _b.sent();
+                return [2 /*return*/, next(error_4)];
             case 3: return [2 /*return*/];
         }
     });

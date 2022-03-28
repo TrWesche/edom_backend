@@ -1,8 +1,8 @@
 // https://stackoverflow.com/questions/37377731/extend-express-request-object-using-typescript
 
 import { RoutePermissions } from "../repositories/permissions.repository";
-import { UserObjectProps } from "../repositories/user.repository";
 
+// TODO: Need to standardize how IDs are added from the params list to the request object
 declare module 'express-serve-static-core' {
     interface Request {
       user?: UserSessionProps
@@ -13,6 +13,7 @@ declare module 'express-serve-static-core' {
       reqPerms?: RoutePermissions
       resolvedPerms?: Array<Object>
       targetUID?: string
+      roleID?: string
     }
     // interface Response {
     //   myField?: string

@@ -170,6 +170,20 @@ class authMW {
       }
   };
 
+  /** Move the RoleID from the Router Parameters into the Request Object */
+  static addRoleIDToRequest (req, res, next) {
+    try {
+        if (req.params.roleID) {
+            req.roleID = req.params.roleID;
+        } else {
+            req.roleID = undefined;
+        }
+        return next();
+      } catch (err) {
+        return next();
+      }
+  };
+
   /** Define Permissions Required to Access a Group Endpoint */
   static defineGroupPermissions (permList: Array<string>) {
     return (req, res, next) => {

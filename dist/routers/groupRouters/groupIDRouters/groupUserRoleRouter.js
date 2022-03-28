@@ -36,31 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-// Library Imports
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
 // Schema Imports
+var groupUserRoleCreateSchema_1 = require("../../../schemas/group/groupUserRoleCreateSchema");
 // Model Imports
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupUserCreateSchema_1 = require("../../../schemas/group/groupUserCreateSchema");
-var groupUserRoleRouter_1 = require("./groupUserRoleRouter");
-var groupUserRouter = express.Router();
-groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
+var groupUserRoleRouter = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Add User
-groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
-    user: [],
-    group: ["group_create_group_user"],
-    public: []
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Add User Role
+groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "create_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -68,30 +61,28 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.userID || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to create group user || target user missing || target group missing", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.targetUID || !req.groupID || !req.body.roleID) {
+                    throw new expresError_1["default"]("Must be logged in to assign roles || target user missing || target group missing || target role missing", 400);
                 }
                 reqValues = {
-                    userID: req.body.userID,
-                    groupID: req.groupID
+                    user_id: req.targetUID,
+                    grouprole_id: req.body.roleID
                 };
-                if (!(0, groupUserCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to Create Group User: ".concat(groupUserCreateSchema_1["default"].errors), 400);
+                if (!(0, groupUserRoleCreateSchema_1["default"])(reqValues)) {
+                    throw new expresError_1["default"]("Unable to Create Group User: ".concat(groupUserRoleCreateSchema_1["default"].errors), 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, reqValues.userID)];
+                return [4 /*yield*/, groupModel_1["default"].create_group_user_role(reqValues.grouprole_id, reqValues.user_id)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Create Group User Failed", 400);
+                    throw new expresError_1["default"]("Create Group User Role Failed", 400);
                 }
-                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
+                return [2 /*return*/, res.json({ GroupUserRoles: [queryData] })];
             case 2:
                 error_1 = _b.sent();
                 next(error_1);
                 return [3 /*break*/, 3];
-            case 3:
-                ;
-                return [2 /*return*/];
+            case 3: return [2 /*return*/];
         }
     });
 }); });
@@ -101,55 +92,30 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 03/25/2022
-// Get User List
-groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
-    user: [],
-    group: ["group_read_room"],
-    public: ["site_read_group_public"]
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, groupReadPermitted_1, error_2;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+// Get User Roles
+groupUserRoleRouter.get("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_2;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _c.trys.push([0, 5, , 6]);
+                _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Unauthorized", 401);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID || !req.targetUID) {
+                    throw new expresError_1["default"]("Must be logged in to view group user roles || target group missing", 400);
                 }
-                ;
-                queryData = void 0;
-                groupReadPermitted_1 = 0;
-                (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.forEach(function (val) {
-                    // Set Delete Permission Level
-                    if (val.permissions_name === "group_read_room") {
-                        groupReadPermitted_1 = 1;
-                    }
-                    ;
-                });
-                if (!(groupReadPermitted_1 === 1)) return [3 /*break*/, 2];
-                return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID, "full")];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_user_roles_by_user_id(req.targetUID, req.groupID)];
             case 1:
-                queryData = _c.sent();
-                return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID, "public")];
-            case 3:
-                queryData = _c.sent();
-                _c.label = 4;
-            case 4:
-                ;
-                // Processing
+                queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Users Not Found: Get Group Users - All", 404);
+                    throw new expresError_1["default"]("Retrieving Group User Roles Failed", 400);
                 }
-                ;
-                return [2 /*return*/, res.json({ users: queryData })];
-            case 5:
-                error_2 = _c.sent();
+                return [2 /*return*/, res.json({ GroupUserRoles: [queryData] })];
+            case 2:
+                error_2 = _b.sent();
                 next(error_2);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); });
@@ -159,12 +125,8 @@ groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
   | |_| | |___| |___| |___  | | | |___
   |____/|_____|_____|_____| |_| |_____|
 */
-// Remove user
-groupUserRouter["delete"]("/:username", authorizationMW_1["default"].defineRoutePermissions({
-    user: [],
-    group: ["group_delete_group_user"],
-    public: []
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Remove User Role
+groupUserRoleRouter["delete"]("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "delete_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -172,26 +134,23 @@ groupUserRouter["delete"]("/:username", authorizationMW_1["default"].defineRoute
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.username || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to delete group user || target user missing || target group missing", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.targetUID || !req.groupID || !req.body.roleID) {
+                    throw new expresError_1["default"]("Must be logged in to create group || target user missing || target group missing || target role missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].delete_group_user(req.groupID, req.params.username)];
+                return [4 /*yield*/, groupModel_1["default"].delete_group_user_role(req.body.roleID, req.targetUID)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Delete Group User Failed", 400);
+                    throw new expresError_1["default"]("Delete Group User Role Failed", 400);
                 }
-                ;
-                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
+                return [2 /*return*/, res.json({ GroupUserRoles: [queryData] })];
             case 2:
                 error_3 = _b.sent();
                 next(error_3);
                 return [3 /*break*/, 3];
-            case 3:
-                ;
-                return [2 /*return*/];
+            case 3: return [2 /*return*/];
         }
     });
 }); });
-exports["default"] = groupUserRouter;
-//# sourceMappingURL=groupUserRouter.js.map
+exports["default"] = groupUserRoleRouter;
+//# sourceMappingURL=groupUserRoleRouter.js.map
