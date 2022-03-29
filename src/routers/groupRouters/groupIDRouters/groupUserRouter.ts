@@ -5,13 +5,15 @@ import * as express from "express";
 import ExpressError from "../../../utils/expresError";
 
 // Schema Imports
+import validateCreateGroupUserSchema, { GroupUserCreateProps } from "../../../schemas/group/groupUserCreateSchema";
 
 // Model Imports
 import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
-import validateCreateGroupUserSchema, { GroupUserCreateProps } from "../../../schemas/group/groupUserCreateSchema";
+
+// Router Imports
 import groupUserRoleRouter from "./groupUserRoleRouter";
 
 const groupUserRouter = express.Router();
@@ -25,6 +27,8 @@ groupUserRouter.use("/:username", groupUserRoleRouter);
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
+// TODO: This needs to be adjusted to a new procedure.  If User has requested access, check group_invite table and then create the connection.
+// If user has not requested access create an entry in the group_invite table.  The complementary User routes will need to be created.
 // Add User
 groupUserRouter.post("/",
     authMW.defineRoutePermissions({
@@ -38,7 +42,7 @@ groupUserRouter.post("/",
             // Preflight
             if (!req.user?.id || !req.body.userID || !req.groupID) {
                 throw new ExpressError(`Must be logged in to create group user || target user missing || target group missing`, 400);
-            }
+            };
 
             const reqValues: GroupUserCreateProps = {
                 userID: req.body.userID,
@@ -48,13 +52,13 @@ groupUserRouter.post("/",
 
             if(!validateCreateGroupUserSchema(reqValues)) {
                 throw new ExpressError(`Unable to Create Group User: ${validateCreateGroupUserSchema.errors}`, 400);
-            }
+            };
 
             // Process
             const queryData = await GroupModel.create_group_user(reqValues.groupID, reqValues.userID);
             if (!queryData) {
                 throw new ExpressError("Create Group User Failed", 400);
-            }
+            };
             
             return res.json({GroupUser: [queryData]})
         } catch (error) {

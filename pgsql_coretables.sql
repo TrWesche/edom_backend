@@ -204,6 +204,19 @@ CREATE TABLE "group_chat_log" (
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
 );
 
+CREATE TABLE "group_invites" (
+  "group_id" uuid,
+  "user_id" uuid,
+  "group_request" boolean,
+  "user_request" boolean,
+  "message" text,
+  "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)
+);
+
+
+ALTER TABLE "group_invites" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
+
+ALTER TABLE "group_invites" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "userdata" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
 

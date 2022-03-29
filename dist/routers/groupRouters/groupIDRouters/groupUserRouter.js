@@ -41,11 +41,12 @@ var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
 // Schema Imports
+var groupUserCreateSchema_1 = require("../../../schemas/group/groupUserCreateSchema");
 // Model Imports
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupUserCreateSchema_1 = require("../../../schemas/group/groupUserCreateSchema");
+// Router Imports
 var groupUserRoleRouter_1 = require("./groupUserRoleRouter");
 var groupUserRouter = express.Router();
 groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
@@ -55,6 +56,8 @@ groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
+// TODO: This needs to be adjusted to a new procedure.  If User has requested access, check group_invite table and then create the connection.
+// If user has not requested access create an entry in the group_invite table.  The complementary User routes will need to be created.
 // Add User
 groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
@@ -71,6 +74,7 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.userID || !req.groupID) {
                     throw new expresError_1["default"]("Must be logged in to create group user || target user missing || target group missing", 400);
                 }
+                ;
                 reqValues = {
                     userID: req.body.userID,
                     groupID: req.groupID
@@ -78,12 +82,14 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
                 if (!(0, groupUserCreateSchema_1["default"])(reqValues)) {
                     throw new expresError_1["default"]("Unable to Create Group User: ".concat(groupUserCreateSchema_1["default"].errors), 400);
                 }
+                ;
                 return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, reqValues.userID)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
                     throw new expresError_1["default"]("Create Group User Failed", 400);
                 }
+                ;
                 return [2 /*return*/, res.json({ GroupUser: [queryData] })];
             case 2:
                 error_1 = _b.sent();
