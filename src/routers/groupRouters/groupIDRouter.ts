@@ -67,25 +67,33 @@ groupIDRouter.get("/",
 
 
 // Get Group Permissions
-
-groupIDRouter.get("/permissions", authMW.defineGroupPermissions(["read_group_permissions"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.groupID) {
-            throw new ExpressError(`Must be logged in to view group permissions || target group missing`, 400);
-        }
-        
-        // Process
-        const queryData = await GroupModel.retrieve_permissions();
-        if (!queryData) {
-            throw new ExpressError("Retrieving Group Permissions Failed", 400);
-        }
-        
-        return res.json({GroupUser: [queryData]})
-    } catch (error) {
-        next(error)
+// Manually Tested 2022-03-28
+groupIDRouter.get("/permissions", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["group_read_group_permissions"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id || !req.groupID) {
+                throw new ExpressError(`Must be logged in to view group permissions || target group missing`, 400);
+            }
+            
+            // Process
+            const queryData = await GroupModel.retrieve_permissions();
+            if (!queryData) {
+                throw new ExpressError("Retrieving Group Permissions Failed", 400);
+            }
+            
+            return res.json({GroupUser: [queryData]});
+        } catch (error) {
+            next(error);
+        };
     }
-});
+);
 
 /* _   _ ____  ____    _  _____ _____ 
   | | | |  _ \|  _ \  / \|_   _| ____|

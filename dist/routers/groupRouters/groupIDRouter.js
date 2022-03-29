@@ -105,7 +105,12 @@ groupIDRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
     });
 }); });
 // Get Group Permissions
-groupIDRouter.get("/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_group_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+// Manually Tested 2022-03-28
+groupIDRouter.get("/permissions", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_read_group_permissions"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -127,7 +132,9 @@ groupIDRouter.get("/permissions", authorizationMW_1["default"].defineGroupPermis
                 error_2 = _b.sent();
                 next(error_2);
                 return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+            case 3:
+                ;
+                return [2 /*return*/];
         }
     });
 }); });
