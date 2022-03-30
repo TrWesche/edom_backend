@@ -143,6 +143,38 @@ class GroupRepo {
         }
     };
 
+    static async fetch_member_requests_by_gid_usernames(groupID: string, usernames: Array<string>) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID];
+            
+            usernames.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT
+                    userprofile.user_id AS id,
+                    group_membership_requests.group_id AS group_id
+                FROM userprofiles
+                LEFT OUTER JOIN group_membership_requests ON group_membership_requests.user_id = user_profile.user_id
+                WHERE group_membership_requests.group_id = $1 AND (userprofile.username ILIKE ${idxParams.join('OR userprofile.username ILIKE')})`;
+
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+
+            return result.rows;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+        }
+    };
+
     static async fetch_unrestricted_group_list_by_user_id(userID: string, limit: number, offset: number) {
         try {
             const result = await pgdb.query(`

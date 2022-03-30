@@ -41,14 +41,16 @@ groupUserRouter.post("/",
         try {
             // Preflight
             if (!req.user?.id || !req.body.userID || !req.groupID) {
-                throw new ExpressError(`Must be logged in to create group user || target user missing || target group missing`, 400);
+                throw new ExpressError(`Must be logged in to add group user || target users missing || target group missing`, 400);
             };
 
             const reqValues: GroupUserCreateProps = {
-                userID: req.body.userID,
+                usernames: req.body.usernames,
                 groupID: req.groupID
             };
             
+            const uidgidpairs = GroupModel.retrieve_group_membership_requests(reqValues.groupID, reqValues.usernames);
+
 
             if(!validateCreateGroupUserSchema(reqValues)) {
                 throw new ExpressError(`Unable to Create Group User: ${validateCreateGroupUserSchema.errors}`, 400);

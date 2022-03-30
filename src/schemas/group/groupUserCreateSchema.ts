@@ -4,7 +4,7 @@ const ajv = new Ajv();
 
 export interface GroupUserCreateProps {
     groupID: string
-    userID: string
+    usernames: Array<string>
 };
 
 const schema: JSONSchemaType<GroupUserCreateProps> = {
@@ -14,13 +14,16 @@ const schema: JSONSchemaType<GroupUserCreateProps> = {
             $id:"#/properties/groupID",
             type: "string"
         },
-        userID: {
-            $id:"#/properties/userID",
-            type: "string",
+        usernames: {
+            $id:"#/properties/usernames",
+            type: "array",
+            items: {
+                type: "string"
+            }
         }
     },
     required: [
-        "groupID", "userID"
+        "groupID", "usernames"
     ],
     additionalProperties: true
 };
