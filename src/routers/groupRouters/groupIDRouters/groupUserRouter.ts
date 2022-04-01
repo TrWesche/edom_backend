@@ -48,21 +48,44 @@ groupUserRouter.post("/",
                 usernames: req.body.usernames,
                 groupID: req.groupID
             };
-            
-            const uidgidpairs = GroupModel.retrieve_group_membership_requests(reqValues.groupID, reqValues.usernames);
-
 
             if(!validateCreateGroupUserSchema(reqValues)) {
-                throw new ExpressError(`Unable to Create Group User: ${validateCreateGroupUserSchema.errors}`, 400);
-            };
-
-            // Process
-            const queryData = await GroupModel.create_group_user(reqValues.groupID, reqValues.userID);
-            if (!queryData) {
-                throw new ExpressError("Create Group User Failed", 400);
+                throw new ExpressError(`Unable to create group user, schema check failure: ${validateCreateGroupUserSchema.errors}`, 400);
             };
             
-            return res.json({GroupUser: [queryData]})
+            const uidgidpairs = await GroupModel.retrieve_group_membership_requests(reqValues.groupID, reqValues.usernames);
+
+            const addUserList: Array<string> = [];
+            const addReqList: Array<string> = [];
+
+            if (uidgidpairs.length > 0) {
+                uidgidpairs.forEach((val) => {
+                    if (val.user_id !== undefined && val.group_id !== undefined) {
+                        if (val.user_id.length > 0 && val.group_id.length > 0) {
+                            addUserList.push(val.user_id);
+                        } else {
+                            addReqList.push(val.user_id);
+                        };
+                    };
+                });
+            };
+            
+            let addUserQueryData;
+            let addReqQueryData;
+
+            if (addUserList.length > 0) {
+                // Process
+                addUserQueryData = await GroupModel.create_group_user(reqValues.groupID, addUserList);
+                if (!addUserQueryData) {throw new ExpressError("Create Group User Failed", 400);};
+            };
+
+
+            if (addReqList.length > 0) {
+                addReqQueryData = await GroupModel.create_invite_group_to_user(reqValues.groupID, addReqList);
+                if (!addUserQueryData) {throw new ExpressError("Create Invite Group to User Failed", 400);};
+            };
+            
+            return res.json({GroupUsersAdded: addUserQueryData, GroupInvitesSent: addReqQueryData});
         } catch (error) {
             next(error)
         };

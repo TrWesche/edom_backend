@@ -10,13 +10,16 @@ var schema = {
             $id: "#/properties/groupID",
             type: "string"
         },
-        userID: {
-            $id: "#/properties/userID",
-            type: "string"
+        usernames: {
+            $id: "#/properties/usernames",
+            type: "array",
+            items: {
+                type: "string"
+            }
         }
     },
     required: [
-        "groupID", "userID"
+        "groupID", "usernames"
     ],
     additionalProperties: true
 };

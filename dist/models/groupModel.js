@@ -56,23 +56,23 @@ var GroupModel = /** @class */ (function () {
          \____|_| \_\_____/_/   \_\_| |_____|
     */
     GroupModel.create_group = function (data) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
             var dbEntryProps, groupEntry, groupRoles, groupPermissions, ownerPermission, userGroup, userAssoc, error_1;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         // Preflight
                         if (!data.name) {
                             throw new expresError_1["default"]("Invalid Create Equipment Call", 400);
                         }
                         ;
-                        _c.label = 1;
+                        _d.label = 1;
                     case 1:
-                        _c.trys.push([1, 10, , 12]);
+                        _d.trys.push([1, 10, , 12]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 2:
-                        _c.sent();
+                        _d.sent();
                         dbEntryProps = {
                             name: data.name,
                             headline: data.headline,
@@ -83,43 +83,43 @@ var GroupModel = /** @class */ (function () {
                         };
                         return [4 /*yield*/, group_repository_1["default"].create_new_group(dbEntryProps)];
                     case 3:
-                        groupEntry = _c.sent();
+                        groupEntry = _d.sent();
                         if (!(groupEntry === null || groupEntry === void 0 ? void 0 : groupEntry.id)) {
                             throw new expresError_1["default"]("Error while creating new group entry", 500);
                         }
                         ;
                         return [4 /*yield*/, groupPermissions_repository_1["default"].create_roles_init_new_group(groupEntry.id)];
                     case 4:
-                        groupRoles = _c.sent();
+                        groupRoles = _d.sent();
                         if (!((_a = groupRoles[0]) === null || _a === void 0 ? void 0 : _a.id)) {
                             throw new expresError_1["default"]("Error while creating group role entries for new group", 500);
                         }
                         ;
                         return [4 /*yield*/, groupPermissions_repository_1["default"].create_role_permissions_for_new_group(groupEntry.id)];
                     case 5:
-                        groupPermissions = _c.sent();
+                        groupPermissions = _d.sent();
                         if (!((_b = groupPermissions[0]) === null || _b === void 0 ? void 0 : _b.grouprole_id)) {
                             throw new expresError_1["default"]("Error while creating group role permission entries for new group", 500);
                         }
                         ;
                         return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_role_by_role_name("owner", groupEntry.id)];
                     case 6:
-                        ownerPermission = _c.sent();
+                        ownerPermission = _d.sent();
                         if (!(ownerPermission === null || ownerPermission === void 0 ? void 0 : ownerPermission.id)) {
                             throw new expresError_1["default"]("Error while fetching group owner permission entry for new group", 500);
                         }
                         ;
-                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group(data.ownerid, groupEntry.id)];
+                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group([data.ownerid], groupEntry.id)];
                     case 7:
-                        userGroup = _c.sent();
+                        userGroup = _d.sent();
                         if (!userGroup) {
                             throw new expresError_1["default"]("Error while associating user to group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(data.ownerid, ownerPermission.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id([data.ownerid], ownerPermission.id)];
                     case 8:
-                        userAssoc = _c.sent();
-                        if (!(userAssoc === null || userAssoc === void 0 ? void 0 : userAssoc.grouprole_id)) {
+                        userAssoc = _d.sent();
+                        if (!((_c = userAssoc[0]) === null || _c === void 0 ? void 0 : _c.grouprole_id)) {
                             throw new expresError_1["default"]("Error assigning user role to user", 500);
                         }
                         ;
@@ -127,13 +127,13 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
                     case 9:
                         // Commit to Database
-                        _c.sent();
+                        _d.sent();
                         return [2 /*return*/, groupEntry];
                     case 10:
-                        error_1 = _c.sent();
+                        error_1 = _d.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 11:
-                        _c.sent();
+                        _d.sent();
                         throw new expresError_1["default"](error_1.message, error_1.status);
                     case 12:
                         ;
@@ -193,7 +193,7 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.create_group_user = function (groupID, userID) {
+    GroupModel.create_group_user = function (groupID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var userGroup, defaultRole, userRole, error_3;
             return __generator(this, function (_a) {
@@ -203,7 +203,7 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group(userID, groupID)];
+                        return [4 /*yield*/, group_repository_1["default"].associate_user_to_group(userIDs, groupID)];
                     case 2:
                         userGroup = _a.sent();
                         if (!userGroup) {
@@ -217,7 +217,7 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while fetching default role for target group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userID, defaultRole.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, defaultRole.id)];
                     case 4:
                         userRole = _a.sent();
                         if (!userRole) {
@@ -242,12 +242,38 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.create_group_user_role = function (roleID, userID) {
+    GroupModel.create_invite_group_to_user = function (groupID, userIDs) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userInvite, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, group_repository_1["default"].create_invite_group_to_user(userIDs, groupID)];
+                    case 1:
+                        userInvite = _a.sent();
+                        if (!userInvite) {
+                            throw new expresError_1["default"]("Error while inviting user to group", 500);
+                        }
+                        ;
+                        return [2 /*return*/, userInvite];
+                    case 2:
+                        error_4 = _a.sent();
+                        throw new expresError_1["default"](error_4.message, error_4.status);
+                    case 3:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupModel.create_group_user_role = function (roleID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var userRole;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userID, roleID)];
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, roleID)];
                     case 1:
                         userRole = _a.sent();
                         if (!userRole) {
@@ -401,6 +427,20 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
+    GroupModel.retrieve_group_membership_requests = function (groupID, usernames) {
+        return __awaiter(this, void 0, void 0, function () {
+            var users;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, group_repository_1["default"].fetch_member_requests_by_gid_usernames(groupID, usernames)];
+                    case 1:
+                        users = _a.sent();
+                        return [2 /*return*/, users];
+                }
+            });
+        });
+    };
+    ;
     // static async retrieve_user_permissions_by_user_id(userID: string) {
     //     const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
     //     return permissions;
@@ -437,7 +477,7 @@ var GroupModel = /** @class */ (function () {
     */
     GroupModel.delete_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var groupList, error_4;
+            var groupList, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -478,11 +518,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupList];
                     case 12:
-                        error_4 = _a.sent();
+                        error_5 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 13:
                         _a.sent();
-                        throw new expresError_1["default"](error_4.message, error_4.status);
+                        throw new expresError_1["default"](error_5.message, error_5.status);
                     case 14: return [2 /*return*/];
                 }
             });
@@ -491,7 +531,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_role = function (roleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var role, error_5;
+            var role, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -517,11 +557,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, role];
                     case 6:
-                        error_5 = _a.sent();
+                        error_6 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 7:
                         _a.sent();
-                        throw new expresError_1["default"](error_5.message, error_5.status);
+                        throw new expresError_1["default"](error_6.message, error_6.status);
                     case 8: return [2 /*return*/];
                 }
             });
@@ -555,7 +595,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_group_user = function (groupID, userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var roles, groupUser, error_6;
+            var roles, groupUser, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -582,11 +622,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupUser];
                     case 5:
-                        error_6 = _a.sent();
+                        error_7 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 6:
                         _a.sent();
-                        throw new expresError_1["default"](error_6.message, error_6.status);
+                        throw new expresError_1["default"](error_7.message, error_7.status);
                     case 7: return [2 /*return*/];
                 }
             });

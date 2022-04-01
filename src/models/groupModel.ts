@@ -64,14 +64,14 @@ class GroupModel {
             };
 
             // Associate User to Group
-            const userGroup = await GroupRepo.associate_user_to_group(data.ownerid, groupEntry.id);
+            const userGroup = await GroupRepo.associate_user_to_group([data.ownerid], groupEntry.id);
             if (!userGroup) {
                 throw new ExpressError("Error while associating user to group", 500);
             };
 
             // Associate Equipment with Uploading User
-            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id(data.ownerid, ownerPermission.id);
-            if (!userAssoc?.grouprole_id) {
+            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id([data.ownerid], ownerPermission.id);
+            if (!userAssoc[0]?.grouprole_id) {
                 throw new ExpressError("Error assigning user role to user", 500);
             };
 
@@ -120,11 +120,11 @@ class GroupModel {
         }
     };
 
-    static async create_group_user(groupID: string, userID: string) {
+    static async create_group_user(groupID: string, userIDs: Array<string>) {
         try {
             await TransactionRepo.begin_transaction();
 
-            const userGroup = await GroupRepo.associate_user_to_group(userID, groupID);
+            const userGroup = await GroupRepo.associate_user_to_group(userIDs, groupID);
             if (!userGroup) {
                 throw new ExpressError("Error while associating user to group", 500);
             };
@@ -134,7 +134,7 @@ class GroupModel {
                 throw new ExpressError("Error while fetching default role for target group", 500);
             };
 
-            const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, defaultRole.id);
+            const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, defaultRole.id);
             if (!userRole) {
                 throw new ExpressError("Error while assinging default role to target user", 500);
             };
@@ -147,8 +147,21 @@ class GroupModel {
         };
     };
     
-    static async create_group_user_role(roleID: string, userID: string) {
-        const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userID, roleID);
+    static async create_invite_group_to_user(groupID: string, userIDs: Array<string>) {
+        try {
+            const userInvite = await GroupRepo.create_invite_group_to_user(userIDs, groupID);
+            if (!userInvite) {
+                throw new ExpressError("Error while inviting user to group", 500);
+            };
+
+            return userInvite;
+        } catch (error) {
+            throw new ExpressError(error.message, error.status);
+        };
+    };
+
+    static async create_group_user_role(roleID: string, userIDs: Array<string>) {
+        const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, roleID);
         if (!userRole) {
             throw new ExpressError("Error while assinging default role to target user", 500);
         };

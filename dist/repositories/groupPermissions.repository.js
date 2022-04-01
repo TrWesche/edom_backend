@@ -575,20 +575,32 @@ var GroupPermissionsRepo = /** @class */ (function () {
     //     }   
     // };
     // User Role Management
-    GroupPermissionsRepo.create_user_group_role_by_role_id = function (userID, groupRoleID) {
+    GroupPermissionsRepo.create_user_group_role_by_role_id = function (userIDs, groupRoleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_20;
+            var idx_5, idxParams_3, query, queryParams_5, result, rVal, error_20;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("INSERT INTO user_grouproles\n                    (user_id, grouprole_id) \n                VALUES ($1, $2) \n                RETURNING user_id, grouprole_id", [
-                                userID, groupRoleID
-                            ])];
+                        idx_5 = 1;
+                        idxParams_3 = [];
+                        query = void 0;
+                        queryParams_5 = [];
+                        userIDs.forEach(function (val) {
+                            if (val) {
+                                queryParams_5.push(val, groupRoleID);
+                                idxParams_3.push("($".concat(idx_5, ", $").concat(idx_5 + 1, ")"));
+                                idx_5 += 2;
+                            }
+                            ;
+                        });
+                        query = "\n                INSERT INTO user_grouproles \n                    (user_id, grouprole_id) \n                VALUES ".concat(idxParams_3.join(', '), "\n                RETURNING user_id, grouprole_id");
+                        console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_5)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
+                        rVal = result.rows;
+                        return [2 /*return*/, rVal];
                     case 2:
                         error_20 = _a.sent();
                         throw new expresError_1["default"]("An Error Occured: Unable to assign user group role - ".concat(error_20), 500);

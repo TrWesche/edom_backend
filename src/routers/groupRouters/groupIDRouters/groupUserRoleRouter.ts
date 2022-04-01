@@ -40,7 +40,7 @@ groupUserRoleRouter.post("/roles", authMW.defineGroupPermissions(["read_user_rol
         }
 
         // Process
-        const queryData = await GroupModel.create_group_user_role(reqValues.grouprole_id, reqValues.user_id);
+        const queryData = await GroupModel.create_group_user_role(reqValues.grouprole_id, [reqValues.user_id]);
         if (!queryData) {
             throw new ExpressError("Create Group User Role Failed", 400);
         }

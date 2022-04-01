@@ -160,8 +160,8 @@ class GroupRepo {
 
             query = `
                 SELECT
-                    userprofile.user_id AS id,
-                    group_membership_requests.group_id AS group_id
+                    group_membership_requests.group_id AS group_id    
+                    userprofile.user_id AS user_id
                 FROM userprofiles
                 LEFT OUTER JOIN group_membership_requests ON group_membership_requests.user_id = user_profile.user_id
                 WHERE group_membership_requests.group_id = $1 AND (userprofile.username ILIKE ${idxParams.join('OR userprofile.username ILIKE')})`;
@@ -169,7 +169,8 @@ class GroupRepo {
             console.log(query);
             const result = await pgdb.query(query, queryParams);
 
-            return result.rows;
+            const rVal: Array<GroupUserProps> | undefined = result.rows;
+            return rVal;
         } catch (error) {
             throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
@@ -304,29 +305,70 @@ class GroupRepo {
         }
     };
 
-    
-
-
 
     //  _   _ ____  _____ ____  
     // | | | / ___|| ____|  _ \ 
     // | | | \___ \|  _| | |_) |
     // | |_| |___) | |___|  _ < 
     //  \___/|____/|_____|_| \_\
-    static async associate_user_to_group(userID: string, groupID: string) {
+    static async create_invite_group_to_user(userIDs: Array<string>, groupID: string) {
         try {
-            const result = await pgdb.query(
-                `INSERT INTO user_groups 
-                    (user_id, group_id) 
-                VALUES ($1, $2) 
-                RETURNING user_id, group_id`,
-            [
-                userID,
-                groupID
-            ]);
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
             
-            const rval: GroupUserProps | undefined = result.rows[0];
-            return rval;
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val, groupID);
+                    idxParams.push(`($${idx}, $${idx+1}, TRUE, FALSE, 'You have been invited to join this group!')`);
+                    idx+=2;
+                };
+            });
+
+            query = `
+                INSERT INTO group_membership_requests 
+                    (user_id, group_id, group_request, user_request, message) 
+                VALUES ${idxParams.join(', ')}
+                RETURNING user_id, group_id`;
+            
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserProps> = result.rows
+
+            return rVal;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to create group association group -> user - ${error}`, 500);
+        }
+    };
+
+
+    static async associate_user_to_group(userIDs: Array<string>, groupID: string) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val, groupID);
+                    idxParams.push(`($${idx}, $${idx+1})`);
+                    idx+=2;
+                };
+            });
+
+            query = `
+                INSERT INTO user_groups 
+                    (user_id, group_id) 
+                VALUES ${idxParams.join(', ')}
+                RETURNING user_id, group_id`;
+            
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserProps> = result.rows
+
+            return rVal;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to create group association group -> user - ${error}`, 500);
         }

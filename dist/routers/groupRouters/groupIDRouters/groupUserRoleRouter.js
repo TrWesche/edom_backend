@@ -71,7 +71,7 @@ groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineGroupPermi
                 if (!(0, groupUserRoleCreateSchema_1["default"])(reqValues)) {
                     throw new expresError_1["default"]("Unable to Create Group User: ".concat(groupUserRoleCreateSchema_1["default"].errors), 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].create_group_user_role(reqValues.grouprole_id, reqValues.user_id)];
+                return [4 /*yield*/, groupModel_1["default"].create_group_user_role(reqValues.grouprole_id, [reqValues.user_id])];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {

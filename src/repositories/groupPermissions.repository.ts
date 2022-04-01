@@ -482,19 +482,32 @@ class GroupPermissionsRepo {
 
 
     // User Role Management
-    static async create_user_group_role_by_role_id(userID: string, groupRoleID: string) {
+    static async create_user_group_role_by_role_id(userIDs: Array<string>, groupRoleID: string) {
         try {
-            const result = await pgdb.query(
-                `INSERT INTO user_grouproles
-                    (user_id, grouprole_id) 
-                VALUES ($1, $2) 
-                RETURNING user_id, grouprole_id`,
-            [
-                userID, groupRoleID
-            ]);
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val, groupRoleID);
+                    idxParams.push(`($${idx}, $${idx+1})`);
+                    idx+=2;
+                };
+            });
 
-            const rval: GroupUserRoleProps | undefined = result.rows[0];
-            return rval;
+            query = `
+                INSERT INTO user_grouproles 
+                    (user_id, grouprole_id) 
+                VALUES ${idxParams.join(', ')}
+                RETURNING user_id, grouprole_id`;
+            
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserRoleProps> = result.rows
+
+            return rVal;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to assign user group role - ${error}`, 500);
         }

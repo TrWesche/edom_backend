@@ -64,38 +64,76 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
     group: ["group_create_group_user"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, error_1;
+    var reqValues, uidgidpairs, addUserList_1, addReqList_1, addUserQueryData, addReqQueryData, error_1;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _b.trys.push([0, 6, , 7]);
                 // Preflight
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.userID || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to create group user || target user missing || target group missing", 400);
+                    throw new expresError_1["default"]("Must be logged in to add group user || target users missing || target group missing", 400);
                 }
                 ;
                 reqValues = {
-                    userID: req.body.userID,
+                    usernames: req.body.usernames,
                     groupID: req.groupID
                 };
                 if (!(0, groupUserCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to Create Group User: ".concat(groupUserCreateSchema_1["default"].errors), 400);
+                    throw new expresError_1["default"]("Unable to create group user, schema check failure: ".concat(groupUserCreateSchema_1["default"].errors), 400);
                 }
                 ;
-                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, reqValues.userID)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_group_membership_requests(reqValues.groupID, reqValues.usernames)];
             case 1:
-                queryData = _b.sent();
-                if (!queryData) {
+                uidgidpairs = _b.sent();
+                addUserList_1 = [];
+                addReqList_1 = [];
+                if (uidgidpairs.length > 0) {
+                    uidgidpairs.forEach(function (val) {
+                        if (val.user_id !== undefined && val.group_id !== undefined) {
+                            if (val.user_id.length > 0 && val.group_id.length > 0) {
+                                addUserList_1.push(val.user_id);
+                            }
+                            else {
+                                addReqList_1.push(val.user_id);
+                            }
+                            ;
+                        }
+                        ;
+                    });
+                }
+                ;
+                addUserQueryData = void 0;
+                addReqQueryData = void 0;
+                if (!(addUserList_1.length > 0)) return [3 /*break*/, 3];
+                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, addUserList_1)];
+            case 2:
+                // Process
+                addUserQueryData = _b.sent();
+                if (!addUserQueryData) {
                     throw new expresError_1["default"]("Create Group User Failed", 400);
                 }
                 ;
-                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
-            case 2:
+                _b.label = 3;
+            case 3:
+                ;
+                if (!(addReqList_1.length > 0)) return [3 /*break*/, 5];
+                return [4 /*yield*/, groupModel_1["default"].create_invite_group_to_user(reqValues.groupID, addReqList_1)];
+            case 4:
+                addReqQueryData = _b.sent();
+                if (!addUserQueryData) {
+                    throw new expresError_1["default"]("Create Invite Group to User Failed", 400);
+                }
+                ;
+                _b.label = 5;
+            case 5:
+                ;
+                return [2 /*return*/, res.json({ GroupUsersAdded: addUserQueryData, GroupInvitesSent: addReqQueryData })];
+            case 6:
                 error_1 = _b.sent();
                 next(error_1);
-                return [3 /*break*/, 3];
-            case 3:
+                return [3 /*break*/, 7];
+            case 7:
                 ;
                 return [2 /*return*/];
         }
