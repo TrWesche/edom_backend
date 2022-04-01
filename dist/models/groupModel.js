@@ -242,14 +242,14 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.create_invite_group_to_user = function (groupID, userIDs) {
+    GroupModel.create_request_group_to_user = function (groupID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var userInvite, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, group_repository_1["default"].create_invite_group_to_user(userIDs, groupID)];
+                        return [4 /*yield*/, group_repository_1["default"].create_request_group_to_user(userIDs, groupID)];
                     case 1:
                         userInvite = _a.sent();
                         if (!userInvite) {
@@ -672,6 +672,32 @@ var GroupModel = /** @class */ (function () {
                         }
                         ;
                         return [2 /*return*/, roles];
+                }
+            });
+        });
+    };
+    ;
+    GroupModel.delete_request_user_group = function (userIDs, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userInvite, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, group_repository_1["default"].delete_request_user_group(userIDs, groupID)];
+                    case 1:
+                        userInvite = _a.sent();
+                        if (!userInvite) {
+                            throw new expresError_1["default"]("Error while deleteing group membership requests", 500);
+                        }
+                        ;
+                        return [2 /*return*/, userInvite];
+                    case 2:
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"](error_9.message, error_9.status);
+                    case 3:
+                        ;
+                        return [2 /*return*/];
                 }
             });
         });

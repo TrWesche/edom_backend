@@ -142,53 +142,86 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
         }
     });
 }); });
-// TODO: This needs to be expanded to handle both the request and the invite request operation
-userRootRouter.post("/join", authorizationMW_1["default"].defineRoutePermissions({
+userRootRouter.post("/requests", authorizationMW_1["default"].defineRoutePermissions({
     user: ["site_update_user_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, invite, error_3;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var queryData, _a, invite, _b, error_3;
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _b.trys.push([0, 8, , 9]);
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                _d.trys.push([0, 19, , 20]);
+                if (!((_c = req.user) === null || _c === void 0 ? void 0 : _c.id)) {
                     throw new expresError_1["default"]("Unauthorized", 401);
                 }
                 ;
-                if (!req.body.groupID) {
-                    throw new expresError_1["default"]("Group Not Found", 400);
+                if (!req.body.groupID || !req.body.context || !req.body.action) {
+                    throw new expresError_1["default"]("Invalid Request", 400);
                 }
                 ;
                 queryData = void 0;
-                return [4 /*yield*/, userModel_1["default"].retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID)];
-            case 1:
-                invite = _b.sent();
-                if (!(invite && invite.group_request === true)) return [3 /*break*/, 3];
-                return [4 /*yield*/, groupModel_1["default"].create_group_user(req.body.groupID, [req.user.id])];
+                _a = req.body.context;
+                switch (_a) {
+                    case "group": return [3 /*break*/, 1];
+                }
+                return [3 /*break*/, 17];
+            case 1: return [4 /*yield*/, userModel_1["default"].retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID)];
             case 2:
-                queryData = _b.sent();
-                return [2 /*return*/, res.json({ message: "Group Joined!" })];
+                invite = _d.sent();
+                _b = req.body.action;
+                switch (_b) {
+                    case "accept_invite": return [3 /*break*/, 3];
+                    case "send_request": return [3 /*break*/, 7];
+                    case "remove_request": return [3 /*break*/, 12];
+                }
+                return [3 /*break*/, 15];
             case 3:
-                if (!(invite && invite.user_request === true)) return [3 /*break*/, 4];
-                return [2 /*return*/, res.json({ message: "You have already requested to join this group." })];
+                if (!(invite && invite.group_request === true)) return [3 /*break*/, 5];
+                return [4 /*yield*/, groupModel_1["default"].create_group_user(req.body.groupID, [req.user.id])];
             case 4:
-                if (!!invite) return [3 /*break*/, 6];
-                return [4 /*yield*/, groupModel_1["default"].create_request_user_to_group(req.body.groupID, req.user.id)];
-            case 5:
-                queryData = _b.sent();
-                return [2 /*return*/, res.json({ message: "Request Sent!" })];
-            case 6: throw new expresError_1["default"]("Server Error", 500);
-            case 7:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ message: "Group Joined!" })];
+            case 5: throw new expresError_1["default"]("Server Error: Unable to join group.", 500);
+            case 6:
                 ;
-                return [3 /*break*/, 9];
+                _d.label = 7;
+            case 7:
+                if (!(invite && invite.user_request === true)) return [3 /*break*/, 8];
+                return [2 /*return*/, res.json({ message: "You have already requested to join this group." })];
             case 8:
-                error_3 = _b.sent();
+                if (!!invite) return [3 /*break*/, 10];
+                return [4 /*yield*/, groupModel_1["default"].create_request_user_to_group(req.body.groupID, req.user.id)];
+            case 9:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ message: "Request Sent" })];
+            case 10: throw new expresError_1["default"]("Server Error: Unable to send request.", 500);
+            case 11:
+                ;
+                _d.label = 12;
+            case 12:
+                if (!invite) return [3 /*break*/, 14];
+                return [4 /*yield*/, groupModel_1["default"].delete_request_user_group([req.user.id], req.body.groupID)];
+            case 13:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ message: "Request Removed" })];
+            case 14:
+                ;
+                return [3 /*break*/, 16];
+            case 15: throw new expresError_1["default"]("Configuration Error - Invalid Action", 400);
+            case 16:
+                ;
+                _d.label = 17;
+            case 17: throw new expresError_1["default"]("Configuration Error - Invalid Context", 400);
+            case 18:
+                ;
+                return [3 /*break*/, 20];
+            case 19:
+                error_3 = _d.sent();
                 next(error_3);
-                return [3 /*break*/, 9];
-            case 9: return [2 /*return*/];
+                return [3 /*break*/, 20];
+            case 20: return [2 /*return*/];
         }
     });
 }); });

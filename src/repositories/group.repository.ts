@@ -322,7 +322,7 @@ class GroupRepo {
     // | | | \___ \|  _| | |_) |
     // | |_| |___) | |___|  _ < 
     //  \___/|____/|_____|_| \_\
-    static async create_invite_group_to_user(userIDs: Array<string>, groupID: string) {
+    static async create_request_group_to_user(userIDs: Array<string>, groupID: string) {
         try {
             let idx = 1;
             const idxParams: Array<string> = [];
@@ -420,6 +420,34 @@ class GroupRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete group association group -> user - ${error}`, 500);
+        }
+    };
+
+    static async delete_request_user_group(userIDs: Array<string>, groupID: string) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID];
+            
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM group_membership_requests
+                WHERE group_membership_requests.group_id = $1 AND group_memberships_requests.user_id IN (${idxParams.join(', ')})`;
+
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
         }
     };
 

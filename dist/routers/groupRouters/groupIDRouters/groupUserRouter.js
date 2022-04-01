@@ -117,7 +117,7 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
             case 3:
                 ;
                 if (!(addReqList_1.length > 0)) return [3 /*break*/, 5];
-                return [4 /*yield*/, groupModel_1["default"].create_invite_group_to_user(reqValues.groupID, addReqList_1)];
+                return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, addReqList_1)];
             case 4:
                 addReqQueryData = _b.sent();
                 if (!addUserQueryData) {

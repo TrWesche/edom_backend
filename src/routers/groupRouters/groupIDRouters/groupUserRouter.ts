@@ -80,7 +80,7 @@ groupUserRouter.post("/",
 
 
             if (addReqList.length > 0) {
-                addReqQueryData = await GroupModel.create_invite_group_to_user(reqValues.groupID, addReqList);
+                addReqQueryData = await GroupModel.create_request_group_to_user(reqValues.groupID, addReqList);
                 if (!addUserQueryData) {throw new ExpressError("Create Invite Group to User Failed", 400);};
             };
             

@@ -108,8 +108,8 @@ userRootRouter.post("/register",
     }
 );
 
-// TODO: This needs to be expanded to handle both the request and the invite request operation
-userRootRouter.post("/join", 
+
+userRootRouter.post("/requests", 
     authMW.defineRoutePermissions({
         user: ["site_update_user_self"],
         group: [],
@@ -119,21 +119,41 @@ userRootRouter.post("/join",
     async (req, res, next) => {
         try {
             if (!req.user?.id) {throw new ExpressError("Unauthorized", 401);};
-            if (!req.body.groupID) {throw new ExpressError("Group Not Found", 400);};
+            if (!req.body.groupID || !req.body.context || !req.body.action) {throw new ExpressError("Invalid Request", 400);};
 
             let queryData;
-            const invite = await UserModel.retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID);
 
-            if (invite && invite.group_request === true) {
-                queryData = await GroupModel.create_group_user(req.body.groupID, [req.user.id]);
-                return res.json({message: "Group Joined!"})
-            } else if (invite && invite.user_request === true) {
-                return res.json({message: "You have already requested to join this group."})
-            } else if (!invite) {
-                queryData = await GroupModel.create_request_user_to_group(req.body.groupID, req.user.id);
-                return res.json({message: "Request Sent!"})
-            } else {
-                throw new ExpressError("Server Error", 500);
+            switch (req.body.context) {
+                case "group":
+                    const invite = await UserModel.retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID);
+                    switch (req.body.action) {
+                        case "accept_invite":
+                            if (invite && invite.group_request === true) {
+                                queryData = await GroupModel.create_group_user(req.body.groupID, [req.user.id]);
+                                return res.json({message: "Group Joined!"})
+                            } else {
+                                throw new ExpressError("Server Error: Unable to join group.", 500);
+                            };
+                        case "send_request":
+                            if (invite && invite.user_request === true) {
+                                return res.json({message: "You have already requested to join this group."})
+                            } else if (!invite) {
+                                queryData = await GroupModel.create_request_user_to_group(req.body.groupID, req.user.id);
+                                return res.json({message: "Request Sent"})
+                            } else {
+                                throw new ExpressError("Server Error: Unable to send request.", 500);
+                            };
+                        case "remove_request":
+                            if (invite) {
+                                queryData = await GroupModel.delete_request_user_group([req.user.id], req.body.groupID);
+                                return res.json({message: "Request Removed"});
+                            };
+                            break;
+                        default:
+                            throw new ExpressError("Configuration Error - Invalid Action", 400);
+                    };
+                default:
+                    throw new ExpressError("Configuration Error - Invalid Context", 400);
             };
         } catch (error) {
             next(error);

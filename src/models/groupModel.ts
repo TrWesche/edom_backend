@@ -147,9 +147,9 @@ class GroupModel {
         };
     };
     
-    static async create_invite_group_to_user(groupID: string, userIDs: Array<string>) {
+    static async create_request_group_to_user(groupID: string, userIDs: Array<string>) {
         try {
-            const userInvite = await GroupRepo.create_invite_group_to_user(userIDs, groupID);
+            const userInvite = await GroupRepo.create_request_group_to_user(userIDs, groupID);
             if (!userInvite) {
                 throw new ExpressError("Error while inviting user to group", 500);
             };
@@ -396,6 +396,19 @@ class GroupModel {
         };
 
         return roles;
+    };
+
+    static async delete_request_user_group(userIDs: Array<string>, groupID: string) {
+        try {
+            const userInvite = await GroupRepo.delete_request_user_group(userIDs, groupID);
+            if (!userInvite) {
+                throw new ExpressError("Error while deleteing group membership requests", 500);
+            };
+
+            return userInvite;
+        } catch (error) {
+            throw new ExpressError(error.message, error.status);
+        };
     };
 
 }
