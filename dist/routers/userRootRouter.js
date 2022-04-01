@@ -174,13 +174,40 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissio
         }
     });
 }); });
+userRootRouter.get("/invites", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_read_user_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_4;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 2, , 3]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
+                }
+                ;
+                return [4 /*yield*/, userModel_1["default"].retrieve_group_invites_by_user_id((_b = req.user) === null || _b === void 0 ? void 0 : _b.id)];
+            case 1:
+                queryData = _c.sent();
+                return [2 /*return*/, res.json({ invites: queryData })];
+            case 2:
+                error_4 = _c.sent();
+                next(error_4);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 // Manually Tested 2022-03-22
 userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: [],
     public: ["site_read_user_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
+    var queryData, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -193,8 +220,8 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 2:
-                error_4 = _a.sent();
-                next(error_4);
+                error_5 = _a.sent();
+                next(error_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -212,7 +239,7 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues, updateValues, group, item, newData, error_5;
+    var prevValues, updateValues, group, item, newData, error_6;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -276,8 +303,8 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
                 newData = _c.sent();
                 return [2 /*return*/, res.json({ user: newData })];
             case 3:
-                error_5 = _c.sent();
-                next(error_5);
+                error_6 = _c.sent();
+                next(error_6);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -314,7 +341,7 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_6;
+    var queryData, error_7;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -332,8 +359,8 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
                 res.setHeader("Authorization", "");
                 return [2 /*return*/, res.json({ message: "Your account has been deleted." })];
             case 2:
-                error_6 = _c.sent();
-                return [2 /*return*/, next(error_6)];
+                error_7 = _c.sent();
+                return [2 /*return*/, next(error_7)];
             case 3: return [2 /*return*/];
         }
     });

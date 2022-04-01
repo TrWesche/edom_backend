@@ -135,6 +135,26 @@ userRootRouter.get("/profile",
         }
 });
 
+
+userRootRouter.get("/invites", 
+    authMW.defineRoutePermissions({
+        user: ["site_read_user_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            if (!req.user?.id) {throw new ExpressError("Unauthorized", 401);};
+            const queryData = await UserModel.retrieve_group_invites_by_user_id(req.user?.id)
+            
+            return res.json({invites: queryData});
+        } catch (error) {
+            next(error);
+        }
+});
+
+
 // Manually Tested 2022-03-22
 userRootRouter.get("/list", 
     authMW.defineRoutePermissions({

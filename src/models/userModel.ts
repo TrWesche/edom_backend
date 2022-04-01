@@ -89,6 +89,12 @@ class UserModel {
     return user;
   };
 
+  static async retrieve_group_invites_by_user_id(id: string) {
+    const groupInvites = await UserRepo.fetch_group_invites_by_user_id(id);
+    return groupInvites;
+  };
+
+
   /** Get user data by username */
   // Manual Test Success 2022/03/13
   static async retrieve_user_by_username(username: string | undefined) {

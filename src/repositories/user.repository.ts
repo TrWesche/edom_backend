@@ -40,6 +40,13 @@ interface UserRolesProps {
     name?: string | undefined
 };
 
+interface GroupInviteProps {
+    group_id: string,
+    user_id: string,
+    group_name: string,
+    image_url: string
+};
+
 type fetchType = "unique" | "auth" | "profile" | "account"
 
 class UserRepo {
@@ -309,6 +316,28 @@ class UserRepo {
         } catch (error) {
             throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
         };
+    };
+
+    static async fetch_group_invites_by_user_id(userID) {
+        let query: string;
+
+        query = `
+            SELECT
+                group_membership_requests.group_id AS group_id,
+                group_membership_requests.user_id AS user_id,
+                sitegroups.name AS group_name,
+                sitegroups.image_url AS image_url
+            FROM group_membership_requests
+            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
+            WHERE group_membership_requests.user_id = $1`;
+
+        const result = await pgdb.query(
+            query,
+            [userID]
+        );
+
+        const rval: Array<GroupInviteProps> | undefined = result.rows;
+        return rval;
     };
 
     // Tested - 03/13/2022

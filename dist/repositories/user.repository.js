@@ -43,6 +43,7 @@ var pgdb_1 = require("../databases/postgreSQL/pgdb");
 ;
 ;
 ;
+;
 var UserRepo = /** @class */ (function () {
     function UserRepo() {
     }
@@ -198,6 +199,23 @@ var UserRepo = /** @class */ (function () {
                     case 3:
                         ;
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    UserRepo.fetch_group_invites_by_user_id = function (userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, result, rval;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                group_membership_requests.user_id AS user_id,\n                sitegroups.name AS group_name,\n                sitegroups.image_url AS image_url\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            WHERE group_membership_requests.user_id = $1";
+                        return [4 /*yield*/, pgdb_1["default"].query(query, [userID])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
                 }
             });
         });

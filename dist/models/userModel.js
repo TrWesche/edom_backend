@@ -165,6 +165,20 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
+    UserModel.retrieve_group_invites_by_user_id = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var groupInvites;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_invites_by_user_id(id)];
+                    case 1:
+                        groupInvites = _a.sent();
+                        return [2 /*return*/, groupInvites];
+                }
+            });
+        });
+    };
+    ;
     /** Get user data by username */
     // Manual Test Success 2022/03/13
     UserModel.retrieve_user_by_username = function (username) {
