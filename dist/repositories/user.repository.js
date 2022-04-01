@@ -43,8 +43,6 @@ var pgdb_1 = require("../databases/postgreSQL/pgdb");
 ;
 ;
 ;
-;
-;
 var UserRepo = /** @class */ (function () {
     function UserRepo() {
     }
@@ -78,35 +76,10 @@ var UserRepo = /** @class */ (function () {
         });
     };
     ;
-    UserRepo.create_request_user_to_group = function (userID, groupIDs) {
-        return __awaiter(this, void 0, void 0, function () {
-            var query, queryParams, result, rVal, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        query = void 0;
-                        queryParams = [userID, groupIDs];
-                        query = "\n                INSERT INTO group_membership_requests \n                    (user_id, group_id, group_request, user_request, message) \n                VALUES ($1, $2, FALSE, TRUE, 'A user would like to join this group!')\n                RETURNING user_id, group_id";
-                        console.log(query);
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
-                    case 1:
-                        result = _a.sent();
-                        rVal = result.rows;
-                        return [2 /*return*/, rVal];
-                    case 2:
-                        error_2 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to request group membership - ".concat(error_2), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
     // Tested - 03/12/2022
     UserRepo.fetch_user_by_user_email = function (userEmail, fetchType) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, result, rval, error_3;
+            var query, result, rval, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -135,8 +108,8 @@ var UserRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_3 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured During Query Execution - ".concat(error_3), 500);
+                        error_2 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured During Query Execution - ".concat(error_2), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -148,7 +121,7 @@ var UserRepo = /** @class */ (function () {
     // Tested - 03/12/2022
     UserRepo.fetch_user_by_username = function (username, fetchType) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, result, rval, error_4;
+            var query, result, rval, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -178,8 +151,8 @@ var UserRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_4 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured During Query Execution - ".concat(error_4), 500);
+                        error_3 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured During Query Execution - ".concat(error_3), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -191,7 +164,7 @@ var UserRepo = /** @class */ (function () {
     // Tested - 03/12/2022
     UserRepo.fetch_user_by_user_id = function (userID, fetchType) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, result, rval, error_5;
+            var query, result, rval, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -220,8 +193,8 @@ var UserRepo = /** @class */ (function () {
                         rval = result.rows[0];
                         return [2 /*return*/, rval];
                     case 2:
-                        error_5 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured During Query Execution - ".concat(error_5), 500);
+                        error_4 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured During Query Execution - ".concat(error_4), 500);
                     case 3:
                         ;
                         return [2 /*return*/];
@@ -247,10 +220,27 @@ var UserRepo = /** @class */ (function () {
         });
     };
     ;
+    UserRepo.fetch_group_invite_by_uid_gid = function (userID, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, result, rval;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                group_membership_requests.user_id AS user_id,\n                group_membership_requests.group_request AS group_request,\n                group_membership_requests.user_request AS user_request,\n                sitegroups.name AS group_name,\n                sitegroups.image_url AS image_url\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            WHERE group_membership_requests.user_id = $1 AND group_membership_requests.group_id = $2";
+                        return [4 /*yield*/, pgdb_1["default"].query(query, [userID, groupID])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows[0];
+                        return [2 /*return*/, rval];
+                }
+            });
+        });
+    };
+    ;
     // Tested - 03/13/2022
     UserRepo.fetch_user_list_paginated = function (limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_6;
+            var result, rval, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -261,8 +251,8 @@ var UserRepo = /** @class */ (function () {
                         rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
-                        error_6 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to locate users - ".concat(error_6), 500);
+                        error_5 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to locate users - ".concat(error_5), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -272,7 +262,7 @@ var UserRepo = /** @class */ (function () {
     // Tested - 03/12/2022
     UserRepo.update_user_by_user_id = function (userID, userData) {
         return __awaiter(this, void 0, void 0, function () {
-            var updateSuccess, _a, query, values, result, _b, query, values, result, _c, query, values, result, error_7;
+            var updateSuccess, _a, query, values, result, _b, query, values, result, _c, query, values, result, error_6;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -313,11 +303,11 @@ var UserRepo = /** @class */ (function () {
                         _d.sent();
                         return [2 /*return*/, updateSuccess];
                     case 9:
-                        error_7 = _d.sent();
+                        error_6 = _d.sent();
                         return [4 /*yield*/, pgdb_1["default"].query("ROLLBACK")];
                     case 10:
                         _d.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to update user - ".concat(error_7), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to update user - ".concat(error_6), 500);
                     case 11: return [2 /*return*/];
                 }
             });
@@ -327,7 +317,7 @@ var UserRepo = /** @class */ (function () {
     // Tested - 03/13/2022
     UserRepo.delete_user_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var error_8;
+            var error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -338,8 +328,8 @@ var UserRepo = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
-                        error_8 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete user - ".concat(error_8), 500);
+                        error_7 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete user - ".concat(error_7), 500);
                     case 3: return [2 /*return*/];
                 }
             });

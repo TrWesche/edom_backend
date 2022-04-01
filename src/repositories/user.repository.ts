@@ -3,7 +3,7 @@ import createUpdateQueryPGSQL from "../utils/createUpdateQueryPGSQL";
 import pgdb from "../databases/postgreSQL/pgdb";
 import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
-
+import { GroupInviteProps } from "./group.repository";
 
 export interface UserObjectProps {
     user_data?: UserDataProps
@@ -11,11 +11,6 @@ export interface UserObjectProps {
     site_permissions?: Array<string>,
     group_permissions?: Array<string>,
     premissions?: Array<PermissionProps>
-};
-
-interface GroupUserProps {
-    user_id: string,
-    group_id: string
 };
 
 interface UserDataProps {
@@ -43,13 +38,6 @@ interface PermissionProps {
 
 interface UserRolesProps {
     name?: string | undefined
-};
-
-interface GroupInviteProps {
-    group_id: string,
-    user_id: string,
-    group_name: string,
-    image_url: string
 };
 
 type fetchType = "unique" | "auth" | "profile" | "account"
@@ -82,28 +70,6 @@ class UserRepo {
             throw new ExpressError(`An Error Occured: Unable to create new user - ${error}`, 500);
         }
     };
-
-    static async create_request_user_to_group(userID: string, groupIDs: string) {
-        try {
-            let query: string;
-            const queryParams: Array<any> = [userID, groupIDs];
-
-            query = `
-                INSERT INTO group_membership_requests 
-                    (user_id, group_id, group_request, user_request, message) 
-                VALUES ($1, $2, FALSE, TRUE, 'A user would like to join this group!')
-                RETURNING user_id, group_id`;
-            
-            console.log(query);
-            const result = await pgdb.query(query, queryParams);
-            const rVal: Array<GroupUserProps> = result.rows
-
-            return rVal;
-        } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to request group membership - ${error}`, 500);
-        }
-    };
-
 
     // Tested - 03/12/2022
     static async fetch_user_by_user_email(userEmail: string, fetchType?: fetchType) {
@@ -345,7 +311,7 @@ class UserRepo {
         };
     };
 
-    static async fetch_group_invites_by_user_id(userID) {
+    static async fetch_group_invites_by_user_id(userID: string) {
         let query: string;
 
         query = `
@@ -364,6 +330,30 @@ class UserRepo {
         );
 
         const rval: Array<GroupInviteProps> | undefined = result.rows;
+        return rval;
+    };
+
+    static async fetch_group_invite_by_uid_gid(userID: string, groupID: string) {
+        let query: string;
+
+        query = `
+            SELECT
+                group_membership_requests.group_id AS group_id,
+                group_membership_requests.user_id AS user_id,
+                group_membership_requests.group_request AS group_request,
+                group_membership_requests.user_request AS user_request,
+                sitegroups.name AS group_name,
+                sitegroups.image_url AS image_url
+            FROM group_membership_requests
+            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
+            WHERE group_membership_requests.user_id = $1 AND group_membership_requests.group_id = $2`;
+
+        const result = await pgdb.query(
+            query,
+            [userID, groupID]
+        );
+
+        const rval: GroupInviteProps | undefined = result.rows[0];
         return rval;
     };
 

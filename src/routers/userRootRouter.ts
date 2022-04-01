@@ -11,6 +11,7 @@ import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userU
 
 // Model Imports
 import UserModel from "../models/userModel";
+import GroupModel from "../models/groupModel";
 
 // Middleware Imports
 import authMW from "../middleware/authorizationMW";
@@ -108,7 +109,7 @@ userRootRouter.post("/register",
 );
 
 // TODO: This needs to be expanded to handle both the request and the invite request operation
-userRootRouter.post("/invite", 
+userRootRouter.post("/join", 
     authMW.defineRoutePermissions({
         user: ["site_update_user_self"],
         group: [],
@@ -118,12 +119,22 @@ userRootRouter.post("/invite",
     async (req, res, next) => {
         try {
             if (!req.user?.id) {throw new ExpressError("Unauthorized", 401);};
-
             if (!req.body.groupID) {throw new ExpressError("Group Not Found", 400);};
 
-            const queryData = await UserModel.create_membership_request(req.user.id, req.body.groupID);
+            let queryData;
+            const invite = await UserModel.retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID);
 
-            return res.json({invites: queryData});
+            if (invite && invite.group_request === true) {
+                queryData = await GroupModel.create_group_user(req.body.groupID, [req.user.id]);
+                return res.json({message: "Group Joined!"})
+            } else if (invite && invite.user_request === true) {
+                return res.json({message: "You have already requested to join this group."})
+            } else if (!invite) {
+                queryData = await GroupModel.create_request_user_to_group(req.body.groupID, req.user.id);
+                return res.json({message: "Request Sent!"})
+            } else {
+                throw new ExpressError("Server Error", 500);
+            };
         } catch (error) {
             next(error);
         }

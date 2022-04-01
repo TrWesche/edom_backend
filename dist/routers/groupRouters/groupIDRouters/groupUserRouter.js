@@ -90,14 +90,14 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
                 addReqList_1 = [];
                 if (uidgidpairs.length > 0) {
                     uidgidpairs.forEach(function (val) {
-                        if (val.user_id !== undefined && val.group_id !== undefined) {
-                            if (val.user_id.length > 0 && val.group_id.length > 0) {
-                                addUserList_1.push(val.user_id);
-                            }
-                            else {
-                                addReqList_1.push(val.user_id);
-                            }
-                            ;
+                        if (val.user_request) {
+                            addUserList_1.push(val.user_id);
+                        }
+                        else if (val.group_request) {
+                            // If group request is already set to true an invite has already been sent, do nothing.
+                        }
+                        else {
+                            addReqList_1.push(val.user_id);
                         }
                         ;
                     });
@@ -108,7 +108,6 @@ groupUserRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
                 if (!(addUserList_1.length > 0)) return [3 /*break*/, 3];
                 return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, addUserList_1)];
             case 2:
-                // Process
                 addUserQueryData = _b.sent();
                 if (!addUserQueryData) {
                     throw new expresError_1["default"]("Create Group User Failed", 400);

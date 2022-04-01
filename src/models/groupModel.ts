@@ -160,6 +160,19 @@ class GroupModel {
         };
     };
 
+    static async create_request_user_to_group(groupID: string, userID: string) {
+        try {
+            const userInvite = await GroupRepo.create_request_user_to_group(userID, groupID);
+            if (!userInvite) {
+                throw new ExpressError("Error while requesting group membership", 500);
+            };
+
+            return userInvite;
+        } catch (error) {
+            throw new ExpressError(error.message, error.status);
+        };
+    };
+
     static async create_group_user_role(roleID: string, userIDs: Array<string>) {
         const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, roleID);
         if (!userRole) {

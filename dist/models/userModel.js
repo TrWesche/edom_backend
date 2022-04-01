@@ -128,20 +128,6 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
-    UserModel.create_membership_request = function (userID, groupID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var request;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_repository_1["default"].create_request_user_to_group(userID, groupID)];
-                    case 1:
-                        request = _a.sent();
-                        return [2 /*return*/, request];
-                }
-            });
-        });
-    };
-    ;
     /** Get user list */
     // Manual Test Success 2022/03/13
     UserModel.retrieve_user_list_paginated = function (limit, offset) {
@@ -190,6 +176,20 @@ var UserModel = /** @class */ (function () {
                     case 1:
                         groupInvites = _a.sent();
                         return [2 /*return*/, groupInvites];
+                }
+            });
+        });
+    };
+    ;
+    UserModel.retrieve_group_invite_by_uid_gid = function (userID, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var groupInvite;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_invite_by_uid_gid(userID, groupID)];
+                    case 1:
+                        groupInvite = _a.sent();
+                        return [2 /*return*/, groupInvite];
                 }
             });
         });

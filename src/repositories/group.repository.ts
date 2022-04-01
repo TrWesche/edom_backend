@@ -16,6 +16,15 @@ export interface GroupUserProps {
     user_id?: string
 };
 
+export interface GroupInviteProps {
+    group_id: string,
+    user_id: string,
+    group_request: boolean,
+    user_request: boolean,
+    group_name?: string,
+    image_url?: string
+};
+
 interface IDList {
     id?: string
 };
@@ -160,8 +169,10 @@ class GroupRepo {
 
             query = `
                 SELECT
-                    group_membership_requests.group_id AS group_id    
-                    userprofile.user_id AS user_id
+                    group_membership_requests.group_id AS group_id,
+                    userprofile.user_id AS user_id,
+                    group_membership_requests.group_request AS group_request,
+                    group_membership_requests.user_request AS user_request
                 FROM userprofiles
                 LEFT OUTER JOIN group_membership_requests ON group_membership_requests.user_id = user_profile.user_id
                 WHERE group_membership_requests.group_id = $1 AND (userprofile.username ILIKE ${idxParams.join('OR userprofile.username ILIKE')})`;
@@ -169,7 +180,7 @@ class GroupRepo {
             console.log(query);
             const result = await pgdb.query(query, queryParams);
 
-            const rVal: Array<GroupUserProps> | undefined = result.rows;
+            const rVal: Array<GroupInviteProps> | undefined = result.rows;
             return rVal;
         } catch (error) {
             throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
@@ -342,6 +353,26 @@ class GroupRepo {
         }
     };
 
+    static async create_request_user_to_group(userID: string, groupID: string) {
+        try {
+            let query: string;
+            const queryParams: Array<any> = [userID, groupID];
+
+            query = `
+                INSERT INTO group_membership_requests 
+                    (user_id, group_id, group_request, user_request, message) 
+                VALUES ($1, $2, FALSE, TRUE, 'A user has requested to join your group!')
+                RETURNING user_id, group_id`;
+            
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserProps> = result.rows
+
+            return rVal;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to invite user to group - ${error}`, 500);
+        }
+    };
 
     static async associate_user_to_group(userIDs: Array<string>, groupID: string) {
         try {

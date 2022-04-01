@@ -268,6 +268,32 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
+    GroupModel.create_request_user_to_group = function (groupID, userID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userInvite, error_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, group_repository_1["default"].create_request_user_to_group(userID, groupID)];
+                    case 1:
+                        userInvite = _a.sent();
+                        if (!userInvite) {
+                            throw new expresError_1["default"]("Error while requesting group membership", 500);
+                        }
+                        ;
+                        return [2 /*return*/, userInvite];
+                    case 2:
+                        error_5 = _a.sent();
+                        throw new expresError_1["default"](error_5.message, error_5.status);
+                    case 3:
+                        ;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     GroupModel.create_group_user_role = function (roleID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var userRole;
@@ -477,7 +503,7 @@ var GroupModel = /** @class */ (function () {
     */
     GroupModel.delete_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var groupList, error_5;
+            var groupList, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -518,11 +544,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupList];
                     case 12:
-                        error_5 = _a.sent();
+                        error_6 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 13:
                         _a.sent();
-                        throw new expresError_1["default"](error_5.message, error_5.status);
+                        throw new expresError_1["default"](error_6.message, error_6.status);
                     case 14: return [2 /*return*/];
                 }
             });
@@ -531,7 +557,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_role = function (roleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var role, error_6;
+            var role, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -557,11 +583,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, role];
                     case 6:
-                        error_6 = _a.sent();
+                        error_7 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 7:
                         _a.sent();
-                        throw new expresError_1["default"](error_6.message, error_6.status);
+                        throw new expresError_1["default"](error_7.message, error_7.status);
                     case 8: return [2 /*return*/];
                 }
             });
@@ -595,7 +621,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_group_user = function (groupID, userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var roles, groupUser, error_7;
+            var roles, groupUser, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -622,11 +648,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupUser];
                     case 5:
-                        error_7 = _a.sent();
+                        error_8 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 6:
                         _a.sent();
-                        throw new expresError_1["default"](error_7.message, error_7.status);
+                        throw new expresError_1["default"](error_8.message, error_8.status);
                     case 7: return [2 /*return*/];
                 }
             });

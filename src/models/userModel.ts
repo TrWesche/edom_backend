@@ -67,12 +67,6 @@ class UserModel {
       throw new ExpressError(error.message , 400);
     }
   };
-  
-
-  static async create_membership_request(userID: string, groupID: string) {
-    const request = await UserRepo.create_request_user_to_group(userID, groupID);
-    return request;
-  };
 
   /** Get user list */
   // Manual Test Success 2022/03/13
@@ -99,6 +93,11 @@ class UserModel {
   static async retrieve_group_invites_by_user_id(id: string) {
     const groupInvites = await UserRepo.fetch_group_invites_by_user_id(id);
     return groupInvites;
+  };
+
+  static async retrieve_group_invite_by_uid_gid(userID: string, groupID: string) {
+    const groupInvite = await UserRepo.fetch_group_invite_by_uid_gid(userID, groupID);
+    return groupInvite;
   };
 
 

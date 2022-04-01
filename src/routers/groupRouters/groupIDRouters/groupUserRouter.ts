@@ -60,12 +60,12 @@ groupUserRouter.post("/",
 
             if (uidgidpairs.length > 0) {
                 uidgidpairs.forEach((val) => {
-                    if (val.user_id !== undefined && val.group_id !== undefined) {
-                        if (val.user_id.length > 0 && val.group_id.length > 0) {
-                            addUserList.push(val.user_id);
-                        } else {
-                            addReqList.push(val.user_id);
-                        };
+                    if (val.user_request) {
+                        addUserList.push(val.user_id);
+                    } else if (val.group_request) {
+                        // If group request is already set to true an invite has already been sent, do nothing.
+                    } else {
+                        addReqList.push(val.user_id);
                     };
                 });
             };
@@ -74,7 +74,6 @@ groupUserRouter.post("/",
             let addReqQueryData;
 
             if (addUserList.length > 0) {
-                // Process
                 addUserQueryData = await GroupModel.create_group_user(reqValues.groupID, addUserList);
                 if (!addUserQueryData) {throw new ExpressError("Create Group User Failed", 400);};
             };

@@ -46,6 +46,7 @@ var userRegisterSchema_1 = require("../schemas/user/userRegisterSchema");
 var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
 // Model Imports
 var userModel_1 = require("../models/userModel");
+var groupModel_1 = require("../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../middleware/authorizationMW");
 var userDMRouter_1 = require("./userRouters/userDMRouter");
@@ -142,17 +143,17 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
     });
 }); });
 // TODO: This needs to be expanded to handle both the request and the invite request operation
-userRootRouter.post("/invite", authorizationMW_1["default"].defineRoutePermissions({
+userRootRouter.post("/join", authorizationMW_1["default"].defineRoutePermissions({
     user: ["site_update_user_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+    var queryData, invite, error_3;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _b.trys.push([0, 8, , 9]);
                 if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
                     throw new expresError_1["default"]("Unauthorized", 401);
                 }
@@ -161,15 +162,33 @@ userRootRouter.post("/invite", authorizationMW_1["default"].defineRoutePermissio
                     throw new expresError_1["default"]("Group Not Found", 400);
                 }
                 ;
-                return [4 /*yield*/, userModel_1["default"].create_membership_request(req.user.id, req.body.groupID)];
+                queryData = void 0;
+                return [4 /*yield*/, userModel_1["default"].retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID)];
             case 1:
-                queryData = _b.sent();
-                return [2 /*return*/, res.json({ invites: queryData })];
+                invite = _b.sent();
+                if (!(invite && invite.group_request === true)) return [3 /*break*/, 3];
+                return [4 /*yield*/, groupModel_1["default"].create_group_user(req.body.groupID, [req.user.id])];
             case 2:
+                queryData = _b.sent();
+                return [2 /*return*/, res.json({ message: "Group Joined!" })];
+            case 3:
+                if (!(invite && invite.user_request === true)) return [3 /*break*/, 4];
+                return [2 /*return*/, res.json({ message: "You have already requested to join this group." })];
+            case 4:
+                if (!!invite) return [3 /*break*/, 6];
+                return [4 /*yield*/, groupModel_1["default"].create_request_user_to_group(req.body.groupID, req.user.id)];
+            case 5:
+                queryData = _b.sent();
+                return [2 /*return*/, res.json({ message: "Request Sent!" })];
+            case 6: throw new expresError_1["default"]("Server Error", 500);
+            case 7:
+                ;
+                return [3 /*break*/, 9];
+            case 8:
                 error_3 = _b.sent();
                 next(error_3);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 9];
+            case 9: return [2 /*return*/];
         }
     });
 }); });
