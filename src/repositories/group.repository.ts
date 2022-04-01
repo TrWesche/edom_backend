@@ -338,7 +338,7 @@ class GroupRepo {
 
             return rVal;
         } catch (error) {
-            throw new ExpressError(`An Error Occured: Unable to create group association group -> user - ${error}`, 500);
+            throw new ExpressError(`An Error Occured: Unable to invite user to group - ${error}`, 500);
         }
     };
 

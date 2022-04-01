@@ -107,6 +107,29 @@ userRootRouter.post("/register",
     }
 );
 
+// TODO: This needs to be expanded to handle both the request and the invite request operation
+userRootRouter.post("/invite", 
+    authMW.defineRoutePermissions({
+        user: ["site_update_user_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            if (!req.user?.id) {throw new ExpressError("Unauthorized", 401);};
+
+            if (!req.body.groupID) {throw new ExpressError("Group Not Found", 400);};
+
+            const queryData = await UserModel.create_membership_request(req.user.id, req.body.groupID);
+
+            return res.json({invites: queryData});
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 /* ____  _____    _    ____  
   |  _ \| ____|  / \  |  _ \ 
   | |_) |  _|   / _ \ | | | |
@@ -136,7 +159,7 @@ userRootRouter.get("/profile",
 });
 
 
-userRootRouter.get("/invites", 
+userRootRouter.get("/invite", 
     authMW.defineRoutePermissions({
         user: ["site_read_user_self"],
         group: [],
@@ -147,12 +170,13 @@ userRootRouter.get("/invites",
         try {
             if (!req.user?.id) {throw new ExpressError("Unauthorized", 401);};
             const queryData = await UserModel.retrieve_group_invites_by_user_id(req.user?.id)
-            
+
             return res.json({invites: queryData});
         } catch (error) {
             next(error);
         }
-});
+    }
+);
 
 
 // Manually Tested 2022-03-22

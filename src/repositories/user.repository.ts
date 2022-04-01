@@ -13,6 +13,11 @@ export interface UserObjectProps {
     premissions?: Array<PermissionProps>
 };
 
+interface GroupUserProps {
+    user_id: string,
+    group_id: string
+};
+
 interface UserDataProps {
     id?: string,
     password?: string,
@@ -77,6 +82,28 @@ class UserRepo {
             throw new ExpressError(`An Error Occured: Unable to create new user - ${error}`, 500);
         }
     };
+
+    static async create_request_user_to_group(userID: string, groupIDs: string) {
+        try {
+            let query: string;
+            const queryParams: Array<any> = [userID, groupIDs];
+
+            query = `
+                INSERT INTO group_membership_requests 
+                    (user_id, group_id, group_request, user_request, message) 
+                VALUES ($1, $2, FALSE, TRUE, 'A user would like to join this group!')
+                RETURNING user_id, group_id`;
+            
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserProps> = result.rows
+
+            return rVal;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to request group membership - ${error}`, 500);
+        }
+    };
+
 
     // Tested - 03/12/2022
     static async fetch_user_by_user_email(userEmail: string, fetchType?: fetchType) {

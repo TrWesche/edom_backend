@@ -141,6 +141,38 @@ userRootRouter.post("/register", function (req, res, next) { return __awaiter(vo
         }
     });
 }); });
+// TODO: This needs to be expanded to handle both the request and the invite request operation
+userRootRouter.post("/invite", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_update_user_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var queryData, error_3;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
+                }
+                ;
+                if (!req.body.groupID) {
+                    throw new expresError_1["default"]("Group Not Found", 400);
+                }
+                ;
+                return [4 /*yield*/, userModel_1["default"].create_membership_request(req.user.id, req.body.groupID)];
+            case 1:
+                queryData = _b.sent();
+                return [2 /*return*/, res.json({ invites: queryData })];
+            case 2:
+                error_3 = _b.sent();
+                next(error_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |
@@ -153,7 +185,7 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissio
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_3;
+    var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -167,19 +199,19 @@ userRootRouter.get("/profile", authorizationMW_1["default"].defineRoutePermissio
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 2:
-                error_3 = _b.sent();
-                next(error_3);
+                error_4 = _b.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
-userRootRouter.get("/invites", authorizationMW_1["default"].defineRoutePermissions({
+userRootRouter.get("/invite", authorizationMW_1["default"].defineRoutePermissions({
     user: ["site_read_user_self"],
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
+    var queryData, error_5;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -194,8 +226,8 @@ userRootRouter.get("/invites", authorizationMW_1["default"].defineRoutePermissio
                 queryData = _c.sent();
                 return [2 /*return*/, res.json({ invites: queryData })];
             case 2:
-                error_4 = _c.sent();
-                next(error_4);
+                error_5 = _c.sent();
+                next(error_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -207,7 +239,7 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
     group: [],
     public: ["site_read_user_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_5;
+    var queryData, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -220,8 +252,8 @@ userRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions(
                 }
                 return [2 /*return*/, res.json({ user: queryData })];
             case 2:
-                error_5 = _a.sent();
-                next(error_5);
+                error_6 = _a.sent();
+                next(error_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -239,7 +271,7 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues, updateValues, group, item, newData, error_6;
+    var prevValues, updateValues, group, item, newData, error_7;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -303,8 +335,8 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
                 newData = _c.sent();
                 return [2 /*return*/, res.json({ user: newData })];
             case 3:
-                error_6 = _c.sent();
-                next(error_6);
+                error_7 = _c.sent();
+                next(error_7);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -341,7 +373,7 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_7;
+    var queryData, error_8;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -359,8 +391,8 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
                 res.setHeader("Authorization", "");
                 return [2 /*return*/, res.json({ message: "Your account has been deleted." })];
             case 2:
-                error_7 = _c.sent();
-                return [2 /*return*/, next(error_7)];
+                error_8 = _c.sent();
+                return [2 /*return*/, next(error_8)];
             case 3: return [2 /*return*/];
         }
     });

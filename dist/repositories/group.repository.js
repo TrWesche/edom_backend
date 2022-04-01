@@ -402,7 +402,7 @@ var GroupRepo = /** @class */ (function () {
                         return [2 /*return*/, rVal];
                     case 2:
                         error_13 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to create group association group -> user - ".concat(error_13), 500);
+                        throw new expresError_1["default"]("An Error Occured: Unable to invite user to group - ".concat(error_13), 500);
                     case 3: return [2 /*return*/];
                 }
             });
