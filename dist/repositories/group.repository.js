@@ -227,6 +227,23 @@ var GroupRepo = /** @class */ (function () {
         });
     };
     ;
+    GroupRepo.fetch_member_requests_by_group_id = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var query, result, rval;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                group_membership_requests.user_id AS user_id,\n                group_membership_requests.group_request AS group_request,\n                group_membership_requests.user_request AS user_request,\n                sitegroups.name AS group_name,\n                sitegroups.image_url AS image_url\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            WHERE group_membership_requests.group_ID = $1";
+                        return [4 /*yield*/, pgdb_1["default"].query(query, [groupID])];
+                    case 1:
+                        result = _a.sent();
+                        rval = result.rows;
+                        return [2 /*return*/, rval];
+                }
+            });
+        });
+    };
+    ;
     GroupRepo.fetch_unrestricted_group_list_by_user_id = function (userID, limit, offset) {
         return __awaiter(this, void 0, void 0, function () {
             var result, rval, error_8;
@@ -496,7 +513,7 @@ var GroupRepo = /** @class */ (function () {
     ;
     GroupRepo.delete_request_user_group = function (userIDs, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var idx_7, idxParams_7, query, queryParams_7, result, error_17;
+            var idx_7, idxParams_7, query, queryParams_7, error_17;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -513,15 +530,14 @@ var GroupRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM group_membership_requests\n                WHERE group_membership_requests.group_id = $1 AND group_memberships_requests.user_id IN (".concat(idxParams_7.join(', '), ")");
-                        console.log(query);
+                        query = "\n                DELETE FROM group_membership_requests\n                WHERE group_membership_requests.group_id = $1 AND group_membership_requests.user_id IN (".concat(idxParams_7.join(', '), ")");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_7)];
                     case 1:
-                        result = _a.sent();
+                        _a.sent();
                         return [2 /*return*/, true];
                     case 2:
                         error_17 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - ".concat(this.caller, " - ").concat(error_17), 500);
+                        throw new expresError_1["default"]("Server Error - Unable to delete user group membership request - ".concat(error_17), 500);
                     case 3: return [2 /*return*/];
                 }
             });
@@ -548,14 +564,9 @@ var GroupRepo = /** @class */ (function () {
                             ;
                         });
                         query = "\n                DELETE FROM user_grouproles\n                WHERE user_grouproles.user_id IN (".concat(idxParams_8.join(', '), ")");
-                        // console.log(query);
-                        // console.log(queryParams);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_8)];
                     case 1:
-                        // console.log(query);
-                        // console.log(queryParams);
                         _a.sent();
-                        // console.log("Delete User Groups Success");
                         return [2 /*return*/, true];
                     case 2:
                         error_18 = _a.sent();

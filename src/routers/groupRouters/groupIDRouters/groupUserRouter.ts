@@ -30,7 +30,7 @@ groupUserRouter.use("/:username", groupUserRoleRouter);
 // TODO: This needs to be adjusted to a new procedure.  If User has requested access, check group_invite table and then create the connection.
 // If user has not requested access create an entry in the group_invite table.  The complementary User routes will need to be created.
 // Add User
-groupUserRouter.post("/",
+groupUserRouter.post("/request",
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_create_group_user"],
@@ -53,7 +53,7 @@ groupUserRouter.post("/",
                 throw new ExpressError(`Unable to create group user, schema check failure: ${validateCreateGroupUserSchema.errors}`, 400);
             };
             
-            const uidgidpairs = await GroupModel.retrieve_group_membership_requests(reqValues.groupID, reqValues.usernames);
+            const uidgidpairs = await GroupModel.retrieve_group_membership_requests_by_username(reqValues.groupID, reqValues.usernames);
 
             const addUserList: Array<string> = [];
             const addReqList: Array<string> = [];
@@ -98,12 +98,38 @@ groupUserRouter.post("/",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+groupUserRouter.get("/request", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["group_create_group_user"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id || !req.groupID) {throw new ExpressError("Unauthorized", 401);};
+
+            let queryData;
+            queryData = await GroupModel.retrieve_group_membership_requests(req.groupID);
+
+            // Processing
+            if (!queryData) {throw new ExpressError("Users Not Found: Get Group Users - All", 404);};
+            
+            return res.json({users: queryData});
+        } catch (error) {
+            next(error)
+        }
+    }
+);
+
+
 // Manual Test - Basic Functionality: 03/25/2022
 // Get User List
 groupUserRouter.get("/", 
     authMW.defineRoutePermissions({
         user: [],
-        group: ["group_read_room"],
+        group: ["group_read_group"],
         public: ["site_read_group_public"]
     }),
     authMW.validateRoutePermissions,
@@ -118,7 +144,7 @@ groupUserRouter.get("/",
     
             req.resolvedPerms?.forEach((val: any) => {
                 // Set Delete Permission Level
-                if (val.permissions_name === "group_read_room") {
+                if (val.permissions_name === "group_read_group") {
                     groupReadPermitted = 1;
                 };
             });
@@ -138,6 +164,9 @@ groupUserRouter.get("/",
         }
     }
 );
+
+
+
 
 
 /* ____  _____ _     _____ _____ _____ 

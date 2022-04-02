@@ -453,12 +453,26 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.retrieve_group_membership_requests = function (groupID, usernames) {
+    GroupModel.retrieve_group_membership_requests_by_username = function (groupID, usernames) {
         return __awaiter(this, void 0, void 0, function () {
             var users;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, group_repository_1["default"].fetch_member_requests_by_gid_usernames(groupID, usernames)];
+                    case 1:
+                        users = _a.sent();
+                        return [2 /*return*/, users];
+                }
+            });
+        });
+    };
+    ;
+    GroupModel.retrieve_group_membership_requests = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var users;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, group_repository_1["default"].fetch_member_requests_by_group_id(groupID)];
                     case 1:
                         users = _a.sent();
                         return [2 /*return*/, users];

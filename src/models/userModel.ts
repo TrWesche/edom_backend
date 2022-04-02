@@ -89,15 +89,22 @@ class UserModel {
     return user;
   };
 
-
-  static async retrieve_group_invites_by_user_id(id: string) {
-    const groupInvites = await UserRepo.fetch_group_invites_by_user_id(id);
+  // Tested - 04/01/2022
+  static async retrieve_group_requests_by_user_id(id: string) {
+    const groupInvites = await UserRepo.fetch_group_requests_by_user_id(id);
     return groupInvites;
   };
 
-  static async retrieve_group_invite_by_uid_gid(userID: string, groupID: string) {
-    const groupInvite = await UserRepo.fetch_group_invite_by_uid_gid(userID, groupID);
+  // Tested - 04/01/2022
+  static async retrieve_group_request_by_uid_gid(userID: string, groupID: string) {
+    const groupInvite = await UserRepo.fetch_group_request_by_uid_gid(userID, groupID);
     return groupInvite;
+  };
+
+  // Tested - 04/01/2022
+  static async retrieve_group_membership_by_uid_gid(userID: string, groupID: string) {
+    const membership = await UserRepo.fetch_group_membership_by_uid_gid(userID, groupID);
+    return membership;
   };
 
 

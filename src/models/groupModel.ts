@@ -263,8 +263,13 @@ class GroupModel {
         return roles;
     };
 
-    static async retrieve_group_membership_requests(groupID: string, usernames: Array<string>) {
+    static async retrieve_group_membership_requests_by_username(groupID: string, usernames: Array<string>) {
         const users = await GroupRepo.fetch_member_requests_by_gid_usernames(groupID, usernames);
+        return users;
+    };
+
+    static async retrieve_group_membership_requests(groupID: string) {
+        const users = await GroupRepo.fetch_member_requests_by_group_id(groupID);
         return users;
     };
 

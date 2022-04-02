@@ -108,8 +108,9 @@ userRootRouter.post("/register",
     }
 );
 
-
-userRootRouter.post("/requests", 
+// Manual Tests - Already a Member, Send Request, Remove Request 2022-04-01
+// To be Tested: Accept Invite
+userRootRouter.post("/request", 
     authMW.defineRoutePermissions({
         user: ["site_update_user_self"],
         group: [],
@@ -125,32 +126,38 @@ userRootRouter.post("/requests",
 
             switch (req.body.context) {
                 case "group":
-                    const invite = await UserModel.retrieve_group_invite_by_uid_gid(req.user.id, req.body.groupID);
-                    switch (req.body.action) {
-                        case "accept_invite":
-                            if (invite && invite.group_request === true) {
-                                queryData = await GroupModel.create_group_user(req.body.groupID, [req.user.id]);
-                                return res.json({message: "Group Joined!"})
-                            } else {
-                                throw new ExpressError("Server Error: Unable to join group.", 500);
-                            };
-                        case "send_request":
-                            if (invite && invite.user_request === true) {
-                                return res.json({message: "You have already requested to join this group."})
-                            } else if (!invite) {
-                                queryData = await GroupModel.create_request_user_to_group(req.body.groupID, req.user.id);
-                                return res.json({message: "Request Sent"})
-                            } else {
-                                throw new ExpressError("Server Error: Unable to send request.", 500);
-                            };
-                        case "remove_request":
-                            if (invite) {
-                                queryData = await GroupModel.delete_request_user_group([req.user.id], req.body.groupID);
-                                return res.json({message: "Request Removed"});
-                            };
-                            break;
-                        default:
-                            throw new ExpressError("Configuration Error - Invalid Action", 400);
+                    const invite = await UserModel.retrieve_group_request_by_uid_gid(req.user.id, req.body.groupID);
+                    const memberstatus = await UserModel.retrieve_group_membership_by_uid_gid(req.user.id, req.body.groupID);
+
+                    if (!memberstatus) {
+                        switch (req.body.action) {
+                            case "accept_invite":
+                                if (invite && invite.group_request === true) {
+                                    queryData = await GroupModel.create_group_user(req.body.groupID, [req.user.id]);
+                                    return res.json({message: "Group Joined!"})
+                                } else {
+                                    throw new ExpressError("Server Error: Unable to join group.", 500);
+                                };
+                            case "send_request":
+                                if (invite && invite.user_request === true) {
+                                    return res.json({message: "You have already requested to join this group."})
+                                } else if (!invite) {
+                                    queryData = await GroupModel.create_request_user_to_group(req.body.groupID, req.user.id);
+                                    return res.json({message: "Request Sent"})
+                                } else {
+                                    throw new ExpressError("Server Error: Unable to send request.", 500);
+                                };
+                            case "remove_request":
+                                if (invite) {
+                                    queryData = await GroupModel.delete_request_user_group([req.user.id], req.body.groupID);
+                                    return res.json({message: "Request Removed"});
+                                };
+                                break;
+                            default:
+                                throw new ExpressError("Configuration Error - Invalid Action", 400);
+                        };
+                    } else {
+                        throw new ExpressError("User is already a member of this group", 400);
                     };
                 default:
                     throw new ExpressError("Configuration Error - Invalid Context", 400);
@@ -190,7 +197,7 @@ userRootRouter.get("/profile",
 });
 
 
-userRootRouter.get("/invite", 
+userRootRouter.get("/request", 
     authMW.defineRoutePermissions({
         user: ["site_read_user_self"],
         group: [],
@@ -200,9 +207,9 @@ userRootRouter.get("/invite",
     async (req, res, next) => {
         try {
             if (!req.user?.id) {throw new ExpressError("Unauthorized", 401);};
-            const queryData = await UserModel.retrieve_group_invites_by_user_id(req.user?.id)
+            const queryData = await UserModel.retrieve_group_requests_by_user_id(req.user?.id)
 
-            return res.json({invites: queryData});
+            return res.json({requests: queryData});
         } catch (error) {
             next(error);
         }

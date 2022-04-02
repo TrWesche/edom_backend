@@ -187,6 +187,31 @@ class GroupRepo {
         }
     };
 
+    static async fetch_member_requests_by_group_id(groupID: string) {
+        let query: string;
+
+        query = `
+            SELECT
+                group_membership_requests.group_id AS group_id,
+                group_membership_requests.user_id AS user_id,
+                group_membership_requests.group_request AS group_request,
+                group_membership_requests.user_request AS user_request,
+                sitegroups.name AS group_name,
+                sitegroups.image_url AS image_url
+            FROM group_membership_requests
+            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
+            WHERE group_membership_requests.group_ID = $1`;
+
+        const result = await pgdb.query(
+            query,
+            [groupID]
+        );
+
+        const rval: Array<GroupInviteProps> | undefined = result.rows;
+        return rval;
+    };
+
+
     static async fetch_unrestricted_group_list_by_user_id(userID: string, limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
@@ -440,14 +465,12 @@ class GroupRepo {
 
             query = `
                 DELETE FROM group_membership_requests
-                WHERE group_membership_requests.group_id = $1 AND group_memberships_requests.user_id IN (${idxParams.join(', ')})`;
+                WHERE group_membership_requests.group_id = $1 AND group_membership_requests.user_id IN (${idxParams.join(', ')})`;
 
-            console.log(query);
-            const result = await pgdb.query(query, queryParams);
-
+            await pgdb.query(query, queryParams);
             return true;
         } catch (error) {
-            throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);
+            throw new ExpressError(`Server Error - Unable to delete user group membership request - ${error}`, 500);
         }
     };
 
@@ -470,11 +493,7 @@ class GroupRepo {
                 DELETE FROM user_grouproles
                 WHERE user_grouproles.user_id IN (${idxParams.join(', ')})`;
             
-            // console.log(query);
-            // console.log(queryParams);
             await pgdb.query(query, queryParams);
-            // console.log("Delete User Groups Success");
-
             return true;
         } catch (error) {
             throw new ExpressError(`Server Error - ${this.caller} - ${error}`, 500);

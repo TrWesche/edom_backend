@@ -311,13 +311,16 @@ class UserRepo {
         };
     };
 
-    static async fetch_group_invites_by_user_id(userID: string) {
+    // Tested - 04/01/2022
+    static async fetch_group_requests_by_user_id(userID: string) {
         let query: string;
 
         query = `
             SELECT
                 group_membership_requests.group_id AS group_id,
                 group_membership_requests.user_id AS user_id,
+                group_membership_requests.group_request AS group_request,
+                group_membership_requests.user_request AS user_request,
                 sitegroups.name AS group_name,
                 sitegroups.image_url AS image_url
             FROM group_membership_requests
@@ -333,7 +336,7 @@ class UserRepo {
         return rval;
     };
 
-    static async fetch_group_invite_by_uid_gid(userID: string, groupID: string) {
+    static async fetch_group_request_by_uid_gid(userID: string, groupID: string) {
         let query: string;
 
         query = `
@@ -354,6 +357,25 @@ class UserRepo {
         );
 
         const rval: GroupInviteProps | undefined = result.rows[0];
+        return rval;
+    };
+
+    static async fetch_group_membership_by_uid_gid(userID: string, groupID: string) {
+        let query: string;
+
+        query = `
+            SELECT
+                user_groups.group_id AS group_id,
+                user_groups.user_id AS user_id
+            FROM user_groups
+            WHERE user_groups.user_id = $1 AND user_groups.group_id = $2`;
+
+        const result = await pgdb.query(
+            query,
+            [userID, groupID]
+        );
+
+        const rval = result.rows[0];
         return rval;
     };
 

@@ -167,12 +167,13 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
-    UserModel.retrieve_group_invites_by_user_id = function (id) {
+    // Tested - 04/01/2022
+    UserModel.retrieve_group_requests_by_user_id = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var groupInvites;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_invites_by_user_id(id)];
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_requests_by_user_id(id)];
                     case 1:
                         groupInvites = _a.sent();
                         return [2 /*return*/, groupInvites];
@@ -181,15 +182,31 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
-    UserModel.retrieve_group_invite_by_uid_gid = function (userID, groupID) {
+    // Tested - 04/01/2022
+    UserModel.retrieve_group_request_by_uid_gid = function (userID, groupID) {
         return __awaiter(this, void 0, void 0, function () {
             var groupInvite;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_invite_by_uid_gid(userID, groupID)];
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_request_by_uid_gid(userID, groupID)];
                     case 1:
                         groupInvite = _a.sent();
                         return [2 /*return*/, groupInvite];
+                }
+            });
+        });
+    };
+    ;
+    // Tested - 04/01/2022
+    UserModel.retrieve_group_membership_by_uid_gid = function (userID, groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var membership;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_group_membership_by_uid_gid(userID, groupID)];
+                    case 1:
+                        membership = _a.sent();
+                        return [2 /*return*/, membership];
                 }
             });
         });
