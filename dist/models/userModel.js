@@ -238,6 +238,20 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
+    UserModel.retrieve_user_id_by_username = function (username) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userID;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, user_repository_1["default"].fetch_user_id_by_username(username)];
+                    case 1:
+                        userID = _a.sent();
+                        return [2 /*return*/, userID];
+                }
+            });
+        });
+    };
+    ;
     /** Update user data with `data` */
     // Manual Test Success 2022/03/13
     UserModel.modify_user = function (id, data) {

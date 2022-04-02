@@ -10,6 +10,7 @@ import ExpressError from "../utils/expresError";
 import TransactionRepo from "../repositories/transactionRepository";
 import EquipmentRepo from "../repositories/equipment.repository";
 import RoomRepo from "../repositories/room.repository";
+import UserRepo from "../repositories/user.repository";
 
 // TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
 // the database server and the front end.
@@ -271,6 +272,28 @@ class GroupModel {
     static async retrieve_group_membership_requests(groupID: string) {
         const users = await GroupRepo.fetch_member_requests_by_group_id(groupID);
         return users;
+    };
+
+    static async retrieve_user_id_by_username(username: Array<string>, context?: string, groupID?: string) {
+        const userIDListRaw = await UserRepo.fetch_user_id_by_username(username);
+
+        switch (context) {
+            case "filter_not_group_members":
+                // https://dba.stackexchange.com/questions/267410/show-values-from-list-that-are-not-returned-by-query
+                // https://stackoverflow.com/questions/19363481/select-rows-which-are-not-present-in-other-table/19364694#19364694
+                // SELECT user_id
+                // FROM unnest(ARRAY['0de29f48-846c-4ef8-a583-fdf11b00fa1f', 'a63d24a9-b13e-4464-ba46-56c496e068f7', 'dec136f4-5b0a-4856-8eb2-91bde2119671']::uuid[]) v(user_id)
+                // LEFT JOIN group_membership_requests gmr USING (user_id)
+                // WHERE  gmr.user_id IS NULL;
+                break;
+            case "filter_can_by_invited":
+                break;
+            case "filter_are_group_members":
+                break;
+            default:
+        };
+
+
     };
 
     // static async retrieve_user_permissions_by_user_id(userID: string) {

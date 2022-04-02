@@ -48,6 +48,7 @@ var groupModel_1 = require("../../../models/groupModel");
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
 // Router Imports
 var groupUserRoleRouter_1 = require("./groupUserRoleRouter");
+var userModel_1 = require("../../../models/userModel");
 var groupUserRouter = express.Router();
 groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
 /* ____ ____  _____    _  _____ _____
@@ -64,75 +65,78 @@ groupUserRouter.post("/request", authorizationMW_1["default"].defineRoutePermiss
     group: ["group_create_group_user"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, uidgidpairs, addUserList_1, addReqList_1, addUserQueryData, addReqQueryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var queryData, _a, reqValues, userIDs, _b, error_1;
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _b.trys.push([0, 6, , 7]);
+                _d.trys.push([0, 15, , 16]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.body.userID || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to add group user || target users missing || target group missing", 400);
+                if (!((_c = req.user) === null || _c === void 0 ? void 0 : _c.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
                 }
                 ;
+                if (!req.body.context || !req.body.action) {
+                    throw new expresError_1["default"]("Invalid Request", 400);
+                }
+                ;
+                queryData = void 0;
+                _a = req.body.context;
+                switch (_a) {
+                    case "user": return [3 /*break*/, 1];
+                }
+                return [3 /*break*/, 13];
+            case 1:
                 reqValues = {
-                    usernames: req.body.usernames,
+                    usernames: req.body.users,
                     groupID: req.groupID
                 };
                 if (!(0, groupUserCreateSchema_1["default"])(reqValues)) {
                     throw new expresError_1["default"]("Unable to create group user, schema check failure: ".concat(groupUserCreateSchema_1["default"].errors), 400);
                 }
                 ;
-                return [4 /*yield*/, groupModel_1["default"].retrieve_group_membership_requests_by_username(reqValues.groupID, reqValues.usernames)];
-            case 1:
-                uidgidpairs = _b.sent();
-                addUserList_1 = [];
-                addReqList_1 = [];
-                if (uidgidpairs.length > 0) {
-                    uidgidpairs.forEach(function (val) {
-                        if (val.user_request) {
-                            addUserList_1.push(val.user_id);
-                        }
-                        else if (val.group_request) {
-                            // If group request is already set to true an invite has already been sent, do nothing.
-                        }
-                        else {
-                            addReqList_1.push(val.user_id);
-                        }
-                        ;
-                    });
+                userIDs = void 0;
+                _b = req.body.action;
+                switch (_b) {
+                    case "accept_request": return [3 /*break*/, 2];
+                    case "send_request": return [3 /*break*/, 5];
+                    case "remove_request": return [3 /*break*/, 8];
                 }
-                ;
-                addUserQueryData = void 0;
-                addReqQueryData = void 0;
-                if (!(addUserList_1.length > 0)) return [3 /*break*/, 3];
-                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, addUserList_1)];
-            case 2:
-                addUserQueryData = _b.sent();
-                if (!addUserQueryData) {
-                    throw new expresError_1["default"]("Create Group User Failed", 400);
-                }
-                ;
-                _b.label = 3;
+                return [3 /*break*/, 11];
+            case 2: return [4 /*yield*/, userModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
             case 3:
-                ;
-                if (!(addReqList_1.length > 0)) return [3 /*break*/, 5];
-                return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, addReqList_1)];
+                userIDs = _d.sent();
+                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, reqValues.usernames)];
             case 4:
-                addReqQueryData = _b.sent();
-                if (!addUserQueryData) {
-                    throw new expresError_1["default"]("Create Invite Group to User Failed", 400);
-                }
-                ;
-                _b.label = 5;
-            case 5:
-                ;
-                return [2 /*return*/, res.json({ GroupUsersAdded: addUserQueryData, GroupInvitesSent: addReqQueryData })];
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ reqAccept: queryData })];
+            case 5: return [4 /*yield*/, userModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
             case 6:
-                error_1 = _b.sent();
-                next(error_1);
-                return [3 /*break*/, 7];
+                userIDs = _d.sent();
+                return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, reqValues.usernames)];
             case 7:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ reqSent: queryData })];
+            case 8: return [4 /*yield*/, userModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
+            case 9:
+                userIDs = _d.sent();
+                return [4 /*yield*/, groupModel_1["default"].delete_request_user_group(userIDs, reqValues.groupID)];
+            case 10:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ reqRemove: queryData })];
+            case 11: throw new expresError_1["default"]("Configuration Error - Invalid Action", 400);
+            case 12:
+                ;
+                _d.label = 13;
+            case 13: throw new expresError_1["default"]("Configuration Error - Invalid Context", 400);
+            case 14:
+                ;
+                return [3 /*break*/, 16];
+            case 15:
+                error_1 = _d.sent();
+                next(error_1);
+                return [3 /*break*/, 16];
+            case 16:
                 ;
                 return [2 /*return*/];
         }

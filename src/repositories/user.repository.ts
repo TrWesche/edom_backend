@@ -311,6 +311,73 @@ class UserRepo {
         };
     };
 
+    static async fetch_user_id_by_username(username: Array<string>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            username.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+            
+            query = `
+                SELECT
+                    userprofile.user_id AS id,
+                FROM userprofile
+                WHERE userprofile.username ILIKE ${queryParams.join(" OR userprofile.username ILIKE")}`;
+
+            const result = await pgdb.query(
+                query,
+                queryParams
+            );
+    
+            const rval = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
+        };
+    };
+
+    static async fetch_user_id_not_in_group(userIDs: Array<string>, groupID: string) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+            
+            query = `
+                SELECT 
+                    group_membership_requests.user_id AS id
+                FROM group_membership_requests
+                LEFT OUTER JOIN user_groups ON user_groups.group_id = group_membership_requests.group_id
+                WHERE user_groups.user_id <> ${queryParams.join(" OR userprofile.username ILIKE")}`;
+
+            const result = await pgdb.query(
+                query,
+                queryParams
+            );
+    
+            const rval = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
+        };
+    };
+
     // Tested - 04/01/2022
     static async fetch_group_requests_by_user_id(userID: string) {
         let query: string;

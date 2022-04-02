@@ -15,6 +15,7 @@ import authMW from "../../../middleware/authorizationMW";
 
 // Router Imports
 import groupUserRoleRouter from "./groupUserRoleRouter";
+import UserModel from "../../../models/userModel";
 
 const groupUserRouter = express.Router();
 
@@ -40,51 +41,44 @@ groupUserRouter.post("/request",
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.body.userID || !req.groupID) {
-                throw new ExpressError(`Must be logged in to add group user || target users missing || target group missing`, 400);
-            };
+            if (!req.user?.id || !req.groupID) {throw new ExpressError("Unauthorized", 401);};
+            if (!req.body.context || !req.body.action) {throw new ExpressError("Invalid Request", 400);};
 
-            const reqValues: GroupUserCreateProps = {
-                usernames: req.body.usernames,
-                groupID: req.groupID
-            };
+            let queryData;
 
-            if(!validateCreateGroupUserSchema(reqValues)) {
-                throw new ExpressError(`Unable to create group user, schema check failure: ${validateCreateGroupUserSchema.errors}`, 400);
-            };
-            
-            const uidgidpairs = await GroupModel.retrieve_group_membership_requests_by_username(reqValues.groupID, reqValues.usernames);
-
-            const addUserList: Array<string> = [];
-            const addReqList: Array<string> = [];
-
-            if (uidgidpairs.length > 0) {
-                uidgidpairs.forEach((val) => {
-                    if (val.user_request) {
-                        addUserList.push(val.user_id);
-                    } else if (val.group_request) {
-                        // If group request is already set to true an invite has already been sent, do nothing.
-                    } else {
-                        addReqList.push(val.user_id);
+            switch (req.body.context) {
+                case "user":
+                    const reqValues: GroupUserCreateProps = {
+                        usernames: req.body.users,
+                        groupID: req.groupID
                     };
-                });
-            };
-            
-            let addUserQueryData;
-            let addReqQueryData;
 
-            if (addUserList.length > 0) {
-                addUserQueryData = await GroupModel.create_group_user(reqValues.groupID, addUserList);
-                if (!addUserQueryData) {throw new ExpressError("Create Group User Failed", 400);};
-            };
+                    if(!validateCreateGroupUserSchema(reqValues)) {
+                        throw new ExpressError(`Unable to create group user, schema check failure: ${validateCreateGroupUserSchema.errors}`, 400);
+                    };
 
+                    let userIDs;
 
-            if (addReqList.length > 0) {
-                addReqQueryData = await GroupModel.create_request_group_to_user(reqValues.groupID, addReqList);
-                if (!addUserQueryData) {throw new ExpressError("Create Invite Group to User Failed", 400);};
+                    switch (req.body.action) {
+                        case "accept_request":
+                            userIDs = await UserModel.retrieve_user_id_by_username(reqValues.usernames)
+                            queryData = await GroupModel.create_group_user(reqValues.groupID, reqValues.usernames);
+                            return res.json({reqAccept: queryData})
+                        case "send_request":
+                            userIDs = await UserModel.retrieve_user_id_by_username(reqValues.usernames)
+                            queryData = await GroupModel.create_request_group_to_user(reqValues.groupID, reqValues.usernames);
+                            return res.json({reqSent: queryData})
+                        case "remove_request":
+                            userIDs = await UserModel.retrieve_user_id_by_username(reqValues.usernames)
+                            queryData = await GroupModel.delete_request_user_group(userIDs, reqValues.groupID);
+                            return res.json({reqRemove: queryData})
+                        default:
+                            throw new ExpressError("Configuration Error - Invalid Action", 400);
+                    };
+
+                default:
+                    throw new ExpressError("Configuration Error - Invalid Context", 400);
             };
-            
-            return res.json({GroupUsersAdded: addUserQueryData, GroupInvitesSent: addReqQueryData});
         } catch (error) {
             next(error)
         };

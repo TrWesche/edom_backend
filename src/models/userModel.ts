@@ -127,6 +127,24 @@ class UserModel {
     return user;
   };
 
+  static async retrieve_user_id_by_username(username: Array<string>, groupID?: string, context?: string) {
+    let userIDs;
+    // Get all used ids
+    const userIDsRaw = await UserRepo.fetch_user_id_by_username(username);
+    switch (context) {
+      case "filter_group_members":
+        // Make sure they aren't already in the group
+        userIDs = await UserRepo.fetch_user_id_not_in_group(userIDsRaw, groupID);
+      case "filter_existing_requests":
+        // Make sure a request doesn't already exist for them
+        userIDs = await UserRepo.fetch_user_id_not_in_requests()
+    }
+
+  
+    return userID;
+  };
+
+
   /** Update user data with `data` */
   // Manual Test Success 2022/03/13
   static async modify_user(id: string | undefined, data: UserUpdateProps) {
