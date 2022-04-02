@@ -19,6 +19,7 @@ export interface GroupUserProps {
 export interface GroupInviteProps {
     group_id: string,
     user_id: string,
+    username: string,
     group_request: boolean,
     user_request: boolean,
     group_name?: string,
@@ -170,11 +171,15 @@ class GroupRepo {
             query = `
                 SELECT
                     group_membership_requests.group_id AS group_id,
+                    sitegroups.name AS group_name,
                     userprofile.user_id AS user_id,
+                    userprofile.username AS username,
                     group_membership_requests.group_request AS group_request,
                     group_membership_requests.user_request AS user_request
                 FROM userprofiles
                 LEFT OUTER JOIN group_membership_requests ON group_membership_requests.user_id = user_profile.user_id
+                LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id
+                LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
                 WHERE group_membership_requests.group_id = $1 AND (userprofile.username ILIKE ${idxParams.join('OR userprofile.username ILIKE')})`;
 
             console.log(query);
@@ -193,13 +198,15 @@ class GroupRepo {
         query = `
             SELECT
                 group_membership_requests.group_id AS group_id,
+                sitegroups.name AS group_name,
                 group_membership_requests.user_id AS user_id,
+                userprofile.username AS username,
                 group_membership_requests.group_request AS group_request,
                 group_membership_requests.user_request AS user_request,
-                sitegroups.name AS group_name,
                 sitegroups.image_url AS image_url
             FROM group_membership_requests
             LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
+            LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id
             WHERE group_membership_requests.group_ID = $1`;
 
         const result = await pgdb.query(
@@ -210,7 +217,6 @@ class GroupRepo {
         const rval: Array<GroupInviteProps> | undefined = result.rows;
         return rval;
     };
-
 
     static async fetch_unrestricted_group_list_by_user_id(userID: string, limit: number, offset: number) {
         try {

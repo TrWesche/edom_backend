@@ -318,13 +318,15 @@ class UserRepo {
         query = `
             SELECT
                 group_membership_requests.group_id AS group_id,
+                sitegroups.name AS group_name,
                 group_membership_requests.user_id AS user_id,
+                userprofile.username AS username,
                 group_membership_requests.group_request AS group_request,
                 group_membership_requests.user_request AS user_request,
-                sitegroups.name AS group_name,
                 sitegroups.image_url AS image_url
             FROM group_membership_requests
             LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
+            LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id
             WHERE group_membership_requests.user_id = $1`;
 
         const result = await pgdb.query(

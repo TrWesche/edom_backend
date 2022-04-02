@@ -210,7 +210,7 @@ var UserRepo = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                group_membership_requests.user_id AS user_id,\n                group_membership_requests.group_request AS group_request,\n                group_membership_requests.user_request AS user_request,\n                sitegroups.name AS group_name,\n                sitegroups.image_url AS image_url\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            WHERE group_membership_requests.user_id = $1";
+                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                sitegroups.name AS group_name,\n                group_membership_requests.user_id AS user_id,\n                userprofile.username AS username,\n                group_membership_requests.group_request AS group_request,\n                group_membership_requests.user_request AS user_request,\n                sitegroups.image_url AS image_url\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id\n            WHERE group_membership_requests.user_id = $1";
                         return [4 /*yield*/, pgdb_1["default"].query(query, [userID])];
                     case 1:
                         result = _a.sent();

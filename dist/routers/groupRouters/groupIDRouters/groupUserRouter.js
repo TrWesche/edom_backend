@@ -144,6 +144,7 @@ groupUserRouter.post("/request", authorizationMW_1["default"].defineRoutePermiss
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
+// Manual Test - Basic Functionality: 04/01/2022
 groupUserRouter.get("/request", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_create_group_user"],

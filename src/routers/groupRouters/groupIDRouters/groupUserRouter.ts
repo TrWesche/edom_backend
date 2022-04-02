@@ -98,6 +98,7 @@ groupUserRouter.post("/request",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
+// Manual Test - Basic Functionality: 04/01/2022
 groupUserRouter.get("/request", 
     authMW.defineRoutePermissions({
         user: [],
