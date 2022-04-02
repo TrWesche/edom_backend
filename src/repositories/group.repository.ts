@@ -243,6 +243,79 @@ class GroupRepo {
         }
     };
 
+    // https://dba.stackexchange.com/questions/267410/show-values-from-list-that-are-not-returned-by-query
+    // https://stackoverflow.com/questions/19363481/select-rows-which-are-not-present-in-other-table/19364694#19364694
+    static async fetch_active_member_requests_by_uid_gid(userID: Array<string>, groupID: string, userToGroup: boolean, groupToUser: boolean) {
+        try {
+            let idx = 4;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID, userToGroup, groupToUser];
+            
+            userID.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT uid AS user_id
+                FROM unnest(ARRAY[${idxParams.join(', ')}]::uuid[]) v(uid)
+                LEFT JOIN group_membership_requests gmr ON gmr.user_id = uid
+                WHERE  gmr.user_id IS NOT NULL AND gmr.group_id = $1 AND gmr.user_request = $2 and gmr.group_request = $3
+            `;
+            
+            console.log(query);
+            console.log(queryParams);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<string> = result.rows
+
+            return rVal;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to query active user requests to join group - ${error}`, 500);
+        }
+    };
+
+
+    static async fetch_request_permitted_by_uid_gid(userID: Array<string>, groupID: string) {
+        try {
+            let idx = 3;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID, groupID];
+            
+            userID.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT uid AS user_id
+                FROM unnest(ARRAY[${idxParams.join(', ')}]::uuid[]) v(uid)
+                WHERE (
+                    NOT EXISTS (SELECT FROM group_membership_requests gmr WHERE gmr.user_id = uid AND gmr.group_id = $1) AND
+                    NOT EXISTS (SELECT FROM user_groups ug WHERE ug.user_id = uid AND ug.group_id = $2)
+                )
+            `;
+            
+            console.log(query);
+            console.log(queryParams);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<string> = result.rows
+
+            return rVal;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to query active user requests to join group - ${error}`, 500);
+        }
+    };
+
+
+
     static async update_group_by_group_id(groupID: string, groupData: GroupObjectProps) {
         try {
             // Parital Update: table name, payload data, lookup column name, lookup key
