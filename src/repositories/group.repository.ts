@@ -182,7 +182,7 @@ class GroupRepo {
                 LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
                 WHERE group_membership_requests.group_id = $1 AND (userprofile.username ILIKE ${idxParams.join('OR userprofile.username ILIKE')})`;
 
-            console.log(query);
+            // console.log(query);
             const result = await pgdb.query(query, queryParams);
 
             const rVal: Array<GroupInviteProps> | undefined = result.rows;
@@ -261,16 +261,18 @@ class GroupRepo {
             });
 
             query = `
-                SELECT uid AS user_id
-                FROM unnest(ARRAY[${idxParams.join(', ')}]::uuid[]) v(uid)
-                LEFT JOIN group_membership_requests gmr ON gmr.user_id = uid
-                WHERE  gmr.user_id IS NOT NULL AND gmr.group_id = $1 AND gmr.user_request = $2 and gmr.group_request = $3
+                SELECT ARRAY (
+                    SELECT uid AS user_id
+                    FROM unnest(ARRAY[${idxParams.join(', ')}]::uuid[]) v(uid)
+                    LEFT JOIN group_membership_requests gmr ON gmr.user_id = uid
+                    WHERE  gmr.user_id IS NOT NULL AND gmr.group_id = $1 AND gmr.user_request = $2 and gmr.group_request = $3
+                )
             `;
             
-            console.log(query);
-            console.log(queryParams);
+            // console.log(query);
+            // console.log(queryParams);
             const result = await pgdb.query(query, queryParams);
-            const rVal: Array<string> = result.rows
+            const rVal: Array<string> = result.rows[0].array
 
             return rVal;
         } catch (error) {
@@ -295,18 +297,20 @@ class GroupRepo {
             });
 
             query = `
-                SELECT uid AS user_id
-                FROM unnest(ARRAY[${idxParams.join(', ')}]::uuid[]) v(uid)
-                WHERE (
-                    NOT EXISTS (SELECT FROM group_membership_requests gmr WHERE gmr.user_id = uid AND gmr.group_id = $1) AND
-                    NOT EXISTS (SELECT FROM user_groups ug WHERE ug.user_id = uid AND ug.group_id = $2)
+                SELECT ARRAY (
+                    SELECT uid AS user_id
+                    FROM unnest(ARRAY[${idxParams.join(', ')}]::uuid[]) v(uid)
+                    WHERE (
+                        NOT EXISTS (SELECT FROM group_membership_requests gmr WHERE gmr.user_id = uid AND gmr.group_id = $1) AND
+                        NOT EXISTS (SELECT FROM user_groups ug WHERE ug.user_id = uid AND ug.group_id = $2)
+                    )
                 )
             `;
             
-            console.log(query);
-            console.log(queryParams);
+            // console.log(query);
+            // console.log(queryParams);
             const result = await pgdb.query(query, queryParams);
-            const rVal: Array<string> = result.rows
+            const rVal: Array<string> = result.rows[0].array
 
             return rVal;
         } catch (error) {
@@ -354,7 +358,7 @@ class GroupRepo {
                 DELETE FROM sitegroups
                 WHERE sitegroups.id IN (${idxParams.join(', ')});`;
             
-            console.log(query);
+            // console.log(query);
             await pgdb.query(query, queryParams);
 
             return true;
@@ -447,7 +451,7 @@ class GroupRepo {
                 VALUES ${idxParams.join(', ')}
                 RETURNING user_id, group_id`;
             
-            console.log(query);
+            // console.log(query);
             const result = await pgdb.query(query, queryParams);
             const rVal: Array<GroupUserProps> = result.rows
 
@@ -468,7 +472,7 @@ class GroupRepo {
                 VALUES ($1, $2, FALSE, TRUE, 'A user has requested to join your group!')
                 RETURNING user_id, group_id`;
             
-            console.log(query);
+            // console.log(query);
             const result = await pgdb.query(query, queryParams);
             const rVal: Array<GroupUserProps> = result.rows
 
@@ -499,7 +503,7 @@ class GroupRepo {
                 VALUES ${idxParams.join(', ')}
                 RETURNING user_id, group_id`;
             
-            console.log(query);
+            // console.log(query);
             const result = await pgdb.query(query, queryParams);
             const rVal: Array<GroupUserProps> = result.rows
 

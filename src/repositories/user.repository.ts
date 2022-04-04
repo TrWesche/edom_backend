@@ -327,17 +327,22 @@ class UserRepo {
             });
             
             query = `
-                SELECT
-                    userprofile.user_id AS id,
-                FROM userprofile
-                WHERE userprofile.username ILIKE ${queryParams.join(" OR userprofile.username ILIKE")}`;
+                SELECT ARRAY(
+                    SELECT
+                        userprofile.user_id AS id
+                    FROM userprofile
+                    WHERE userprofile.username ILIKE ${idxParams.join(" OR userprofile.username ILIKE ")}
+                )`;
+
+            // console.log(query);
+            // console.log(queryParams);
 
             const result = await pgdb.query(
                 query,
                 queryParams
             );
     
-            const rval = result.rows;
+            const rval = result.rows[0].array;
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured During Query Execution - ${error}`, 500);
@@ -529,7 +534,7 @@ class UserRepo {
     // Tested - 03/13/2022
     static async delete_user_by_user_id(userID: string) {
         try {
-            console.log("Called Delete User by User ID");
+            // console.log("Called Delete User by User ID");
             await pgdb.query(
                 `SELECT delete_user_account($1)`,
                 [userID]);

@@ -222,11 +222,11 @@ var UserRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                SELECT\n                    userprofile.user_id AS id,\n                FROM userprofile\n                WHERE userprofile.username ILIKE ".concat(queryParams_1.join(" OR userprofile.username ILIKE"));
+                        query = "\n                SELECT ARRAY(\n                    SELECT\n                        userprofile.user_id AS id\n                    FROM userprofile\n                    WHERE userprofile.username ILIKE ".concat(idxParams_1.join(" OR userprofile.username ILIKE "), "\n                )");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_1)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows;
+                        rval = result.rows[0].array;
                         return [2 /*return*/, rval];
                     case 2:
                         error_5 = _a.sent();
@@ -412,9 +412,10 @@ var UserRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        console.log("Called Delete User by User ID");
+                        // console.log("Called Delete User by User ID");
                         return [4 /*yield*/, pgdb_1["default"].query("SELECT delete_user_account($1)", [userID])];
                     case 1:
+                        // console.log("Called Delete User by User ID");
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:

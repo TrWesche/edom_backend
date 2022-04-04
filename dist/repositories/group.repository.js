@@ -212,7 +212,6 @@ var GroupRepo = /** @class */ (function () {
                             ;
                         });
                         query = "\n                SELECT\n                    group_membership_requests.group_id AS group_id,\n                    sitegroups.name AS group_name,\n                    userprofile.user_id AS user_id,\n                    userprofile.username AS username,\n                    group_membership_requests.group_request AS group_request,\n                    group_membership_requests.user_request AS user_request\n                FROM userprofiles\n                LEFT OUTER JOIN group_membership_requests ON group_membership_requests.user_id = user_profile.user_id\n                LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id\n                LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n                WHERE group_membership_requests.group_id = $1 AND (userprofile.username ILIKE ".concat(idxParams_1.join('OR userprofile.username ILIKE'), ")");
-                        console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_1)];
                     case 1:
                         result = _a.sent();
@@ -286,13 +285,11 @@ var GroupRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                SELECT uid AS user_id\n                FROM unnest(ARRAY[".concat(idxParams_2.join(', '), "]::uuid[]) v(uid)\n                LEFT JOIN group_membership_requests gmr ON gmr.user_id = uid\n                WHERE  gmr.user_id IS NOT NULL AND gmr.group_id = $1 AND gmr.user_request = $2 and gmr.group_request = $3\n            ");
-                        console.log(query);
-                        console.log(queryParams_2);
+                        query = "\n                SELECT ARRAY (\n                    SELECT uid AS user_id\n                    FROM unnest(ARRAY[".concat(idxParams_2.join(', '), "]::uuid[]) v(uid)\n                    LEFT JOIN group_membership_requests gmr ON gmr.user_id = uid\n                    WHERE  gmr.user_id IS NOT NULL AND gmr.group_id = $1 AND gmr.user_request = $2 and gmr.group_request = $3\n                )\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
                     case 1:
                         result = _a.sent();
-                        rVal = result.rows;
+                        rVal = result.rows[0].array;
                         return [2 /*return*/, rVal];
                     case 2:
                         error_9 = _a.sent();
@@ -322,13 +319,11 @@ var GroupRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                SELECT uid AS user_id\n                FROM unnest(ARRAY[".concat(idxParams_3.join(', '), "]::uuid[]) v(uid)\n                WHERE (\n                    NOT EXISTS (SELECT FROM group_membership_requests gmr WHERE gmr.user_id = uid AND gmr.group_id = $1) AND\n                    NOT EXISTS (SELECT FROM user_groups ug WHERE ug.user_id = uid AND ug.group_id = $2)\n                )\n            ");
-                        console.log(query);
-                        console.log(queryParams_3);
+                        query = "\n                SELECT ARRAY (\n                    SELECT uid AS user_id\n                    FROM unnest(ARRAY[".concat(idxParams_3.join(', '), "]::uuid[]) v(uid)\n                    WHERE (\n                        NOT EXISTS (SELECT FROM group_membership_requests gmr WHERE gmr.user_id = uid AND gmr.group_id = $1) AND\n                        NOT EXISTS (SELECT FROM user_groups ug WHERE ug.user_id = uid AND ug.group_id = $2)\n                    )\n                )\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
                     case 1:
                         result = _a.sent();
-                        rVal = result.rows;
+                        rVal = result.rows[0].array;
                         return [2 /*return*/, rVal];
                     case 2:
                         error_10 = _a.sent();
@@ -381,9 +376,10 @@ var GroupRepo = /** @class */ (function () {
                             ;
                         });
                         query = "\n                DELETE FROM sitegroups\n                WHERE sitegroups.id IN (".concat(idxParams_4.join(', '), ");");
-                        console.log(query);
+                        // console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_4)];
                     case 1:
+                        // console.log(query);
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
@@ -486,7 +482,6 @@ var GroupRepo = /** @class */ (function () {
                             ;
                         });
                         query = "\n                INSERT INTO group_membership_requests \n                    (user_id, group_id, group_request, user_request, message) \n                VALUES ".concat(idxParams_7.join(', '), "\n                RETURNING user_id, group_id");
-                        console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_7)];
                     case 1:
                         result = _a.sent();
@@ -511,7 +506,6 @@ var GroupRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [userID, groupID];
                         query = "\n                INSERT INTO group_membership_requests \n                    (user_id, group_id, group_request, user_request, message) \n                VALUES ($1, $2, FALSE, TRUE, 'A user has requested to join your group!')\n                RETURNING user_id, group_id";
-                        console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
@@ -546,7 +540,6 @@ var GroupRepo = /** @class */ (function () {
                             ;
                         });
                         query = "\n                INSERT INTO user_groups \n                    (user_id, group_id) \n                VALUES ".concat(idxParams_8.join(', '), "\n                RETURNING user_id, group_id");
-                        console.log(query);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_8)];
                     case 1:
                         result = _a.sent();

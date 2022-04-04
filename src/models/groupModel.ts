@@ -291,7 +291,7 @@ class GroupModel {
                 case "user_request_permitted":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted User to Group Requests", 400)};
                     
-                    userIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, true, false);
+                    userIDs = await GroupRepo.fetch_request_permitted_by_uid_gid(userIDListRaw, groupID);
                     break;
                 case "group_request_active":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Active Group Requests to Users", 400)};
@@ -301,13 +301,13 @@ class GroupModel {
                 case "group_request_permitted":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted Group Invite Requests", 400)};
                     
-                    userIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, false, true);
+                    userIDs = await GroupRepo.fetch_request_permitted_by_uid_gid(userIDListRaw, groupID);
                     break;
                 default:
                     userIDs = userIDListRaw;
             };
 
-            return userIDListRaw;
+            return userIDs;
         } catch (error) {
             throw new ExpressError(error.message, error.status);
         }
@@ -326,7 +326,7 @@ class GroupModel {
                 case "user_request_permitted":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted User to Group Requests", 400)};
                     
-                    filteredUIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDs, groupID, true, false);
+                    filteredUIDs = await GroupRepo.fetch_request_permitted_by_uid_gid(userIDs, groupID);
                     break;
                 case "group_request_active":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Active Group Requests to Users", 400)};
@@ -336,7 +336,7 @@ class GroupModel {
                 case "group_request_permitted":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted Group Invite Requests", 400)};
                     
-                    filteredUIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDs, groupID, false, true);
+                    filteredUIDs = await GroupRepo.fetch_request_permitted_by_uid_gid(userIDs, groupID);
                     break;
                 default:
                     filteredUIDs = userIDs;

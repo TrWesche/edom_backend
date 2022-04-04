@@ -108,8 +108,7 @@ userRootRouter.post("/register",
     }
 );
 
-// Manual Tests - Already a Member, Send Request, Remove Request 2022-04-01
-// To be Tested: Accept Invite
+// Manual Tests - Already Invited, Send Request, Remove Request, Already Member, Accept Invite 2022-04-04
 userRootRouter.post("/request", 
     authMW.defineRoutePermissions({
         user: ["site_update_user_self"],
@@ -131,17 +130,17 @@ userRootRouter.post("/request",
                         switch (req.body.action) {
                             case "accept_request":
                                 userIDs = await GroupModel.retrieve_filtered_user_ids([req.user.id], req.body.groupID, "group_request_active");
-                                if (userIDs.length < 1) {throw new ExpressError("Server Error: Unable to join group.", 500);};
+                                if (userIDs.length < 1) {throw new ExpressError("Unable to join group.", 400);};
                                 queryData = await GroupModel.create_group_user(req.body.groupID, userIDs);
                                 return res.json({reqAccept: queryData});
                             case "send_request":
                                 userIDs = await GroupModel.retrieve_filtered_user_ids([req.user.id], req.body.groupID, "user_request_permitted");
-                                if (userIDs.length < 1) {throw new ExpressError("Server Error: Unable to request to join this group.", 500);};
+                                if (userIDs.length < 1) {throw new ExpressError("Unable to request to join this group.", 400);};
                                 queryData = await GroupModel.create_request_user_to_group(req.body.groupID, req.user.id);
                                 return res.json({reqSent: queryData});
                             case "remove_request":
                                 userIDs = await GroupModel.retrieve_filtered_user_ids([req.user.id], req.body.groupID);
-                                if (userIDs.length < 1) {throw new ExpressError("Server Error: Unable to remove invite request.", 500);};
+                                if (userIDs.length < 1) {throw new ExpressError("Unable to remove invite request.", 400);};
                                 queryData = await GroupModel.delete_request_user_group(userIDs, req.body.groupID);
                                 return res.json({reqRemove: queryData});
                             default:
