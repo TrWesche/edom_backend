@@ -184,7 +184,7 @@ userRootRouter.get("/profile",
         }
 });
 
-
+// Manually Tested 2022-04-04
 userRootRouter.get("/request", 
     authMW.defineRoutePermissions({
         user: ["site_read_user_self"],

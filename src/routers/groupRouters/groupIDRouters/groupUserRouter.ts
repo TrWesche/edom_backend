@@ -15,7 +15,6 @@ import authMW from "../../../middleware/authorizationMW";
 
 // Router Imports
 import groupUserRoleRouter from "./groupUserRoleRouter";
-import UserModel from "../../../models/userModel";
 
 const groupUserRouter = express.Router();
 
@@ -30,7 +29,7 @@ groupUserRouter.use("/:username", groupUserRoleRouter);
 
 // Manually Tested - 2022-04-04
 // Send Request, Remove Reqeust, Accept Request, Filter Existing Users, Filter Existing Requests
-// Add User
+// Add User / Request User Membership
 groupUserRouter.post("/request",
     authMW.defineRoutePermissions({
         user: [],
@@ -95,7 +94,8 @@ groupUserRouter.post("/request",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-// Manual Test - Basic Functionality: 04/01/2022
+// Manually Tested 2022-04-04
+// Get Active Requests
 groupUserRouter.get("/request", 
     authMW.defineRoutePermissions({
         user: [],
@@ -162,9 +162,6 @@ groupUserRouter.get("/",
         }
     }
 );
-
-
-
 
 
 /* ____  _____ _     _____ _____ _____ 

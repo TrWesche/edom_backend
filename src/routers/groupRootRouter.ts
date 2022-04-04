@@ -18,8 +18,6 @@ import groupIDRouter from "./groupRouters/groupIDRouter";
 
 const groupRootRouter = express.Router();
 
-
-
 /* ____ ____  _____    _  _____ _____ 
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|  

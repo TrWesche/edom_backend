@@ -56,7 +56,11 @@ groupRoleMgmtRouter.use("/:roleID", authorizationMW_1["default"].addRoleIDToRequ
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Add Role
-groupRoleMgmtRouter.post("/", authorizationMW_1["default"].defineGroupPermissions(["read_role", "create_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRoleMgmtRouter.post("/", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_create_role"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -96,7 +100,11 @@ groupRoleMgmtRouter.post("/", authorizationMW_1["default"].defineGroupPermission
   |_| \_\_____/_/   \_\____/
 */
 // Get Role List
-groupRoleMgmtRouter.get("/", authorizationMW_1["default"].defineGroupPermissions(["read_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRoleMgmtRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_read_role"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -123,7 +131,11 @@ groupRoleMgmtRouter.get("/", authorizationMW_1["default"].defineGroupPermissions
     });
 }); });
 // Get Role Detail View
-groupRoleMgmtRouter.get("/roles/:roleID/permissions", authorizationMW_1["default"].defineGroupPermissions(["read_role_permissions"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRoleMgmtRouter.get("/roles/:roleID/permissions", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_read_role_permissions"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {
@@ -157,7 +169,11 @@ groupRoleMgmtRouter.get("/roles/:roleID/permissions", authorizationMW_1["default
 */
 // TODO: Need to make sure the default role and owner role cannot be deleted
 // Remove Role
-groupRoleMgmtRouter["delete"]("/:roleID", authorizationMW_1["default"].defineGroupPermissions(["read_role", "delete_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupRoleMgmtRouter["delete"]("/:roleID", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_delete_role"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_4;
     var _a;
     return __generator(this, function (_b) {

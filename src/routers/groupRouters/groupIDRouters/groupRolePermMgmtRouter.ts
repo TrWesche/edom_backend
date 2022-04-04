@@ -24,37 +24,45 @@ const groupRolePermMgmtRouter = express.Router();
 */
 
 // Add Role Permissions
-groupRolePermMgmtRouter.post("/permissions", authMW.defineGroupPermissions(["read_role_permissions", "create_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.body.permissions || req.body.permissions.length === 0 || !req.groupID || !req.roleID) {
-            throw new ExpressError(`Must be logged in to create group role || missing permissions to add || target group missing || target role missing`, 400);
-        };
-
-        const reqValues: Array<GroupRolePermissionCreateProps> = [];
-        req.body.permissions.forEach(permission => {
-            const permissionEntry: GroupRolePermissionCreateProps = {
-                grouprole_id: req.roleID ? req.roleID : "",
-                grouppermission_id: permission
+groupRolePermMgmtRouter.post("/permissions", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["group_create_role_permissions"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id || !req.body.permissions || req.body.permissions.length === 0 || !req.groupID || !req.roleID) {
+                throw new ExpressError(`Must be logged in to create group role || missing permissions to add || target group missing || target role missing`, 400);
             };
-            if(!validateCreateGroupRolePermissionSchema(permissionEntry)) {
-                throw new ExpressError(`Unable to Create Group Role Permission: ${validateCreateGroupRolePermissionSchema.errors}`, 400);
+
+            const reqValues: Array<GroupRolePermissionCreateProps> = [];
+            req.body.permissions.forEach(permission => {
+                const permissionEntry: GroupRolePermissionCreateProps = {
+                    grouprole_id: req.roleID ? req.roleID : "",
+                    grouppermission_id: permission
+                };
+                if(!validateCreateGroupRolePermissionSchema(permissionEntry)) {
+                    throw new ExpressError(`Unable to Create Group Role Permission: ${validateCreateGroupRolePermissionSchema.errors}`, 400);
+                }
+
+                reqValues.push(permissionEntry);
+            });
+
+            // Process
+            const queryData = await GroupModel.create_role_permissions(reqValues);
+            if (!queryData) {
+                throw new ExpressError("Create Group Role Permission Failed", 400);
             }
-
-            reqValues.push(permissionEntry);
-        });
-
-        // Process
-        const queryData = await GroupModel.create_role_permissions(reqValues);
-        if (!queryData) {
-            throw new ExpressError("Create Group Role Permission Failed", 400);
+            
+            return res.json({GroupRolePermissions: [queryData]})
+        } catch (error) {
+            next(error)
         }
-        
-        return res.json({GroupRolePermissions: [queryData]})
-    } catch (error) {
-        next(error)
     }
-});
+);
 
 
 /* ____  _____    _    ____  
@@ -65,24 +73,32 @@ groupRolePermMgmtRouter.post("/permissions", authMW.defineGroupPermissions(["rea
 */
 
 // Get Role Permissions
-groupRolePermMgmtRouter.get("/permissions", authMW.defineGroupPermissions(["read_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.groupID || !req.roleID) {
-            throw new ExpressError(`Must be logged in to view group roles || target group missing || target role missing`, 400);
+groupRolePermMgmtRouter.get("/permissions", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["group_read_role_permissions"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id || !req.groupID || !req.roleID) {
+                throw new ExpressError(`Must be logged in to view group roles || target group missing || target role missing`, 400);
+            }
+            
+            // Process
+            const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.groupID, req.roleID);
+            if (!queryData) {
+                throw new ExpressError("Retrieving Group Role Permissions Failed", 400);
+            }
+            
+            return res.json({GroupRolePermissions: [queryData]})
+        } catch (error) {
+            next(error)
         }
-        
-        // Process
-        const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.groupID, req.roleID);
-        if (!queryData) {
-            throw new ExpressError("Retrieving Group Role Permissions Failed", 400);
-        }
-        
-        return res.json({GroupRolePermissions: [queryData]})
-    } catch (error) {
-        next(error)
     }
-});
+);
 
 
 /* ____  _____ _     _____ _____ _____ 
@@ -93,23 +109,31 @@ groupRolePermMgmtRouter.get("/permissions", authMW.defineGroupPermissions(["read
 */
 
 // Remove Role Permissions
-groupRolePermMgmtRouter.delete("/permissions", authMW.defineGroupPermissions(["read_role_permissions", "delete_role_permissions"]), authMW.validatePermissions, async (req, res, next) => {
-    try {
-        // Preflight
-        if (!req.user?.id || !req.roleID || !req.groupID || !req.body.permissionID) {
-            throw new ExpressError(`Must be logged in to delete permissions || target role missing || target group missing || target permission missing`, 400);
-        }
+groupRolePermMgmtRouter.delete("/permissions", 
+    authMW.defineRoutePermissions({
+        user: [],
+        group: ["group_delete_role_permissions"],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+        try {
+            // Preflight
+            if (!req.user?.id || !req.roleID || !req.groupID || !req.body.permissionID) {
+                throw new ExpressError(`Must be logged in to delete permissions || target role missing || target group missing || target permission missing`, 400);
+            }
 
-        // Process
-        const queryData = await GroupModel.delete_role_pemission(req.roleID, req.body.permissionID);
-        if (!queryData) {
-            throw new ExpressError("Delete Group Role Permission Failed", 400);
+            // Process
+            const queryData = await GroupModel.delete_role_pemission(req.roleID, req.body.permissionID);
+            if (!queryData) {
+                throw new ExpressError("Delete Group Role Permission Failed", 400);
+            }
+            
+            return res.json({GroupRolePermissions: [queryData]})
+        } catch (error) {
+            next(error)
         }
-        
-        return res.json({GroupRolePermissions: [queryData]})
-    } catch (error) {
-        next(error)
     }
-});
+);
 
 export default groupRolePermMgmtRouter;

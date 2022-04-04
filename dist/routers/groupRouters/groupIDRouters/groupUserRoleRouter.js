@@ -53,7 +53,11 @@ var groupUserRoleRouter = express.Router();
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Add User Role
-groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "create_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_create_user_role"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var reqValues, queryData, error_1;
     var _a;
     return __generator(this, function (_b) {
@@ -93,7 +97,11 @@ groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineGroupPermi
   |_| \_\_____/_/   \_\____/
 */
 // Get User Roles
-groupUserRoleRouter.get("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupUserRoleRouter.get("/roles", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_read_user_role"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -126,7 +134,11 @@ groupUserRoleRouter.get("/roles", authorizationMW_1["default"].defineGroupPermis
   |____/|_____|_____|_____| |_| |_____|
 */
 // Remove User Role
-groupUserRoleRouter["delete"]("/roles", authorizationMW_1["default"].defineGroupPermissions(["read_user_role", "delete_user_role"]), authorizationMW_1["default"].validatePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+groupUserRoleRouter["delete"]("/roles", authorizationMW_1["default"].defineRoutePermissions({
+    user: [],
+    group: ["group_delete_user_role"],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
     var _a;
     return __generator(this, function (_b) {

@@ -58,7 +58,7 @@ groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
 */
 // Manually Tested - 2022-04-04
 // Send Request, Remove Reqeust, Accept Request, Filter Existing Users, Filter Existing Requests
-// Add User
+// Add User / Request User Membership
 groupUserRouter.post("/request", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_create_group_user"],
@@ -159,7 +159,8 @@ groupUserRouter.post("/request", authorizationMW_1["default"].defineRoutePermiss
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manual Test - Basic Functionality: 04/01/2022
+// Manually Tested 2022-04-04
+// Get Active Requests
 groupUserRouter.get("/request", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_create_group_user"],
