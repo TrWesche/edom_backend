@@ -10,8 +10,7 @@ import ExpressError from "../utils/expresError";
 import TransactionRepo from "../repositories/transactionRepository";
 import EquipmentRepo from "../repositories/equipment.repository";
 import RoomRepo from "../repositories/room.repository";
-import UserRepo from "../repositories/user.repository";
-import { group } from "console";
+import UserRepo from "../repositories/user.repository";import { group } from "console";
 
 // TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
 // the database server and the front end.
@@ -140,6 +139,8 @@ class GroupModel {
             if (!userRole) {
                 throw new ExpressError("Error while assinging default role to target user", 500);
             };
+
+            await GroupRepo.delete_request_user_group(userIDs, groupID);
 
             await TransactionRepo.commit_transaction();
             return userRole;
@@ -275,7 +276,7 @@ class GroupModel {
         return users;
     };
 
-    static async retrieve_user_id_by_username(username: Array<string>, groupID?: string, context?: string) {
+    static async retrieve_user_id_by_username(username: Array<string>, groupID: string, context?: string) {
         try {
             const userIDListRaw = await UserRepo.fetch_user_id_by_username(username);
             console.log(userIDListRaw);
@@ -286,15 +287,19 @@ class GroupModel {
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Active User Requests to Groups", 400)};
 
                     userIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, true, false);
-
+                    break;
+                case "user_request_permitted":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted User to Group Requests", 400)};
+                    
+                    userIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, true, false);
                     break;
                 case "group_request_active":
                     if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Active Group Requests to Users", 400)};
                     
                     userIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, false, true);
                     break;
-                case "invite_permitted":
-                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted Group Invited Requests", 400)};
+                case "group_request_permitted":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted Group Invite Requests", 400)};
                     
                     userIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, false, true);
                     break;
@@ -303,6 +308,41 @@ class GroupModel {
             };
 
             return userIDListRaw;
+        } catch (error) {
+            throw new ExpressError(error.message, error.status);
+        }
+    };
+
+    static async retrieve_filtered_user_ids(userIDs: Array<string>, groupID: string, context?: string) {
+        try {
+            let filteredUIDs;
+
+            switch (context) {
+                case "user_request_active":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Active User Requests to Groups", 400)};
+
+                    filteredUIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDs, groupID, true, false);
+                    break;
+                case "user_request_permitted":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted User to Group Requests", 400)};
+                    
+                    filteredUIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDs, groupID, true, false);
+                    break;
+                case "group_request_active":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Active Group Requests to Users", 400)};
+                    
+                    filteredUIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDs, groupID, false, true);
+                    break;
+                case "group_request_permitted":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve Permitted Group Invite Requests", 400)};
+                    
+                    filteredUIDs = await GroupRepo.fetch_active_member_requests_by_uid_gid(userIDs, groupID, false, true);
+                    break;
+                default:
+                    filteredUIDs = userIDs;
+            };
+
+            return filteredUIDs;
         } catch (error) {
             throw new ExpressError(error.message, error.status);
         }

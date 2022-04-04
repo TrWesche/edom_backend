@@ -44,6 +44,7 @@ var expresError_1 = require("../utils/expresError");
 var transactionRepository_1 = require("../repositories/transactionRepository");
 var equipment_repository_1 = require("../repositories/equipment.repository");
 var room_repository_1 = require("../repositories/room.repository");
+var user_repository_1 = require("../repositories/user.repository");
 // TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
 // the database server and the front end.
 var GroupModel = /** @class */ (function () {
@@ -199,7 +200,7 @@ var GroupModel = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 6, , 8]);
+                        _a.trys.push([0, 7, , 9]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
@@ -224,17 +225,20 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while assinging default role to target user", 500);
                         }
                         ;
-                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                        return [4 /*yield*/, group_repository_1["default"].delete_request_user_group(userIDs, groupID)];
                     case 5:
                         _a.sent();
-                        return [2 /*return*/, userRole];
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
                     case 6:
+                        _a.sent();
+                        return [2 /*return*/, userRole];
+                    case 7:
                         error_3 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 7:
+                    case 8:
                         _a.sent();
                         throw new expresError_1["default"](error_3.message, error_3.status);
-                    case 8:
+                    case 9:
                         ;
                         return [2 /*return*/];
                 }
@@ -481,6 +485,67 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
+    GroupModel.retrieve_user_id_by_username = function (username, groupID, context) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userIDListRaw, userIDs, _a, error_6;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 10, , 11]);
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_id_by_username(username)];
+                    case 1:
+                        userIDListRaw = _b.sent();
+                        console.log(userIDListRaw);
+                        userIDs = void 0;
+                        _a = context;
+                        switch (_a) {
+                            case "user_request_active": return [3 /*break*/, 2];
+                            case "group_request_active": return [3 /*break*/, 4];
+                            case "invite_permitted": return [3 /*break*/, 6];
+                        }
+                        return [3 /*break*/, 8];
+                    case 2:
+                        if (!groupID) {
+                            throw new expresError_1["default"]("Invalid Call - Retrieve Active User Requests to Groups", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, group_repository_1["default"].fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, true, false)];
+                    case 3:
+                        userIDs = _b.sent();
+                        return [3 /*break*/, 9];
+                    case 4:
+                        if (!groupID) {
+                            throw new expresError_1["default"]("Invalid Call - Retrieve Active Group Requests to Users", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, group_repository_1["default"].fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, false, true)];
+                    case 5:
+                        userIDs = _b.sent();
+                        return [3 /*break*/, 9];
+                    case 6:
+                        if (!groupID) {
+                            throw new expresError_1["default"]("Invalid Call - Retrieve Permitted Group Invited Requests", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, group_repository_1["default"].fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, false, true)];
+                    case 7:
+                        userIDs = _b.sent();
+                        return [3 /*break*/, 9];
+                    case 8:
+                        userIDs = userIDListRaw;
+                        _b.label = 9;
+                    case 9:
+                        ;
+                        return [2 /*return*/, userIDListRaw];
+                    case 10:
+                        error_6 = _b.sent();
+                        throw new expresError_1["default"](error_6.message, error_6.status);
+                    case 11: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     // static async retrieve_user_permissions_by_user_id(userID: string) {
     //     const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
     //     return permissions;
@@ -517,7 +582,7 @@ var GroupModel = /** @class */ (function () {
     */
     GroupModel.delete_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var groupList, error_6;
+            var groupList, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -558,11 +623,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupList];
                     case 12:
-                        error_6 = _a.sent();
+                        error_7 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 13:
                         _a.sent();
-                        throw new expresError_1["default"](error_6.message, error_6.status);
+                        throw new expresError_1["default"](error_7.message, error_7.status);
                     case 14: return [2 /*return*/];
                 }
             });
@@ -571,7 +636,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_role = function (roleID) {
         return __awaiter(this, void 0, void 0, function () {
-            var role, error_7;
+            var role, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -597,11 +662,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, role];
                     case 6:
-                        error_7 = _a.sent();
+                        error_8 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 7:
                         _a.sent();
-                        throw new expresError_1["default"](error_7.message, error_7.status);
+                        throw new expresError_1["default"](error_8.message, error_8.status);
                     case 8: return [2 /*return*/];
                 }
             });
@@ -635,7 +700,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_group_user = function (groupID, userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var roles, groupUser, error_8;
+            var roles, groupUser, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -662,11 +727,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupUser];
                     case 5:
-                        error_8 = _a.sent();
+                        error_9 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 6:
                         _a.sent();
-                        throw new expresError_1["default"](error_8.message, error_8.status);
+                        throw new expresError_1["default"](error_9.message, error_9.status);
                     case 7: return [2 /*return*/];
                 }
             });
@@ -693,7 +758,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_request_user_group = function (userIDs, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var userInvite, error_9;
+            var userInvite, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -707,8 +772,8 @@ var GroupModel = /** @class */ (function () {
                         ;
                         return [2 /*return*/, userInvite];
                     case 2:
-                        error_9 = _a.sent();
-                        throw new expresError_1["default"](error_9.message, error_9.status);
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"](error_10.message, error_10.status);
                     case 3:
                         ;
                         return [2 /*return*/];

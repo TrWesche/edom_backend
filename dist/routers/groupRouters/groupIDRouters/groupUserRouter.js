@@ -48,7 +48,6 @@ var groupModel_1 = require("../../../models/groupModel");
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
 // Router Imports
 var groupUserRoleRouter_1 = require("./groupUserRoleRouter");
-var userModel_1 = require("../../../models/userModel");
 var groupUserRouter = express.Router();
 groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
 /* ____ ____  _____    _  _____ _____
@@ -103,21 +102,21 @@ groupUserRouter.post("/request", authorizationMW_1["default"].defineRoutePermiss
                     case "remove_request": return [3 /*break*/, 8];
                 }
                 return [3 /*break*/, 11];
-            case 2: return [4 /*yield*/, userModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
+            case 2: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID, "user_request_active")];
             case 3:
                 userIDs = _d.sent();
-                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, reqValues.usernames)];
+                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, userIDs)];
             case 4:
                 queryData = _d.sent();
                 return [2 /*return*/, res.json({ reqAccept: queryData })];
-            case 5: return [4 /*yield*/, userModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
+            case 5: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID, "invite_permitted")];
             case 6:
                 userIDs = _d.sent();
-                return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, reqValues.usernames)];
+                return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, userIDs)];
             case 7:
                 queryData = _d.sent();
                 return [2 /*return*/, res.json({ reqSent: queryData })];
-            case 8: return [4 /*yield*/, userModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
+            case 8: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames)];
             case 9:
                 userIDs = _d.sent();
                 return [4 /*yield*/, groupModel_1["default"].delete_request_user_group(userIDs, reqValues.groupID)];
