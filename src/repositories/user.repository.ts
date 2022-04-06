@@ -510,10 +510,16 @@ class UserRepo {
 
             // User Profile Update
             if (userData.user_profile) {
+                let userProfileUpdate: any = userData.user_profile;
+                
+                if (userProfileUpdate.username) {
+                    userProfileUpdate.username_lowercase = userProfileUpdate.username.toLowerCase();
+                };
+
                 // Parital Update: table name, payload data, lookup column name, lookup key
                 const {query, values} = createUpdateQueryPGSQL(
                     "userprofile",
-                    userData.user_profile,
+                    userProfileUpdate,
                     "user_id",
                     userID
                 );

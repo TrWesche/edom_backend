@@ -352,7 +352,7 @@ var UserRepo = /** @class */ (function () {
     // Tested - 03/12/2022
     UserRepo.update_user_by_user_id = function (userID, userData) {
         return __awaiter(this, void 0, void 0, function () {
-            var updateSuccess, _a, query, values, result, _b, query, values, result, _c, query, values, result, error_8;
+            var updateSuccess, _a, query, values, result, _b, query, values, result, userProfileUpdate, _c, query, values, result, error_8;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -380,7 +380,12 @@ var UserRepo = /** @class */ (function () {
                     case 5:
                         ;
                         if (!userData.user_profile) return [3 /*break*/, 7];
-                        _c = (0, createUpdateQueryPGSQL_1["default"])("userprofile", userData.user_profile, "user_id", userID), query = _c.query, values = _c.values;
+                        userProfileUpdate = userData.user_profile;
+                        if (userProfileUpdate.username) {
+                            userProfileUpdate.username_lowercase = userProfileUpdate.username.toLowerCase();
+                        }
+                        ;
+                        _c = (0, createUpdateQueryPGSQL_1["default"])("userprofile", userProfileUpdate, "user_id", userID), query = _c.query, values = _c.values;
                         return [4 /*yield*/, pgdb_1["default"].query(query, values)];
                     case 6:
                         result = _d.sent();

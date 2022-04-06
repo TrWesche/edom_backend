@@ -341,9 +341,9 @@ BEGIN
 		(_id, _email, FALSE, _first_name, FALSE, _last_name, FALSE);
 		
 	INSERT INTO userprofile
-		("user_id", "username")
+		("user_id", "username", "username_lowercase")
 	VALUES
-		(_id, _username);
+		(_id, _username, LOWER(_username));
 		
 	SELECT siteroles.id INTO _userrole_id FROM siteroles WHERE name = 'user';
 	

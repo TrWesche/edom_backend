@@ -25,6 +25,7 @@ CREATE TABLE "userdata" (
 CREATE TABLE "userprofile" (
   "user_id" uuid NOT NULL,
   "username" text UNIQUE NOT NULL,
+  "username_lowercase" text UNIQUE NOT NULL,
   "headline" text,
   "about" text,
   "image_url" text,
