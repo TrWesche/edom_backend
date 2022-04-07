@@ -14,12 +14,12 @@ import authMW from "../../middleware/authorizationMW";
 
 // Router Imports
 import groupUserRouter from "./groupIDRouters/groupUserRouter";
-import groupRoleMgmtRouter from "./groupIDRouters/groupRoleMgmtRouter";
+import groupMgmtRouter from "./groupIDRouters/groupMgmtRouter";
 
 
 const groupIDRouter = express.Router();
 
-groupIDRouter.use("/role", groupRoleMgmtRouter);
+groupIDRouter.use("/gm", groupMgmtRouter);
 groupIDRouter.use("/user", groupUserRouter);
 
 /* ____  _____    _    ____  

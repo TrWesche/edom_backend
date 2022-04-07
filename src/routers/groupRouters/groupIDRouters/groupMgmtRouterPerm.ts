@@ -13,7 +13,7 @@ import GroupModel from "../../../models/groupModel";
 import authMW from "../../../middleware/authorizationMW";
 
 
-const groupRolePermMgmtRouter = express.Router();
+const groupMgmtRouterPerm = express.Router();
 
 
 /* ____ ____  _____    _  _____ _____ 
@@ -24,7 +24,7 @@ const groupRolePermMgmtRouter = express.Router();
 */
 
 // Add Role Permissions
-groupRolePermMgmtRouter.post("/permissions", 
+groupMgmtRouterPerm.post("/", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_create_role_permissions"],
@@ -73,7 +73,7 @@ groupRolePermMgmtRouter.post("/permissions",
 */
 
 // Get Role Permissions
-groupRolePermMgmtRouter.get("/permissions", 
+groupMgmtRouterPerm.get("/", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_role_permissions"],
@@ -109,7 +109,7 @@ groupRolePermMgmtRouter.get("/permissions",
 */
 
 // Remove Role Permissions
-groupRolePermMgmtRouter.delete("/permissions", 
+groupMgmtRouterPerm.delete("/", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_delete_role_permissions"],
@@ -136,4 +136,4 @@ groupRolePermMgmtRouter.delete("/permissions",
     }
 );
 
-export default groupRolePermMgmtRouter;
+export default groupMgmtRouterPerm;

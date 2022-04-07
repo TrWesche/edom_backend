@@ -13,12 +13,9 @@ import GroupModel from "../../../models/groupModel";
 import authMW from "../../../middleware/authorizationMW";
 
 // Router Imports
-import groupRolePermMgmtRouter from "./groupRolePermMgmtRouter";
 
 
-const groupRoleMgmtRouter = express.Router();
-
-groupRoleMgmtRouter.use("/:roleID", authMW.addRoleIDToRequest, groupRolePermMgmtRouter)
+const groupMgmtRouterRole = express.Router();
 
 /* ____ ____  _____    _  _____ _____ 
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -28,7 +25,7 @@ groupRoleMgmtRouter.use("/:roleID", authMW.addRoleIDToRequest, groupRolePermMgmt
 */
 
 // Add Role
-groupRoleMgmtRouter.post("/", 
+groupMgmtRouterRole.post("/", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_create_role"],
@@ -74,7 +71,7 @@ groupRoleMgmtRouter.post("/",
 */
 
 // Get Role List
-groupRoleMgmtRouter.get("/",
+groupMgmtRouterRole.get("/",
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_role"],
@@ -102,7 +99,7 @@ groupRoleMgmtRouter.get("/",
 );
 
 // Get Role Detail View
-groupRoleMgmtRouter.get("/roles/:roleID/permissions", 
+groupMgmtRouterRole.get("/:roleID", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_role_permissions"],
@@ -139,7 +136,7 @@ groupRoleMgmtRouter.get("/roles/:roleID/permissions",
 
 // TODO: Need to make sure the default role and owner role cannot be deleted
 // Remove Role
-groupRoleMgmtRouter.delete("/:roleID", 
+groupMgmtRouterRole.delete("/:roleID", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_delete_role"],
@@ -167,4 +164,4 @@ groupRoleMgmtRouter.delete("/:roleID",
 );
 
 
-export default groupRoleMgmtRouter;
+export default groupMgmtRouterRole;

@@ -47,9 +47,9 @@ var groupModel_1 = require("../../models/groupModel");
 var authorizationMW_1 = require("../../middleware/authorizationMW");
 // Router Imports
 var groupUserRouter_1 = require("./groupIDRouters/groupUserRouter");
-var groupRoleMgmtRouter_1 = require("./groupIDRouters/groupRoleMgmtRouter");
+var groupMgmtRouter_1 = require("./groupIDRouters/groupMgmtRouter");
 var groupIDRouter = express.Router();
-groupIDRouter.use("/role", groupRoleMgmtRouter_1["default"]);
+groupIDRouter.use("/gm", groupMgmtRouter_1["default"]);
 groupIDRouter.use("/user", groupUserRouter_1["default"]);
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \

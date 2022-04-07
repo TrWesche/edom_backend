@@ -40,160 +40,18 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
-// Schema Imports
-var groupUserCreateSchema_1 = require("../../../schemas/group/groupUserCreateSchema");
 // Model Imports
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
 // Router Imports
-var groupUserRoleRouter_1 = require("./groupUserRoleRouter");
 var groupUserRouter = express.Router();
-/* ____ ____  _____    _  _____ _____
-  / ___|  _ \| ____|  / \|_   _| ____|
- | |   | |_) |  _|   / _ \ | | |  _|
- | |___|  _ <| |___ / ___ \| | | |___
-  \____|_| \_\_____/_/   \_\_| |_____|
-*/
-// Manually Tested - 2022-04-04
-// Send Request, Remove Reqeust, Accept Request, Filter Existing Users, Filter Existing Requests
-// Add User / Request User Membership
-groupUserRouter.post("/request", authorizationMW_1["default"].defineRoutePermissions({
-    user: [],
-    group: ["group_create_group_user"],
-    public: []
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, _a, reqValues, userIDs, _b, error_1;
-    var _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0:
-                _d.trys.push([0, 15, , 16]);
-                // Preflight
-                if (!((_c = req.user) === null || _c === void 0 ? void 0 : _c.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Unauthorized", 401);
-                }
-                ;
-                if (!req.body.context || !req.body.action) {
-                    throw new expresError_1["default"]("Invalid Request", 400);
-                }
-                ;
-                queryData = void 0;
-                _a = req.body.context;
-                switch (_a) {
-                    case "user": return [3 /*break*/, 1];
-                }
-                return [3 /*break*/, 13];
-            case 1:
-                reqValues = {
-                    usernames: req.body.users,
-                    groupID: req.groupID
-                };
-                if (!(0, groupUserCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to create group user, schema check failure: ".concat(groupUserCreateSchema_1["default"].errors), 400);
-                }
-                ;
-                userIDs = void 0;
-                _b = req.body.action;
-                switch (_b) {
-                    case "accept_request": return [3 /*break*/, 2];
-                    case "send_request": return [3 /*break*/, 5];
-                    case "remove_request": return [3 /*break*/, 8];
-                }
-                return [3 /*break*/, 11];
-            case 2: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID, "user_request_active")];
-            case 3:
-                userIDs = _d.sent();
-                if (userIDs.length < 1) {
-                    throw new expresError_1["default"]("Unable to add users.", 400);
-                }
-                ;
-                return [4 /*yield*/, groupModel_1["default"].create_group_user(reqValues.groupID, userIDs)];
-            case 4:
-                queryData = _d.sent();
-                return [2 /*return*/, res.json({ reqAccept: queryData })];
-            case 5: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID, "group_request_permitted")];
-            case 6:
-                userIDs = _d.sent();
-                if (userIDs.length < 1) {
-                    throw new expresError_1["default"]("Unable to invite user to join group.", 400);
-                }
-                ;
-                return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, userIDs)];
-            case 7:
-                queryData = _d.sent();
-                return [2 /*return*/, res.json({ reqSent: queryData })];
-            case 8: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID)];
-            case 9:
-                userIDs = _d.sent();
-                if (userIDs.length < 1) {
-                    throw new expresError_1["default"]("Unable to remove invite request.", 400);
-                }
-                ;
-                return [4 /*yield*/, groupModel_1["default"].delete_request_user_group(userIDs, reqValues.groupID)];
-            case 10:
-                queryData = _d.sent();
-                return [2 /*return*/, res.json({ reqRemove: queryData })];
-            case 11: throw new expresError_1["default"]("Configuration Error - Invalid Action", 400);
-            case 12:
-                ;
-                _d.label = 13;
-            case 13: throw new expresError_1["default"]("Configuration Error - Invalid Context", 400);
-            case 14:
-                ;
-                return [3 /*break*/, 16];
-            case 15:
-                error_1 = _d.sent();
-                next(error_1);
-                return [3 /*break*/, 16];
-            case 16:
-                ;
-                return [2 /*return*/];
-        }
-    });
-}); });
 /* ____  _____    _    ____
   |  _ \| ____|  / \  |  _ \
   | |_) |  _|   / _ \ | | | |
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Manually Tested 2022-04-04
-// Get Active Requests
-groupUserRouter.get("/request", authorizationMW_1["default"].defineRoutePermissions({
-    user: [],
-    group: ["group_create_group_user"],
-    public: []
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_2;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 2, , 3]);
-                // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
-                    throw new expresError_1["default"]("Unauthorized", 401);
-                }
-                ;
-                queryData = void 0;
-                return [4 /*yield*/, groupModel_1["default"].retrieve_group_membership_requests(req.groupID)];
-            case 1:
-                queryData = _b.sent();
-                // Processing
-                if (!queryData) {
-                    throw new expresError_1["default"]("Users Not Found: Get Group Users - All", 404);
-                }
-                ;
-                return [2 /*return*/, res.json({ users: queryData })];
-            case 2:
-                error_2 = _b.sent();
-                next(error_2);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
 // Manual Test - Basic Functionality: 03/25/2022
 // Get User List
 groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
@@ -201,7 +59,7 @@ groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
     group: ["group_read_group"],
     public: ["site_read_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, groupReadPermitted_1, error_3;
+    var queryData, groupReadPermitted_1, error_1;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -239,44 +97,12 @@ groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
                 ;
                 return [2 /*return*/, res.json({ users: queryData })];
             case 5:
-                error_3 = _c.sent();
-                next(error_3);
+                error_1 = _c.sent();
+                next(error_1);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
     });
 }); });
-/* ____  _____ _     _____ _____ _____
-  |  _ \| ____| |   | ____|_   _| ____|
-  | | | |  _| | |   |  _|   | | |  _|
-  | |_| | |___| |___| |___  | | | |___
-  |____/|_____|_____|_____| |_| |_____|
-*/
-// Remove user
-// groupUserRouter.delete("/:username", 
-//     authMW.defineRoutePermissions({
-//         user: [],
-//         group: ["group_delete_group_user"],
-//         public: []
-//     }),
-//     authMW.validateRoutePermissions,
-//     async (req, res, next) => {
-//         try {
-//             // Preflight
-//             if (!req.user?.id || !req.params.username || !req.groupID) {
-//                 throw new ExpressError(`Must be logged in to delete group user || target user missing || target group missing`, 400);
-//             }
-//             // Process
-//             const queryData = await GroupModel.delete_group_user(req.groupID, req.params.username);
-//             if (!queryData) {
-//                 throw new ExpressError("Delete Group User Failed", 400);
-//             };
-//             return res.json({GroupUser: [queryData]});
-//         } catch (error) {
-//             next(error)
-//         };
-//     }
-// );
-groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
 exports["default"] = groupUserRouter;
 //# sourceMappingURL=groupUserRouter.js.map

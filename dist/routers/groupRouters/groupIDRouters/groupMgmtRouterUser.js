@@ -45,7 +45,7 @@ var groupUserRoleCreateSchema_1 = require("../../../schemas/group/groupUserRoleC
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupUserRoleRouter = express.Router({ mergeParams: true });
+var groupMgmtRouterUser = express.Router({ mergeParams: true });
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|
@@ -53,7 +53,7 @@ var groupUserRoleRouter = express.Router({ mergeParams: true });
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 // Add User Role
-groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineRoutePermissions({
+groupMgmtRouterUser.post("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_create_user_role"],
     public: []
@@ -96,33 +96,8 @@ groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineRoutePermi
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Get User Roles
-// groupUserRoleRouter.get("/roles", 
-//     authMW.defineRoutePermissions({
-//         user: [],
-//         group: ["group_read_user_role"],
-//         public: []
-//     }),
-//     authMW.validateRoutePermissions,
-//     async (req, res, next) => {
-//         try {
-//             // Preflight
-//             if (!req.user?.id || !req.groupID || !req.targetUID) {
-//                 throw new ExpressError(`Must be logged in to view group user roles || target group missing`, 400);
-//             }
-//             // Process
-//             const queryData = await GroupModel.retrieve_user_roles_by_user_id(req.targetUID, req.groupID);
-//             if (!queryData) {
-//                 throw new ExpressError("Retrieving Group User Roles Failed", 400);
-//             }
-//             return res.json({GroupUserRoles: [queryData]})
-//         } catch (error) {
-//             next(error)
-//         }
-//     }
-// );
 // Get User Group Data
-groupUserRoleRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
+groupMgmtRouterUser.get("/:username", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_read_user_role"],
     public: []
@@ -152,16 +127,9 @@ groupUserRoleRouter.get("/", authorizationMW_1["default"].defineRoutePermissions
         }
     });
 }); });
-/* ____  _____ _     _____ _____ _____
-  |  _ \| ____| |   | ____|_   _| ____|
-  | | | |  _| | |   |  _|   | | |  _|
-  | |_| | |___| |___| |___  | | | |___
-  |____/|_____|_____|_____| |_| |_____|
-*/
-// Remove User Role
-groupUserRoleRouter["delete"]("/roles", authorizationMW_1["default"].defineRoutePermissions({
+groupMgmtRouterUser.get("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
-    group: ["group_delete_user_role"],
+    group: ["group_read_group_user"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_3;
@@ -171,16 +139,19 @@ groupUserRoleRouter["delete"]("/roles", authorizationMW_1["default"].defineRoute
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.targetUID || !req.groupID || !req.body.roleID) {
-                    throw new expresError_1["default"]("Must be logged in to create group || target user missing || target group missing || target role missing", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
                 }
-                return [4 /*yield*/, groupModel_1["default"].delete_group_user_role(req.body.roleID, req.targetUID)];
+                ;
+                return [4 /*yield*/, groupModel_1["default"].retrieve_users_by_group_id(req.groupID, "full")];
             case 1:
                 queryData = _b.sent();
+                // Processing
                 if (!queryData) {
-                    throw new expresError_1["default"]("Delete Group User Role Failed", 400);
+                    throw new expresError_1["default"]("Users Not Found: Get Group Users - All", 404);
                 }
-                return [2 /*return*/, res.json({ GroupUserRoles: [queryData] })];
+                ;
+                return [2 /*return*/, res.json({ users: queryData })];
             case 2:
                 error_3 = _b.sent();
                 next(error_3);
@@ -189,5 +160,5 @@ groupUserRoleRouter["delete"]("/roles", authorizationMW_1["default"].defineRoute
         }
     });
 }); });
-exports["default"] = groupUserRoleRouter;
-//# sourceMappingURL=groupUserRoleRouter.js.map
+exports["default"] = groupMgmtRouterUser;
+//# sourceMappingURL=groupMgmtRouterUser.js.map
