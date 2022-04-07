@@ -491,7 +491,7 @@ var GroupModel = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 12, , 13]);
+                        _b.trys.push([0, 14, , 15]);
                         return [4 /*yield*/, user_repository_1["default"].fetch_user_id_by_username(username)];
                     case 1:
                         userIDListRaw = _b.sent();
@@ -503,8 +503,9 @@ var GroupModel = /** @class */ (function () {
                             case "user_request_permitted": return [3 /*break*/, 4];
                             case "group_request_active": return [3 /*break*/, 6];
                             case "group_request_permitted": return [3 /*break*/, 8];
+                            case "are_group_members": return [3 /*break*/, 10];
                         }
-                        return [3 /*break*/, 10];
+                        return [3 /*break*/, 12];
                     case 2:
                         if (!groupID) {
                             throw new expresError_1["default"]("Invalid Call - Retrieve Active User Requests to Groups", 400);
@@ -513,7 +514,7 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, group_repository_1["default"].fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, true, false)];
                     case 3:
                         userIDs = _b.sent();
-                        return [3 /*break*/, 11];
+                        return [3 /*break*/, 13];
                     case 4:
                         if (!groupID) {
                             throw new expresError_1["default"]("Invalid Call - Retrieve Permitted User to Group Requests", 400);
@@ -522,7 +523,7 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, group_repository_1["default"].fetch_request_permitted_by_uid_gid(userIDListRaw, groupID)];
                     case 5:
                         userIDs = _b.sent();
-                        return [3 /*break*/, 11];
+                        return [3 /*break*/, 13];
                     case 6:
                         if (!groupID) {
                             throw new expresError_1["default"]("Invalid Call - Retrieve Active Group Requests to Users", 400);
@@ -531,7 +532,7 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, group_repository_1["default"].fetch_active_member_requests_by_uid_gid(userIDListRaw, groupID, false, true)];
                     case 7:
                         userIDs = _b.sent();
-                        return [3 /*break*/, 11];
+                        return [3 /*break*/, 13];
                     case 8:
                         if (!groupID) {
                             throw new expresError_1["default"]("Invalid Call - Retrieve Permitted Group Invite Requests", 400);
@@ -540,17 +541,26 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, group_repository_1["default"].fetch_request_permitted_by_uid_gid(userIDListRaw, groupID)];
                     case 9:
                         userIDs = _b.sent();
-                        return [3 /*break*/, 11];
+                        return [3 /*break*/, 13];
                     case 10:
-                        userIDs = userIDListRaw;
-                        _b.label = 11;
+                        if (!groupID) {
+                            throw new expresError_1["default"]("Invalid Call - Retrieve IDs for Users in Group", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, group_repository_1["default"].fetch_group_members_of_group_by_uid_gid(userIDListRaw, groupID)];
                     case 11:
+                        userIDs = _b.sent();
+                        return [3 /*break*/, 13];
+                    case 12:
+                        userIDs = userIDListRaw;
+                        _b.label = 13;
+                    case 13:
                         ;
                         return [2 /*return*/, userIDs];
-                    case 12:
+                    case 14:
                         error_6 = _b.sent();
                         throw new expresError_1["default"](error_6.message, error_6.status);
-                    case 13: return [2 /*return*/];
+                    case 15: return [2 /*return*/];
                 }
             });
         });
@@ -775,7 +785,7 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.delete_group_user = function (groupID, userID) {
+    GroupModel.delete_group_user = function (groupID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var roles, groupUser, error_10;
             return __generator(this, function (_a) {
@@ -785,14 +795,14 @@ var GroupModel = /** @class */ (function () {
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_user_id(userID)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_user_id(userIDs)];
                     case 2:
                         roles = _a.sent();
                         if (!roles) {
                             throw new expresError_1["default"]("Failed to Delete Roles Associated with Target User", 500);
                         }
                         ;
-                        return [4 /*yield*/, group_repository_1["default"].disassociate_user_from_group(userID, groupID)];
+                        return [4 /*yield*/, group_repository_1["default"].disassociate_user_from_group(userIDs, groupID)];
                     case 3:
                         groupUser = _a.sent();
                         if (!groupUser) {

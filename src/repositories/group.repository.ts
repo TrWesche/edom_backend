@@ -319,6 +319,41 @@ class GroupRepo {
     };
 
 
+    static async fetch_group_members_of_group_by_uid_gid(userID: Array<string>, groupID: string) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID];
+            
+            userID.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT ARRAY (
+                    SELECT 
+                        user_groups.user_id AS user_id
+                    FROM user_groups
+                    WHERE user_groups.group_id = $1 AND user_groups.user_id IN (${idxParams.join(', ')})
+                )
+            `;
+            
+            // console.log(query);
+            // console.log(queryParams);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<string> = result.rows[0].array
+
+            return rVal;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to query user ids for user in target group - ${error}`, 500);
+        }
+    };
+
 
     static async update_group_by_group_id(groupID: string, groupData: GroupObjectProps) {
         try {
@@ -513,19 +548,31 @@ class GroupRepo {
         }
     };
 
-    static async disassociate_user_from_group(userID: string, groupID: string) {
+    static async disassociate_user_from_group(userIDs: Array<string>, groupID: string) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM user_groups
-                WHERE user_id = $1 AND group_id = $2
-                RETURNING user_id, group_id`,
-            [
-                userID,
-                groupID
-            ]);
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID];
             
-            const rval: GroupUserProps | undefined = result.rows[0];
-            return rval;
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_groups 
+                WHERE group_id = $1 AND user_id IN (${idxParams.join(', ')})
+                RETURNING user_id, group_id`;
+            
+            // console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserProps> = result.rows
+
+            return rVal;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete group association group -> user - ${error}`, 500);
         }

@@ -39,12 +39,11 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
-// Schema Imports
-var groupUserRoleCreateSchema_1 = require("../../../schemas/group/groupUserRoleCreateSchema");
 // Model Imports
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
+var groupMgmtSchemaUser_1 = require("../../../schemas/group/groupMgmtSchemaUser");
 var groupMgmtRouterUser = express.Router({ mergeParams: true });
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -58,35 +57,73 @@ groupMgmtRouterUser.post("/", authorizationMW_1["default"].defineRoutePermission
     group: ["group_create_user_role"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var reqValues, queryData, error_1;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var reqValues, queryData, _a, userIDs, _b, error_1;
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _d.trys.push([0, 13, , 14]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.targetUID || !req.groupID || !req.body.roleID) {
-                    throw new expresError_1["default"]("Must be logged in to assign roles || target user missing || target group missing || target role missing", 400);
+                if (!((_c = req.user) === null || _c === void 0 ? void 0 : _c.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Unauthorized", 401);
                 }
+                ;
                 reqValues = {
-                    user_id: req.targetUID,
-                    grouprole_id: req.body.roleID
+                    usernames: req.body.users,
+                    groupID: req.groupID,
+                    context: req.body.context,
+                    action: req.body.action,
+                    roles: req.body.roles ? req.body.roles : undefined
                 };
-                if (!(0, groupUserRoleCreateSchema_1["default"])(reqValues)) {
-                    throw new expresError_1["default"]("Unable to Create Group User: ".concat(groupUserRoleCreateSchema_1["default"].errors), 400);
+                if (!(0, groupMgmtSchemaUser_1["default"])(reqValues)) {
+                    throw new expresError_1["default"]("Unable to run Management Procedure, schema check failure: ".concat(groupMgmtSchemaUser_1["default"].errors), 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].create_group_user_role(reqValues.grouprole_id, [reqValues.user_id])];
-            case 1:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Create Group User Role Failed", 400);
+                ;
+                queryData = void 0;
+                _a = reqValues.context;
+                switch (_a) {
+                    case "user": return [3 /*break*/, 1];
                 }
-                return [2 /*return*/, res.json({ GroupUserRoles: [queryData] })];
+                return [3 /*break*/, 11];
+            case 1: return [4 /*yield*/, groupModel_1["default"].retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID, "are_group_members")];
             case 2:
-                error_1 = _b.sent();
+                userIDs = _d.sent();
+                if (userIDs.length < 1) {
+                    throw new expresError_1["default"]("No valid users found.", 400);
+                }
+                ;
+                _b = reqValues.action;
+                switch (_b) {
+                    case "remove_from_group": return [3 /*break*/, 3];
+                    case "add_roles": return [3 /*break*/, 5];
+                    case "delete_roles": return [3 /*break*/, 7];
+                }
+                return [3 /*break*/, 9];
+            case 3: return [4 /*yield*/, groupModel_1["default"].delete_group_user(reqValues.groupID, userIDs)];
+            case 4:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ message: "Users Removed" })];
+            case 5: return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, userIDs)];
+            case 6:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ reqSent: queryData })];
+            case 7: return [4 /*yield*/, groupModel_1["default"].delete_request_user_group(userIDs, reqValues.groupID)];
+            case 8:
+                queryData = _d.sent();
+                return [2 /*return*/, res.json({ reqRemove: queryData })];
+            case 9: throw new expresError_1["default"]("Configuration Error - Invalid Action", 400);
+            case 10:
+                ;
+                _d.label = 11;
+            case 11: throw new expresError_1["default"]("Configuration Error - Invalid Context", 400);
+            case 12:
+                ;
+                return [3 /*break*/, 14];
+            case 13:
+                error_1 = _d.sent();
                 next(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 14];
+            case 14: return [2 /*return*/];
         }
     });
 }); });

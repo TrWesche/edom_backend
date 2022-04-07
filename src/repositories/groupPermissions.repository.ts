@@ -529,13 +529,27 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async delete_user_group_roles_by_user_id(userID: string) {
+    static async delete_user_group_roles_by_user_id(userIDs: Array<string>) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM user_grouproles
-                WHERE user_id = $1`,
-                [userID]
-            );
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                DELETE FROM user_grouproles
+                WHERE user_id IN (${idxParams.join(', ')})
+            `;
+
+            const result = await pgdb.query(query, queryParams);
 
             return true;
         } catch (error) {

@@ -11,6 +11,7 @@ import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
+import validateGroupMgmtSchemaUser, { GroupMgmtSchemaUser } from "../../../schemas/group/groupMgmtSchemaUser";
 
 
 const groupMgmtRouterUser = express.Router({mergeParams: true});
@@ -33,26 +34,46 @@ groupMgmtRouterUser.post("/",
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.targetUID || !req.groupID || !req.body.roleID ) {
-                throw new ExpressError(`Must be logged in to assign roles || target user missing || target group missing || target role missing`, 400);
-            }
+            if (!req.user?.id || !req.groupID) {throw new ExpressError("Unauthorized", 401);};
 
-            const reqValues: GroupUserRoleCreateProps = {
-                user_id: req.targetUID,
-                grouprole_id: req.body.roleID
+            const reqValues: GroupMgmtSchemaUser = {
+                usernames: req.body.users,
+                groupID: req.groupID,
+                context: req.body.context,
+                action: req.body.action,
+                roles: req.body.roles ? req.body.roles : undefined
             };
-            
-            if(!validateCreateGroupUserRoleSchema(reqValues)) {
-                throw new ExpressError(`Unable to Create Group User: ${validateCreateGroupUserRoleSchema.errors}`, 400);
-            }
 
-            // Process
-            const queryData = await GroupModel.create_group_user_role(reqValues.grouprole_id, [reqValues.user_id]);
-            if (!queryData) {
-                throw new ExpressError("Create Group User Role Failed", 400);
-            }
-            
-            return res.json({GroupUserRoles: [queryData]})
+            if(!validateGroupMgmtSchemaUser(reqValues)) {
+                throw new ExpressError(`Unable to run Management Procedure, schema check failure: ${validateGroupMgmtSchemaUser.errors}`, 400);
+            };
+
+            let queryData;
+
+            switch (reqValues.context) {
+                case "user":
+                    const userIDs = await GroupModel.retrieve_user_id_by_username(reqValues.usernames, reqValues.groupID, "are_group_members");
+                    if (userIDs.length < 1) {throw new ExpressError("No valid users found.", 400);};
+
+                    switch (reqValues.action) {
+                        case "remove_from_group":
+                            queryData = await GroupModel.delete_group_user(reqValues.groupID, userIDs);
+                            return res.json({message: "Users Removed"});
+                        case "add_roles":
+                            queryData = await GroupModel.create_request_group_to_user(reqValues.groupID, userIDs);
+                            return res.json({reqSent: queryData});
+                        case "delete_roles":
+                            queryData = await GroupModel.delete_request_user_group(userIDs, reqValues.groupID);
+                            return res.json({reqRemove: queryData})
+                        default:
+                            throw new ExpressError("Configuration Error - Invalid Action", 400);
+                    };
+
+                default:
+                    throw new ExpressError("Configuration Error - Invalid Context", 400);
+            };
+
+
         } catch (error) {
             next(error)
         }

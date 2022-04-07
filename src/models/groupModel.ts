@@ -303,6 +303,11 @@ class GroupModel {
                     
                     userIDs = await GroupRepo.fetch_request_permitted_by_uid_gid(userIDListRaw, groupID);
                     break;
+                case "are_group_members":
+                    if (!groupID) {throw new ExpressError("Invalid Call - Retrieve IDs for Users in Group", 400)};
+                    
+                    userIDs = await GroupRepo.fetch_group_members_of_group_by_uid_gid(userIDListRaw, groupID);
+                    break;
                 default:
                     userIDs = userIDListRaw;
             };
@@ -447,16 +452,16 @@ class GroupModel {
         return permission;
     };
 
-    static async delete_group_user(groupID: string, userID: string) {
+    static async delete_group_user(groupID: string, userIDs: Array<string>) {
         try {
             await TransactionRepo.begin_transaction();
 
-            const roles = await GroupPermissionsRepo.delete_user_group_roles_by_user_id(userID);
+            const roles = await GroupPermissionsRepo.delete_user_group_roles_by_user_id(userIDs);
             if (!roles) {
                 throw new ExpressError("Failed to Delete Roles Associated with Target User", 500);
             };
             
-            const groupUser = await GroupRepo.disassociate_user_from_group(userID, groupID);
+            const groupUser = await GroupRepo.disassociate_user_from_group(userIDs, groupID);
             if (!groupUser) {
                 throw new ExpressError("Failed to Disassociate User From Target Group", 500);
             };
