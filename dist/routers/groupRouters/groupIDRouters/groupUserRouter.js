@@ -49,7 +49,6 @@ var authorizationMW_1 = require("../../../middleware/authorizationMW");
 // Router Imports
 var groupUserRoleRouter_1 = require("./groupUserRoleRouter");
 var groupUserRouter = express.Router();
-groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|
@@ -254,38 +253,30 @@ groupUserRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
   |____/|_____|_____|_____| |_| |_____|
 */
 // Remove user
-groupUserRouter["delete"]("/:username", authorizationMW_1["default"].defineRoutePermissions({
-    user: [],
-    group: ["group_delete_group_user"],
-    public: []
-}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_4;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _b.trys.push([0, 2, , 3]);
-                // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.params.username || !req.groupID) {
-                    throw new expresError_1["default"]("Must be logged in to delete group user || target user missing || target group missing", 400);
-                }
-                return [4 /*yield*/, groupModel_1["default"].delete_group_user(req.groupID, req.params.username)];
-            case 1:
-                queryData = _b.sent();
-                if (!queryData) {
-                    throw new expresError_1["default"]("Delete Group User Failed", 400);
-                }
-                ;
-                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
-            case 2:
-                error_4 = _b.sent();
-                next(error_4);
-                return [3 /*break*/, 3];
-            case 3:
-                ;
-                return [2 /*return*/];
-        }
-    });
-}); });
+// groupUserRouter.delete("/:username", 
+//     authMW.defineRoutePermissions({
+//         user: [],
+//         group: ["group_delete_group_user"],
+//         public: []
+//     }),
+//     authMW.validateRoutePermissions,
+//     async (req, res, next) => {
+//         try {
+//             // Preflight
+//             if (!req.user?.id || !req.params.username || !req.groupID) {
+//                 throw new ExpressError(`Must be logged in to delete group user || target user missing || target group missing`, 400);
+//             }
+//             // Process
+//             const queryData = await GroupModel.delete_group_user(req.groupID, req.params.username);
+//             if (!queryData) {
+//                 throw new ExpressError("Delete Group User Failed", 400);
+//             };
+//             return res.json({GroupUser: [queryData]});
+//         } catch (error) {
+//             next(error)
+//         };
+//     }
+// );
+groupUserRouter.use("/:username", groupUserRoleRouter_1["default"]);
 exports["default"] = groupUserRouter;
 //# sourceMappingURL=groupUserRouter.js.map

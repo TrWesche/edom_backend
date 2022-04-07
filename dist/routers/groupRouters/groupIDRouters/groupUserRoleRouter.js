@@ -45,7 +45,7 @@ var groupUserRoleCreateSchema_1 = require("../../../schemas/group/groupUserRoleC
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupUserRoleRouter = express.Router();
+var groupUserRoleRouter = express.Router({ mergeParams: true });
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
  | |   | |_) |  _|   / _ \ | | |  _|
@@ -97,9 +97,34 @@ groupUserRoleRouter.post("/roles", authorizationMW_1["default"].defineRoutePermi
   |_| \_\_____/_/   \_\____/
 */
 // Get User Roles
-groupUserRoleRouter.get("/roles", authorizationMW_1["default"].defineRoutePermissions({
+// groupUserRoleRouter.get("/roles", 
+//     authMW.defineRoutePermissions({
+//         user: [],
+//         group: ["group_read_user_role"],
+//         public: []
+//     }),
+//     authMW.validateRoutePermissions,
+//     async (req, res, next) => {
+//         try {
+//             // Preflight
+//             if (!req.user?.id || !req.groupID || !req.targetUID) {
+//                 throw new ExpressError(`Must be logged in to view group user roles || target group missing`, 400);
+//             }
+//             // Process
+//             const queryData = await GroupModel.retrieve_user_roles_by_user_id(req.targetUID, req.groupID);
+//             if (!queryData) {
+//                 throw new ExpressError("Retrieving Group User Roles Failed", 400);
+//             }
+//             return res.json({GroupUserRoles: [queryData]})
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// );
+// Get User Group Data
+groupUserRoleRouter.get("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
-    group: ["group_read_user_role"],
+    group: ["group_read_group", "group_read_user_role"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;

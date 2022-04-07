@@ -18,7 +18,7 @@ import groupUserRoleRouter from "./groupUserRoleRouter";
 
 const groupUserRouter = express.Router();
 
-groupUserRouter.use("/:username", groupUserRoleRouter);
+
 
 /* ____ ____  _____    _  _____ _____ 
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -172,31 +172,33 @@ groupUserRouter.get("/",
 */
 
 // Remove user
-groupUserRouter.delete("/:username", 
-    authMW.defineRoutePermissions({
-        user: [],
-        group: ["group_delete_group_user"],
-        public: []
-    }),
-    authMW.validateRoutePermissions,
-    async (req, res, next) => {
-        try {
-            // Preflight
-            if (!req.user?.id || !req.params.username || !req.groupID) {
-                throw new ExpressError(`Must be logged in to delete group user || target user missing || target group missing`, 400);
-            }
+// groupUserRouter.delete("/:username", 
+//     authMW.defineRoutePermissions({
+//         user: [],
+//         group: ["group_delete_group_user"],
+//         public: []
+//     }),
+//     authMW.validateRoutePermissions,
+//     async (req, res, next) => {
+//         try {
+//             // Preflight
+//             if (!req.user?.id || !req.params.username || !req.groupID) {
+//                 throw new ExpressError(`Must be logged in to delete group user || target user missing || target group missing`, 400);
+//             }
 
-            // Process
-            const queryData = await GroupModel.delete_group_user(req.groupID, req.params.username);
-            if (!queryData) {
-                throw new ExpressError("Delete Group User Failed", 400);
-            };
+//             // Process
+//             const queryData = await GroupModel.delete_group_user(req.groupID, req.params.username);
+//             if (!queryData) {
+//                 throw new ExpressError("Delete Group User Failed", 400);
+//             };
             
-            return res.json({GroupUser: [queryData]});
-        } catch (error) {
-            next(error)
-        };
-    }
-);
+//             return res.json({GroupUser: [queryData]});
+//         } catch (error) {
+//             next(error)
+//         };
+//     }
+// );
+
+groupUserRouter.use("/:username", groupUserRoleRouter);
 
 export default groupUserRouter;

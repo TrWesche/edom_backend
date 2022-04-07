@@ -578,16 +578,16 @@ class GroupPermissionsRepo {
     static async fetch_user_group_roles_by_user_id(userID: string, groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT users.id AS user_id,
-                        users.username AS username,
+                `SELECT userprofile.user_id AS user_id,
+                        userprofile.username AS username,
                         grouproles.id AS role_id, 
                         grouproles.name AS role_name
-                    FROM users
+                    FROM userprofile
                     LEFT JOIN user_grouproles 
-                        ON users.id = user_grouproles.user_id
+                        ON userprofile.user_id = user_grouproles.user_id
                     LEFT JOIN groupRoles
                         ON user_grouproles.grouprole_id = grouproles.id
-                    WHERE users.id = $1 AND grouproles.group_id = $2`,
+                    WHERE userprofile.user_id = $1 AND grouproles.group_id = $2`,
                     [userID, groupID]
             );
 

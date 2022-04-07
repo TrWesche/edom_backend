@@ -13,7 +13,7 @@ import GroupModel from "../../../models/groupModel";
 import authMW from "../../../middleware/authorizationMW";
 
 
-const groupUserRoleRouter = express.Router();
+const groupUserRoleRouter = express.Router({mergeParams: true});
 
 /* ____ ____  _____    _  _____ _____ 
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -68,10 +68,39 @@ groupUserRoleRouter.post("/roles",
 */
 
 // Get User Roles
-groupUserRoleRouter.get("/roles", 
+// groupUserRoleRouter.get("/roles", 
+//     authMW.defineRoutePermissions({
+//         user: [],
+//         group: ["group_read_user_role"],
+//         public: []
+//     }),
+//     authMW.validateRoutePermissions,
+//     async (req, res, next) => {
+//         try {
+//             // Preflight
+//             if (!req.user?.id || !req.groupID || !req.targetUID) {
+//                 throw new ExpressError(`Must be logged in to view group user roles || target group missing`, 400);
+//             }
+            
+//             // Process
+//             const queryData = await GroupModel.retrieve_user_roles_by_user_id(req.targetUID, req.groupID);
+//             if (!queryData) {
+//                 throw new ExpressError("Retrieving Group User Roles Failed", 400);
+//             }
+            
+//             return res.json({GroupUserRoles: [queryData]})
+//         } catch (error) {
+//             next(error)
+//         }
+//     }
+// );
+
+
+// Get User Group Data
+groupUserRoleRouter.get("/", 
     authMW.defineRoutePermissions({
         user: [],
-        group: ["group_read_user_role"],
+        group: ["group_read_group", "group_read_user_role"],
         public: []
     }),
     authMW.validateRoutePermissions,

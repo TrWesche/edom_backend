@@ -699,7 +699,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT users.id AS user_id,\n                        users.username AS username,\n                        grouproles.id AS role_id, \n                        grouproles.name AS role_name\n                    FROM users\n                    LEFT JOIN user_grouproles \n                        ON users.id = user_grouproles.user_id\n                    LEFT JOIN groupRoles\n                        ON user_grouproles.grouprole_id = grouproles.id\n                    WHERE users.id = $1 AND grouproles.group_id = $2", [userID, groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT userprofile.user_id AS user_id,\n                        userprofile.username AS username,\n                        grouproles.id AS role_id, \n                        grouproles.name AS role_name\n                    FROM userprofile\n                    LEFT JOIN user_grouproles \n                        ON userprofile.user_id = user_grouproles.user_id\n                    LEFT JOIN groupRoles\n                        ON user_grouproles.grouprole_id = grouproles.id\n                    WHERE userprofile.user_id = $1 AND grouproles.group_id = $2", [userID, groupID])];
                     case 1:
                         result = _a.sent();
                         // const rval: Array<siteRoleProps> | undefined = result.rows;
