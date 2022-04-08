@@ -284,3 +284,23 @@ ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("group_id") REFERENCES "sitegroups
 ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("thread_id") REFERENCES "group_chat_threads" ("id") ON DELETE NO ACTION;
 
 ALTER TABLE "group_chat_log" ADD FOREIGN KEY ("user_id") REFERENCES "useraccount" ("id") ON DELETE NO ACTION;
+
+CREATE UNIQUE INDEX "user_id_grouprole_id" ON "user_grouproles"("user_id", "grouprole_id");
+
+CREATE UNIQUE INDEX "user_id_group_id" ON "user_groups"("user_id", "group_id");
+
+CREATE UNIQUE INDEX "user_id_equip_id" ON "user_equipment"("user_id", "equip_id");
+
+CREATE UNIQUE INDEX "user_id_room_id" ON "user_rooms"("user_id", "room_id");
+
+CREATE UNIQUE INDEX "user_id_siterole_id" ON "user_siteroles"("user_id", "siterole_id");
+
+CREATE UNIQUE INDEX "siterole_id_permission_id" ON "siterole_permissiontypes"("siterole_id", "permission_id");
+
+CREATE UNIQUE INDEX "grouprole_id_permission_id" ON "grouproles_permissiontypes"("grouprole_id", "permission_id");
+
+CREATE UNIQUE INDEX "group_id_room_id" ON "group_rooms"("group_id", "room_id");
+
+CREATE UNIQUE INDEX "room_id_equip_id" ON "room_equipment"("room_id", "equip_id");
+
+CREATE UNIQUE INDEX "group_id_equip_id" ON "group_equipment"("group_id", "equip_id");
