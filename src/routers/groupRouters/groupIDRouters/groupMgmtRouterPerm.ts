@@ -71,34 +71,35 @@ groupMgmtRouterPerm.post("/",
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/ 
 */
-
-// Get Role Permissions
+// Get Group Permission Definitions
+// Manually Tested 2022-04-08
 groupMgmtRouterPerm.get("/", 
     authMW.defineRoutePermissions({
         user: [],
-        group: ["group_read_role_permissions"],
+        group: ["group_read_group_permissions"],
         public: []
     }),
     authMW.validateRoutePermissions,
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.groupID || !req.roleID) {
-                throw new ExpressError(`Must be logged in to view group roles || target group missing || target role missing`, 400);
+            if (!req.user?.id || !req.groupID) {
+                throw new ExpressError(`Must be logged in to view group permissions || target group missing`, 400);
             }
             
             // Process
-            const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.groupID, req.roleID);
+            const queryData = await GroupModel.retrieve_permissions();
             if (!queryData) {
-                throw new ExpressError("Retrieving Group Role Permissions Failed", 400);
+                throw new ExpressError("Retrieving Group Permissions Failed", 400);
             }
             
-            return res.json({GroupRolePermissions: [queryData]})
+            return res.json({GroupUser: [queryData]});
         } catch (error) {
-            next(error)
-        }
+            next(error);
+        };
     }
 );
+
 
 
 /* ____  _____ _     _____ _____ _____ 

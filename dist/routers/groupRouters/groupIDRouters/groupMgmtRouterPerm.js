@@ -101,10 +101,11 @@ groupMgmtRouterPerm.post("/", authorizationMW_1["default"].defineRoutePermission
   |  _ <| |___ / ___ \| |_| |
   |_| \_\_____/_/   \_\____/
 */
-// Get Role Permissions
+// Get Group Permission Definitions
+// Manually Tested 2022-04-08
 groupMgmtRouterPerm.get("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
-    group: ["group_read_role_permissions"],
+    group: ["group_read_group_permissions"],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var queryData, error_2;
@@ -114,21 +115,23 @@ groupMgmtRouterPerm.get("/", authorizationMW_1["default"].defineRoutePermissions
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID || !req.roleID) {
-                    throw new expresError_1["default"]("Must be logged in to view group roles || target group missing || target role missing", 400);
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID) {
+                    throw new expresError_1["default"]("Must be logged in to view group permissions || target group missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_role_permissions_by_role_id(req.groupID, req.roleID)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_permissions()];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
-                    throw new expresError_1["default"]("Retrieving Group Role Permissions Failed", 400);
+                    throw new expresError_1["default"]("Retrieving Group Permissions Failed", 400);
                 }
-                return [2 /*return*/, res.json({ GroupRolePermissions: [queryData] })];
+                return [2 /*return*/, res.json({ GroupUser: [queryData] })];
             case 2:
                 error_2 = _b.sent();
                 next(error_2);
                 return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+            case 3:
+                ;
+                return [2 /*return*/];
         }
     });
 }); });
