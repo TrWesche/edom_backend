@@ -130,18 +130,31 @@ class GroupPermissionsRepo {
         };
     };
 
-    static async fetch_role_by_role_name(groupRoleName: string, groupID: string) {
+    static async fetch_roles_by_gid_role_name(groupID: string, roleNames: Array<string>) {
         try {
-            const result = await pgdb.query(
-                `SELECT id, 
-                        name,
-                        group_id
-                  FROM grouproles
-                  WHERE name = $1 AND group_id = $2`,
-                  [groupRoleName, groupID]
-            );
-    
-            const rval: GroupRoleProps | undefined = result.rows[0];
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [groupID];
+            
+            roleNames.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT
+                    id, 
+                    name
+                FROM grouproles
+                WHERE group_id = $1 AND name IN (${idxParams.join(', ')})
+            `;
+            
+            const result = await pgdb.query(query, queryParams);
+            const rval: Array<GroupRoleProps> | undefined = result.rows;
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate group role - ${error}`, 500);
@@ -482,18 +495,22 @@ class GroupPermissionsRepo {
 
 
     // User Role Management
-    static async create_user_group_role_by_role_id(userIDs: Array<string>, groupRoleID: string) {
+    static async create_user_group_role_by_role_id(userIDs: Array<string>, roleIDs: Array<GroupRoleProps>) {
         try {
             let idx = 1;
             const idxParams: Array<string> = [];
             let query: string;
             const queryParams: Array<any> = [];
             
-            userIDs.forEach((val) => {
-                if (val) {
-                    queryParams.push(val, groupRoleID);
-                    idxParams.push(`($${idx}, $${idx+1})`);
-                    idx+=2;
+            userIDs.forEach((userID) => {
+                if (userID) {
+                    roleIDs.forEach((roleID) => {
+                        if (roleID.id) {
+                            queryParams.push(userID, roleID.id);
+                            idxParams.push(`($${idx}, $${idx+1})`);
+                            idx+=2;
+                        }
+                    });
                 };
             });
 
@@ -557,17 +574,34 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async delete_user_group_role_by_user_and_role_id(userID: string, roleID: string) {
+    static async delete_user_group_role_by_role_id(userIDs: Array<string>, roleIDs: Array<GroupRoleProps>) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM user_grouproles
-                WHERE user_id = $1 AND grouprole_id = $2
-                RETURNING user_id, grouprole_id`,
-                [userID, roleID]
-            );
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            userIDs.forEach((userID) => {
+                if (userID) {
+                    roleIDs.forEach((roleID) => {
+                        if (roleID.id) {
+                            queryParams.push(userID, roleID.id);
+                            idxParams.push(`(user_id = $${idx} AND grouprole_id = $${idx+1})`);
+                            idx+=2;
+                        }
+                    });
+                };
+            });
 
-            const rval: GroupUserRoleProps | undefined = result.rows[0];
-            return rval;
+            query = `
+                DELETE FROM user_grouproles
+                WHERE ${idxParams.join(' OR ')}
+                RETURNING user_id, grouprole_id`;
+            
+            console.log(query);
+            const result = await pgdb.query(query, queryParams);
+            const rVal: Array<GroupUserRoleProps> = result.rows
+            return rVal;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete user group role - ${error}`, 500);
         }

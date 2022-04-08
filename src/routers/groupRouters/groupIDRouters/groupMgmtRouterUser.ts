@@ -4,14 +4,14 @@ import * as express from "express";
 import ExpressError from "../../../utils/expresError";
 
 // Schema Imports
-import validateCreateGroupUserRoleSchema, { GroupUserRoleCreateProps } from "../../../schemas/group/groupUserRoleCreateSchema";
+import validateGroupMgmtSchemaUser, { GroupMgmtSchemaUser } from "../../../schemas/group/groupMgmtSchemaUser";
 
 // Model Imports
 import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
-import validateGroupMgmtSchemaUser, { GroupMgmtSchemaUser } from "../../../schemas/group/groupMgmtSchemaUser";
+
 
 
 const groupMgmtRouterUser = express.Router({mergeParams: true});
@@ -23,7 +23,7 @@ const groupMgmtRouterUser = express.Router({mergeParams: true});
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-// Add User Role
+// Manual Test - Remove From Group: 2022-04-07
 groupMgmtRouterUser.post("/", 
     authMW.defineRoutePermissions({
         user: [],
@@ -60,10 +60,10 @@ groupMgmtRouterUser.post("/",
                             queryData = await GroupModel.delete_group_user(reqValues.groupID, userIDs);
                             return res.json({message: "Users Removed"});
                         case "add_roles":
-                            queryData = await GroupModel.create_request_group_to_user(reqValues.groupID, userIDs);
+                            queryData = await GroupModel.create_group_user_role(reqValues.groupID, reqValues.roles, userIDs);
                             return res.json({reqSent: queryData});
                         case "delete_roles":
-                            queryData = await GroupModel.delete_request_user_group(userIDs, reqValues.groupID);
+                            queryData = await GroupModel.delete_group_user_role(reqValues.groupID, reqValues.roles, userIDs);
                             return res.json({reqRemove: queryData})
                         default:
                             throw new ExpressError("Configuration Error - Invalid Action", 400);

@@ -103,10 +103,10 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while creating group role permission entries for new group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_role_by_role_name("owner", groupEntry.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupEntry.id, ["owner"])];
                     case 6:
                         ownerPermission = _d.sent();
-                        if (!(ownerPermission === null || ownerPermission === void 0 ? void 0 : ownerPermission.id)) {
+                        if (!ownerPermission) {
                             throw new expresError_1["default"]("Error while fetching group owner permission entry for new group", 500);
                         }
                         ;
@@ -117,7 +117,7 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while associating user to group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id([data.ownerid], ownerPermission.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id([data.ownerid], ownerPermission)];
                     case 8:
                         userAssoc = _d.sent();
                         if (!((_c = userAssoc[0]) === null || _c === void 0 ? void 0 : _c.grouprole_id)) {
@@ -196,7 +196,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.create_group_user = function (groupID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var userGroup, defaultRole, userRole, error_3;
+            var userGroup, defaultRoles, userRole, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -211,14 +211,14 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while associating user to group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_role_by_role_name("user", groupID)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, ["user"])];
                     case 3:
-                        defaultRole = _a.sent();
-                        if (!(defaultRole === null || defaultRole === void 0 ? void 0 : defaultRole.id)) {
+                        defaultRoles = _a.sent();
+                        if (!defaultRoles) {
                             throw new expresError_1["default"]("Error while fetching default role for target group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, defaultRole.id)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, defaultRoles)];
                     case 4:
                         userRole = _a.sent();
                         if (!userRole) {
@@ -298,16 +298,23 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.create_group_user_role = function (roleID, userIDs) {
+    GroupModel.create_group_user_role = function (groupID, roleNames, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var userRole;
+            var roleIDs, userRole;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, roleID)];
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, roleNames)];
                     case 1:
+                        roleIDs = _a.sent();
+                        if (!roleIDs) {
+                            throw new expresError_1["default"]("Error while fetching role ids", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, roleIDs)];
+                    case 2:
                         userRole = _a.sent();
                         if (!userRole) {
-                            throw new expresError_1["default"]("Error while assinging default role to target user", 500);
+                            throw new expresError_1["default"]("Error while assinging roles to target users", 500);
                         }
                         ;
                         return [2 /*return*/, userRole];
@@ -825,13 +832,20 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.delete_group_user_role = function (roleID, userID) {
+    GroupModel.delete_group_user_role = function (groupID, roleNames, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var roles;
+            var roleIDs, roles;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_role_by_user_and_role_id(userID, roleID)];
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, roleNames)];
                     case 1:
+                        roleIDs = _a.sent();
+                        if (!roleIDs) {
+                            throw new expresError_1["default"]("Error while fetching role ids", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_role_by_role_id(userIDs, roleIDs)];
+                    case 2:
                         roles = _a.sent();
                         if (!roles) {
                             throw new expresError_1["default"]("Failed to Delete User Role Associated with Target User", 500);

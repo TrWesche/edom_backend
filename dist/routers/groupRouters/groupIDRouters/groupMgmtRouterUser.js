@@ -39,11 +39,12 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
+// Schema Imports
+var groupMgmtSchemaUser_1 = require("../../../schemas/group/groupMgmtSchemaUser");
 // Model Imports
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupMgmtSchemaUser_1 = require("../../../schemas/group/groupMgmtSchemaUser");
 var groupMgmtRouterUser = express.Router({ mergeParams: true });
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|
@@ -51,7 +52,7 @@ var groupMgmtRouterUser = express.Router({ mergeParams: true });
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Add User Role
+// Manual Test - Remove From Group: 2022-04-07
 groupMgmtRouterUser.post("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_create_user_role"],
@@ -103,11 +104,11 @@ groupMgmtRouterUser.post("/", authorizationMW_1["default"].defineRoutePermission
             case 4:
                 queryData = _d.sent();
                 return [2 /*return*/, res.json({ message: "Users Removed" })];
-            case 5: return [4 /*yield*/, groupModel_1["default"].create_request_group_to_user(reqValues.groupID, userIDs)];
+            case 5: return [4 /*yield*/, groupModel_1["default"].create_group_user_role(reqValues.groupID, reqValues.roles, userIDs)];
             case 6:
                 queryData = _d.sent();
                 return [2 /*return*/, res.json({ reqSent: queryData })];
-            case 7: return [4 /*yield*/, groupModel_1["default"].delete_request_user_group(userIDs, reqValues.groupID)];
+            case 7: return [4 /*yield*/, groupModel_1["default"].delete_group_user_role(reqValues.groupID, reqValues.roles, userIDs)];
             case 8:
                 queryData = _d.sent();
                 return [2 /*return*/, res.json({ reqRemove: queryData })];

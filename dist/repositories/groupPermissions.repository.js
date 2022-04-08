@@ -165,17 +165,30 @@ var GroupPermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupPermissionsRepo.fetch_role_by_role_name = function (groupRoleName, groupID) {
+    GroupPermissionsRepo.fetch_roles_by_gid_role_name = function (groupID, roleNames) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_6;
+            var idx_2, idxParams_1, query, queryParams_2, result, rval, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, \n                        name,\n                        group_id\n                  FROM grouproles\n                  WHERE name = $1 AND group_id = $2", [groupRoleName, groupID])];
+                        idx_2 = 2;
+                        idxParams_1 = [];
+                        query = void 0;
+                        queryParams_2 = [groupID];
+                        roleNames.forEach(function (val) {
+                            if (val) {
+                                queryParams_2.push(val);
+                                idxParams_1.push("$".concat(idx_2));
+                                idx_2++;
+                            }
+                            ;
+                        });
+                        query = "\n                SELECT\n                    id, \n                    name\n                FROM grouproles\n                WHERE group_id = $1 AND name IN (".concat(idxParams_1.join(', '), ")\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
+                        rval = result.rows;
                         return [2 /*return*/, rval];
                     case 2:
                         error_6 = _a.sent();
@@ -233,40 +246,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.delete_role_permissions_by_group_id = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var idx_2, idxParams_1, query, queryParams_2, error_9;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        idx_2 = 1;
-                        idxParams_1 = [];
-                        query = void 0;
-                        queryParams_2 = [];
-                        groupID.forEach(function (val) {
-                            if (val.id) {
-                                queryParams_2.push(val.id);
-                                idxParams_1.push("$".concat(idx_2));
-                                idx_2++;
-                            }
-                            ;
-                        });
-                        query = "\n                DELETE FROM grouproles_permissiontypes\n                WHERE grouproles_permissiontypes.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_1.join(', '), ")\n                )");
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_2)];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/, true];
-                    case 2:
-                        error_9 = _a.sent();
-                        throw new expresError_1["default"]("Server Error - delete_role_permissions_by_group_id - ".concat(error_9), 500);
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    GroupPermissionsRepo.delete_roles_by_group_id = function (groupID) {
-        return __awaiter(this, void 0, void 0, function () {
-            var idx_3, idxParams_2, query, queryParams_3, error_10;
+            var idx_3, idxParams_2, query, queryParams_3, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -283,9 +263,42 @@ var GroupPermissionsRepo = /** @class */ (function () {
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM grouproles\n                WHERE grouproles.group_id IN (".concat(idxParams_2.join(', '), ")");
-                        console.log(query);
+                        query = "\n                DELETE FROM grouproles_permissiontypes\n                WHERE grouproles_permissiontypes.grouprole_id IN (\n                    SELECT grouproles.id FROM grouproles\n                    WHERE grouproles.group_id IN (".concat(idxParams_2.join(', '), ")\n                )");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_3)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_9 = _a.sent();
+                        throw new expresError_1["default"]("Server Error - delete_role_permissions_by_group_id - ".concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
+    GroupPermissionsRepo.delete_roles_by_group_id = function (groupID) {
+        return __awaiter(this, void 0, void 0, function () {
+            var idx_4, idxParams_3, query, queryParams_4, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        idx_4 = 1;
+                        idxParams_3 = [];
+                        query = void 0;
+                        queryParams_4 = [];
+                        groupID.forEach(function (val) {
+                            if (val.id) {
+                                queryParams_4.push(val.id);
+                                idxParams_3.push("$".concat(idx_4));
+                                idx_4++;
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM grouproles\n                WHERE grouproles.group_id IN (".concat(idxParams_3.join(', '), ")");
+                        console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_4)];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, true];
@@ -427,7 +440,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.create_role_permissions_for_new_group = function (groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var newGroupPermissions, queryColumns, queryColIdxs_2, queryParams_4, idx_4, _loop_1, key, query, result, rval, error_16;
+            var newGroupPermissions, queryColumns, queryColIdxs_2, queryParams_5, idx_5, _loop_1, key, query, result, rval, error_16;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -462,13 +475,13 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         };
                         queryColumns = ["grouprole_id", "permission_id"];
                         queryColIdxs_2 = [];
-                        queryParams_4 = [];
-                        idx_4 = 1;
+                        queryParams_5 = [];
+                        idx_5 = 1;
                         _loop_1 = function (key) {
                             newGroupPermissions[key].forEach(function (element) {
-                                queryColIdxs_2.push("\n                    ( (SELECT get_group_role_uuid($".concat(idx_4, ", $").concat(idx_4 + 1, ")), (SELECT get_permission_uuid($").concat(idx_4 + 2, ")) )"));
-                                queryParams_4.push(key, groupID, element);
-                                idx_4 += 3;
+                                queryColIdxs_2.push("\n                    ( (SELECT get_group_role_uuid($".concat(idx_5, ", $").concat(idx_5 + 1, ")), (SELECT get_permission_uuid($").concat(idx_5 + 2, ")) )"));
+                                queryParams_5.push(key, groupID, element);
+                                idx_5 += 3;
                             });
                         };
                         // If this works its super inefficient and should be replaced at some point
@@ -477,7 +490,7 @@ var GroupPermissionsRepo = /** @class */ (function () {
                         }
                         ;
                         query = "\n                INSERT INTO grouproles_permissiontypes\n                    (".concat(queryColumns.join(","), ") \n                VALUES ").concat(queryColIdxs_2.join(","), " \n                RETURNING grouprole_id, permission_id");
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_4)];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_5)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -575,28 +588,32 @@ var GroupPermissionsRepo = /** @class */ (function () {
     //     }   
     // };
     // User Role Management
-    GroupPermissionsRepo.create_user_group_role_by_role_id = function (userIDs, groupRoleID) {
+    GroupPermissionsRepo.create_user_group_role_by_role_id = function (userIDs, roleIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var idx_5, idxParams_3, query, queryParams_5, result, rVal, error_20;
+            var idx_6, idxParams_4, query, queryParams_6, result, rVal, error_20;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        idx_5 = 1;
-                        idxParams_3 = [];
+                        idx_6 = 1;
+                        idxParams_4 = [];
                         query = void 0;
-                        queryParams_5 = [];
-                        userIDs.forEach(function (val) {
-                            if (val) {
-                                queryParams_5.push(val, groupRoleID);
-                                idxParams_3.push("($".concat(idx_5, ", $").concat(idx_5 + 1, ")"));
-                                idx_5 += 2;
+                        queryParams_6 = [];
+                        userIDs.forEach(function (userID) {
+                            if (userID) {
+                                roleIDs.forEach(function (roleID) {
+                                    if (roleID.id) {
+                                        queryParams_6.push(userID, roleID.id);
+                                        idxParams_4.push("($".concat(idx_6, ", $").concat(idx_6 + 1, ")"));
+                                        idx_6 += 2;
+                                    }
+                                });
                             }
                             ;
                         });
-                        query = "\n                INSERT INTO user_grouproles \n                    (user_id, grouprole_id) \n                VALUES ".concat(idxParams_3.join(', '), "\n                RETURNING user_id, grouprole_id");
+                        query = "\n                INSERT INTO user_grouproles \n                    (user_id, grouprole_id) \n                VALUES ".concat(idxParams_4.join(', '), "\n                RETURNING user_id, grouprole_id");
                         console.log(query);
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_5)];
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_6)];
                     case 1:
                         result = _a.sent();
                         rVal = result.rows;
@@ -632,25 +649,25 @@ var GroupPermissionsRepo = /** @class */ (function () {
     ;
     GroupPermissionsRepo.delete_user_group_roles_by_user_id = function (userIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var idx_6, idxParams_4, query, queryParams_6, result, error_22;
+            var idx_7, idxParams_5, query, queryParams_7, result, error_22;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        idx_6 = 1;
-                        idxParams_4 = [];
+                        idx_7 = 1;
+                        idxParams_5 = [];
                         query = void 0;
-                        queryParams_6 = [];
+                        queryParams_7 = [];
                         userIDs.forEach(function (val) {
                             if (val) {
-                                queryParams_6.push(val);
-                                idxParams_4.push("$".concat(idx_6));
-                                idx_6++;
+                                queryParams_7.push(val);
+                                idxParams_5.push("$".concat(idx_7));
+                                idx_7++;
                             }
                             ;
                         });
-                        query = "\n                DELETE FROM user_grouproles\n                WHERE user_id IN (".concat(idxParams_4.join(', '), ")\n            ");
-                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_6)];
+                        query = "\n                DELETE FROM user_grouproles\n                WHERE user_id IN (".concat(idxParams_5.join(', '), ")\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_7)];
                     case 1:
                         result = _a.sent();
                         return [2 /*return*/, true];
@@ -663,18 +680,36 @@ var GroupPermissionsRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupPermissionsRepo.delete_user_group_role_by_user_and_role_id = function (userID, roleID) {
+    GroupPermissionsRepo.delete_user_group_role_by_role_id = function (userIDs, roleIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_23;
+            var idx_8, idxParams_6, query, queryParams_8, result, rVal, error_23;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("DELETE FROM user_grouproles\n                WHERE user_id = $1 AND grouprole_id = $2\n                RETURNING user_id, grouprole_id", [userID, roleID])];
+                        idx_8 = 1;
+                        idxParams_6 = [];
+                        query = void 0;
+                        queryParams_8 = [];
+                        userIDs.forEach(function (userID) {
+                            if (userID) {
+                                roleIDs.forEach(function (roleID) {
+                                    if (roleID.id) {
+                                        queryParams_8.push(userID, roleID.id);
+                                        idxParams_6.push("(user_id = $".concat(idx_8, " AND grouprole_id = $").concat(idx_8 + 1, ")"));
+                                        idx_8 += 2;
+                                    }
+                                });
+                            }
+                            ;
+                        });
+                        query = "\n                DELETE FROM user_grouproles\n                WHERE ".concat(idxParams_6.join(' OR '), "\n                RETURNING user_id, grouprole_id");
+                        console.log(query);
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_8)];
                     case 1:
                         result = _a.sent();
-                        rval = result.rows[0];
-                        return [2 /*return*/, rval];
+                        rVal = result.rows;
+                        return [2 /*return*/, rVal];
                     case 2:
                         error_23 = _a.sent();
                         throw new expresError_1["default"]("An Error Occured: Unable to delete user group role - ".concat(error_23), 500);

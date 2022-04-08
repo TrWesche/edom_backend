@@ -59,8 +59,8 @@ class GroupModel {
                 throw new ExpressError("Error while creating group role permission entries for new group", 500);
             };
 
-            const ownerPermission = await GroupPermissionsRepo.fetch_role_by_role_name("owner", groupEntry.id);
-            if (!ownerPermission?.id) {
+            const ownerPermission = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupEntry.id, ["owner"]);
+            if (!ownerPermission) {
                 throw new ExpressError("Error while fetching group owner permission entry for new group", 500);
             };
 
@@ -71,7 +71,7 @@ class GroupModel {
             };
 
             // Associate Equipment with Uploading User
-            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id([data.ownerid], ownerPermission.id);
+            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id([data.ownerid], ownerPermission);
             if (!userAssoc[0]?.grouprole_id) {
                 throw new ExpressError("Error assigning user role to user", 500);
             };
@@ -130,12 +130,12 @@ class GroupModel {
                 throw new ExpressError("Error while associating user to group", 500);
             };
 
-            const defaultRole = await GroupPermissionsRepo.fetch_role_by_role_name("user", groupID);
-            if (!defaultRole?.id) {
+            const defaultRoles = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, ["user"]);
+            if (!defaultRoles) {
                 throw new ExpressError("Error while fetching default role for target group", 500);
             };
 
-            const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, defaultRole.id);
+            const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, defaultRoles);
             if (!userRole) {
                 throw new ExpressError("Error while assinging default role to target user", 500);
             };
@@ -176,10 +176,15 @@ class GroupModel {
         };
     };
 
-    static async create_group_user_role(roleID: string, userIDs: Array<string>) {
-        const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, roleID);
+    static async create_group_user_role(groupID: string, roleNames: Array<string>, userIDs: Array<string>) {
+        const roleIDs = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, roleNames)
+        if (!roleIDs) {
+            throw new ExpressError("Error while fetching role ids", 500);
+        };  
+
+        const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, roleIDs);
         if (!userRole) {
-            throw new ExpressError("Error while assinging default role to target user", 500);
+            throw new ExpressError("Error while assinging roles to target users", 500);
         };
 
         return userRole;
@@ -474,8 +479,13 @@ class GroupModel {
         }
     };
 
-    static async delete_group_user_role(roleID: string, userID: string) {
-        const roles = await GroupPermissionsRepo.delete_user_group_role_by_user_and_role_id(userID, roleID);
+    static async delete_group_user_role(groupID: string, roleNames: Array<string>, userIDs: Array<string>) {
+        const roleIDs = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, roleNames)
+        if (!roleIDs) {
+            throw new ExpressError("Error while fetching role ids", 500);
+        };  
+
+        const roles = await GroupPermissionsRepo.delete_user_group_role_by_role_id(userIDs, roleIDs);
         if (!roles) {
             throw new ExpressError("Failed to Delete User Role Associated with Target User", 500);
         };
