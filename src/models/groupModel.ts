@@ -261,8 +261,13 @@ class GroupModel {
         return users;
     };
 
-    static async retrieve_role_permissions_by_role_id(groupID: string, roleID: string) {
-        const permissions = GroupPermissionsRepo.fetch_role_permissions_by_role_id(groupID, roleID);
+    static async retrieve_role_permissions_by_role_id(groupID: string, rolename: string) {
+        const roleIDs = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, [rolename]);
+        if (!roleIDs || !roleIDs[0].id) {
+            throw new ExpressError("Error while fetching role ids", 500);
+        };  
+
+        const permissions = await GroupPermissionsRepo.fetch_role_permissions_by_role_id(groupID, roleIDs[0].id);
         return permissions;
     };
 

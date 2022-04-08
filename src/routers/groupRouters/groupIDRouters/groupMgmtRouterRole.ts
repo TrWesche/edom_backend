@@ -99,7 +99,7 @@ groupMgmtRouterRole.get("/",
 );
 
 // Get Role Detail View
-groupMgmtRouterRole.get("/:roleID", 
+groupMgmtRouterRole.get("/:rolename", 
     authMW.defineRoutePermissions({
         user: [],
         group: ["group_read_role_permissions"],
@@ -109,12 +109,12 @@ groupMgmtRouterRole.get("/:roleID",
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.groupID || !req.params.roleID) {
+            if (!req.user?.id || !req.groupID || !req.params.rolename) {
                 throw new ExpressError(`Must be logged in to view group roles || target group missing || target role missing`, 400);
             }
             
             // Process
-            const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.groupID, req.params.roleID);
+            const queryData = await GroupModel.retrieve_role_permissions_by_role_id(req.groupID, req.params.rolename);
             if (!queryData) {
                 throw new ExpressError("Retrieving Group Role Permissions Failed", 400);
             }

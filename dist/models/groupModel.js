@@ -444,12 +444,23 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.retrieve_role_permissions_by_role_id = function (groupID, roleID) {
+    GroupModel.retrieve_role_permissions_by_role_id = function (groupID, rolename) {
         return __awaiter(this, void 0, void 0, function () {
-            var permissions;
+            var roleIDs, permissions;
             return __generator(this, function (_a) {
-                permissions = groupPermissions_repository_1["default"].fetch_role_permissions_by_role_id(groupID, roleID);
-                return [2 /*return*/, permissions];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, [rolename])];
+                    case 1:
+                        roleIDs = _a.sent();
+                        if (!roleIDs || !roleIDs[0].id) {
+                            throw new expresError_1["default"]("Error while fetching role ids", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_role_permissions_by_role_id(groupID, roleIDs[0].id)];
+                    case 2:
+                        permissions = _a.sent();
+                        return [2 /*return*/, permissions];
+                }
             });
         });
     };

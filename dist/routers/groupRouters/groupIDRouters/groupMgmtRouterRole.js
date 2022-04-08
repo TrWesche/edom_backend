@@ -129,7 +129,7 @@ groupMgmtRouterRole.get("/", authorizationMW_1["default"].defineRoutePermissions
     });
 }); });
 // Get Role Detail View
-groupMgmtRouterRole.get("/:roleID", authorizationMW_1["default"].defineRoutePermissions({
+groupMgmtRouterRole.get("/:rolename", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_read_role_permissions"],
     public: []
@@ -141,10 +141,10 @@ groupMgmtRouterRole.get("/:roleID", authorizationMW_1["default"].defineRoutePerm
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 // Preflight
-                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID || !req.params.roleID) {
+                if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || !req.groupID || !req.params.rolename) {
                     throw new expresError_1["default"]("Must be logged in to view group roles || target group missing || target role missing", 400);
                 }
-                return [4 /*yield*/, groupModel_1["default"].retrieve_role_permissions_by_role_id(req.groupID, req.params.roleID)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_role_permissions_by_role_id(req.groupID, req.params.rolename)];
             case 1:
                 queryData = _b.sent();
                 if (!queryData) {
