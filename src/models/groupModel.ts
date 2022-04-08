@@ -423,15 +423,20 @@ class GroupModel {
         }        
     };
 
-    static async delete_role(roleID: string) {
+    static async delete_role(groupID: string, rolename: string) {
         try {
             await TransactionRepo.begin_transaction();
 
-            await GroupPermissionsRepo.delete_role_permissions_by_role_id(roleID);
+            const roleIDs = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, [rolename])
+            if (!roleIDs || !roleIDs[0].id) {
+                throw new ExpressError("Error while fetching role ids", 500);
+            };  
 
-            await GroupPermissionsRepo.delete_user_group_roles_by_role_id(roleID);
+            await GroupPermissionsRepo.delete_role_permissions_by_role_id(roleIDs[0].id);
 
-            const role = await GroupPermissionsRepo.delete_role_by_role_id(roleID);
+            await GroupPermissionsRepo.delete_user_group_roles_by_role_id(roleIDs[0].id);
+
+            const role = await GroupPermissionsRepo.delete_role_by_role_id(roleIDs[0].id);
             if (!role) {
                 throw new ExpressError("Failed to Delete Target Role", 500);
             };
@@ -484,8 +489,8 @@ class GroupModel {
         }
     };
 
-    static async delete_group_user_role(groupID: string, roleNames: Array<string>, userIDs: Array<string>) {
-        const roleIDs = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, roleNames)
+    static async delete_group_user_role(groupID: string, rolenames: Array<string>, userIDs: Array<string>) {
+        const roleIDs = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, rolenames)
         if (!roleIDs) {
             throw new ExpressError("Error while fetching role ids", 500);
         };  

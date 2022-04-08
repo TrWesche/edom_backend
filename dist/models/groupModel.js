@@ -739,40 +739,47 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.delete_role = function (roleID) {
+    GroupModel.delete_role = function (groupID, rolename) {
         return __awaiter(this, void 0, void 0, function () {
-            var role, error_9;
+            var roleIDs, role, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 6, , 8]);
+                        _a.trys.push([0, 7, , 9]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permissions_by_role_id(roleID)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, [rolename])];
                     case 2:
-                        _a.sent();
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_role_id(roleID)];
+                        roleIDs = _a.sent();
+                        if (!roleIDs || !roleIDs[0].id) {
+                            throw new expresError_1["default"]("Error while fetching role ids", 500);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permissions_by_role_id(roleIDs[0].id)];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_by_role_id(roleID)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_roles_by_role_id(roleIDs[0].id)];
                     case 4:
+                        _a.sent();
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_by_role_id(roleIDs[0].id)];
+                    case 5:
                         role = _a.sent();
                         if (!role) {
                             throw new expresError_1["default"]("Failed to Delete Target Role", 500);
                         }
                         ;
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
-                    case 5:
+                    case 6:
                         _a.sent();
                         return [2 /*return*/, role];
-                    case 6:
+                    case 7:
                         error_9 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 7:
+                    case 8:
                         _a.sent();
                         throw new expresError_1["default"](error_9.message, error_9.status);
-                    case 8: return [2 /*return*/];
+                    case 9: return [2 /*return*/];
                 }
             });
         });
@@ -843,12 +850,12 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.delete_group_user_role = function (groupID, roleNames, userIDs) {
+    GroupModel.delete_group_user_role = function (groupID, rolenames, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
             var roleIDs, roles;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, roleNames)];
+                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, rolenames)];
                     case 1:
                         roleIDs = _a.sent();
                         if (!roleIDs) {

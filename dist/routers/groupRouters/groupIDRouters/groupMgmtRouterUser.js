@@ -52,7 +52,7 @@ var groupMgmtRouterUser = express.Router({ mergeParams: true });
  | |___|  _ <| |___ / ___ \| | | |___
   \____|_| \_\_____/_/   \_\_| |_____|
 */
-// Manual Test - Remove From Group: 2022-04-07
+// Manually Tested - 2022-04-08
 groupMgmtRouterUser.post("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_create_user_role"],
@@ -135,6 +135,7 @@ groupMgmtRouterUser.post("/", authorizationMW_1["default"].defineRoutePermission
   |_| \_\_____/_/   \_\____/
 */
 // Get User Group Data
+// Manually Tested - 2022-04-08
 groupMgmtRouterUser.get("/:username", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_read_user_role"],
@@ -165,6 +166,7 @@ groupMgmtRouterUser.get("/:username", authorizationMW_1["default"].defineRoutePe
         }
     });
 }); });
+// Manually Tested - 2022-04-08
 groupMgmtRouterUser.get("/", authorizationMW_1["default"].defineRoutePermissions({
     user: [],
     group: ["group_read_group_user"],

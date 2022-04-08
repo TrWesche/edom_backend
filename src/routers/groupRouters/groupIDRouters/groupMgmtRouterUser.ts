@@ -23,7 +23,7 @@ const groupMgmtRouterUser = express.Router({mergeParams: true});
   \____|_| \_\_____/_/   \_\_| |_____|
 */
 
-// Manual Test - Remove From Group: 2022-04-07
+// Manually Tested - 2022-04-08
 groupMgmtRouterUser.post("/", 
     authMW.defineRoutePermissions({
         user: [],
@@ -88,6 +88,7 @@ groupMgmtRouterUser.post("/",
   |_| \_\_____/_/   \_\____/ 
 */
 // Get User Group Data
+// Manually Tested - 2022-04-08
 groupMgmtRouterUser.get("/:username", 
     authMW.defineRoutePermissions({
         user: [],
@@ -115,7 +116,7 @@ groupMgmtRouterUser.get("/:username",
     }
 );
 
-
+// Manually Tested - 2022-04-08
 groupMgmtRouterUser.get("/", 
     authMW.defineRoutePermissions({
         user: [],
