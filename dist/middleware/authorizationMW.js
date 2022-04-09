@@ -117,107 +117,6 @@ var authMW = /** @class */ (function () {
         });
     };
     ;
-    /** Middleware: Load All User Permissions. */
-    // Version 1 of this, need to think about how to make it faster
-    authMW.loadUserPermissions = function (req, res, next) {
-        return __awaiter(this, void 0, void 0, function () {
-            var userPermissions, error_3;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        if (!req.user || !req.user.id) {
-                            req.user = undefined;
-                            return [2 /*return*/, next()];
-                        }
-                        ;
-                        return [4 /*yield*/, permissions_repository_1["default"].fetch_permissions_by_user_id(req.user.id)];
-                    case 1:
-                        userPermissions = _a.sent();
-                        req.user.premissions = userPermissions;
-                        console.log(req.user.premissions);
-                        return [2 /*return*/, next()];
-                    case 2:
-                        error_3 = _a.sent();
-                        return [2 /*return*/, next({ status: 401, message: "Unauthorized" })];
-                    case 3: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    ;
-    /** Middleware: Validate Permissions Assigned - Comparing User's Assigned Site/Group Permissions to those Required for the endpoint */
-    authMW.validatePermissions = function (req, res, next) {
-        var _a;
-        try {
-            if (!((_a = req.user) === null || _a === void 0 ? void 0 : _a.id)) {
-                return next({ status: 401, message: "Unauthorized" });
-            }
-            ;
-            // If no permissions are defined for validating access throw an error
-            if (!req.requiredPermissions.site) {
-                return next({ status: 500, message: "Route Configuration Error - SP Def Missing" });
-            }
-            ;
-            // Check for Group Permissions if they are defined
-            if (req.requiredPermissions.group) {
-                if (!req.user.group_permissions) {
-                    return next({ status: 500, message: "Route Configuration Error - GP Def Missing" });
-                }
-                var permissionsOK = req.requiredPermissions.group.reduce(function (acc, val) {
-                    var findResult = req.user.group_permissions.find(function (perm) {
-                        return perm.permission_name === val;
-                    });
-                    return findResult !== undefined && acc;
-                }, true);
-                if (!permissionsOK) {
-                    return next({ status: 401, message: "Unauthorized" });
-                }
-                ;
-            }
-            // Check for Site Permisisons if they are defined
-            if (req.requiredPermissions.site) {
-                if (!req.user.site_permissions) {
-                    return next({ status: 401, message: "Unauthorized" });
-                }
-                var permissionsOK = req.requiredPermissions.site.reduce(function (acc, val) {
-                    var findResult = req.user.site_permissions.find(function (perm) {
-                        return perm.permission_name === val;
-                    });
-                    return findResult !== undefined && acc;
-                }, true);
-                if (!permissionsOK) {
-                    return next({ status: 401, message: "Unauthorized" });
-                }
-                ;
-                return next();
-            }
-        }
-        catch (error) {
-            return next({ status: 401, message: "Unauthorized" });
-        }
-    };
-    ;
-    /** Define Permissions Required to Access a Site Endpoint */
-    authMW.defineSitePermissions = function (permList) {
-        return function (req, res, next) {
-            try {
-                if (req.requiredPermissions) {
-                    req.requiredPermissions.site = permList;
-                }
-                else {
-                    req.requiredPermissions = {
-                        site: permList
-                    };
-                }
-                return next();
-            }
-            catch (err) {
-                return next();
-            }
-        };
-    };
-    ;
     /** Move the GroupID from the Route Parameters into the Request Object */
     authMW.addGroupIDToRequest = function (req, res, next) {
         try {
@@ -232,42 +131,6 @@ var authMW = /** @class */ (function () {
         catch (err) {
             return next();
         }
-    };
-    ;
-    /** Move the RoleID from the Router Parameters into the Request Object */
-    authMW.addRoleIDToRequest = function (req, res, next) {
-        try {
-            if (req.params.roleID) {
-                req.roleID = req.params.roleID;
-            }
-            else {
-                req.roleID = undefined;
-            }
-            return next();
-        }
-        catch (err) {
-            return next();
-        }
-    };
-    ;
-    /** Define Permissions Required to Access a Group Endpoint */
-    authMW.defineGroupPermissions = function (permList) {
-        return function (req, res, next) {
-            try {
-                if (req.requiredPermissions) {
-                    req.requiredPermissions.group = permList;
-                }
-                else {
-                    req.requiredPermissions = {
-                        group: permList
-                    };
-                }
-                return next();
-            }
-            catch (err) {
-                return next();
-            }
-        };
     };
     ;
     /** Parse Context and Add Context Sensitive Information to Request */
@@ -306,7 +169,7 @@ var authMW = /** @class */ (function () {
     authMW.validateRoutePermissions = function (req, res, next) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var permissions, foundPermissions, foundPermissions, foundPermissions, comparisonUID, foundPermissions, foundPermissions, foundPermissions, foundPermissions, error_4;
+            var permissions, foundPermissions, foundPermissions, foundPermissions, comparisonUID, foundPermissions, foundPermissions, foundPermissions, foundPermissions, error_3;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -384,7 +247,7 @@ var authMW = /** @class */ (function () {
                         req.resolvedPerms = permissions;
                         return [2 /*return*/, next()];
                     case 16:
-                        error_4 = _b.sent();
+                        error_3 = _b.sent();
                         return [2 /*return*/, next({ status: 401, message: "Error - Unauthorized" })];
                     case 17: return [2 /*return*/];
                 }

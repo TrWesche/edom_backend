@@ -39,11 +39,12 @@ exports.__esModule = true;
 var express = require("express");
 // Utility Functions Import
 var expresError_1 = require("../../../utils/expresError");
+// Schema Imports
+var groupMgmtSchemaPerm_1 = require("../../../schemas/group/groupMgmtSchemaPerm");
 // Model Imports
 var groupModel_1 = require("../../../models/groupModel");
 // Middleware Imports
 var authorizationMW_1 = require("../../../middleware/authorizationMW");
-var groupMgmtSchemaPerm_1 = require("../../../schemas/group/groupMgmtSchemaPerm");
 var groupMgmtRouterPerm = express.Router();
 /* ____ ____  _____    _  _____ _____
   / ___|  _ \| ____|  / \|_   _| ____|

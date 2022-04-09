@@ -12,8 +12,8 @@ import EquipmentRepo from "../repositories/equipment.repository";
 import RoomRepo from "../repositories/room.repository";
 import UserRepo from "../repositories/user.repository";import { group } from "console";
 
-// TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
-// the database server and the front end.
+// Note:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
+// the database server and the express backend.
 
 class GroupModel {
     /*    ____ ____  _____    _  _____ _____ 
@@ -71,7 +71,7 @@ class GroupModel {
             };
 
             // Associate Equipment with Uploading User
-            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_role_id([data.ownerid], ownerPermission);
+            const userAssoc = await GroupPermissionsRepo.create_user_group_role_by_uid_role_id([data.ownerid], ownerPermission);
             if (!userAssoc[0]?.grouprole_id) {
                 throw new ExpressError("Error assigning user role to user", 500);
             };
@@ -130,7 +130,7 @@ class GroupModel {
                 throw new ExpressError("Error while fetching default role for target group", 500);
             };
 
-            const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, defaultRoles);
+            const userRole = await GroupPermissionsRepo.create_user_group_role_by_uid_role_id(userIDs, defaultRoles);
             if (!userRole) {
                 throw new ExpressError("Error while assinging default role to target user", 500);
             };
@@ -177,7 +177,7 @@ class GroupModel {
             throw new ExpressError("Error while fetching role ids", 500);
         };  
 
-        const userRole = await GroupPermissionsRepo.create_user_group_role_by_role_id(userIDs, roleIDs);
+        const userRole = await GroupPermissionsRepo.create_user_group_role_by_uid_role_id(userIDs, roleIDs);
         if (!userRole) {
             throw new ExpressError("Error while assinging roles to target users", 500);
         };
@@ -487,7 +487,7 @@ class GroupModel {
             throw new ExpressError("Error while fetching role ids", 500);
         };  
 
-        const roles = await GroupPermissionsRepo.delete_user_group_role_by_role_id(userIDs, roleIDs);
+        const roles = await GroupPermissionsRepo.delete_user_group_role_by_uid_role_id(userIDs, roleIDs);
         if (!roles) {
             throw new ExpressError("Failed to Delete User Role Associated with Target User", 500);
         };

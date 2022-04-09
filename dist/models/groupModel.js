@@ -45,8 +45,8 @@ var transactionRepository_1 = require("../repositories/transactionRepository");
 var equipment_repository_1 = require("../repositories/equipment.repository");
 var room_repository_1 = require("../repositories/room.repository");
 var user_repository_1 = require("../repositories/user.repository");
-// TODO:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
-// the database server and the front end.
+// Note:  Alot of the queries in here would be better off to be written in stored procedures to minimize the amount of back and forth between
+// the database server and the express backend.
 var GroupModel = /** @class */ (function () {
     function GroupModel() {
     }
@@ -117,7 +117,7 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while associating user to group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id([data.ownerid], ownerPermission)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_uid_role_id([data.ownerid], ownerPermission)];
                     case 8:
                         userAssoc = _d.sent();
                         if (!((_c = userAssoc[0]) === null || _c === void 0 ? void 0 : _c.grouprole_id)) {
@@ -225,7 +225,7 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while fetching default role for target group", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, defaultRoles)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_uid_role_id(userIDs, defaultRoles)];
                     case 4:
                         userRole = _a.sent();
                         if (!userRole) {
@@ -317,7 +317,7 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while fetching role ids", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_role_id(userIDs, roleIDs)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_user_group_role_by_uid_role_id(userIDs, roleIDs)];
                     case 2:
                         userRole = _a.sent();
                         if (!userRole) {
@@ -883,7 +883,7 @@ var GroupModel = /** @class */ (function () {
                             throw new expresError_1["default"]("Error while fetching role ids", 500);
                         }
                         ;
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_role_by_role_id(userIDs, roleIDs)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_user_group_role_by_uid_role_id(userIDs, roleIDs)];
                     case 2:
                         roles = _a.sent();
                         if (!roles) {

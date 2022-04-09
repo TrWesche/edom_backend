@@ -552,29 +552,9 @@ class GroupPermissionsRepo {
         }
     };
 
-    // static async delete_role_permissions_by_group_id(groupID: string) {
-    //     try {
-    //         const result = await pgdb.query(
-    //             `DELETE FROM grouproles_grouppermissions
-    //             WHERE grouprole_id IN 
-    //             (
-    //                 SELECT grouproles.id FROM grouproles
-    //                 WHERE grouproles.group_id = $1
-    //             )
-    //             RETURNING grouprole_id`,
-    //             [groupID]
-    //         ); 
-
-    //         const rval: GroupRolePermsProps | undefined = result.rows[0];
-    //         return rval;    
-    //     } catch (error) {
-    //         throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error.message}`, 500);
-    //     }   
-    // };
-
 
     // User Role Management
-    static async create_user_group_role_by_role_id(userIDs: Array<string>, roleIDs: Array<GroupRoleProps>) {
+    static async create_user_group_role_by_uid_role_id(userIDs: Array<string>, roleIDs: Array<GroupRoleProps>) {
         try {
             let idx = 1;
             const idxParams: Array<string> = [];
@@ -653,7 +633,7 @@ class GroupPermissionsRepo {
         }
     };
 
-    static async delete_user_group_role_by_role_id(userIDs: Array<string>, roleIDs: Array<GroupRoleProps>) {
+    static async delete_user_group_role_by_uid_role_id(userIDs: Array<string>, roleIDs: Array<GroupRoleProps>) {
         try {
             let idx = 1;
             const idxParams: Array<string> = [];

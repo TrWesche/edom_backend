@@ -4,14 +4,14 @@ import * as express from "express";
 import ExpressError from "../../../utils/expresError";
 
 // Schema Imports
-import validateCreateGroupRolePermissionSchema, { GroupRolePermissionCreateProps } from "../../../schemas/group/groupRolePermissionCreateSchema";
+import validateGroupMgmtSchemaPerm, { GroupMgmtSchemaPerm } from "../../../schemas/group/groupMgmtSchemaPerm";
 
 // Model Imports
 import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
-import validateGroupMgmtSchemaPerm, { GroupMgmtSchemaPerm } from "../../../schemas/group/groupMgmtSchemaPerm";
+
 
 
 const groupMgmtRouterPerm = express.Router();
