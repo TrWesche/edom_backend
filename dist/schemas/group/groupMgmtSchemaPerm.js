@@ -23,8 +23,8 @@ var schema = {
             type: "string",
             pattern: "^[a-z0-9_]+$"
         },
-        permissions: {
-            $id: "#/properties/permissions",
+        permission: {
+            $id: "#/properties/permission",
             type: "array",
             items: {
                 type: "string",
@@ -33,7 +33,7 @@ var schema = {
         }
     },
     required: [
-        "groupID", "context", "action", "role", "permissions"
+        "groupID", "context", "action", "role", "permission"
     ],
     additionalProperties: true
 };

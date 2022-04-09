@@ -96,28 +96,23 @@ class GroupModel {
         return role;
     };
 
-    static async create_role_permissions(permissionList: Array<GroupRolePermsProps>) {
-        // if (!roleID || !name) {
-        //     throw new ExpressError("Invalid Create Group Role Permissions Call", 400);
-        // };
-
+    static async create_role_permissions(groupID: string, roleName: string, permNames: Array<string>) {
         try {
             await TransactionRepo.begin_transaction();
-            let rolePermissions: Array<GroupRolePermsProps> | undefined;
+            
+            const roleID = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, [roleName]);
+            if (!roleID || roleID.length < 1 || !roleID[0].id) {throw new ExpressError("Creating Role Permissions Failed - Role Not Found", 400);};
 
-            if (permissionList.length > 0) {
-                rolePermissions = await GroupPermissionsRepo.create_role_permissions(permissionList);
-            } else {
-                throw new ExpressError("Error encountered when creating new role permissions", 400);
-            }
-
-            if (rolePermissions && rolePermissions.length > 0 && rolePermissions[0].grouppermission_id) {
-                await TransactionRepo.commit_transaction();
-            }
-    
+            const permissionIDs = await GroupPermissionsRepo.fetch_perm_id_by_perm_name(permNames);
+            if (!permissionIDs || permissionIDs.length < 1) {throw new ExpressError("Creating Role Permissions Failed - Permissions Not Found", 400);};
+            
+            const rolePermissions = await GroupPermissionsRepo.create_role_permissions(roleID[0].id, permissionIDs);
+            
+            await TransactionRepo.commit_transaction();
             return rolePermissions;
         } catch (error) {
             await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
         }
     };
 
@@ -363,11 +358,6 @@ class GroupModel {
         }
     };
 
-    // static async retrieve_user_permissions_by_user_id(userID: string) {
-    //     const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
-    //     return permissions;
-    // };
-
     /*   _   _ ____  ____    _  _____ _____ 
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|  
@@ -449,22 +439,24 @@ class GroupModel {
         }
     };
 
-    // static async delete_permission(permID: string) {
-    //     const permission = await GroupPermissionsRepo.delete_permission_by_permission_id(permID);
-    //     if (!permission) {
-    //         throw new ExpressError("Unable to delete target permission", 400);
-    //     };
+    static async delete_role_permissions(groupID: string, roleName: string, permNames: Array<string>) {
+        try {
+            await TransactionRepo.begin_transaction();
+            
+            const roleID = await GroupPermissionsRepo.fetch_roles_by_gid_role_name(groupID, [roleName]);
+            if (!roleID || !roleID[0].id) {throw new ExpressError("Deleting Role Permissions Failed - Role Not Found", 400);};
 
-    //     return permission;
-    // };
-
-    static async delete_role_pemission(roleID: string, permID: string) {
-        const permission = await GroupPermissionsRepo.delete_role_permission_by_role_permission_id(roleID, permID);
-        if (!permission) {
-            throw new ExpressError("Unable to delete target role permission", 500);
-        };
-
-        return permission;
+            const permissionIDs = await GroupPermissionsRepo.fetch_perm_id_by_perm_name_role_id(roleID[0].id, permNames);
+            if (!permissionIDs) {throw new ExpressError("Deleting Role Permissions Failed - Permissions Not Found", 400);};
+            
+            const rolePermissions = await GroupPermissionsRepo.delete_role_permission_by_role_permission_id(roleID[0].id, permissionIDs);
+        
+            await TransactionRepo.commit_transaction();    
+            return rolePermissions;
+        } catch (error) {
+            await TransactionRepo.rollback_transaction();
+            throw new ExpressError(error.message, error.status);
+        }
     };
 
     static async delete_group_user(groupID: string, userIDs: Array<string>) {

@@ -7,7 +7,7 @@ export interface GroupMgmtSchemaPerm {
     context: string
     action: string
     role: string
-    permissions: Array<string>
+    permission: Array<string>
 };
 
 const schema: JSONSchemaType<GroupMgmtSchemaPerm> = {
@@ -30,8 +30,8 @@ const schema: JSONSchemaType<GroupMgmtSchemaPerm> = {
             type: "string",
             pattern: "^[a-z0-9_]+$"
         },
-        permissions: {
-            $id:"#/properties/permissions",
+        permission: {
+            $id:"#/properties/permission",
             type: "array",
             items: {
                 type: "string",
@@ -40,7 +40,7 @@ const schema: JSONSchemaType<GroupMgmtSchemaPerm> = {
         }
     },
     required: [
-        "groupID", "context", "action", "role", "permissions"
+        "groupID", "context", "action", "role", "permission"
     ],
     additionalProperties: true
 };

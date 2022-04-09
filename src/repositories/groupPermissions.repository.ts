@@ -10,6 +10,7 @@ export interface GroupRoleProps {
 }
 
 export interface GroupPermProps {
+    role_id?: string,
     id?: string,
     name?: string
 }
@@ -158,6 +159,70 @@ class GroupPermissionsRepo {
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to locate group role - ${error}`, 500);
+        };
+    };
+
+    static async fetch_perm_id_by_perm_name_role_id(roleID: string, permNames: Array<string>) {
+        try {
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [roleID];
+            
+            permNames.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT
+                    grouproles_permissiontypes.grouprole_id AS role_id,
+                    grouproles_permissiontypes.permission_id AS id,
+                    permissiontypes.name AS name
+                FROM grouproles_permissiontypes
+                LEFT JOIN permissiontypes ON permissiontypes.id = grouproles_permissiontypes.permission_id
+                WHERE grouproles_permissiontypes.grouprole_id = $1 AND permissiontypes.name IN (${idxParams.join(', ')})
+            `;
+            
+            const result = await pgdb.query(query, queryParams);
+            const rval: Array<GroupPermProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate role permissions - ${error}`, 500);
+        };
+    };
+
+    static async fetch_perm_id_by_perm_name(permNames: Array<string>) {
+        try {
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            permNames.forEach((val) => {
+                if (val) {
+                    queryParams.push(val);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
+
+            query = `
+                SELECT
+                    id,
+                    name
+                FROM permissiontypes
+                WHERE name IN (${idxParams.join(', ')})
+            `;
+            
+            const result = await pgdb.query(query, queryParams);
+            const rval: Array<GroupPermProps> | undefined = result.rows;
+            return rval;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Unable to locate group permissions - ${error}`, 500);
         };
     };
 
@@ -325,30 +390,30 @@ class GroupPermissionsRepo {
 
 
     // ROLE PERMISSIONS ASSOCIATIONS Management
-    static async create_role_permissions(permissionList: Array<GroupRolePermsProps>) {
-        // console.log(permissionList);
-        const valueExpressions: Array<string> = [];
-        let queryValues = [permissionList[0].grouprole_id];
-
-        for (const permission of permissionList) {
-            if (permission.grouppermission_id) {
-                queryValues.push(permission.grouppermission_id);
-                valueExpressions.push(`($1, $${queryValues.length})`)
-            }
-        }
-
-        const valueExpressionRows = valueExpressions.join(",");
-        console.log(valueExpressionRows);
-
+    static async create_role_permissions(roleID: string, permIDs: Array<GroupPermProps>) {
         try {
-            const result = await pgdb.query(`
+            let idx = 1;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [];
+            
+            permIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(roleID, val.id);
+                    idxParams.push(`($${idx}, $${idx+1})`);
+                    idx+=2;
+                };
+            });
+
+            query = `
                 INSERT INTO grouproles_permissiontypes
                     (grouprole_id, permission_id)
                 VALUES
-                    ${valueExpressionRows}
-                RETURNING grouprole_id, permission_id`,
-            queryValues);
-            
+                    ${idxParams.join(", ")}
+                RETURNING grouprole_id, permission_id
+            `;
+        
+            const result = await pgdb.query(query, queryParams);
             const rval: Array<GroupRolePermsProps> | undefined = result.rows;
             return rval;
         } catch (error) {
@@ -443,15 +508,29 @@ class GroupPermissionsRepo {
         };
     };
 
-    static async delete_role_permission_by_role_permission_id(groupRoleID: string, groupPermID: string) {
+    static async delete_role_permission_by_role_permission_id(roleID: string, permIDs: Array<GroupPermProps>) {
         try {
-            const result = await pgdb.query(
-                `DELETE FROM grouproles_permissiontypes
-                WHERE grouprole_id = $1 AND grouppermission_id = $2
-                RETURNING grouprole_id`,
-            [groupRoleID, groupPermID]);
+            let idx = 2;
+            const idxParams: Array<string> = [];
+            let query: string;
+            const queryParams: Array<any> = [roleID];
+            
+            permIDs.forEach((val) => {
+                if (val) {
+                    queryParams.push(val.id);
+                    idxParams.push(`$${idx}`);
+                    idx++;
+                };
+            });
 
-            const rval: GroupRolePermsProps | undefined = result.rows[0];
+            query = `
+                DELETE FROM grouproles_permissiontypes  
+                WHERE grouprole_id = $1 AND permission_id IN (${idxParams.join(", ")})
+                RETURNING grouprole_id, permission_id
+            `;
+        
+            const result = await pgdb.query(query, queryParams);
+            const rval: Array<GroupRolePermsProps> | undefined = result.rows;
             return rval;
         } catch (error) {
             throw new ExpressError(`An Error Occured: Unable to delete group role permission - ${error}`, 500);

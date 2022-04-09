@@ -158,37 +158,44 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.create_role_permissions = function (permissionList) {
+    GroupModel.create_role_permissions = function (groupID, roleName, permNames) {
         return __awaiter(this, void 0, void 0, function () {
-            var rolePermissions, error_2;
+            var roleID, permissionIDs, rolePermissions, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 7, , 9]);
+                        _a.trys.push([0, 6, , 8]);
                         return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
                         _a.sent();
-                        rolePermissions = void 0;
-                        if (!(permissionList.length > 0)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_role_permissions(permissionList)];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, [roleName])];
                     case 2:
-                        rolePermissions = _a.sent();
-                        return [3 /*break*/, 4];
-                    case 3: throw new expresError_1["default"]("Error encountered when creating new role permissions", 400);
+                        roleID = _a.sent();
+                        if (!roleID || roleID.length < 1 || !roleID[0].id) {
+                            throw new expresError_1["default"]("Creating Role Permissions Failed - Role Not Found", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_perm_id_by_perm_name(permNames)];
+                    case 3:
+                        permissionIDs = _a.sent();
+                        if (!permissionIDs || permissionIDs.length < 1) {
+                            throw new expresError_1["default"]("Creating Role Permissions Failed - Permissions Not Found", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].create_role_permissions(roleID[0].id, permissionIDs)];
                     case 4:
-                        if (!(rolePermissions && rolePermissions.length > 0 && rolePermissions[0].grouppermission_id)) return [3 /*break*/, 6];
+                        rolePermissions = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
                     case 5:
                         _a.sent();
-                        _a.label = 6;
-                    case 6: return [2 /*return*/, rolePermissions];
-                    case 7:
+                        return [2 /*return*/, rolePermissions];
+                    case 6:
                         error_2 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
-                    case 8:
+                    case 7:
                         _a.sent();
-                        return [3 /*break*/, 9];
-                    case 9: return [2 /*return*/];
+                        throw new expresError_1["default"](error_2.message, error_2.status);
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -651,10 +658,6 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    // static async retrieve_user_permissions_by_user_id(userID: string) {
-    //     const permissions = GroupPermissionsRepo.fetch_user_group_permissions_by_user_id(userID);
-    //     return permissions;
-    // };
     /*   _   _ ____  ____    _  _____ _____
         | | | |  _ \|  _ \  / \|_   _| ____|
         | | | | |_) | | | |/ _ \ | | |  _|
@@ -785,26 +788,44 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    // static async delete_permission(permID: string) {
-    //     const permission = await GroupPermissionsRepo.delete_permission_by_permission_id(permID);
-    //     if (!permission) {
-    //         throw new ExpressError("Unable to delete target permission", 400);
-    //     };
-    //     return permission;
-    // };
-    GroupModel.delete_role_pemission = function (roleID, permID) {
+    GroupModel.delete_role_permissions = function (groupID, roleName, permNames) {
         return __awaiter(this, void 0, void 0, function () {
-            var permission;
+            var roleID, permissionIDs, rolePermissions, error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permission_by_role_permission_id(roleID, permID)];
+                    case 0:
+                        _a.trys.push([0, 6, , 8]);
+                        return [4 /*yield*/, transactionRepository_1["default"].begin_transaction()];
                     case 1:
-                        permission = _a.sent();
-                        if (!permission) {
-                            throw new expresError_1["default"]("Unable to delete target role permission", 500);
+                        _a.sent();
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_roles_by_gid_role_name(groupID, [roleName])];
+                    case 2:
+                        roleID = _a.sent();
+                        if (!roleID || !roleID[0].id) {
+                            throw new expresError_1["default"]("Deleting Role Permissions Failed - Role Not Found", 400);
                         }
                         ;
-                        return [2 /*return*/, permission];
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].fetch_perm_id_by_perm_name_role_id(roleID[0].id, permNames)];
+                    case 3:
+                        permissionIDs = _a.sent();
+                        if (!permissionIDs) {
+                            throw new expresError_1["default"]("Deleting Role Permissions Failed - Permissions Not Found", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, groupPermissions_repository_1["default"].delete_role_permission_by_role_permission_id(roleID[0].id, permissionIDs)];
+                    case 4:
+                        rolePermissions = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].commit_transaction()];
+                    case 5:
+                        _a.sent();
+                        return [2 /*return*/, rolePermissions];
+                    case 6:
+                        error_10 = _a.sent();
+                        return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
+                    case 7:
+                        _a.sent();
+                        throw new expresError_1["default"](error_10.message, error_10.status);
+                    case 8: return [2 /*return*/];
                 }
             });
         });
@@ -812,7 +833,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_group_user = function (groupID, userIDs) {
         return __awaiter(this, void 0, void 0, function () {
-            var roles, groupUser, error_10;
+            var roles, groupUser, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -839,11 +860,11 @@ var GroupModel = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, groupUser];
                     case 5:
-                        error_10 = _a.sent();
+                        error_11 = _a.sent();
                         return [4 /*yield*/, transactionRepository_1["default"].rollback_transaction()];
                     case 6:
                         _a.sent();
-                        throw new expresError_1["default"](error_10.message, error_10.status);
+                        throw new expresError_1["default"](error_11.message, error_11.status);
                     case 7: return [2 /*return*/];
                 }
             });
@@ -877,7 +898,7 @@ var GroupModel = /** @class */ (function () {
     ;
     GroupModel.delete_request_user_group = function (userIDs, groupID) {
         return __awaiter(this, void 0, void 0, function () {
-            var userInvite, error_11;
+            var userInvite, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -891,8 +912,8 @@ var GroupModel = /** @class */ (function () {
                         ;
                         return [2 /*return*/, userInvite];
                     case 2:
-                        error_11 = _a.sent();
-                        throw new expresError_1["default"](error_11.message, error_11.status);
+                        error_12 = _a.sent();
+                        throw new expresError_1["default"](error_12.message, error_12.status);
                     case 3:
                         ;
                         return [2 /*return*/];

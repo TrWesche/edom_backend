@@ -11,6 +11,7 @@ import GroupModel from "../../../models/groupModel";
 
 // Middleware Imports
 import authMW from "../../../middleware/authorizationMW";
+import validateGroupMgmtSchemaPerm, { GroupMgmtSchemaPerm } from "../../../schemas/group/groupMgmtSchemaPerm";
 
 
 const groupMgmtRouterPerm = express.Router();
@@ -34,30 +35,46 @@ groupMgmtRouterPerm.post("/",
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.body.permissions || req.body.permissions.length === 0 || !req.groupID || !req.roleID) {
-                throw new ExpressError(`Must be logged in to create group role || missing permissions to add || target group missing || target role missing`, 400);
+            if (!req.user?.id || !req.groupID) {
+                throw new ExpressError(`Must be logged in to create group role || target group missing`, 400);
             };
 
-            const reqValues: Array<GroupRolePermissionCreateProps> = [];
-            req.body.permissions.forEach(permission => {
-                const permissionEntry: GroupRolePermissionCreateProps = {
-                    grouprole_id: req.roleID ? req.roleID : "",
-                    grouppermission_id: permission
-                };
-                if(!validateCreateGroupRolePermissionSchema(permissionEntry)) {
-                    throw new ExpressError(`Unable to Create Group Role Permission: ${validateCreateGroupRolePermissionSchema.errors}`, 400);
-                }
+            const reqValues: GroupMgmtSchemaPerm = {
+                groupID: req.groupID,
+                context: req.body.context,
+                action: req.body.action,
+                role: req.body.role,
+                permission: req.body.permission
+            };
 
-                reqValues.push(permissionEntry);
-            });
+            if (!validateGroupMgmtSchemaPerm(reqValues)) {
+                throw new ExpressError(`Unable to Update Group Role Permission: ${JSON.stringify(validateGroupMgmtSchemaPerm.errors)}`, 400);
+            };
+
 
             // Process
-            const queryData = await GroupModel.create_role_permissions(reqValues);
-            if (!queryData) {
-                throw new ExpressError("Create Group Role Permission Failed", 400);
-            }
-            
-            return res.json({GroupRolePermissions: [queryData]})
+            let queryData;
+
+            switch (reqValues.context) {
+                case "role":
+                    switch (reqValues.action) {
+                        case "create_permission":
+                            queryData = await GroupModel.create_role_permissions(reqValues.groupID, reqValues.role, reqValues.permission);
+                            return res.json({GroupPermissions: [queryData]})
+                        case "delete_permission":
+                            if (reqValues.role === "owner") {
+                                throw new ExpressError("Owner permissions cannot be modified.", 400);
+                            };
+                            queryData = await GroupModel.delete_role_permissions(reqValues.groupID, reqValues.role, reqValues.permission);
+                            return res.json({GroupPermissions: [queryData]});
+
+                        default:
+                            throw new ExpressError("Configuration Error - Invalid Action", 400);
+                    };
+                    
+                default:
+                    throw new ExpressError("Configuration Error - Invalid Context", 400);
+            };
         } catch (error) {
             next(error)
         }
@@ -93,7 +110,7 @@ groupMgmtRouterPerm.get("/",
                 throw new ExpressError("Retrieving Group Permissions Failed", 400);
             }
             
-            return res.json({GroupUser: [queryData]});
+            return res.json({GroupPermissions: [queryData]});
         } catch (error) {
             next(error);
         };
@@ -120,12 +137,12 @@ groupMgmtRouterPerm.delete("/",
     async (req, res, next) => {
         try {
             // Preflight
-            if (!req.user?.id || !req.roleID || !req.groupID || !req.body.permissionID) {
-                throw new ExpressError(`Must be logged in to delete permissions || target role missing || target group missing || target permission missing`, 400);
+            if (!req.user?.id || !req.groupID) {
+                throw new ExpressError(`Must be logged in to delete permissions || target group missing`, 400);
             }
 
             // Process
-            const queryData = await GroupModel.delete_role_pemission(req.roleID, req.body.permissionID);
+            const queryData = await GroupModel.delete_role_permissions(req.groupID, req.params.roleName, [req.params.permName]);
             if (!queryData) {
                 throw new ExpressError("Delete Group Role Permission Failed", 400);
             }
