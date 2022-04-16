@@ -69,6 +69,14 @@ app.use("/v1/room", authMW.loadSitePermissions, roomRootRouter);
 app.use("/v1/user", authMW.loadSitePermissions, userRootRouter);
 app.use("/v1/group", authMW.loadSitePermissions, groupRootRouter);
 
+app.use((error, req, res, next) => {
+  // Error gets here
+  console.log(error);
+  res.json({
+    errorMessage: error
+  });
+});
+
 server.listen(port, host, () => {
     console.log(`Example app listening at https://${host}:${port}`);
 })

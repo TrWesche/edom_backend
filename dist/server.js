@@ -58,6 +58,13 @@ app.use("/v1/equip", authorizationMW_1["default"].loadSitePermissions, equipRoot
 app.use("/v1/room", authorizationMW_1["default"].loadSitePermissions, roomRootRouter_1["default"]);
 app.use("/v1/user", authorizationMW_1["default"].loadSitePermissions, userRootRouter_1["default"]);
 app.use("/v1/group", authorizationMW_1["default"].loadSitePermissions, groupRootRouter_1["default"]);
+app.use(function (error, req, res, next) {
+    // Error gets here
+    console.log(error);
+    res.json({
+        errorMessage: error
+    });
+});
 server.listen(config_1.port, host, function () {
     console.log("Example app listening at https://".concat(host, ":").concat(config_1.port));
 });
