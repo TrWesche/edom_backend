@@ -254,7 +254,7 @@ userRootRouter.patch("/update",
 
         const incValues = req.body;
         for (const pKey in prevValues) {
-            if (incValues[pKey] && incValues[pKey] !== prevValues[pKey]) {
+            if (incValues[pKey] !== undefined && incValues[pKey] !== prevValues[pKey]) {
                 // Special Cases - Username Change, Email Change
                 if (pKey === "username" || pKey === "email") {
                     const cv1 = prevValues[pKey] || "";
@@ -304,7 +304,7 @@ userRootRouter.patch("/update",
         // Clean-Up Update List
         for(group in updateValues) {
             for (item in updateValues[group]) {
-                if (!updateValues[group][item]) {
+                if (updateValues[group][item] === undefined) {
                     delete updateValues[group][item];
                 }
             };
