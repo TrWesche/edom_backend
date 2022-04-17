@@ -80,7 +80,7 @@ class UserRepo {
                     query = `
                         SELECT email
                         FROM userdata
-                        WHERE email ILIKE $1`;
+                        WHERE email_clean ILIKE $1`;
                     break;
                 case 'auth':
                     query = `SELECT
@@ -89,17 +89,19 @@ class UserRepo {
                         useraccount.password AS password
                     FROM userdata
                     LEFT JOIN useraccount ON useraccount.id = userdata.user_id
-                    WHERE email ILIKE $1`;
+                    WHERE email_clean ILIKE $1`;
                     break;
                 case 'profile':
                     query = `SELECT
                         useraccount.id AS id,
                         userprofile.username AS username,
+                        userprofile.username_clean AS username_clean,
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
+                        userdata.email_clean AS email_clean,
                         userdata.public_email AS public_email,
                         userdata.first_name AS first_name,
                         userdata.public_first_name AS public_first_name,
@@ -110,16 +112,18 @@ class UserRepo {
                     FROM useraccount
                     LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
                     LEFT JOIN userdata ON userdata.user_id = useraccount.id
-                    WHERE email ILIKE $1`;
+                    WHERE email_clean ILIKE $1`;
                 case 'account':
                     query = `SELECT
                         useraccount.id AS id,
                         userprofile.username AS username,
+                        userprofile.username_clean AS username_clean,
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
+                        userdata.email_clean AS email_clean,
                         userdata.public_email AS public_email,
                         userdata.first_name AS first_name,
                         userdata.public_first_name AS public_first_name,
@@ -130,13 +134,13 @@ class UserRepo {
                     FROM useraccount
                     LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
                     LEFT JOIN userdata ON userdata.user_id = useraccount.id
-                    WHERE email ILIKE $1`;
+                    WHERE email_clean ILIKE $1`;
                     break;
                 default:
                     query = `
                         SELECT email
                         FROM userdata
-                        WHERE email ILIKE $1`;
+                        WHERE email_clean ILIKE $1`;
                     break;
             };
 
@@ -161,22 +165,24 @@ class UserRepo {
                     query = `
                         SELECT username
                         FROM userprofile
-                        WHERE username ILIKE $1`;
+                        WHERE username_clean ILIKE $1`;
                     break;
                 case 'auth':
                     query = `SELECT
                         userprofile.user_id AS id,
                         userprofile.username AS username,
+                        userprofile.username_clean AS username_clean,
                         useraccount.password AS password
                     FROM userprofile
                     LEFT JOIN useraccount ON useraccount.id = userprofile.user_id
-                    WHERE username ILIKE $1`;
+                    WHERE username_clean ILIKE $1`;
                     break;
                 case 'profile':
                         query = `
                         SELECT
                             useraccount.id AS id,
                             userprofile.username AS username,
+                            userprofile.username_clean AS username_clean,
                             userprofile.headline AS headline,
                             userprofile.about AS about,
                             userprofile.image_url AS image_url,
@@ -187,17 +193,19 @@ class UserRepo {
                         FROM useraccount
                         LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
                         LEFT JOIN userdata ON userdata.user_id = useraccount.id
-                        WHERE EXISTS (SELECT user_id FROM userprofile WHERE userprofile.username ILIKE $1 AND userprofile.public = TRUE)`;
+                        WHERE EXISTS (SELECT user_id FROM userprofile WHERE userprofile.username_clean ILIKE $1 AND userprofile.public = TRUE)`;
                         break;
                 case 'account':
                     query = `SELECT
                         useraccount.id AS id,
                         userprofile.username AS username,
+                        userprofile.username_clean AS username_clean,
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
+                        userdata.email_clean AS email_clean,
                         userdata.public_email AS public_email,
                         userdata.first_name AS first_name,
                         userdata.public_first_name AS public_first_name,
@@ -208,13 +216,13 @@ class UserRepo {
                     FROM useraccount
                     LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
                     LEFT JOIN userdata ON userdata.user_id = useraccount.id
-                    WHERE username ILIKE $1`;
+                    WHERE username_clean ILIKE $1`;
                     break;
                 default:
                     query = `
                         SELECT username
                         FROM userprofile
-                        WHERE username ILIKE $1`;
+                        WHERE username_clean ILIKE $1`;
                     break;
             };
 
@@ -274,11 +282,13 @@ class UserRepo {
                     query = `SELECT
                         useraccount.id AS id,
                         userprofile.username AS username,
+                        userprofile.username_clean AS username_clean,
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
+                        userdata.email_clean AS email_clean,
                         userdata.public_email AS public_email,
                         userdata.first_name AS first_name,
                         userdata.public_first_name AS public_first_name,

@@ -13,6 +13,7 @@ CREATE TABLE "useraccount" (
 CREATE TABLE "userdata" (
   "user_id" uuid NOT NULL,
   "email" text UNIQUE NOT NULL,
+  "email_clean" text UNIQUE NOT NULL,
   "public_email" boolean DEFAULT false,
   "first_name" text,
   "public_first_name" boolean DEFAULT false,
@@ -25,7 +26,7 @@ CREATE TABLE "userdata" (
 CREATE TABLE "userprofile" (
   "user_id" uuid NOT NULL,
   "username" text UNIQUE NOT NULL,
-  "username_lowercase" text UNIQUE NOT NULL,
+  "username_clean" text UNIQUE NOT NULL,
   "headline" text,
   "about" text,
   "image_url" text,
@@ -48,6 +49,7 @@ CREATE TABLE "user_subscription" (
 CREATE TABLE "sitegroups" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "name" text UNIQUE NOT NULL,
+  "name_clean" text UNIQUE NOT NULL,
   "headline" text,
   "description" text,
   "image_url" text,

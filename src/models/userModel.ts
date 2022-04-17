@@ -141,16 +141,16 @@ class UserModel {
     }
 
     // Handle Email Change
-    if (data.user_data?.email) {
-      const duplicateCheck = await UserRepo.fetch_user_by_user_email(data.user_data?.email);
+    if (data.user_data?.email_clean) {
+      const duplicateCheck = await UserRepo.fetch_user_by_user_email(data.user_data?.email_clean);
       if (duplicateCheck && duplicateCheck.id !== id) {
         throw new ExpressError("A user already exists with that email", 400);
       };
     }
 
     // Handle Username Change
-    if (data.user_profile?.username) {
-      const duplicateCheck = await UserRepo.fetch_user_by_username(data.user_profile?.username);
+    if (data.user_profile?.username_clean) {
+      const duplicateCheck = await UserRepo.fetch_user_by_username(data.user_profile?.username_clean);
       if (duplicateCheck && duplicateCheck.id !== id) {
         throw new ExpressError("A user already exists with that username", 400);
       };

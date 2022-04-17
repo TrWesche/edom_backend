@@ -250,26 +250,47 @@ userRootRouter.patch("/update",
         };
 
 
+        const processedValues: any = {};
+
+        const incValues = req.body;
+        for (const pKey in prevValues) {
+            if (incValues[pKey] && incValues[pKey] !== prevValues[pKey]) {
+                // Special Cases - Username Change, Email Change
+                if (pKey === "username" || pKey === "email") {
+                    const cv1 = prevValues[pKey] || "";
+                    if (incValues[pKey].toLowerCase() !== cv1.toLowerCase()) {
+                        processedValues[pKey] = incValues[pKey];
+                        processedValues[`${pKey}_clean`] = incValues[pKey].toLowerCase();
+                    };
+                } else {
+                    processedValues[pKey] = incValues[pKey];
+                };
+            }
+        };
+
+
         const updateValues: UserUpdateProps = {
             user_account: {
-                password: req.body.password
+                password: processedValues.password
             },
             user_profile: {
-                username: req.body.username,
-                headline: req.body.headline,
-                about: req.body.about,
-                image_url: req.body.image_url,
-                public: req.body.public
+                username: processedValues.username,
+                username_clean: processedValues.username_clean,
+                headline: processedValues.headline,
+                about: processedValues.about,
+                image_url: processedValues.image_url,
+                public: processedValues.public
             },
             user_data: {
-                email: req.body.email,
-                public_email: req.body.public_email,
-                first_name: req.body.first_name,
-                public_first_name: req.body.public_first_name,
-                last_name: req.body.last_name,
-                public_last_name: req.body.public_last_name,
-                location: req.body.location,
-                public_location: req.body.public_location
+                email: processedValues.email,
+                email_clean: processedValues.email_clean,
+                public_email: processedValues.public_email,
+                first_name: processedValues.first_name,
+                public_first_name: processedValues.public_first_name,
+                last_name: processedValues.last_name,
+                public_last_name: processedValues.public_last_name,
+                location: processedValues.location,
+                public_location: processedValues.public_location
             }
         };
 

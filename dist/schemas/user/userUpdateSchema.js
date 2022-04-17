@@ -43,6 +43,14 @@ var schema = {
                     nullable: true,
                     pattern: "^[A-z0-9]+$"
                 },
+                username_clean: {
+                    $id: "#/properties/user_profile/properties/username_clean",
+                    type: "string",
+                    "default": "",
+                    minLength: 4,
+                    nullable: true,
+                    pattern: "^[a-z0-9]+$"
+                },
                 headline: {
                     $id: "#/properties/user_profile/properties/headline",
                     type: "string",
@@ -73,7 +81,15 @@ var schema = {
             nullable: true,
             properties: {
                 email: {
-                    $id: "#/properties/user_data/properties/username",
+                    $id: "#/properties/user_data/properties/email",
+                    type: "string",
+                    format: "email",
+                    "default": "",
+                    minLength: 6,
+                    nullable: true
+                },
+                email_clean: {
+                    $id: "#/properties/user_data/properties/email_clean",
                     type: "string",
                     format: "email",
                     "default": "",

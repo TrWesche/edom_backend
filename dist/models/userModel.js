@@ -257,8 +257,8 @@ var UserModel = /** @class */ (function () {
                         _f.password = _g.sent();
                         _g.label = 2;
                     case 2:
-                        if (!((_b = data.user_data) === null || _b === void 0 ? void 0 : _b.email)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email((_c = data.user_data) === null || _c === void 0 ? void 0 : _c.email)];
+                        if (!((_b = data.user_data) === null || _b === void 0 ? void 0 : _b.email_clean)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_email((_c = data.user_data) === null || _c === void 0 ? void 0 : _c.email_clean)];
                     case 3:
                         duplicateCheck = _g.sent();
                         if (duplicateCheck && duplicateCheck.id !== id) {
@@ -267,8 +267,8 @@ var UserModel = /** @class */ (function () {
                         ;
                         _g.label = 4;
                     case 4:
-                        if (!((_d = data.user_profile) === null || _d === void 0 ? void 0 : _d.username)) return [3 /*break*/, 6];
-                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username((_e = data.user_profile) === null || _e === void 0 ? void 0 : _e.username)];
+                        if (!((_d = data.user_profile) === null || _d === void 0 ? void 0 : _d.username_clean)) return [3 /*break*/, 6];
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_username((_e = data.user_profile) === null || _e === void 0 ? void 0 : _e.username_clean)];
                     case 5:
                         duplicateCheck = _g.sent();
                         if (duplicateCheck && duplicateCheck.id !== id) {

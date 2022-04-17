@@ -325,7 +325,7 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var prevValues, updateValues, group, item, newData, error_7;
+    var prevValues, processedValues, incValues, pKey, cv1, updateValues, group, item, newData, error_7;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -338,26 +338,48 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
                     throw new expresError_1["default"]("Update Failed: User Not Found", 404);
                 }
                 ;
+                processedValues = {};
+                incValues = req.body;
+                for (pKey in prevValues) {
+                    if (incValues[pKey] && incValues[pKey] !== prevValues[pKey]) {
+                        // Special Cases - Username Change, Email Change
+                        if (pKey === "username" || pKey === "email") {
+                            cv1 = prevValues[pKey] || "";
+                            if (incValues[pKey].toLowerCase() !== cv1.toLowerCase()) {
+                                processedValues[pKey] = incValues[pKey];
+                                processedValues["".concat(pKey, "_clean")] = incValues[pKey].toLowerCase();
+                            }
+                            ;
+                        }
+                        else {
+                            processedValues[pKey] = incValues[pKey];
+                        }
+                        ;
+                    }
+                }
+                ;
                 updateValues = {
                     user_account: {
-                        password: req.body.password
+                        password: processedValues.password
                     },
                     user_profile: {
-                        username: req.body.username,
-                        headline: req.body.headline,
-                        about: req.body.about,
-                        image_url: req.body.image_url,
-                        public: req.body.public
+                        username: processedValues.username,
+                        username_clean: processedValues.username_clean,
+                        headline: processedValues.headline,
+                        about: processedValues.about,
+                        image_url: processedValues.image_url,
+                        public: processedValues.public
                     },
                     user_data: {
-                        email: req.body.email,
-                        public_email: req.body.public_email,
-                        first_name: req.body.first_name,
-                        public_first_name: req.body.public_first_name,
-                        last_name: req.body.last_name,
-                        public_last_name: req.body.public_last_name,
-                        location: req.body.location,
-                        public_location: req.body.public_location
+                        email: processedValues.email,
+                        email_clean: processedValues.email_clean,
+                        public_email: processedValues.public_email,
+                        first_name: processedValues.first_name,
+                        public_first_name: processedValues.public_first_name,
+                        last_name: processedValues.last_name,
+                        public_last_name: processedValues.public_last_name,
+                        location: processedValues.location,
+                        public_location: processedValues.public_location
                     }
                 };
                 if (!(0, userUpdateSchema_1["default"])(updateValues)) {
