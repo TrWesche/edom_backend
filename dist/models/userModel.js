@@ -292,6 +292,35 @@ var UserModel = /** @class */ (function () {
         });
     };
     ;
+    /** Update user data with `data` */
+    UserModel.modify_password = function (id, password) {
+        return __awaiter(this, void 0, void 0, function () {
+            var newPassword, updateSuccess, user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!id) {
+                            throw new expresError_1["default"]("Error: User ID not provided", 400);
+                        }
+                        return [4 /*yield*/, bcrypt.hash(password, config_1.bcrypt_work_factor)];
+                    case 1:
+                        newPassword = _a.sent();
+                        return [4 /*yield*/, user_repository_1["default"].update_user_password_by_user_id(id, newPassword)];
+                    case 2:
+                        updateSuccess = _a.sent();
+                        if (!updateSuccess) {
+                            throw new expresError_1["default"]("Unable to update target user", 400);
+                        }
+                        ;
+                        return [4 /*yield*/, user_repository_1["default"].fetch_user_by_user_id(id, 'account')];
+                    case 3:
+                        user = _a.sent();
+                        return [2 /*return*/, user];
+                }
+            });
+        });
+    };
+    ;
     /** Delete target user from database; returns undefined. */
     // Manual Test - 2022/03/13 (Only delete_user_by_user_id() verified to work)
     UserModel.delete_user = function (id) {

@@ -17,6 +17,7 @@ import GroupPermissionsRepo from "../repositories/groupPermissions.repository";
 import { UserAuthProps } from "../schemas/user/userAuthSchema";
 import { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 import { UserUpdateProps } from "../schemas/user/userUpdateSchema";
+import { UserUpdatePasswordProps } from "../schemas/user/userUpdatePasswordSchema";
 
 /** Standard User Creation & Authentication */
 class UserModel {
@@ -158,6 +159,26 @@ class UserModel {
 
     // Perform User Update
     const updateSuccess = await UserRepo.update_user_by_user_id(id, data);
+    if (!updateSuccess) {
+      throw new ExpressError("Unable to update target user", 400);
+    };
+
+    const user = await UserRepo.fetch_user_by_user_id(id, 'account');
+    return user;
+  };
+
+  /** Update user data with `data` */
+  
+  static async modify_password(id: string | undefined, password: string) {
+    if (!id) {
+      throw new ExpressError("Error: User ID not provided", 400);
+    }
+
+    // Handle Password Change
+    const newPassword = await bcrypt.hash(password, bcrypt_work_factor);
+
+    // Perform User Update
+    const updateSuccess = await UserRepo.update_user_password_by_user_id(id, newPassword);
     if (!updateSuccess) {
       throw new ExpressError("Unable to update target user", 400);
     };

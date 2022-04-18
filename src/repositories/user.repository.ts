@@ -547,6 +547,29 @@ class UserRepo {
         }
     };
     
+
+    static async update_user_password_by_user_id(userID: string, password: string) {
+        try {
+            const processData = {
+                password: password
+            };
+
+            // Parital Update: table name, payload data, lookup column name, lookup key
+            const {query, values} = createUpdateQueryPGSQL(
+                "useraccount",
+                processData,
+                "id",
+                userID
+            );
+
+            const result = await pgdb.query(query, values);
+
+            return true;
+        } catch (error) {
+            throw new ExpressError(`An Error Occured: Password Change Failed - ${error}`, 500);
+        }
+    };
+
     // Tested - 03/13/2022
     static async delete_user_by_user_id(userID: string) {
         try {

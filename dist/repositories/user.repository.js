@@ -409,10 +409,34 @@ var UserRepo = /** @class */ (function () {
         });
     };
     ;
+    UserRepo.update_user_password_by_user_id = function (userID, password) {
+        return __awaiter(this, void 0, void 0, function () {
+            var processData, _a, query, values, result, error_9;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 2, , 3]);
+                        processData = {
+                            password: password
+                        };
+                        _a = (0, createUpdateQueryPGSQL_1["default"])("useraccount", processData, "id", userID), query = _a.query, values = _a.values;
+                        return [4 /*yield*/, pgdb_1["default"].query(query, values)];
+                    case 1:
+                        result = _b.sent();
+                        return [2 /*return*/, true];
+                    case 2:
+                        error_9 = _b.sent();
+                        throw new expresError_1["default"]("An Error Occured: Password Change Failed - ".concat(error_9), 500);
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ;
     // Tested - 03/13/2022
     UserRepo.delete_user_by_user_id = function (userID) {
         return __awaiter(this, void 0, void 0, function () {
-            var error_9;
+            var error_10;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -424,8 +448,8 @@ var UserRepo = /** @class */ (function () {
                         _a.sent();
                         return [2 /*return*/, true];
                     case 2:
-                        error_9 = _a.sent();
-                        throw new expresError_1["default"]("An Error Occured: Unable to delete user - ".concat(error_9), 500);
+                        error_10 = _a.sent();
+                        throw new expresError_1["default"]("An Error Occured: Unable to delete user - ".concat(error_10), 500);
                     case 3: return [2 /*return*/];
                 }
             });

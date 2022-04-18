@@ -8,6 +8,7 @@ import AuthHandling from "../utils/authHandling";
 import validateUserAuthSchema, { UserAuthProps } from "../schemas/user/userAuthSchema";
 import validateUserRegisterSchema, { UserRegisterProps } from "../schemas/user/userRegisterSchema";
 import validateUserUpdateSchema, { UserUpdateProps } from "../schemas/user/userUpdateSchema";
+import validateUserUpdatePasswordSchema, { UserUpdatePasswordProps } from "../schemas/user/userUpdatePasswordSchema";
 
 // Model Imports
 import UserModel from "../models/userModel";
@@ -326,6 +327,36 @@ userRootRouter.patch("/update",
     }
 });
 
+
+userRootRouter.patch("/cpw", 
+    authMW.defineRoutePermissions({
+        user: ["site_update_user_self"],
+        group: [],
+        public: []
+    }),
+    authMW.validateRoutePermissions,
+    async (req, res, next) => {
+    try {
+        const updateValues: UserUpdatePasswordProps = {
+            password_e1: req.body.password_e1,
+            password_e2: req.body.password_e2
+        };
+
+        if (!(updateValues.password_e1 === updateValues.password_e2)) {
+            throw new ExpressError(`Update Error: Passwords entries are not the same.`, 400);
+        };
+
+        if(!validateUserUpdatePasswordSchema(updateValues)) {
+            throw new ExpressError(`Update Error: ${validateUserUpdatePasswordSchema.errors}`, 400);
+        };
+
+        // Update the user data with the itemsList information
+        const newData = await UserModel.modify_password(req.user?.id, updateValues.password_e1);
+        return res.json({user: newData});
+    } catch (error) {
+        next(error);
+    }
+});
 
 
 /* _     ___   ____  ___  _   _ _____ 

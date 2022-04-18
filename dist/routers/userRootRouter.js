@@ -44,6 +44,7 @@ var authHandling_1 = require("../utils/authHandling");
 var userAuthSchema_1 = require("../schemas/user/userAuthSchema");
 var userRegisterSchema_1 = require("../schemas/user/userRegisterSchema");
 var userUpdateSchema_1 = require("../schemas/user/userUpdateSchema");
+var userUpdatePasswordSchema_1 = require("../schemas/user/userUpdatePasswordSchema");
 // Model Imports
 var userModel_1 = require("../models/userModel");
 var groupModel_1 = require("../models/groupModel");
@@ -418,6 +419,41 @@ userRootRouter.patch("/update", authorizationMW_1["default"].defineRoutePermissi
         }
     });
 }); });
+userRootRouter.patch("/cpw", authorizationMW_1["default"].defineRoutePermissions({
+    user: ["site_update_user_self"],
+    group: [],
+    public: []
+}), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateValues, newData, error_8;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                updateValues = {
+                    password_e1: req.body.password_e1,
+                    password_e2: req.body.password_e2
+                };
+                if (!(updateValues.password_e1 === updateValues.password_e2)) {
+                    throw new expresError_1["default"]("Update Error: Passwords entries are not the same.", 400);
+                }
+                ;
+                if (!(0, userUpdatePasswordSchema_1["default"])(updateValues)) {
+                    throw new expresError_1["default"]("Update Error: ".concat(userUpdatePasswordSchema_1["default"].errors), 400);
+                }
+                ;
+                return [4 /*yield*/, userModel_1["default"].modify_password((_a = req.user) === null || _a === void 0 ? void 0 : _a.id, updateValues.password_e1)];
+            case 1:
+                newData = _b.sent();
+                return [2 /*return*/, res.json({ user: newData })];
+            case 2:
+                error_8 = _b.sent();
+                next(error_8);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 /* _     ___   ____  ___  _   _ _____
   | |   / _ \ / ___|/ _ \| | | |_   _|
   | |  | | | | |  _| | | | | | | | |
@@ -449,7 +485,7 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
     group: [],
     public: []
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, error_8;
+    var queryData, error_9;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -467,8 +503,8 @@ userRootRouter["delete"]("/delete", authorizationMW_1["default"].defineRoutePerm
                 res.setHeader("Authorization", "");
                 return [2 /*return*/, res.json({ message: "Your account has been deleted." })];
             case 2:
-                error_8 = _c.sent();
-                return [2 /*return*/, next(error_8)];
+                error_9 = _c.sent();
+                return [2 /*return*/, next(error_9)];
             case 3: return [2 /*return*/];
         }
     });
