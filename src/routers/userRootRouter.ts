@@ -280,7 +280,7 @@ userRootRouter.patch("/update",
                 headline: processedValues.headline,
                 about: processedValues.about,
                 image_url: processedValues.image_url,
-                public: processedValues.public
+                public: processedValues.public_profile
             },
             user_data: {
                 email: processedValues.email,
