@@ -314,14 +314,30 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
-    RoomRepo.fetch_public_room_list_by_user_id = function (userID, limit, offset) {
+    RoomRepo.fetch_public_room_list_by_user_id = function (userID, limit, offset, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_11;
+            var idx, filterParams, queryParams, query, result, rval, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE user_rooms.user_id = $1 AND rooms.public = TRUE\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        idx = 4;
+                        filterParams = ['rooms.public = TRUE', 'user_rooms.user_id = $1'];
+                        queryParams = [userID, limit, offset];
+                        if (categoryID) {
+                            filterParams.push("rooms.category_id = $".concat(idx));
+                            queryParams.push(categoryID);
+                            idx++;
+                        }
+                        ;
+                        if (search) {
+                            filterParams.push("(rooms.name ILIKE $".concat(idx, " OR\n                        rooms.headline ILIKE $").concat(idx, " OR\n                        rooms.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -335,14 +351,30 @@ var RoomRepo = /** @class */ (function () {
         });
     };
     ;
-    RoomRepo.fetch_unrestricted_room_list_by_user_id = function (userID, limit, offset) {
+    RoomRepo.fetch_unrestricted_room_list_by_user_id = function (userID, limit, offset, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_12;
+            var idx, filterParams, queryParams, query, result, rval, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE user_rooms.user_id = $1\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        idx = 4;
+                        filterParams = ['user_rooms.user_id = $1'];
+                        queryParams = [userID, limit, offset];
+                        if (categoryID) {
+                            filterParams.push("rooms.category_id = $".concat(idx));
+                            queryParams.push(categoryID);
+                            idx++;
+                        }
+                        ;
+                        if (search) {
+                            filterParams.push("(rooms.name ILIKE $".concat(idx, " OR\n                        rooms.headline ILIKE $").concat(idx, " OR\n                        rooms.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;

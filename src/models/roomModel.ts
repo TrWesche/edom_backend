@@ -130,14 +130,21 @@ class RoomModel {
         return rooms;
     };
 
-    static async retrieve_user_rooms_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
+    static async retrieve_user_rooms_list_by_user_id(
+        userID: string, 
+        accessType: string, 
+        limit: number, 
+        offset: number,
+        categoryID: string | null,
+        search: string | null
+    ) {
         let rooms;
         switch (accessType) {
             case "public":
-                rooms = await RoomRepo.fetch_public_room_list_by_user_id(userID, limit, offset);
+                rooms = await RoomRepo.fetch_public_room_list_by_user_id(userID, limit, offset, categoryID, search);
                 break;
             case "user":
-                rooms = await RoomRepo.fetch_unrestricted_room_list_by_user_id(userID, limit, offset);
+                rooms = await RoomRepo.fetch_unrestricted_room_list_by_user_id(userID, limit, offset, categoryID, search);
                 break;
             default:
                 throw new ExpressError("Server Configuration Error", 500);

@@ -224,7 +224,7 @@ var RoomModel = /** @class */ (function () {
         });
     };
     ;
-    RoomModel.retrieve_user_rooms_list_by_user_id = function (userID, accessType, limit, offset) {
+    RoomModel.retrieve_user_rooms_list_by_user_id = function (userID, accessType, limit, offset, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms, _a;
             return __generator(this, function (_b) {
@@ -236,11 +236,11 @@ var RoomModel = /** @class */ (function () {
                             case "user": return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 5];
-                    case 1: return [4 /*yield*/, room_repository_1["default"].fetch_public_room_list_by_user_id(userID, limit, offset)];
+                    case 1: return [4 /*yield*/, room_repository_1["default"].fetch_public_room_list_by_user_id(userID, limit, offset, categoryID, search)];
                     case 2:
                         rooms = _b.sent();
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, room_repository_1["default"].fetch_unrestricted_room_list_by_user_id(userID, limit, offset)];
+                    case 3: return [4 /*yield*/, room_repository_1["default"].fetch_unrestricted_room_list_by_user_id(userID, limit, offset, categoryID, search)];
                     case 4:
                         rooms = _b.sent();
                         return [3 /*break*/, 6];

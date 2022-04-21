@@ -171,14 +171,24 @@ var GroupRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupRepo.fetch_public_group_list_by_user_id = function (userID, limit, offset) {
+    GroupRepo.fetch_public_group_list_by_user_id = function (userID, limit, offset, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_6;
+            var idx, filterParams, queryParams, query, result, rval, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE user_groups.user_id = $1 AND sitegroups.public = TRUE\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        idx = 4;
+                        filterParams = ['sitegroups.public = TRUE', 'user_groups.user_id = $1'];
+                        queryParams = [userID, limit, offset];
+                        if (search) {
+                            filterParams.push("(sitegroups.name ILIKE $".concat(idx, " OR\n                        sitegroups.headline ILIKE $").concat(idx, " OR\n                        sitegroups.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -243,14 +253,24 @@ var GroupRepo = /** @class */ (function () {
         });
     };
     ;
-    GroupRepo.fetch_unrestricted_group_list_by_user_id = function (userID, limit, offset) {
+    GroupRepo.fetch_unrestricted_group_list_by_user_id = function (userID, limit, offset, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_8;
+            var idx, filterParams, queryParams, query, result, rval, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE user_groups.user_id = $1\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        idx = 4;
+                        filterParams = ['user_groups.user_id = $1'];
+                        queryParams = [userID, limit, offset];
+                        if (search) {
+                            filterParams.push("(sitegroups.name ILIKE $".concat(idx, " OR\n                        sitegroups.headline ILIKE $").concat(idx, " OR\n                        sitegroups.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;

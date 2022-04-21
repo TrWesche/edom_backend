@@ -101,7 +101,7 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
     group: [],
     public: ["site_read_group_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, userSelf, error_2;
+    var queryData, limit, offset, search, userSelf, error_2;
     var _a, _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -112,17 +112,20 @@ userDeviceMasterRouter.get("/:username/group", authorizationMW_1["default"].defi
                 }
                 ;
                 queryData = void 0;
+                limit = typeof (req.query.limit) === "string" ? Number(req.query.limit) : 4;
+                offset = typeof (req.query.offset) === "string" ? Number(req.query.offset) : 0;
+                search = typeof (req.query.s) === "string" ? req.query.s : null;
                 userSelf = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
                     return acc = acc || (val.permissions_name === "site_read_group_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
-                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "elevated", 10, 0)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "elevated", limit, offset, search)];
             case 1:
                 queryData = _d.sent();
                 return [3 /*break*/, 4];
             case 2:
                 if (!req.targetUID) return [3 /*break*/, 4];
-                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)];
+                return [4 /*yield*/, groupModel_1["default"].retrieve_user_groups_list_by_user_id(req.targetUID, "public", limit, offset, search)];
             case 3:
                 queryData = _d.sent();
                 _d.label = 4;
@@ -147,7 +150,7 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
     group: [],
     public: ["site_read_room_public"]
 }), authorizationMW_1["default"].validateRoutePermissions, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var queryData, userSelf, error_3;
+    var queryData, limit, offset, catid, search, userSelf, error_3;
     var _a, _b, _c;
     return __generator(this, function (_d) {
         switch (_d.label) {
@@ -158,17 +161,21 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
                 }
                 ;
                 queryData = void 0;
+                limit = typeof (req.query.limit) === "string" ? Number(req.query.limit) : 4;
+                offset = typeof (req.query.offset) === "string" ? Number(req.query.offset) : 0;
+                catid = typeof (req.query.catid) === "string" ? req.query.catid : null;
+                search = typeof (req.query.s) === "string" ? req.query.s : null;
                 userSelf = (_b = req.resolvedPerms) === null || _b === void 0 ? void 0 : _b.reduce(function (acc, val) {
                     return acc = acc || (val.permissions_name === "site_read_room_self");
                 }, false);
                 if (!userSelf) return [3 /*break*/, 2];
-                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "user", 10, 0)];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_list_by_user_id((_c = req.user) === null || _c === void 0 ? void 0 : _c.id, "user", limit, offset, catid, search)];
             case 1:
                 queryData = _d.sent();
                 return [3 /*break*/, 4];
             case 2:
                 if (!req.targetUID) return [3 /*break*/, 4];
-                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_list_by_user_id(req.targetUID, "public", 10, 0)];
+                return [4 /*yield*/, roomModel_1["default"].retrieve_user_rooms_list_by_user_id(req.targetUID, "public", limit, offset, catid, search)];
             case 3:
                 queryData = _d.sent();
                 _d.label = 4;

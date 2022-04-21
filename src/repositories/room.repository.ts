@@ -258,9 +258,35 @@ class RoomRepo {
         }
     };
 
-    static async fetch_public_room_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_public_room_list_by_user_id(
+        userID: string, 
+        limit: number, 
+        offset: number,
+        categoryID: string | null, 
+        search: string | null    
+    ) {
         try {
-            const result = await pgdb.query(`
+            let idx = 4;
+            const filterParams: Array<any> = ['rooms.public = TRUE', 'user_rooms.user_id = $1'];
+            const queryParams: Array<any> = [userID, limit, offset];
+
+            if (categoryID) {
+                filterParams.push(`rooms.category_id = $${idx}`);
+                queryParams.push(categoryID);
+                idx++;
+            };
+
+            if (search) {
+                filterParams.push(
+                    `(rooms.name ILIKE $${idx} OR
+                        rooms.headline ILIKE $${idx} OR
+                        rooms.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
                 SELECT
                     rooms.id AS id,
                     rooms.name AS name,
@@ -270,11 +296,29 @@ class RoomRepo {
                     rooms.category_id AS category_id
                 FROM rooms
                 LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
-                WHERE user_rooms.user_id = $1 AND rooms.public = TRUE
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $2
-                OFFSET $3`,
-                [userID, limit, offset]
-            );
+                OFFSET $3
+            `;
+
+            const result = await pgdb.query(query, queryParams);
+            
+
+            // const result = await pgdb.query(`
+            //     SELECT
+            //         rooms.id AS id,
+            //         rooms.name AS name,
+            //         rooms.headline AS headline,
+            //         rooms.description AS description,
+            //         rooms.image_url AS image_url,
+            //         rooms.category_id AS category_id
+            //     FROM rooms
+            //     LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
+            //     WHERE user_rooms.user_id = $1 AND rooms.public = TRUE
+            //     LIMIT $2
+            //     OFFSET $3`,
+            //     [userID, limit, offset]
+            // );
     
             const rval: Array<RoomObjectProps> | undefined = result.rows;
             return rval;
@@ -283,9 +327,35 @@ class RoomRepo {
         }
     };
 
-    static async fetch_unrestricted_room_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_unrestricted_room_list_by_user_id(
+        userID: string, 
+        limit: number, 
+        offset: number,
+        categoryID: string | null, 
+        search: string | null    
+    ) {
         try {
-            const result = await pgdb.query(`
+            let idx = 4;
+            const filterParams: Array<any> = ['user_rooms.user_id = $1'];
+            const queryParams: Array<any> = [userID, limit, offset];
+
+            if (categoryID) {
+                filterParams.push(`rooms.category_id = $${idx}`);
+                queryParams.push(categoryID);
+                idx++;
+            };
+
+            if (search) {
+                filterParams.push(
+                    `(rooms.name ILIKE $${idx} OR
+                        rooms.headline ILIKE $${idx} OR
+                        rooms.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
                 SELECT
                     rooms.id AS id,
                     rooms.name AS name,
@@ -295,11 +365,28 @@ class RoomRepo {
                     rooms.category_id AS category_id
                 FROM rooms
                 LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
-                WHERE user_rooms.user_id = $1
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $2
-                OFFSET $3`,
-                [userID, limit, offset]
-            );
+                OFFSET $3
+            `;
+
+            const result = await pgdb.query(query, queryParams);
+
+            // const result = await pgdb.query(`
+            //     SELECT
+            //         rooms.id AS id,
+            //         rooms.name AS name,
+            //         rooms.headline AS headline,
+            //         rooms.description AS description,
+            //         rooms.image_url AS image_url,
+            //         rooms.category_id AS category_id
+            //     FROM rooms
+            //     LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
+            //     WHERE user_rooms.user_id = $1
+            //     LIMIT $2
+            //     OFFSET $3`,
+            //     [userID, limit, offset]
+            // );
     
             const rval: Array<RoomObjectProps> | undefined = result.rows;
             return rval;

@@ -377,7 +377,7 @@ var GroupModel = /** @class */ (function () {
         });
     };
     ;
-    GroupModel.retrieve_user_groups_list_by_user_id = function (userID, accessType, limit, offset) {
+    GroupModel.retrieve_user_groups_list_by_user_id = function (userID, accessType, limit, offset, search) {
         return __awaiter(this, void 0, void 0, function () {
             var groups, _a;
             return __generator(this, function (_b) {
@@ -389,11 +389,11 @@ var GroupModel = /** @class */ (function () {
                             case "public": return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 5];
-                    case 1: return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_list_by_user_id(userID, limit, offset)];
+                    case 1: return [4 /*yield*/, group_repository_1["default"].fetch_unrestricted_group_list_by_user_id(userID, limit, offset, search)];
                     case 2:
                         groups = _b.sent();
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, group_repository_1["default"].fetch_public_group_list_by_user_id(userID, limit, offset)];
+                    case 3: return [4 /*yield*/, group_repository_1["default"].fetch_public_group_list_by_user_id(userID, limit, offset, search)];
                     case 4:
                         groups = _b.sent();
                         return [3 /*break*/, 6];
