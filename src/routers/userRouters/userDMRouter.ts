@@ -34,7 +34,7 @@ userDeviceMasterRouter.get("/:username",
     async (req, res, next) => {
     try {
         let queryData;
-
+        
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
             return acc = acc || (val.permissions_name === "site_read_user_self")
         }, false);

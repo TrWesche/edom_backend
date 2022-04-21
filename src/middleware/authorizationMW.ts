@@ -138,23 +138,31 @@ class authMW {
       
       
       if (req.params.username) {
-        // console.log("Checking Username Permissions");
+        // console.log(req.params.username);
         const comparisonUID = await PermissionsRepo.fetch_user_id_by_username(req.params.username);
+        // console.log(comparisonUID);
         if (comparisonUID !== undefined) {
           req.targetUID = comparisonUID.user_id;
-
           if (req.user.id === req.targetUID) {
-            // console.log("Same User");
             const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
             permissions.push(...foundPermissions);
-          } else {
-            const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_public(req.targetUID ? req.targetUID : "", req.reqPerms);
-            permissions.push(...foundPermissions);
-          }
+          } 
+          // else {
+          //   const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_public(req.targetUID ? req.targetUID : "", req.reqPerms);
+          //   permissions.push(...foundPermissions);
+          // }
         }
       };
 
-      if (req.reqPerms.user && req.reqPerms.user.length > 0 && permissions.length <= 0) {
+      if (
+        req.reqPerms.user && 
+        req.reqPerms.user.length > 0 && 
+        permissions.length <= 0 &&
+        !req.params.equipID &&
+        !req.params.roomID &&
+        !req.params.username &&
+        !req.groupID
+      ) {
         const foundPermissions = await PermissionsRepo.fetch_user_account_permissions_all(req.user.id, req.reqPerms);
         permissions.push(...foundPermissions);
       } else

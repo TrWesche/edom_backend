@@ -193,7 +193,8 @@ class UserRepo {
                         FROM useraccount
                         LEFT JOIN userprofile ON userprofile.user_id = useraccount.id
                         LEFT JOIN userdata ON userdata.user_id = useraccount.id
-                        WHERE EXISTS (SELECT user_id FROM userprofile WHERE userprofile.username_clean ILIKE $1 AND userprofile.public = TRUE)`;
+                        WHERE userprofile.username_clean ILIKE $1 AND userprofile.public = TRUE`
+                        // WHERE EXISTS (SELECT user_id FROM userprofile WHERE userprofile.username_clean ILIKE $1 AND userprofile.public = TRUE)`;
                         break;
                 case 'account':
                     query = `SELECT
