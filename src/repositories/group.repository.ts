@@ -128,9 +128,28 @@ class GroupRepo {
         }
     };
 
-    static async fetch_public_group_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_public_group_list_by_user_id(
+        userID: string, 
+        limit: number, 
+        offset: number,
+        search: string | null    
+    ) {
         try {
-            const result = await pgdb.query(`
+            let idx = 4;
+            const filterParams: Array<any> = ['sitegroups.public = TRUE', 'user_groups.user_id = $1'];
+            const queryParams: Array<any> = [userID, limit, offset];
+
+            if (search) {
+                filterParams.push(
+                    `(sitegroups.name ILIKE $${idx} OR
+                        sitegroups.headline ILIKE $${idx} OR
+                        sitegroups.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
                 SELECT
                     sitegroups.id AS id,
                     sitegroups.name AS name,
@@ -140,11 +159,28 @@ class GroupRepo {
                     sitegroups.location AS location
                 FROM sitegroups
                 LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
-                WHERE user_groups.user_id = $1 AND sitegroups.public = TRUE
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $2
-                OFFSET $3`,
-                [userID, limit, offset]
-            );
+                OFFSET $3
+            `;
+
+            const result = await pgdb.query(query, queryParams);
+
+            // const result = await pgdb.query(`
+            //     SELECT
+            //         sitegroups.id AS id,
+            //         sitegroups.name AS name,
+            //         sitegroups.headline AS headline,
+            //         sitegroups.description AS description,
+            //         sitegroups.image_url AS image_url,
+            //         sitegroups.location AS location
+            //     FROM sitegroups
+            //     LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
+            //     WHERE user_groups.user_id = $1 AND sitegroups.public = TRUE
+            //     LIMIT $2
+            //     OFFSET $3`,
+            //     [userID, limit, offset]
+            // );
     
             const rval: Array<GroupObjectProps> | undefined = result.rows;
             return rval;
@@ -218,9 +254,28 @@ class GroupRepo {
         return rval;
     };
 
-    static async fetch_unrestricted_group_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_unrestricted_group_list_by_user_id(
+        userID: string, 
+        limit: number, 
+        offset: number,
+        search: string | null    
+    ) {
         try {
-            const result = await pgdb.query(`
+            let idx = 4;
+            const filterParams: Array<any> = ['user_groups.user_id = $1'];
+            const queryParams: Array<any> = [userID, limit, offset];
+
+            if (search) {
+                filterParams.push(
+                    `(sitegroups.name ILIKE $${idx} OR
+                        sitegroups.headline ILIKE $${idx} OR
+                        sitegroups.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
                 SELECT
                     sitegroups.id AS id,
                     sitegroups.name AS name,
@@ -230,11 +285,29 @@ class GroupRepo {
                     sitegroups.location AS location
                 FROM sitegroups
                 LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
-                WHERE user_groups.user_id = $1
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $2
-                OFFSET $3`,
-                [userID, limit, offset]
-            );
+                OFFSET $3
+            `;
+
+            const result = await pgdb.query(query, queryParams);
+
+
+            // const result = await pgdb.query(`
+            //     SELECT
+            //         sitegroups.id AS id,
+            //         sitegroups.name AS name,
+            //         sitegroups.headline AS headline,
+            //         sitegroups.description AS description,
+            //         sitegroups.image_url AS image_url,
+            //         sitegroups.location AS location
+            //     FROM sitegroups
+            //     LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
+            //     WHERE user_groups.user_id = $1
+            //     LIMIT $2
+            //     OFFSET $3`,
+            //     [userID, limit, offset]
+            // );
     
             const rval: Array<GroupObjectProps> | undefined = result.rows;
             return rval;

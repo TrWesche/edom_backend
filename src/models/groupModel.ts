@@ -214,14 +214,20 @@ class GroupModel {
         return groups;
     };
 
-    static async retrieve_user_groups_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
+    static async retrieve_user_groups_list_by_user_id(
+        userID: string, 
+        accessType: string, 
+        limit: number, 
+        offset: number,
+        search: string | null
+    ) {
         let groups;
         switch (accessType) {
             case "elevated":
-                groups = await GroupRepo.fetch_unrestricted_group_list_by_user_id(userID, limit, offset);
+                groups = await GroupRepo.fetch_unrestricted_group_list_by_user_id(userID, limit, offset, search);
                 break;
             case "public":
-                groups = await GroupRepo.fetch_public_group_list_by_user_id(userID, limit, offset);
+                groups = await GroupRepo.fetch_public_group_list_by_user_id(userID, limit, offset, search);
                 break;
             default:
                 throw new ExpressError("Server Configuration Error", 500);

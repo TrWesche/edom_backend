@@ -71,16 +71,27 @@ userDeviceMasterRouter.get("/:username/group",
 
         let queryData;
 
+        // Read in Query Params
+        const limit = typeof(req.query.limit) === "string" ? Number(req.query.limit) : 4;
+        const offset = typeof(req.query.offset) === "string" ? Number(req.query.offset) : 0;
+        // const catid = typeof(req.query.catid) === "string" ? req.query.catid : null;
+        const search = typeof(req.query.s) === "string" ? req.query.s : null;
+        // TODO: Will need to add functionality for featured items, ordering, favorites
+        // const featured = typeof(req.query.feat) === "string" ? req.query.feat : null; // true, false text
+        // const favorites = typeof(req.query.fav) === "string" ? req.query.fav : null; // true, false text
+        // const orderby = typeof(req.query.orderby) === "string" ? req.query.orderby : null; //vlohi, vhilo, dtlohi, dthilo
+
+
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
             return acc = acc || (val.permissions_name === "site_read_group_self")
         }, false);
         
 
         if (userSelf) {
-            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, "elevated", 10, 0)
+            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.user?.id, "elevated", limit, offset, search)
         } else 
         if (req.targetUID) {
-            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.targetUID, "public", 10, 0)
+            queryData = await GroupModel.retrieve_user_groups_list_by_user_id(req.targetUID, "public", limit, offset, search)
         };
         
         if (!queryData) {
@@ -108,16 +119,26 @@ userDeviceMasterRouter.get("/:username/room",
 
         let queryData;
 
+        // Read in Query Params
+        const limit = typeof(req.query.limit) === "string" ? Number(req.query.limit) : 4;
+        const offset = typeof(req.query.offset) === "string" ? Number(req.query.offset) : 0;
+        const catid = typeof(req.query.catid) === "string" ? req.query.catid : null;
+        const search = typeof(req.query.s) === "string" ? req.query.s : null;
+        // TODO: Will need to add functionality for featured items, ordering, favorites
+        // const featured = typeof(req.query.feat) === "string" ? req.query.feat : null; // true, false text
+        // const favorites = typeof(req.query.fav) === "string" ? req.query.fav : null; // true, false text
+        // const orderby = typeof(req.query.orderby) === "string" ? req.query.orderby : null; //vlohi, vhilo, dtlohi, dthilo
+
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
             return acc = acc || (val.permissions_name === "site_read_room_self")
         }, false);
         
 
         if (userSelf) {
-            queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.user?.id, "user", 10, 0)
+            queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.user?.id, "user", limit, offset, catid, search)
         } else 
         if (req.targetUID) {
-            queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.targetUID, "public", 10, 0)
+            queryData = await RoomModel.retrieve_user_rooms_list_by_user_id(req.targetUID, "public", limit, offset, catid, search)
         };
         
         if (!queryData) {
@@ -150,6 +171,10 @@ userDeviceMasterRouter.get("/:username/equip",
         const offset = typeof(req.query.offset) === "string" ? Number(req.query.offset) : 0;
         const catid = typeof(req.query.catid) === "string" ? req.query.catid : null;
         const search = typeof(req.query.s) === "string" ? req.query.s : null;
+        // TODO: Will need to add functionality for featured items, ordering, favorites
+        // const featured = typeof(req.query.feat) === "string" ? req.query.feat : null; // true, false text
+        // const favorites = typeof(req.query.fav) === "string" ? req.query.fav : null; // true, false text
+        // const orderby = typeof(req.query.orderby) === "string" ? req.query.orderby : null; //vlohi, vhilo, dtlohi, dthilo
 
         // Determine Permission Level
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
