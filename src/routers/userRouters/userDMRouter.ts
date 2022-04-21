@@ -145,7 +145,7 @@ userDeviceMasterRouter.get("/:username/room",
             throw new ExpressError("Rooms not found.", 404);
         }
         
-        return res.json({room: queryData});
+        return res.json({rooms: queryData});
     } catch (error) {
         next(error)
     }

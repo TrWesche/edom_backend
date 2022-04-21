@@ -302,23 +302,6 @@ class RoomRepo {
             `;
 
             const result = await pgdb.query(query, queryParams);
-            
-
-            // const result = await pgdb.query(`
-            //     SELECT
-            //         rooms.id AS id,
-            //         rooms.name AS name,
-            //         rooms.headline AS headline,
-            //         rooms.description AS description,
-            //         rooms.image_url AS image_url,
-            //         rooms.category_id AS category_id
-            //     FROM rooms
-            //     LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
-            //     WHERE user_rooms.user_id = $1 AND rooms.public = TRUE
-            //     LIMIT $2
-            //     OFFSET $3`,
-            //     [userID, limit, offset]
-            // );
     
             const rval: Array<RoomObjectProps> | undefined = result.rows;
             return rval;
@@ -371,22 +354,6 @@ class RoomRepo {
             `;
 
             const result = await pgdb.query(query, queryParams);
-
-            // const result = await pgdb.query(`
-            //     SELECT
-            //         rooms.id AS id,
-            //         rooms.name AS name,
-            //         rooms.headline AS headline,
-            //         rooms.description AS description,
-            //         rooms.image_url AS image_url,
-            //         rooms.category_id AS category_id
-            //     FROM rooms
-            //     LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
-            //     WHERE user_rooms.user_id = $1
-            //     LIMIT $2
-            //     OFFSET $3`,
-            //     [userID, limit, offset]
-            // );
     
             const rval: Array<RoomObjectProps> | undefined = result.rows;
             return rval;

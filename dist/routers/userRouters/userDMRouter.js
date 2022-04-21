@@ -184,7 +184,7 @@ userDeviceMasterRouter.get("/:username/room", authorizationMW_1["default"].defin
                 if (!queryData) {
                     throw new expresError_1["default"]("Rooms not found.", 404);
                 }
-                return [2 /*return*/, res.json({ room: queryData })];
+                return [2 /*return*/, res.json({ rooms: queryData })];
             case 5:
                 error_3 = _d.sent();
                 next(error_3);

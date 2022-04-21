@@ -165,22 +165,6 @@ class GroupRepo {
             `;
 
             const result = await pgdb.query(query, queryParams);
-
-            // const result = await pgdb.query(`
-            //     SELECT
-            //         sitegroups.id AS id,
-            //         sitegroups.name AS name,
-            //         sitegroups.headline AS headline,
-            //         sitegroups.description AS description,
-            //         sitegroups.image_url AS image_url,
-            //         sitegroups.location AS location
-            //     FROM sitegroups
-            //     LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
-            //     WHERE user_groups.user_id = $1 AND sitegroups.public = TRUE
-            //     LIMIT $2
-            //     OFFSET $3`,
-            //     [userID, limit, offset]
-            // );
     
             const rval: Array<GroupObjectProps> | undefined = result.rows;
             return rval;
@@ -291,23 +275,6 @@ class GroupRepo {
             `;
 
             const result = await pgdb.query(query, queryParams);
-
-
-            // const result = await pgdb.query(`
-            //     SELECT
-            //         sitegroups.id AS id,
-            //         sitegroups.name AS name,
-            //         sitegroups.headline AS headline,
-            //         sitegroups.description AS description,
-            //         sitegroups.image_url AS image_url,
-            //         sitegroups.location AS location
-            //     FROM sitegroups
-            //     LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
-            //     WHERE user_groups.user_id = $1
-            //     LIMIT $2
-            //     OFFSET $3`,
-            //     [userID, limit, offset]
-            // );
     
             const rval: Array<GroupObjectProps> | undefined = result.rows;
             return rval;
