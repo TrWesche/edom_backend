@@ -145,16 +145,23 @@ userDeviceMasterRouter.get("/:username/equip",
 
         let queryData;
 
+        // Read in Query Params
+        const limit = typeof(req.query.limit) === "string" ? Number(req.query.limit) : 4;
+        const offset = typeof(req.query.offset) === "string" ? Number(req.query.offset) : 0;
+        const catid = typeof(req.query.catid) === "string" ? req.query.catid : null;
+        const search = typeof(req.query.s) === "string" ? req.query.s : null;
+
+        // Determine Permission Level
         const userSelf = req.resolvedPerms?.reduce((acc: any, val: any) => {
             return acc = acc || (val.permissions_name === "site_read_equip_self")
         }, false);
-        
+    
 
         if (userSelf) {
-            queryData = await EquipModel.retrieve_user_equip_list_by_user_id(req.user?.id, "user", 10, 0)
+            queryData = await EquipModel.retrieve_user_equip_list_by_user_id(req.user?.id, "user", limit, offset, catid, search)
         } else 
         if (req.targetUID) {
-            queryData = await EquipModel.retrieve_user_equip_list_by_user_id(req.targetUID, "public", 10, 0)
+            queryData = await EquipModel.retrieve_user_equip_list_by_user_id(req.targetUID, "public", limit, offset, catid, search)
         };
         
         if (!queryData) {

@@ -96,8 +96,8 @@ class EquipmentRepo {
         username: string | null, 
         groupID: string | null, 
         categoryID: string | null, 
-        search: string | null) 
-    {
+        search: string | null
+    ) {
         try {
             let idx = 3;
             const joinTables: Array<string> = [];
@@ -296,9 +296,35 @@ class EquipmentRepo {
         }
     };
 
-    static async fetch_public_equip_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_public_equip_list_by_user_id(
+        userID: string, 
+        limit: number, 
+        offset: number,
+        categoryID: string | null, 
+        search: string | null
+    ) {
         try {
-            const result = await pgdb.query(`
+            let idx = 4;
+            const filterParams: Array<any> = ['user_equipment.user_id = $1', 'equipment.public = TRUE'];
+            const queryParams: Array<any> = [userID, limit, offset];
+
+            if (categoryID) {
+                filterParams.push(`equipment.category_id = $${idx}`);
+                queryParams.push(categoryID);
+                idx++;
+            };
+
+            if (search) {
+                filterParams.push(
+                    `(equipment.name ILIKE $${idx} OR
+                    equipment.headline ILIKE $${idx} OR
+                    equipment.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
                 SELECT
                     equipment.id AS id,
                     equipment.name AS name,
@@ -308,11 +334,12 @@ class EquipmentRepo {
                     equipment.category_id AS category_id
                 FROM equipment
                 LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id
-                WHERE user_equipment.user_id = $1 AND equipment.public = TRUE
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $2
-                OFFSET $3`,
-                [userID, limit, offset]
-            );
+                OFFSET $3
+            `;
+
+            const result = await pgdb.query(query, queryParams);
     
             const rval: Array<EquipObjectProps> | undefined = result.rows;
             return rval;
@@ -321,9 +348,35 @@ class EquipmentRepo {
         }
     };
 
-    static async fetch_unrestricted_equip_list_by_user_id(userID: string, limit: number, offset: number) {
+    static async fetch_unrestricted_equip_list_by_user_id(
+        userID: string, 
+        limit: number, 
+        offset: number,
+        categoryID: string | null, 
+        search: string | null    
+    ) {
         try {
-            const result = await pgdb.query(`
+            let idx = 4;
+            const filterParams: Array<any> = ['user_equipment.user_id = $1'];
+            const queryParams: Array<any> = [userID, limit, offset];
+
+            if (categoryID) {
+                filterParams.push(`equipment.category_id = $${idx}`);
+                queryParams.push(categoryID);
+                idx++;
+            };
+
+            if (search) {
+                filterParams.push(
+                    `(equipment.name ILIKE $${idx} OR
+                    equipment.headline ILIKE $${idx} OR
+                    equipment.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
                 SELECT
                     equipment.id AS id,
                     equipment.name AS name,
@@ -333,11 +386,12 @@ class EquipmentRepo {
                     equipment.category_id AS category_id
                 FROM equipment
                 LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id
-                WHERE user_equipment.user_id = $1
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $2
-                OFFSET $3`,
-                [userID, limit, offset]
-            );
+                OFFSET $3
+            `;
+
+            const result = await pgdb.query(query, queryParams);
     
             const rval: Array<EquipObjectProps> | undefined = result.rows;
             return rval;

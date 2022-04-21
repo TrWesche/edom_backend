@@ -167,10 +167,6 @@ equipRootRouter.get("/list", authorizationMW_1["default"].defineRoutePermissions
                 gid = typeof (req.query.gid) === "string" ? req.query.gid : null;
                 catid = typeof (req.query.catid) === "string" ? req.query.catid : null;
                 search = typeof (req.query.s) === "string" ? req.query.s : null;
-                if (typeof limit !== "number" || typeof offset !== "number") {
-                    throw new expresError_1["default"]("One or more query parameters is of an invalid type", 404);
-                }
-                ;
                 return [4 /*yield*/, equipModel_1["default"].retrieve_equip_list_paginated(limit, offset, username, gid, catid, search)];
             case 1:
                 queryData = _a.sent();

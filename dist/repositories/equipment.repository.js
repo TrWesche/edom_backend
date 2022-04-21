@@ -335,14 +335,30 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_public_equip_list_by_user_id = function (userID, limit, offset) {
+    EquipmentRepo.fetch_public_equip_list_by_user_id = function (userID, limit, offset, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_11;
+            var idx, filterParams, queryParams, query, result, rval, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    equipment.id AS id,\n                    equipment.name AS name,\n                    equipment.headline AS headline,\n                    equipment.description AS description,\n                    equipment.image_url AS image_url,\n                    equipment.category_id AS category_id\n                FROM equipment\n                LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND equipment.public = TRUE\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        idx = 4;
+                        filterParams = ['user_equipment.user_id = $1', 'equipment.public = TRUE'];
+                        queryParams = [userID, limit, offset];
+                        if (categoryID) {
+                            filterParams.push("equipment.category_id = $".concat(idx));
+                            queryParams.push(categoryID);
+                            idx++;
+                        }
+                        ;
+                        if (search) {
+                            filterParams.push("(equipment.name ILIKE $".concat(idx, " OR\n                    equipment.headline ILIKE $").concat(idx, " OR\n                    equipment.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT\n                    equipment.id AS id,\n                    equipment.name AS name,\n                    equipment.headline AS headline,\n                    equipment.description AS description,\n                    equipment.image_url AS image_url,\n                    equipment.category_id AS category_id\n                FROM equipment\n                LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -356,14 +372,30 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_unrestricted_equip_list_by_user_id = function (userID, limit, offset) {
+    EquipmentRepo.fetch_unrestricted_equip_list_by_user_id = function (userID, limit, offset, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_12;
+            var idx, filterParams, queryParams, query, result, rval, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT\n                    equipment.id AS id,\n                    equipment.name AS name,\n                    equipment.headline AS headline,\n                    equipment.description AS description,\n                    equipment.image_url AS image_url,\n                    equipment.category_id AS category_id\n                FROM equipment\n                LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1\n                LIMIT $2\n                OFFSET $3", [userID, limit, offset])];
+                        idx = 4;
+                        filterParams = ['user_equipment.user_id = $1'];
+                        queryParams = [userID, limit, offset];
+                        if (categoryID) {
+                            filterParams.push("equipment.category_id = $".concat(idx));
+                            queryParams.push(categoryID);
+                            idx++;
+                        }
+                        ;
+                        if (search) {
+                            filterParams.push("(equipment.name ILIKE $".concat(idx, " OR\n                    equipment.headline ILIKE $").concat(idx, " OR\n                    equipment.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT\n                    equipment.id AS id,\n                    equipment.name AS name,\n                    equipment.headline AS headline,\n                    equipment.description AS description,\n                    equipment.image_url AS image_url,\n                    equipment.category_id AS category_id\n                FROM equipment\n                LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;

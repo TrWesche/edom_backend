@@ -282,7 +282,7 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_user_equip_list_by_user_id = function (userID, accessType, limit, offset) {
+    EquipModel.retrieve_user_equip_list_by_user_id = function (userID, accessType, limit, offset, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
             var rooms, _a;
             return __generator(this, function (_b) {
@@ -294,11 +294,11 @@ var EquipModel = /** @class */ (function () {
                             case "user": return [3 /*break*/, 3];
                         }
                         return [3 /*break*/, 5];
-                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_public_equip_list_by_user_id(userID, limit, offset)];
+                    case 1: return [4 /*yield*/, equipment_repository_1["default"].fetch_public_equip_list_by_user_id(userID, limit, offset, categoryID, search)];
                     case 2:
                         rooms = _b.sent();
                         return [3 /*break*/, 6];
-                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_unrestricted_equip_list_by_user_id(userID, limit, offset)];
+                    case 3: return [4 /*yield*/, equipment_repository_1["default"].fetch_unrestricted_equip_list_by_user_id(userID, limit, offset, categoryID, search)];
                     case 4:
                         rooms = _b.sent();
                         return [3 /*break*/, 6];

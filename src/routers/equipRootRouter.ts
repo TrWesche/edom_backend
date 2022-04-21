@@ -110,9 +110,6 @@ equipRootRouter.get("/list",
     authMW.validateRoutePermissions,
     async (req, res, next) => {
         try {
-            // TODO: Add free text search, category type filters, user filters, group filters
-            
-            // const {limit, offset} = req.query as unknown as equipRouterQuery;
             // Preflight
             const limit = typeof(req.query.limit) === "string" ? Number(req.query.limit) : 25;
             const offset = typeof(req.query.offset) === "string" ? Number(req.query.offset) : 0;
@@ -120,11 +117,6 @@ equipRootRouter.get("/list",
             const gid = typeof(req.query.gid) === "string" ? req.query.gid : null;
             const catid = typeof(req.query.catid) === "string" ? req.query.catid : null;
             const search = typeof(req.query.s) === "string" ? req.query.s : null;
-
-            if (typeof limit !== "number" || typeof offset !== "number") {
-                throw new ExpressError("One or more query parameters is of an invalid type", 404);
-            };
-
 
             // Processing
             const queryData = await EquipModel.retrieve_equip_list_paginated(limit, offset, username, gid, catid, search);

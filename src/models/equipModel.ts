@@ -164,14 +164,21 @@ class EquipModel {
         return equip;
     };
 
-    static async retrieve_user_equip_list_by_user_id(userID: string, accessType: string, limit: number, offset: number) {
+    static async retrieve_user_equip_list_by_user_id(
+        userID: string, 
+        accessType: string, 
+        limit: number, 
+        offset: number,
+        categoryID: string | null,
+        search: string | null
+    ) {
         let rooms;
         switch (accessType) {
             case "public":
-                rooms = await EquipRepo.fetch_public_equip_list_by_user_id(userID, limit, offset);
+                rooms = await EquipRepo.fetch_public_equip_list_by_user_id(userID, limit, offset, categoryID, search);
                 break;
             case "user":
-                rooms = await EquipRepo.fetch_unrestricted_equip_list_by_user_id(userID, limit, offset);
+                rooms = await EquipRepo.fetch_unrestricted_equip_list_by_user_id(userID, limit, offset, categoryID, search);
                 break;
             default:
                 throw new ExpressError("Server Configuration Error", 500);
