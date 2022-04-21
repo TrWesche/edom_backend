@@ -203,12 +203,12 @@ var EquipModel = /** @class */ (function () {
         });
     };
     ;
-    EquipModel.retrieve_equip_list_paginated = function (limit, offset) {
+    EquipModel.retrieve_equip_list_paginated = function (limit, offset, username, groupID, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
             var equip;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_list_paginated(limit, offset)];
+                    case 0: return [4 /*yield*/, equipment_repository_1["default"].fetch_equip_list_paginated(limit, offset, username, groupID, categoryID, search)];
                     case 1:
                         equip = _a.sent();
                         return [2 /*return*/, equip];

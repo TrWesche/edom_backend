@@ -119,8 +119,15 @@ class EquipModel {
         return equip;
     };
 
-    static async retrieve_equip_list_paginated(limit: number, offset: number) {
-        const equip = await EquipRepo.fetch_equip_list_paginated(limit, offset);
+    static async retrieve_equip_list_paginated(
+        limit: number, 
+        offset: number,
+        username: string | null,
+        groupID: string | null,
+        categoryID: string | null,
+        search: string | null
+    ) {
+        const equip = await EquipRepo.fetch_equip_list_paginated(limit, offset, username, groupID, categoryID, search);
         return equip;
     };
 

@@ -114,12 +114,12 @@ equipRootRouter.get("/list",
             
             // const {limit, offset} = req.query as unknown as equipRouterQuery;
             // Preflight
-            const limit = req.query.limit ? req.query.limit : 25;
-            const offset = req.query.offset ? req.query.offset : 0;
-            // const ftserach = req.query.ftsearch;
-            // const catid = req.query.catid;
-            // const uid = req.query.uid;
-            // const gid = req.query.gid;
+            const limit = typeof(req.query.limit) === "string" ? Number(req.query.limit) : 25;
+            const offset = typeof(req.query.offset) === "string" ? Number(req.query.offset) : 0;
+            const username = typeof(req.query.un) === "string" ? req.query.un.toLowerCase() : null;
+            const gid = typeof(req.query.gid) === "string" ? req.query.gid : null;
+            const catid = typeof(req.query.catid) === "string" ? req.query.catid : null;
+            const search = typeof(req.query.s) === "string" ? req.query.s : null;
 
             if (typeof limit !== "number" || typeof offset !== "number") {
                 throw new ExpressError("One or more query parameters is of an invalid type", 404);
@@ -127,7 +127,7 @@ equipRootRouter.get("/list",
 
 
             // Processing
-            const queryData = await EquipModel.retrieve_equip_list_paginated(limit, offset);
+            const queryData = await EquipModel.retrieve_equip_list_paginated(limit, offset, username, gid, catid, search);
             if (!queryData) {
                 throw new ExpressError("Equipment Not Found.", 404);
             }

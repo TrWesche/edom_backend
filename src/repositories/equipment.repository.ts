@@ -90,16 +90,69 @@ class EquipmentRepo {
         }
     };
 
-    static async fetch_equip_list_paginated(limit: number, offset: number) {
+    static async fetch_equip_list_paginated(
+        limit: number, 
+        offset: number, 
+        username: string | null, 
+        groupID: string | null, 
+        categoryID: string | null, 
+        search: string | null) 
+    {
         try {
-            const result = await pgdb.query(`
-                SELECT id, name, category_id, headline
+            let idx = 3;
+            const joinTables: Array<string> = [];
+            const filterParams: Array<any> = ['equipment.public = TRUE'];
+            const queryParams: Array<any> = [limit, offset];
+
+            if (username) {
+                joinTables.push(`
+                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id
+                    LEFT JOIN userprofile ON userprofile.user_id = user_equipment.user_id
+                `)
+                filterParams.push(`userprofile.username_clean = $${idx}`);
+                queryParams.push(username);
+                idx++;
+            };
+
+            if (groupID) {
+                joinTables.push(`
+                    LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id
+                `)
+                filterParams.push(`group_equipment.group_id = $${idx}`);
+                queryParams.push(groupID);
+                idx++;
+            };
+
+            if (categoryID) {
+                filterParams.push(`equipment.category_id = $${idx}`);
+                queryParams.push(categoryID);
+                idx++;
+            };
+
+            if (search) {
+                filterParams.push(
+                    `(equipment.name ILIKE $${idx} OR
+                    equipment.headline ILIKE $${idx} OR
+                    equipment.description ILIKE $${idx})`,
+                );
+                queryParams.push(`%${search}%`);
+                idx++;
+            };
+
+            let query = `
+                SELECT 
+                    equipment.id AS id, 
+                    equipment.name AS name, 
+                    equipment.category_id AS category_id, 
+                    equipment.headline AS headline
                 FROM equipment
-                WHERE equipment.public = TRUE
+                ${joinTables.join(" ")}
+                WHERE ${filterParams.join(" AND ")}
                 LIMIT $1
-                OFFSET $2`,
-                [limit, offset]
-            );
+                OFFSET $2
+            `;
+
+            const result = await pgdb.query(query, queryParams);
     
             const rval: Array<EquipObjectProps> | undefined = result.rows;
             return rval;

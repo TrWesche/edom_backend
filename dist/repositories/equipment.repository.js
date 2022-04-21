@@ -127,14 +127,45 @@ var EquipmentRepo = /** @class */ (function () {
         });
     };
     ;
-    EquipmentRepo.fetch_equip_list_paginated = function (limit, offset) {
+    EquipmentRepo.fetch_equip_list_paginated = function (limit, offset, username, groupID, categoryID, search) {
         return __awaiter(this, void 0, void 0, function () {
-            var result, rval, error_4;
+            var idx, joinTables, filterParams, queryParams, query, result, rval, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline\n                FROM equipment\n                WHERE equipment.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
+                        idx = 3;
+                        joinTables = [];
+                        filterParams = ['equipment.public = TRUE'];
+                        queryParams = [limit, offset];
+                        if (username) {
+                            joinTables.push("\n                    LEFT JOIN user_equipment ON user_equipment.equip_id = equipment.id\n                    LEFT JOIN userprofile ON userprofile.user_id = user_equipment.user_id\n                ");
+                            filterParams.push("userprofile.username_clean = $".concat(idx));
+                            queryParams.push(username);
+                            idx++;
+                        }
+                        ;
+                        if (groupID) {
+                            joinTables.push("\n                    LEFT JOIN group_equipment ON group_equipment.equip_id = equipment.id\n                ");
+                            filterParams.push("group_equipment.group_id = $".concat(idx));
+                            queryParams.push(groupID);
+                            idx++;
+                        }
+                        ;
+                        if (categoryID) {
+                            filterParams.push("equipment.category_id = $".concat(idx));
+                            queryParams.push(categoryID);
+                            idx++;
+                        }
+                        ;
+                        if (search) {
+                            filterParams.push("(equipment.name ILIKE $".concat(idx, " OR\n                    equipment.headline ILIKE $").concat(idx, " OR\n                    equipment.description ILIKE $").concat(idx, ")"));
+                            queryParams.push("%".concat(search, "%"));
+                            idx++;
+                        }
+                        ;
+                        query = "\n                SELECT \n                    equipment.id AS id, \n                    equipment.name AS name, \n                    equipment.category_id AS category_id, \n                    equipment.headline AS headline\n                FROM equipment\n                ".concat(joinTables.join(" "), "\n                WHERE ").concat(filterParams.join(" AND "), "\n                LIMIT $1\n                OFFSET $2\n            ");
+                        return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
