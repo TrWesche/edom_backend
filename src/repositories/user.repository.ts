@@ -477,7 +477,7 @@ class UserRepo {
     static async fetch_user_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
-                SELECT username, headline, image_url
+                SELECT username, headline, image_url, image_alt_text
                 FROM userprofile
                 WHERE userprofile.public = TRUE
                 LIMIT $1

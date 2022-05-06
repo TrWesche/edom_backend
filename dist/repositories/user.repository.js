@@ -336,7 +336,7 @@ var UserRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT username, headline, image_url\n                FROM userprofile\n                WHERE userprofile.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT username, headline, image_url, image_alt_text\n                FROM userprofile\n                WHERE userprofile.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
