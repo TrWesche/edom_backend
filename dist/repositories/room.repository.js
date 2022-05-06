@@ -88,7 +88,7 @@ var RoomRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         query = void 0;
                         queryParams = [];
-                        query = "\n                SELECT id, name, category_id, headline, image_url, description\n                FROM rooms\n                WHERE id = $1 AND public = TRUE";
+                        query = "\n                SELECT id, name, category_id, headline, image_url, image_alt_text, description\n                FROM rooms\n                WHERE id = $1 AND public = TRUE";
                         queryParams.push(roomID);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
@@ -115,7 +115,7 @@ var RoomRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         query = void 0;
                         queryParams = [];
-                        query = "\n                SELECT id, name, category_id, headline, image_url, description, public\n                FROM rooms\n                WHERE id = $1";
+                        query = "\n                SELECT id, name, category_id, headline, image_url, image_alt_text, description, public\n                FROM rooms\n                WHERE id = $1";
                         queryParams.push(roomID);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
@@ -140,7 +140,7 @@ var RoomRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline, image_url\n                FROM rooms\n                WHERE rooms.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, category_id, headline, image_url, image_alt_text\n                FROM rooms\n                WHERE rooms.public = TRUE\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -170,7 +170,7 @@ var RoomRepo = /** @class */ (function () {
                             filterBuilder.push('equipment.public = TRUE');
                         }
                         ;
-                        query = "\n                SELECT \n                    equipment.id AS id, \n                    equipment.name AS name,\n                    equipment.image_url AS image_url,\n                    equipment_categories.name AS category_name\n                FROM rooms\n                RIGHT JOIN room_equipment\n                ON rooms.id = room_equipment.room_id\n                LEFT JOIN equipment\n                ON equipment.id = room_equipment.equip_id\n                LEFT JOIN equipment_categories\n                ON equipment_categories.id = equipment.category_id\n                WHERE ".concat(filterBuilder.join(' AND '));
+                        query = "\n                SELECT \n                    equipment.id AS id, \n                    equipment.name AS name,\n                    equipment.image_url AS image_url,\n                    equipment.image_alt_text AS image_alt_text,\n                    equipment_categories.name AS category_name\n                FROM rooms\n                RIGHT JOIN room_equipment\n                ON rooms.id = room_equipment.room_id\n                LEFT JOIN equipment\n                ON equipment.id = room_equipment.equip_id\n                LEFT JOIN equipment_categories\n                ON equipment_categories.id = equipment.category_id\n                WHERE ".concat(filterBuilder.join(' AND '));
                         queryParams = [roomID];
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
@@ -293,11 +293,11 @@ var RoomRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (roomPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline, image_url\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.room_id\n                    WHERE user_rooms.user_id = $1 AND rooms.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url,  image_alt_text\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.room_id\n                    WHERE user_rooms.user_id = $1 AND rooms.public = $2";
                             queryParams.push(userID, roomPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline, image_url\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.room_id\n                    WHERE user_rooms.user_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url,  image_alt_text\n                    FROM rooms\n                    RIGHT JOIN user_rooms\n                    ON rooms.id = user_rooms.room_id\n                    WHERE user_rooms.user_id = $1";
                             queryParams.push(userID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
@@ -336,7 +336,7 @@ var RoomRepo = /** @class */ (function () {
                             idx++;
                         }
                         ;
-                        query = "\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        query = "\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.image_alt_text AS image_alt_text,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
@@ -373,7 +373,7 @@ var RoomRepo = /** @class */ (function () {
                             idx++;
                         }
                         ;
-                        query = "\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        query = "\n                SELECT\n                    rooms.id AS id,\n                    rooms.name AS name,\n                    rooms.headline AS headline,\n                    rooms.description AS description,\n                    rooms.image_url AS image_url,\n                    rooms.image_alt_text AS image_alt_text,\n                    rooms.category_id AS category_id\n                FROM rooms\n                LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
@@ -498,7 +498,7 @@ var RoomRepo = /** @class */ (function () {
                         _a.trys.push([0, 2, , 3]);
                         query = void 0;
                         queryParams = [];
-                        query = "\n                    SELECT \n                        sitegroups.id AS id,\n                        sitegroups.name AS name,\n                        sitegroups.image_url AS image_url\n                    FROM sitegroups\n                    LEFT JOIN group_rooms\n                    ON group_rooms.group_id = sitegroups.id\n                    WHERE group_rooms.room_id = $1";
+                        query = "\n                    SELECT \n                        sitegroups.id AS id,\n                        sitegroups.name AS name,\n                        sitegroups.image_url AS image_url,\n                        sitegroups.image_alt_text AS image_alt_text\n                    FROM sitegroups\n                    LEFT JOIN group_rooms\n                    ON group_rooms.group_id = sitegroups.id\n                    WHERE group_rooms.room_id = $1";
                         queryParams.push(roomID);
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
@@ -524,11 +524,11 @@ var RoomRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (roomPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline, image_url\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.room_id\n                    WHERE group_rooms.group_id = $1 AND rooms.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url, image_alt_text\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.room_id\n                    WHERE group_rooms.group_id = $1 AND rooms.public = $2";
                             queryParams.push(groupID, roomPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline, image_url\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.room_id\n                    WHERE group_rooms.group_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url, image_alt_text\n                    FROM rooms\n                    RIGHT JOIN group_rooms\n                    ON rooms.id = group_rooms.room_id\n                    WHERE group_rooms.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

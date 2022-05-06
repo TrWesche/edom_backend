@@ -23,7 +23,8 @@ export interface GroupInviteProps {
     group_request: boolean,
     user_request: boolean,
     group_name?: string,
-    image_url?: string
+    image_url?: string,
+    image_alt_text?: string,
 };
 
 interface IDList {
@@ -65,7 +66,7 @@ class GroupRepo {
     static async fetch_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT id, name, headline, description, image_url, location
+                `SELECT id, name, headline, description, image_url, image_alt_text, location
                   FROM sitegroups
                   WHERE id = $1`,
                   [groupID]
@@ -81,7 +82,7 @@ class GroupRepo {
     static async fetch_public_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT id, name, headline, description, image_url, location, public
+                `SELECT id, name, headline, description, image_url, image_alt_text, location, public
                   FROM sitegroups
                   WHERE id = $1 AND sitegroups.public = TRUE`,
                   [groupID]
@@ -97,7 +98,7 @@ class GroupRepo {
     static async fetch_unrestricted_group_by_group_id(groupID: string) {
         try {
             const result = await pgdb.query(
-                `SELECT id, name, headline, description, image_url, location, public
+                `SELECT id, name, headline, description, image_url, image_alt_text, location, public
                   FROM sitegroups
                   WHERE id = $1`,
                   [groupID]
@@ -113,7 +114,7 @@ class GroupRepo {
     static async fetch_group_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
-                SELECT id, name, headline, image_url, location
+                SELECT id, name, headline, image_url, image_alt_text, location
                 FROM sitegroups
                 WHERE sitegroups.public = true
                 LIMIT $1
@@ -156,6 +157,7 @@ class GroupRepo {
                     sitegroups.headline AS headline,
                     sitegroups.description AS description,
                     sitegroups.image_url AS image_url,
+                    sitegroups.image_alt_text AS image_alt_text,
                     sitegroups.location AS location
                 FROM sitegroups
                 LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id
@@ -223,7 +225,8 @@ class GroupRepo {
                 userprofile.username AS username,
                 group_membership_requests.group_request AS group_request,
                 group_membership_requests.user_request AS user_request,
-                sitegroups.image_url AS image_url
+                sitegroups.image_url AS image_url,
+                sitegroups.image_alt_text AS image_alt_text
             FROM group_membership_requests
             LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
             LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id
@@ -266,6 +269,7 @@ class GroupRepo {
                     sitegroups.headline AS headline,
                     sitegroups.description AS description,
                     sitegroups.image_url AS image_url,
+                    sitegroups.image_alt_text AS image_alt_text,
                     sitegroups.location AS location
                 FROM sitegroups
                 LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id

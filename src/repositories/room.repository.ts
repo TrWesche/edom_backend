@@ -9,6 +9,8 @@ export interface RoomObjectProps {
     name?: string,
     category_id?: string,
     headline?: string,
+    image_url?: string,
+    image_alt_text?: string,
     description?: string,
     public?: boolean,
 };
@@ -55,7 +57,7 @@ class RoomRepo {
             let queryParams: Array<any> = [];
 
             query = `
-                SELECT id, name, category_id, headline, image_url, description
+                SELECT id, name, category_id, headline, image_url, image_alt_text, description
                 FROM rooms
                 WHERE id = $1 AND public = TRUE`;
             queryParams.push(roomID);
@@ -75,7 +77,7 @@ class RoomRepo {
             let queryParams: Array<any> = [];
 
             query = `
-                SELECT id, name, category_id, headline, image_url, description, public
+                SELECT id, name, category_id, headline, image_url, image_alt_text, description, public
                 FROM rooms
                 WHERE id = $1`;
             queryParams.push(roomID);
@@ -92,7 +94,7 @@ class RoomRepo {
     static async fetch_room_list_paginated(limit: number, offset: number) {
         try {
             const result = await pgdb.query(`
-                SELECT id, name, category_id, headline, image_url
+                SELECT id, name, category_id, headline, image_url, image_alt_text
                 FROM rooms
                 WHERE rooms.public = TRUE
                 LIMIT $1
@@ -124,6 +126,7 @@ class RoomRepo {
                     equipment.id AS id, 
                     equipment.name AS name,
                     equipment.image_url AS image_url,
+                    equipment.image_alt_text AS image_alt_text,
                     equipment_categories.name AS category_name
                 FROM rooms
                 RIGHT JOIN room_equipment
@@ -233,7 +236,7 @@ class RoomRepo {
 
             if (roomPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline, image_url
+                    SELECT id, name, category_id, headline, image_url,  image_alt_text
                     FROM rooms
                     RIGHT JOIN user_rooms
                     ON rooms.id = user_rooms.room_id
@@ -241,7 +244,7 @@ class RoomRepo {
                 queryParams.push(userID, roomPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, image_url
+                    SELECT id, name, category_id, headline, image_url,  image_alt_text
                     FROM rooms
                     RIGHT JOIN user_rooms
                     ON rooms.id = user_rooms.room_id
@@ -293,6 +296,7 @@ class RoomRepo {
                     rooms.headline AS headline,
                     rooms.description AS description,
                     rooms.image_url AS image_url,
+                    rooms.image_alt_text AS image_alt_text,
                     rooms.category_id AS category_id
                 FROM rooms
                 LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
@@ -345,6 +349,7 @@ class RoomRepo {
                     rooms.headline AS headline,
                     rooms.description AS description,
                     rooms.image_url AS image_url,
+                    rooms.image_alt_text AS image_alt_text,
                     rooms.category_id AS category_id
                 FROM rooms
                 LEFT JOIN user_rooms ON rooms.id = user_rooms.room_id
@@ -457,7 +462,8 @@ class RoomRepo {
                     SELECT 
                         sitegroups.id AS id,
                         sitegroups.name AS name,
-                        sitegroups.image_url AS image_url
+                        sitegroups.image_url AS image_url,
+                        sitegroups.image_alt_text AS image_alt_text
                     FROM sitegroups
                     LEFT JOIN group_rooms
                     ON group_rooms.group_id = sitegroups.id
@@ -480,7 +486,7 @@ class RoomRepo {
 
             if (roomPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline, image_url
+                    SELECT id, name, category_id, headline, image_url, image_alt_text
                     FROM rooms
                     RIGHT JOIN group_rooms
                     ON rooms.id = group_rooms.room_id
@@ -488,7 +494,7 @@ class RoomRepo {
                 queryParams.push(groupID, roomPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, image_url
+                    SELECT id, name, category_id, headline, image_url, image_alt_text
                     FROM rooms
                     RIGHT JOIN group_rooms
                     ON rooms.id = group_rooms.room_id

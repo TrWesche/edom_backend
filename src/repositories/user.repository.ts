@@ -20,6 +20,7 @@ interface UserDataProps {
     headline?: string,
     about?: string,
     image_url?: string,
+    image_alt_text?: string,
     email?: string,
     first_name?: string,
     last_name?: string,
@@ -99,6 +100,7 @@ class UserRepo {
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
+                        userprofile.image_alt_text AS image_alt_text,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
                         userdata.email_clean AS email_clean,
@@ -121,6 +123,7 @@ class UserRepo {
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
+                        userprofile.image_alt_text AS image_alt_text,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
                         userdata.email_clean AS email_clean,
@@ -186,6 +189,7 @@ class UserRepo {
                             userprofile.headline AS headline,
                             userprofile.about AS about,
                             userprofile.image_url AS image_url,
+                            userprofile.image_alt_text AS image_alt_text,
                             (SELECT userdata.email AS email FROM userdata WHERE userdata.public_email = TRUE),
                             (SELECT userdata.first_name AS first_name FROM userdata WHERE userdata.public_first_name = TRUE),
                             (SELECT userdata.last_name AS last_name FROM userdata WHERE userdata.public_last_name = TRUE),
@@ -204,6 +208,7 @@ class UserRepo {
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
+                        userprofile.image_alt_text AS image_alt_text,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
                         userdata.email_clean AS email_clean,
@@ -266,6 +271,7 @@ class UserRepo {
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
+                        userprofile.image_alt_text AS image_alt_text,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
                         userdata.public_email AS public_email,
@@ -287,6 +293,7 @@ class UserRepo {
                         userprofile.headline AS headline,
                         userprofile.about AS about,
                         userprofile.image_url AS image_url,
+                        userprofile.image_alt_text AS image_alt_text,
                         userprofile.public AS public_profile,
                         userdata.email AS email,
                         userdata.email_clean AS email_clean,
@@ -406,7 +413,8 @@ class UserRepo {
                 userprofile.username AS username,
                 group_membership_requests.group_request AS group_request,
                 group_membership_requests.user_request AS user_request,
-                sitegroups.image_url AS image_url
+                sitegroups.image_url AS image_url,
+                sitegroups.image_alt_text AS image_alt_text
             FROM group_membership_requests
             LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
             LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id
@@ -431,7 +439,8 @@ class UserRepo {
                 group_membership_requests.group_request AS group_request,
                 group_membership_requests.user_request AS user_request,
                 sitegroups.name AS group_name,
-                sitegroups.image_url AS image_url
+                sitegroups.image_url AS image_url,
+                sitegroups.image_alt_text AS image_alt_text
             FROM group_membership_requests
             LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id
             WHERE group_membership_requests.user_id = $1 AND group_membership_requests.group_id = $2`;

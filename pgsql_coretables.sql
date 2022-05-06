@@ -30,6 +30,7 @@ CREATE TABLE "userprofile" (
   "headline" text,
   "about" text,
   "image_url" text,
+  "image_alt_text" text,
   "public" boolean DEFAULT false
 );
 
@@ -53,6 +54,7 @@ CREATE TABLE "sitegroups" (
   "headline" text,
   "description" text,
   "image_url" text,
+  "image_alt_text" text,
   "location" text,
   "public" boolean DEFAULT false,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
@@ -67,6 +69,7 @@ CREATE TABLE "equipment" (
   "headline" text,
   "description" text,
   "image_url" text,
+  "image_alt_text" text,
   "public" boolean DEFAULT false,
   "configuration" json NOT NULL,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
@@ -81,6 +84,7 @@ CREATE TABLE "rooms" (
   "headline" text,
   "description" text,
   "image_url" text,
+  "image_alt_text" text,
   "public" boolean DEFAULT false,
   "created_at" timestamptz DEFAULT (CURRENT_TIMESTAMP),
   "modified_at" timestamptz DEFAULT (CURRENT_TIMESTAMP)

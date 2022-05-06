@@ -8,6 +8,8 @@ export interface EquipObjectProps {
     name?: string,
     category_id?: string,
     headline?: string,
+    image_url?: string,
+    image_alt_text?: string,
     description?: string,
     public?: boolean,
     config?: object 
@@ -38,7 +40,7 @@ class EquipmentRepo {
                 INSERT INTO equipment 
                     (${queryColumns.join(",")}) 
                 VALUES (${queryColIdxs.join(",")}) 
-                RETURNING id, name, category_id, headline, description, public, configuration`;
+                RETURNING id, name, category_id, headline, description, public, image_url, image_alt_text, configuration`;
 
             const result = await pgdb.query(query, queryParams);
             
@@ -55,7 +57,7 @@ class EquipmentRepo {
             let queryParams: Array<any> = [];
 
             query = `
-                SELECT id, name, category_id, headline, description, image_url
+                SELECT id, name, category_id, headline, description, image_url, image_alt_text
                 FROM equipment
                 WHERE id = $1 AND public = TRUE`;
             queryParams.push(equipID);
@@ -76,7 +78,7 @@ class EquipmentRepo {
             let queryParams: Array<any> = [];
 
             query = `
-                SELECT id, name, category_id, headline, description, image_url, public, configuration
+                SELECT id, name, category_id, headline, description, image_url, image_alt_text, public, configuration
                 FROM equipment
                 WHERE id = $1`;
             queryParams.push(equipID);
@@ -145,7 +147,8 @@ class EquipmentRepo {
                     equipment.name AS name, 
                     equipment.category_id AS category_id, 
                     equipment.headline AS headline,
-                    equipment.image_url AS image_url
+                    equipment.image_url AS image_url,
+                    equipment.image_alt_text AS image_alt_text
                 FROM equipment
                 ${joinTables.join(" ")}
                 WHERE ${filterParams.join(" AND ")}
@@ -251,7 +254,7 @@ class EquipmentRepo {
             });
 
             query = `
-                SELECT id, name, category_id, headline, image_url
+                SELECT id, name, category_id, headline, image_url, image_alt_text
                 FROM equipment
                 RIGHT JOIN user_equipment
                 ON equipment.id = user_equipment.equip_id
@@ -272,7 +275,7 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline, image_url
+                    SELECT id, name, category_id, headline, image_url,  image_alt_text
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -280,7 +283,7 @@ class EquipmentRepo {
                 queryParams.push(userID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, image_url, public
+                    SELECT id, name, category_id, headline, image_url, image_alt_text, public
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -332,6 +335,7 @@ class EquipmentRepo {
                     equipment.headline AS headline,
                     equipment.description AS description,
                     equipment.image_url AS image_url,
+                    equipment.image_alt_text AS image_alt_text,
                     equipment.category_id AS category_id
                 FROM equipment
                 LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id
@@ -384,6 +388,7 @@ class EquipmentRepo {
                     equipment.headline AS headline,
                     equipment.description AS description,
                     equipment.image_url AS image_url,
+                    equipment.image_alt_text AS image_alt_text,
                     equipment.category_id AS category_id
                 FROM equipment
                 LEFT JOIN user_equipment ON equipment.id = user_equipment.equip_id
@@ -540,7 +545,7 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline, image_url
+                    SELECT id, name, category_id, headline, image_url, image_alt_text
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
@@ -548,7 +553,7 @@ class EquipmentRepo {
                 queryParams.push(groupID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, image_url, public
+                    SELECT id, name, category_id, headline, image_url, image_alt_text, public
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
@@ -574,7 +579,8 @@ class EquipmentRepo {
                 SELECT 
                     sitegroups.id AS id, 
                     sitegroups.name AS name, 
-                    sitegroups.image_url AS image_url
+                    sitegroups.image_url AS image_url,
+                    sitegroups.image_alt_text AS image_alt_text
                 FROM sitegroups
                 LEFT JOIN group_equipment
                 ON group_equipment.group_id = sitegroups.id
@@ -719,6 +725,7 @@ class EquipmentRepo {
                     rooms.id AS id, 
                     rooms.name AS name,
                     rooms.image_url AS image_url,
+                    rooms.image_alt_text AS image_alt_text,
                     room_categories.name AS category_name
                 FROM rooms
                 RIGHT JOIN room_equipment

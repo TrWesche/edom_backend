@@ -88,7 +88,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location\n                  FROM sitegroups\n                  WHERE id = $1", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, image_alt_text, location\n                  FROM sitegroups\n                  WHERE id = $1", [groupID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -111,7 +111,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location, public\n                  FROM sitegroups\n                  WHERE id = $1 AND sitegroups.public = TRUE", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, image_alt_text, location, public\n                  FROM sitegroups\n                  WHERE id = $1 AND sitegroups.public = TRUE", [groupID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -134,7 +134,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, location, public\n                  FROM sitegroups\n                  WHERE id = $1", [groupID])];
+                        return [4 /*yield*/, pgdb_1["default"].query("SELECT id, name, headline, description, image_url, image_alt_text, location, public\n                  FROM sitegroups\n                  WHERE id = $1", [groupID])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows[0];
@@ -157,7 +157,7 @@ var GroupRepo = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, headline, image_url, location\n                FROM sitegroups\n                WHERE sitegroups.public = true\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
+                        return [4 /*yield*/, pgdb_1["default"].query("\n                SELECT id, name, headline, image_url, image_alt_text, location\n                FROM sitegroups\n                WHERE sitegroups.public = true\n                LIMIT $1\n                OFFSET $2", [limit, offset])];
                     case 1:
                         result = _a.sent();
                         rval = result.rows;
@@ -187,7 +187,7 @@ var GroupRepo = /** @class */ (function () {
                             idx++;
                         }
                         ;
-                        query = "\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        query = "\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.image_alt_text AS image_alt_text,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
@@ -242,7 +242,7 @@ var GroupRepo = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                sitegroups.name AS group_name,\n                group_membership_requests.user_id AS user_id,\n                userprofile.username AS username,\n                group_membership_requests.group_request AS group_request,\n                group_membership_requests.user_request AS user_request,\n                sitegroups.image_url AS image_url\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id\n            WHERE group_membership_requests.group_ID = $1";
+                        query = "\n            SELECT\n                group_membership_requests.group_id AS group_id,\n                sitegroups.name AS group_name,\n                group_membership_requests.user_id AS user_id,\n                userprofile.username AS username,\n                group_membership_requests.group_request AS group_request,\n                group_membership_requests.user_request AS user_request,\n                sitegroups.image_url AS image_url,\n                sitegroups.image_alt_text AS image_alt_text\n            FROM group_membership_requests\n            LEFT JOIN sitegroups ON sitegroups.id = group_membership_requests.group_id\n            LEFT JOIN userprofile ON userprofile.user_id = group_membership_requests.user_id\n            WHERE group_membership_requests.group_ID = $1";
                         return [4 /*yield*/, pgdb_1["default"].query(query, [groupID])];
                     case 1:
                         result = _a.sent();
@@ -269,7 +269,7 @@ var GroupRepo = /** @class */ (function () {
                             idx++;
                         }
                         ;
-                        query = "\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
+                        query = "\n                SELECT\n                    sitegroups.id AS id,\n                    sitegroups.name AS name,\n                    sitegroups.headline AS headline,\n                    sitegroups.description AS description,\n                    sitegroups.image_url AS image_url,\n                    sitegroups.image_alt_text AS image_alt_text,\n                    sitegroups.location AS location\n                FROM sitegroups\n                LEFT JOIN user_groups ON sitegroups.id = user_groups.group_id\n                WHERE ".concat(filterParams.join(" AND "), "\n                LIMIT $2\n                OFFSET $3\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
