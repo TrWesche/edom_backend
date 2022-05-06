@@ -728,7 +728,7 @@ class GroupRepo {
 
             if (groupPublic !== undefined) {
                 query = `
-                    SELECT id, name, headline
+                    SELECT id, name, headline, image_url
                     FROM sitegroups
                     RIGHT JOIN user_groups
                     ON sitegroups.id = user_groups.group_id
@@ -736,7 +736,7 @@ class GroupRepo {
                 queryParams.push(userID, groupPublic);
             } else {
                 query = `
-                    SELECT id, name, headline
+                    SELECT id, name, headline, image_url
                     FROM sitegroups
                     RIGHT JOIN user_groups
                     ON sitegroups.id = user_groups.equip_id

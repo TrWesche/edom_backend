@@ -164,7 +164,7 @@ var EquipmentRepo = /** @class */ (function () {
                             idx++;
                         }
                         ;
-                        query = "\n                SELECT \n                    equipment.id AS id, \n                    equipment.name AS name, \n                    equipment.category_id AS category_id, \n                    equipment.headline AS headline\n                FROM equipment\n                ".concat(joinTables.join(" "), "\n                WHERE ").concat(filterParams.join(" AND "), "\n                LIMIT $1\n                OFFSET $2\n            ");
+                        query = "\n                SELECT \n                    equipment.id AS id, \n                    equipment.name AS name, \n                    equipment.category_id AS category_id, \n                    equipment.headline AS headline,\n                    equipment.image_url AS image_url\n                FROM equipment\n                ".concat(joinTables.join(" "), "\n                WHERE ").concat(filterParams.join(" AND "), "\n                LIMIT $1\n                OFFSET $2\n            ");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
                     case 1:
                         result = _a.sent();
@@ -290,7 +290,7 @@ var EquipmentRepo = /** @class */ (function () {
                             idxParams_1.push("$".concat(idx_1));
                             idx_1++;
                         });
-                        query = "\n                SELECT id, name\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id IN (".concat(idxParams_1.join(', '), ")");
+                        query = "\n                SELECT id, name, category_id, headline, image_url\n                FROM equipment\n                RIGHT JOIN user_equipment\n                ON equipment.id = user_equipment.equip_id\n                WHERE user_equipment.user_id = $1 AND user_equipment.equip_id IN (".concat(idxParams_1.join(', '), ")");
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams_1)];
                     case 1:
                         result = _a.sent();
@@ -314,11 +314,11 @@ var EquipmentRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (equipPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1 AND equipment.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1 AND equipment.public = $2";
                             queryParams.push(userID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline, public\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url, public\n                    FROM equipment\n                    RIGHT JOIN user_equipment\n                    ON equipment.id = user_equipment.equip_id\n                    WHERE user_equipment.user_id = $1";
                             queryParams.push(userID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];
@@ -575,11 +575,11 @@ var EquipmentRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (equipPublic !== undefined) {
-                            query = "\n                    SELECT id, name, category_id, headline\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1 AND equipment.public = $2";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1 AND equipment.public = $2";
                             queryParams.push(groupID, equipPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, category_id, headline, public\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
+                            query = "\n                    SELECT id, name, category_id, headline, image_url, public\n                    FROM equipment\n                    RIGHT JOIN group_equipment\n                    ON equipment.id = group_equipment.equip_id\n                    WHERE group_equipment.group_id = $1";
                             queryParams.push(groupID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

@@ -778,11 +778,11 @@ var GroupRepo = /** @class */ (function () {
                         query = void 0;
                         queryParams = [];
                         if (groupPublic !== undefined) {
-                            query = "\n                    SELECT id, name, headline\n                    FROM sitegroups\n                    RIGHT JOIN user_groups\n                    ON sitegroups.id = user_groups.group_id\n                    WHERE user_groups.user_id = $1 AND sitegroups.public = $2";
+                            query = "\n                    SELECT id, name, headline, image_url\n                    FROM sitegroups\n                    RIGHT JOIN user_groups\n                    ON sitegroups.id = user_groups.group_id\n                    WHERE user_groups.user_id = $1 AND sitegroups.public = $2";
                             queryParams.push(userID, groupPublic);
                         }
                         else {
-                            query = "\n                    SELECT id, name, headline\n                    FROM sitegroups\n                    RIGHT JOIN user_groups\n                    ON sitegroups.id = user_groups.equip_id\n                    WHERE sitegroups.user_id = $1";
+                            query = "\n                    SELECT id, name, headline, image_url\n                    FROM sitegroups\n                    RIGHT JOIN user_groups\n                    ON sitegroups.id = user_groups.equip_id\n                    WHERE sitegroups.user_id = $1";
                             queryParams.push(userID);
                         }
                         return [4 /*yield*/, pgdb_1["default"].query(query, queryParams)];

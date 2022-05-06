@@ -144,7 +144,8 @@ class EquipmentRepo {
                     equipment.id AS id, 
                     equipment.name AS name, 
                     equipment.category_id AS category_id, 
-                    equipment.headline AS headline
+                    equipment.headline AS headline,
+                    equipment.image_url AS image_url
                 FROM equipment
                 ${joinTables.join(" ")}
                 WHERE ${filterParams.join(" AND ")}
@@ -250,7 +251,7 @@ class EquipmentRepo {
             });
 
             query = `
-                SELECT id, name
+                SELECT id, name, category_id, headline, image_url
                 FROM equipment
                 RIGHT JOIN user_equipment
                 ON equipment.id = user_equipment.equip_id
@@ -271,7 +272,7 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline
+                    SELECT id, name, category_id, headline, image_url
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -279,7 +280,7 @@ class EquipmentRepo {
                 queryParams.push(userID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, public
+                    SELECT id, name, category_id, headline, image_url, public
                     FROM equipment
                     RIGHT JOIN user_equipment
                     ON equipment.id = user_equipment.equip_id
@@ -539,7 +540,7 @@ class EquipmentRepo {
 
             if (equipPublic !== undefined) {
                 query = `
-                    SELECT id, name, category_id, headline
+                    SELECT id, name, category_id, headline, image_url
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
@@ -547,7 +548,7 @@ class EquipmentRepo {
                 queryParams.push(groupID, equipPublic);
             } else {
                 query = `
-                    SELECT id, name, category_id, headline, public
+                    SELECT id, name, category_id, headline, image_url, public
                     FROM equipment
                     RIGHT JOIN group_equipment
                     ON equipment.id = group_equipment.equip_id
